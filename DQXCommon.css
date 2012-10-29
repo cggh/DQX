@@ -1,0 +1,564 @@
+﻿
+/*added 212-08-22*/
+html,body {
+    height:100%;
+}
+
+
+body
+{
+	background-color:rgb(255,255,255);
+	color:#000000;
+	font-size:9pt;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+    margin-left: 30px;
+    margin-right: 30px;
+    margin-top:0px;
+    margin-bottom:0px;
+/*    margin-bottom:20px;*/
+	height:100%;
+	overflow:hidden;
+}
+
+.DQXLarge
+{
+	font-size:11pt;
+    font-weight:bold;
+}
+
+.DQXSemiLarge
+{
+/*	font-size:11pt;*/
+    font-weight:bold;
+}
+
+
+/******************************************************************************************
+** DQX Help
+******************************************************************************************/
+
+.DQXInfoButton
+{
+  position:relative;
+    bottom:-3px;
+    cursor:pointer;
+}
+
+
+.DQXInfoButton img:hover
+{
+    -ms-transform:scale(1.25);
+    transform:scale(1.25);
+    -moz-transform:scale(1.25);
+    -webkit-transform:scale(1.25);
+    -o-transform:scale(1.25);
+}
+
+
+.DQXHelp
+{
+}
+
+/******************************************************************************************
+** DQX Query tables
+******************************************************************************************/
+
+
+.DQXQueryTable  
+{
+    border-width: 0px;
+    border-style: solid;
+    border-collapse:collapse;
+    border-color: rgb(60,60,60);
+ /*   width:100%;*/
+}
+
+.DQXQueryTable th
+{
+    border-width: 1px;
+    border-style: solid;
+    border-color: #000000;
+    background-color:rgb(100,100,100);
+    color:rgb(220,220,220);
+    text-align: left; 
+    height:35px;
+/*    width: 180px !important; */
+    white-space:nowrap;
+    padding: 4px;
+}
+
+.DQXQueryTable td    
+{ 
+    border-width: 1px; 
+    border-style: solid;
+    border-color: rgb(210,210,210);
+    padding-left: 3px;
+    padding-right: 3px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    color:rgb(0,0,0);
+    font-size:8pt;
+    white-space:nowrap;
+    text-align:left;
+}
+
+.DQXQueryTableInvalid td 
+{
+    background-image:url(Bitmaps/diagpattern.jpg) !important;
+    background-repeat:repeat;
+}
+
+.DQXQueryTableLink
+{
+    color: rgb(100,100,200) !important;
+}
+
+
+
+
+.DQXVSpacer
+{
+    clear:both;
+}
+
+
+/******************************************************************************************
+** DQX Float boxes
+******************************************************************************************/
+
+
+.DQXFloatBox
+{ 
+    border-width:2px;
+    border-style:solid;
+    border-color:rgb(40,40,40);
+    position:absolute; 
+    left:850px; 
+    top:100px; 
+    box-shadow: 5px 5px 10px #000000; 
+ 	z-index:999;
+}
+.DQXFloatBoxHeader
+{ 
+    background-color:rgb(40,40,40); 
+    padding:8px; 
+    cursor:move; 
+    font-size:10pt;
+    font-weight:bold;
+    color:rgb(255,230,200);
+}
+
+.DQXFloatBoxContent
+{ 
+    background-color:rgb(230,230,230); 
+    padding:5px; 
+    cursor:text; 
+}
+
+.DQXFloatBoxHelp
+{
+    border-color:rgb(20,20,130) !important;
+}
+
+.DQXFloatBoxHeaderHelp
+{
+    background-color:rgb(20,20,130) !important;
+}
+
+.DQXFloatBoxContentHelp
+{
+    background-color:rgb(220,220,230) !important; 
+    padding:15px;
+}
+
+
+/******************************************************************************************
+** DQX Light frame styling elements
+******************************************************************************************/
+
+
+.DQXLightFrame, .DQXTabBody, .DQXTabActive
+{
+    background-color:rgb(60,60,60);
+    color:rgb(210,210,210);
+}
+
+
+.DQXLightFrame select, .DQXLightFrame input[type="text"]
+{
+/*    background-color:rgb(255,255,255);*/
+    background-color:rgb(210,210,210);
+}
+
+
+
+/******************************************************************************************
+** DQX Dark frame styling elements
+******************************************************************************************/
+
+.DQXDarkFrame
+{
+    background-color:rgb(60,60,60);
+    color:rgb(210,210,210);
+}
+
+.DQXDarkFrameHighlight
+{
+    color:rgb(240,240,190);
+}
+
+.DQXDarkFrame select, .DQXDarkFrame input[type="text"]
+{
+    background-color:rgb(210,210,210);
+    border-width:0px;
+}
+
+.DQXDarkFrame input[type="text"]
+{
+    border-width:1px;
+    border-style:solid;
+    border-color:rgb(0,0,0);
+}
+
+
+.DQXDarkFrame a:link, .DQXDarkFrame a:visited .DQXLightFrame a:link, .DQXLightFrame a:visited{
+    color: rgb(140,190,255);
+}
+
+
+/******************************************************************************************
+** DQX Query builder styling elements
+******************************************************************************************/
+
+
+.DQXQBQuerybox
+{
+    border-radius: 5px;
+    background-color:rgb(140,170,190) !important;/*Fallback mechanism form IE8*/
+    background-color:rgba(140,170,190,0.8) !important;
+    color:rgb(255,255,255) !important;
+    font-weight:bold !important;
+}
+
+.DQXQBQueryboxControl
+{
+    border: 1px solid !important; 
+    border-color: rgb(100,100,150) !important; 
+    background-color: rgb(220,240,245) !important; 
+    box-shadow: 1px 1px 3px rgba(0,0,0,0.35) !important; 
+    margin-bottom:3px;
+}
+
+.DQXQBQueryboxControl:hover
+{
+    background-color: rgb(220,255,255) !important;
+    border-color: rgb(120,160,255) !important;
+    box-shadow: 0px 0px 10px rgba(0,128,255,0.75) !important;
+}
+
+
+/******************************************************************************************
+** DQX Bitmap links
+******************************************************************************************/
+
+
+.DQXBitmapLink
+{
+}
+
+.DQXBitmapLinkTransparent
+{
+    opacity:0.70;
+    filter:alpha(opacity=70); /* For IE8 and earlier */
+}
+
+.DQXBitmapLink:hover, .DQXBitmapLinkTransparent:hover
+{
+    opacity:1.0;
+    filter:alpha(opacity=100); /* For IE8 and earlier */
+    outline: 2px dotted;
+    outline-color: rgba(255,150,100,0.7);
+}
+
+
+
+/******************************************************************************************
+** DQX Tabbed environment styling elements
+******************************************************************************************/
+
+.DQXTabs 
+{
+}
+
+.DQXTabSet
+{
+}
+
+.DQXTab {
+	font-size:10pt;
+	border-top-left-radius:8px;
+	border-top-right-radius:8px;
+	margin-right:3px;
+	padding-left:10px;
+	padding-right:10px;
+	padding-top:3px;
+	padding-bottom:7px;
+	float:left;
+	border:1px solid #000000;
+	border-bottom-width: 0px;
+	cursor:pointer;
+	z-index:2;
+}
+
+.DQXTabInactive:hover {
+	border-color:rgb(255,128,0);
+}
+
+
+.DQXTabInactive {
+	background-color:rgb(210,210,210);
+	border-color:rgb(210,210,210);
+	color:rgb(0,0,0);
+	font-weight:bold;
+}
+
+.DQXTabActive {
+    position: relative;
+	top: 1px;	
+	font-weight:bold;
+	color:rgb(255,240,200);
+}
+
+.DQXTabInactive img
+{
+    opacity:0.5;
+}
+
+
+.DQXTabContent 
+{
+}
+
+.DQXTabBody 
+{
+    clear:both;
+	/*border:1px solid #000000;*/
+	z-index:1;
+/*	border-bottom-left-radius:10px;
+	border-bottom-right-radius:10px;*/
+	padding-bottom:10px;
+/*	border-top-right-radius:10px;*/
+	padding-top:10px;
+	padding-left:5px;
+	padding-right:5px;
+}
+
+
+/******************************************************************************************
+** DQX Misc controls
+******************************************************************************************/
+
+
+.DQXGlowButton
+{
+	padding:3px;
+	padding-left:6px;
+	padding-right:6px;
+	border:2px solid rgb(255,255,200);
+	background-color:rgb(230,230,210);
+	font-weight:bold;
+	color:rgb(0,0,0);
+	cursor:pointer;
+	border-style: outset;
+    box-shadow: 0px 0px 12px rgba(255,128,0,0.75);
+    border-radius:4px;
+}
+
+.DQXGlowButton:hover
+{
+	background-color:rgb(255,255,150);
+    -ms-transform:scale(1.1);
+    transform:scale(1.1);
+    -moz-transform:scale(1.1);
+    -webkit-transform:scale(1.1);
+    -o-transform:scale(1.1);
+}
+
+.DQXShadow {
+    box-shadow: 4px 4px 8px rgb(80,80,80);
+    -moz-box-shadow: 4px 4px 8px rgb(80,80,80);
+    -webkit-box-shadow: 4px 4px 8px rgb(80,80,80);
+    -ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#000000')";
+    filter: progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#000000');
+}
+
+.DQXMenu
+{
+    border-width: 2px;
+    border-style: solid;
+    border-color: #000000;
+    background-color: rgb(240,240,210);
+}   
+
+
+.DQXMenuItem 
+{
+	padding:3px;
+}
+
+.DQXMenuItem:hover
+{
+    background-color: rgb(255,150,150) !important;
+}   
+
+/* SVG elements */
+
+.piepart 
+{
+    stroke:black; 
+    stroke-width:1;
+    fill-opacity: 0.5;
+}
+
+.DQXLight
+{
+    background-color: rgb(170,170,170);
+    border-width:0px;
+}
+
+
+.DQXClient
+{
+    color:Black;
+    background-color: rgb(230,230,230);
+    border-width:0px;
+}
+
+
+.DQXLargeListItem
+{
+    color:Black;
+    padding:4px;
+    padding-bottom:8px;
+background: rgb(232,232,232); /* Old browsers */
+background: -moz-linear-gradient(top, rgba(232,232,232,1) 0%, rgba(198,198,198,1) 100%); /* FF3.6+ */
+background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(232,232,232,1)), color-stop(100%,rgba(198,198,198,1))); /* Chrome,Safari4+ */
+background: -webkit-linear-gradient(top, rgba(232,232,232,1) 0%,rgba(198,198,198,1) 100%); /* Chrome10+,Safari5.1+ */
+background: -o-linear-gradient(top, rgba(232,232,232,1) 0%,rgba(198,198,198,1) 100%); /* Opera 11.10+ */
+background: -ms-linear-gradient(top, rgba(232,232,232,1) 0%,rgba(198,198,198,1) 100%); /* IE10+ */
+background: linear-gradient(to bottom, rgba(232,232,232,1) 0%,rgba(198,198,198,1) 100%); /* W3C */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e8e8e8', endColorstr='#c6c6c6',GradientType=0 ); /* IE6-9 */
+	font-size:8pt;
+
+    cursor:pointer;
+
+}
+
+
+.DQXLargeListItemSelected
+{
+    color:Black;
+    padding:4px;
+    padding-bottom:8px;
+background: rgb(196,208,252); /* Old browsers */
+background: -moz-linear-gradient(top, rgba(196,208,252,1) 0%, rgba(164,181,234,1) 100%); /* FF3.6+ */
+background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(196,208,252,1)), color-stop(100%,rgba(164,181,234,1))); /* Chrome,Safari4+ */
+background: -webkit-linear-gradient(top, rgba(196,208,252,1) 0%,rgba(164,181,234,1) 100%); /* Chrome10+,Safari5.1+ */
+background: -o-linear-gradient(top, rgba(196,208,252,1) 0%,rgba(164,181,234,1) 100%); /* Opera 11.10+ */
+background: -ms-linear-gradient(top, rgba(196,208,252,1) 0%,rgba(164,181,234,1) 100%); /* IE10+ */
+background: linear-gradient(to bottom, rgba(196,208,252,1) 0%,rgba(164,181,234,1) 100%); /* W3C */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#c4d0fc', endColorstr='#a4b5ea',GradientType=0 ); /* IE6-9 */
+
+	font-size:8pt;
+    cursor:pointer;
+
+}
+
+
+
+.DQXLargeListItem:hover
+{
+    color:rgb(0,0,180);
+background: rgb(247,247,247); /* Old browsers */
+background: -moz-linear-gradient(top, rgba(247,247,247,1) 0%, rgba(214,214,214,1) 100%); /* FF3.6+ */
+background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(247,247,247,1)), color-stop(100%,rgba(214,214,214,1))); /* Chrome,Safari4+ */
+background: -webkit-linear-gradient(top, rgba(247,247,247,1) 0%,rgba(214,214,214,1) 100%); /* Chrome10+,Safari5.1+ */
+background: -o-linear-gradient(top, rgba(247,247,247,1) 0%,rgba(214,214,214,1) 100%); /* Opera 11.10+ */
+background: -ms-linear-gradient(top, rgba(247,247,247,1) 0%,rgba(214,214,214,1) 100%); /* IE10+ */
+background: linear-gradient(to bottom, rgba(247,247,247,1) 0%,rgba(214,214,214,1) 100%); /* W3C */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7f7f7', endColorstr='#d6d6d6',GradientType=0 ); /* IE6-9 */    
+}
+
+
+
+
+.DQXTreeItem, .DQXTreeItemNoSelect
+{
+    color:Black;
+    padding:4px;
+    /*padding-bottom:8px;*/
+	font-size:8pt;
+}
+
+.DQXTreeItemSelected
+{
+    background: rgb(196,208,252); /* Old browsers */
+    background: -moz-linear-gradient(top, rgba(196,208,252,1) 0%, rgba(164,181,234,1) 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(196,208,252,1)), color-stop(100%,rgba(164,181,234,1))); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top, rgba(196,208,252,1) 0%,rgba(164,181,234,1) 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top, rgba(196,208,252,1) 0%,rgba(164,181,234,1) 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top, rgba(196,208,252,1) 0%,rgba(164,181,234,1) 100%); /* IE10+ */
+    background: linear-gradient(to bottom, rgba(196,208,252,1) 0%,rgba(164,181,234,1) 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#c4d0fc', endColorstr='#a4b5ea',GradientType=0 ); /* IE6-9 */
+    outline-color: black;
+    outline-width:1px;
+	outline-style: dotted;
+ }
+
+
+.DQXTreeItem
+{
+    cursor:pointer;
+}
+
+.DQXTreeItem:hover
+{
+    color:rgb(0,0,180);
+    outline-color: black;
+    outline-width:1px;
+	outline-style: dotted;
+    /*background: rgb(247,247,247);*/
+}
+
+.DQXTreeButton
+{
+    cursor:pointer;
+}
+
+.DQXTreeButtonImage:hover
+{
+    -ms-transform:scale(1.1);
+    transform:scale(1.1);
+    -moz-transform:scale(1.1);
+    -webkit-transform:scale(1.1);
+    -o-transform:scale(1.1);
+}
+
+
+
+.DQXTitleBar
+{
+    padding-left:7px;
+    padding-right:7px;
+    font-weight:bold;
+    color:rgb(255,230,180);
+    line-height:28px;
+    
+    background: rgb(80,80,80); /* Old browsers */
+	background-image:url(Bitmaps/barback1a.png);
+	background-repeat:repeat-x;
+	border-top-left-radius:12px;
+	border-top-right-radius:12px;
+	/*height:33px;*/
+    
+}
