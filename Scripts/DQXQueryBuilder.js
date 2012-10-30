@@ -205,6 +205,10 @@ DQX.QueryBuilder = function (iDivID) {
         this.notifyModified();
     }
 
+    this._ReactUpdateQuery = function (id) {
+        this.updateQuery();
+    }
+
 
     //Calculates the minimum required horizontal space for a component
     this._calcMinSizeX = function (comp) {
@@ -496,7 +500,7 @@ DQX.QueryBuilder = function (iDivID) {
         var container = DQX.DocEl.Div();
         container.addStyle('float', 'left');
         container.setWidthPx(sizex);
-    
+
         var createstartendpoint = function (txt) {
             var spacer = DQX.DocEl.Div();
             spacer.addStyle('position', 'relative');
@@ -563,6 +567,7 @@ DQX.QueryBuilder = function (iDivID) {
         }
 
         var spacer = createstartendpoint('Filtered data set');
+        spacerel.addElem(DQX.DocEl.JavaScriptBitmaplinkTransparent("Bitmaps/addright.png", "Update query", this._createReactFunctionString('_ReactUpdateQuery', -1)));
         container.addElem(spacer);
 
         var rs = container.toString();
