@@ -746,3 +746,37 @@ DQX.Framework.Form = function (iid, idivid) {
 
     return that;
 }
+
+
+
+
+
+
+
+DQX.Gui = {};
+
+
+//////////////////////////////////////////////////////////////////////////////////////////
+// Base class for high-level GUI components
+//////////////////////////////////////////////////////////////////////////////////////////
+
+DQX.Gui.GuiComponent = function (iid, args) {
+    var that = {};
+    that.myID= iid;
+
+    that.getSubId = function (ext) { return that.myID + ext; }
+
+    if ($('#' + that.myID).length == 0) throw "Invalid Gui component " + iid;
+    that.rootelem = $('#' + that.myID);
+
+    that.handleResize = function () {
+        if ('onResize' in that) {
+            if ((that.rootelem.width() > 5) && (that.rootelem.height() > 5))
+                that.onResize();
+        }
+    }
+
+    //that.rootelem.resize(_handleOnResize);
+
+    return that;
+}
