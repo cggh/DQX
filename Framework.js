@@ -83,6 +83,8 @@
         that.sepSize = 10;
         that.frameClass = ''; //css class of the div that makes the border of this panel
     
+    that.allowYScrollbar = true;
+    that.allowXScrollbar = false;
     
         ////////////////// GETNERAL GETTERS
     
@@ -224,8 +226,8 @@
                 thediv.setCssClass(this.frameClass);
     
             if (this.isFinalPanel()) {
-                theclientdiv.addStyle('overflow-y', 'auto');
-                theclientdiv.addStyle('overflow-x', 'hidden');
+            if (this.allowYScrollbar) theclientdiv.addStyle('overflow-y', 'auto');
+            if (this.allowXScrollbar) theclientdiv.addStyle('overflow-x', 'auto');
                 theclientdiv.setCssClass('DQXClient');
             }
     

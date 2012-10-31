@@ -567,8 +567,13 @@
                 container.addElem(spacer);
             }
     
-            var spacer = createstartendpoint('Filtered data set');
-            spacerel.addElem(DocEl.JavaScriptBitmaplinkTransparent("Bitmaps/addright.png", "Update query", this._createReactFunctionString('_ReactUpdateQuery', -1)));
+        var spacer = createstartendpoint('Filtered data set');
+        var updateBitmap = DocEl.JavaScriptBitmaplinkTransparent("Bitmaps/update.png", "Update query", this._createReactFunctionString('_ReactUpdateQuery', -1));
+        updateBitmap.addStyle('position', 'absolute');
+        updateBitmap.addStyle('right', '15px');
+        updateBitmap.addStyle('top', '3px');
+        spacerel.addElem(updateBitmap);
+
             container.addElem(spacer);
     
             var rs = container.toString();
