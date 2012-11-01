@@ -212,6 +212,7 @@
     DocEl.JavaScriptBitmaplink = function (imagefile, description, functionstr, args) {
         return DocEl.JavaScriptlink('<IMG SRC="' + imagefile + '" border=0 class="DQXBitmapLink" ALT="' + description + '" TITLE="' + description + '">', functionstr, args);
     }
+
     
     DocEl.StyledText = function (content, styleclass) {
         var span = DocEl.Span();
