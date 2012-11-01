@@ -15,17 +15,15 @@
             that.myComment = '';
             that.TablePart = iTablePart;
             that.Collapsed = false;
-            that.hyperlinkMessageScope = null;
-            //this.HyperLinkTarget = null;
+            that._hyperlinkCellMessageScope = null;
 
             that.CellToText = function (content) { return content; }
             that.CellToColor = function (content) { return "white"; }
 
-            //Use this function to convert a column into a hyperlink.
-            //A callback function will be called when the user clicks the link
-            //Target specifies the url target
-            that.MakeHyperlink = function (messageScope) {
-                this.hyperlinkMessageScope = messageScope;
+            //Use this function to convert a column cell into a hyperlink.
+            //A message will be sent when the user clicks the link
+            that.makeHyperlinkCell = function (messageScope) {
+                this._hyperlinkCellMessageScope = messageScope;
             }
             return that;
         }
@@ -160,18 +158,6 @@
                 return false;
             }
 
-            //Used internally as a message reflection mechanism
-            that._onOwnMessage = function (message1, message2, message3) {
-                /*                if (message1 == "Collapse") {
-                var thecol = this.findColumn(message2);
-                thecol.Collapsed = !thecol.Collapsed;
-                this.render();
-                return false;
-                }*/
-                /*                if (message1 == "Link") {
-                this.findColumn(message2).HyperlinkCallBack(message3);
-                }*/
-            }
 
             that._onChangeSort = function () {
                 //determine sort option
@@ -309,10 +295,10 @@
                                     cell_content = "";
                             }
                             rs_table[tbnr] += "<td  TITLE='" + cell_title + "' style='background-color:" + cell_color + "'>";
-                            if ((thecol.hyperlinkMessageScope) && (hascontent))
+                            if ((thecol._hyperlinkCellMessageScope) && (hascontent))
                                 rs_table[tbnr] += '<a class="DQXQueryTableLink" id="' + thecol.myCompID + '_' + downloadrownr + '_link_' + this.myBaseID + '">';
                             rs_table[tbnr] += cell_content;
-                            if ((thecol.HyperlinkCallBack) && (hascontent))
+                            if ((thecol._hyperlinkCellMessageScope) && (hascontent))
                                 rs_table[tbnr] += '</a>';
                             rs_table[tbnr] += "</td>";
                         }
@@ -338,7 +324,7 @@
             that._onClickLink = function (ev) {
                 var tokens = ev.target.id.split('_');
                 var column = this.findColumn(tokens[0]);
-                Msg.send(column.hyperlinkMessageScope,parseInt(tokens[1]));
+                Msg.send(column._hyperlinkCellMessageScope, parseInt(tokens[1]));
             }
 
             //This function is called when a key was pressed

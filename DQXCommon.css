@@ -289,6 +289,8 @@ body
 
 .DQXTabs 
 {
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .DQXTabSet
@@ -304,11 +306,12 @@ body
 	padding-right:10px;
 	padding-top:3px;
 	padding-bottom:7px;
-	float:left;
+	/*float:left;*/
 	border:1px solid #000000;
 	border-bottom-width: 0px;
 	cursor:pointer;
 	z-index:2;
+	display:inline-block;
 }
 
 .DQXTabInactive:hover {
