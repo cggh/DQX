@@ -1,5 +1,5 @@
-﻿define(["jquery", "DQX/Utils", "DQX/DocEl"],
-    function ($, DQX, DocEl) {
+﻿define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg"],
+    function ($, DQX, DocEl, Msg) {
 
         //Namespace for query tables
         var QueryTable = {}
@@ -15,8 +15,8 @@
             that.myComment = '';
             that.TablePart = iTablePart;
             that.Collapsed = false;
-            that.HyperlinkCallBack = null;
-            this.HyperLinkTarget = null;
+            that.hyperlinkMessageScope = null;
+            //this.HyperLinkTarget = null;
 
             that.CellToText = function (content) { return content; }
             that.CellToColor = function (content) { return "white"; }
@@ -24,9 +24,8 @@
             //Use this function to convert a column into a hyperlink.
             //A callback function will be called when the user clicks the link
             //Target specifies the url target
-            that.MakeHyperlink = function (iCallBack, iTarget) {
-                this.HyperlinkCallBack = iCallBack;
-                this.HyperLinkTarget = iTarget;
+            that.MakeHyperlink = function (messageScope) {
+                this.hyperlinkMessageScope = messageScope;
             }
             return that;
         }
@@ -163,15 +162,15 @@
 
             //Used internally as a message reflection mechanism
             that._onOwnMessage = function (message1, message2, message3) {
-/*                if (message1 == "Collapse") {
-                    var thecol = this.findColumn(message2);
-                    thecol.Collapsed = !thecol.Collapsed;
-                    this.render();
-                    return false;
+                /*                if (message1 == "Collapse") {
+                var thecol = this.findColumn(message2);
+                thecol.Collapsed = !thecol.Collapsed;
+                this.render();
+                return false;
                 }*/
-                if (message1 == "Link") {
-                    this.findColumn(message2).HyperlinkCallBack(message3);
-                }
+                /*                if (message1 == "Link") {
+                this.findColumn(message2).HyperlinkCallBack(message3);
+                }*/
             }
 
             that._onChangeSort = function () {
@@ -310,8 +309,8 @@
                                     cell_content = "";
                             }
                             rs_table[tbnr] += "<td  TITLE='" + cell_title + "' style='background-color:" + cell_color + "'>";
-                            if ((thecol.HyperlinkCallBack) && (hascontent))
-                                rs_table[tbnr] += '<a class="DQXQueryTableLink" onclick=\"QueryTable._reflectOwnMessage(\'' + this.myBaseID + '\',\'Link\',\'' + thecol.myCompID + '\',' + rownr + ')\" href=' + thecol.HyperLinkTarget + '>';
+                            if ((thecol.hyperlinkMessageScope) && (hascontent))
+                                rs_table[tbnr] += '<a class="DQXQueryTableLink" id="' + thecol.myCompID + '_' + downloadrownr + '_link_' + this.myBaseID + '">';
                             rs_table[tbnr] += cell_content;
                             if ((thecol.HyperlinkCallBack) && (hascontent))
                                 rs_table[tbnr] += '</a>';
@@ -333,6 +332,13 @@
                     var id = messageHandlers[i];
                     $('#' + this.myBaseID + id).click($.proxy(that[id], that));
                 }
+                $('#' + this.myBaseID).find('.DQXQueryTableLink').click($.proxy(that._onClickLink, that));
+            }
+
+            that._onClickLink = function (ev) {
+                var tokens = ev.target.id.split('_');
+                var column = this.findColumn(tokens[0]);
+                Msg.send(column.hyperlinkMessageScope,parseInt(tokens[1]));
             }
 
             //This function is called when a key was pressed

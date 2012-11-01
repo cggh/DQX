@@ -111,6 +111,7 @@ body
 .DQXQueryTableLink
 {
     color: rgb(100,100,200) !important;
+	cursor:pointer;
 }
 
 
