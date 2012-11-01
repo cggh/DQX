@@ -108,7 +108,7 @@ body
     background-repeat:repeat;
 }
 
-.DQXQueryTableLink
+.DQXQueryTableLinkCell, .DQXQueryTableLinkHeader
 {
     color: rgb(100,100,200) !important;
 	cursor:pointer;

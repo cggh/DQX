@@ -16,6 +16,7 @@
             that.TablePart = iTablePart;
             that.Collapsed = false;
             that._hyperlinkCellMessageScope = null;
+            that._hyperlinkHeaderMessageScope = null;
 
             that.CellToText = function (content) { return content; }
             that.CellToColor = function (content) { return "white"; }
@@ -25,6 +26,13 @@
             that.makeHyperlinkCell = function (messageScope) {
                 this._hyperlinkCellMessageScope = messageScope;
             }
+
+            //Use this function to convert a column header into a hyperlink.
+            //A message will be sent when the user clicks the link
+            that.makeHyperlinkHeader = function (messageScope) {
+                this._hyperlinkHeaderMessageScope = messageScope;
+            }
+
             return that;
         }
 
@@ -262,6 +270,11 @@
                     else {
                         //                      rs_table[tbnr] += '&nbsp;<a onclick=\"QueryTable._reflectOwnMessage(\'' + this.myBaseID + '\',\'Collapse\',\'' + thecol.myCompID + '\')\" href=\"javascript:void(0)\">></a>'
                     }
+                    if (thecol._hyperlinkHeaderMessageScope) {
+                        var st = '<IMG class="DQXQueryTableLinkHeader" id="{id}" SRC=Bitmaps/link1.png border=0 class="DQXBitmapLink" ALT="Link">'.
+                            DQXformat({ id: thecol.myCompID + '~headerlink~' + this.myBaseID });
+                        rs_table[tbnr] += ' ' + st;
+                    }
                     rs_table[tbnr] += "</th>";
                 }
 
@@ -296,7 +309,7 @@
                             }
                             rs_table[tbnr] += "<td  TITLE='" + cell_title + "' style='background-color:" + cell_color + "'>";
                             if ((thecol._hyperlinkCellMessageScope) && (hascontent))
-                                rs_table[tbnr] += '<a class="DQXQueryTableLink" id="' + thecol.myCompID + '_' + downloadrownr + '_link_' + this.myBaseID + '">';
+                                rs_table[tbnr] += '<a class="DQXQueryTableLinkCell" id="' + thecol.myCompID + '~' + downloadrownr + '~link~' + this.myBaseID + '">';
                             rs_table[tbnr] += cell_content;
                             if ((thecol._hyperlinkCellMessageScope) && (hascontent))
                                 rs_table[tbnr] += '</a>';
@@ -318,13 +331,20 @@
                     var id = messageHandlers[i];
                     $('#' + this.myBaseID + id).click($.proxy(that[id], that));
                 }
-                $('#' + this.myBaseID).find('.DQXQueryTableLink').click($.proxy(that._onClickLink, that));
+                $('#' + this.myBaseID).find('.DQXQueryTableLinkCell').click($.proxy(that._onClickLinkCell, that));
+                $('#' + this.myBaseID).find('.DQXQueryTableLinkHeader').click($.proxy(that._onClickLinkHeader, that));
             }
 
-            that._onClickLink = function (ev) {
-                var tokens = ev.target.id.split('_');
+            that._onClickLinkCell = function (ev) {
+                var tokens = ev.target.id.split('~');
                 var column = this.findColumn(tokens[0]);
                 Msg.send(column._hyperlinkCellMessageScope, parseInt(tokens[1]));
+            }
+
+            that._onClickLinkHeader = function (ev) {
+                var tokens = ev.target.id.split('~');
+                var column = this.findColumn(tokens[0]);
+                Msg.send(column._hyperlinkHeaderMessageScope, tokens[0]);
             }
 
             //This function is called when a key was pressed
