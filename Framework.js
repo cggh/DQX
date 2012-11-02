@@ -82,6 +82,7 @@
             that.myID = '';
             that.sepSize = 10;
             that.frameClass = ''; //css class of the div that makes the border of this panel
+            that.frameClassClient = ''; //css class of the div that makes the client area this panel
 
             that.allowYScrollbar = true;
             that.allowXScrollbar = false;
@@ -90,6 +91,10 @@
 
             that.getVisibleTyleDivID = function () {
                 return this.myID + '_DisplayTitle';
+            }
+
+            that.getClientContainerDivID = function () {
+                return this.myID + '_clientcontainer';
             }
 
             that.getClientDivID = function () {
@@ -133,6 +138,16 @@
                 return this.myFrameID;
             }
 
+            that.hasTitleBar = function () {
+                return (this.myDisplayTitle) && ((!this.myParent) || (!this.myParent.isTabber()));
+            }
+
+            that.getTitleBarHeight = function () {
+                if (this.hasTitleBar())
+                    return Framework.frameTitleBarH;
+                else
+                    return 0;
+            }
 
             ///////////////// TO BE CALLED CREATION TIME
 
@@ -151,8 +166,11 @@
             }
 
             that.setDisplayTitle = function (ttle) {
-                this.marginTop = Framework.frameTitleBarH;
                 this.myDisplayTitle = ttle;
+            }
+
+            that.getMarginTop = function () {
+                return this.marginTop + (this.hasTitleBar() ? Framework.frameTitleBarH : 0);
             }
 
             that.isFixedSize = function (dim) {
@@ -171,7 +189,7 @@
                         subminsize = Math.max(subminsize, this.memberFrames[i].getMinSize(dim));
                 }
                 var minsize = Math.max(subminsize, this.sizeRange[dim].getMinSize());
-                if ((dim == Framework.dimY) && this.myDisplayTitle)
+                if ((dim == Framework.dimY) && this.hasTitleBar())
                     minsize += Framework.frameTitleBarH;
                 return minsize;
             }
@@ -187,7 +205,7 @@
                         submaxsize = Math.max(submaxsize, this.memberFrames[i].getMaxSize(dim));
                 }
                 var maxsize = Math.max(submaxsize, this.sizeRange[dim].getMaxSize());
-                if ((dim == Framework.dimY) && this.myDisplayTitle)
+                if ((dim == Framework.dimY) && this.hasTitleBar())
                     maxsize += Framework.frameTitleBarH;
                 return maxsize;
             }
@@ -210,6 +228,7 @@
             /////////////// INTERNAL FUNCTIONS
 
             that._reactClickTab = function (scope, id) {
+                this.setSubFramesPosition();
                 for (var fnr = 0; fnr < this.memberFrames.length; fnr++) {
                     var tabid = this.getClientDivID() + '_tab_' + fnr;
                     if (tabid == id) {
@@ -222,7 +241,10 @@
             that.createElements = function (level) {
                 if (this.myID.length == 0) throw "Frame without ID";
                 var thediv = DocEl.Div({ id: this.myID });
-                var theclientdiv = DocEl.Div({ parent: thediv, id: this.getClientDivID() });
+
+                var theclientcontainerdiv = DocEl.Div({ parent: thediv, id: this.getClientContainerDivID() });
+
+                var theclientdiv = DocEl.Div({ parent: theclientcontainerdiv, id: this.getClientDivID() });
                 thediv.setWidthPx(100);
                 thediv.setHeightPx(100);
                 var fr = 1 - 0.1 * level;
@@ -236,12 +258,16 @@
                     theclientdiv.setCssClass('DQXClient');
                 }
 
-                if (this.myDisplayTitle) {
+                if (this.hasTitleBar()) {
                     var titlediv = DocEl.Div({ parent: thediv, id: this.getVisibleTyleDivID() });
                     titlediv.setHeightPx(Framework.frameTitleBarH);
                     titlediv.setCssClass('DQXTitleBar');
                     titlediv.addElem(this.myDisplayTitle);
                 }
+
+                /*                if (this.marginTop > 0) {
+                var titlediv = DocEl.Div({ parent: thediv, id: this.getVisibleTyleDivID() });
+                }*/
 
                 if (this.isSplitter()) {
                     for (var fnr = 0; fnr < this.memberFrames.length - 1; fnr++) {
@@ -261,21 +287,21 @@
                     theclientdiv.setCssClass("DQXTabSet");
                     var tabheader = DocEl.Div({ parent: theclientdiv, id: this.getClientDivID() + '_tabheader' });
                     tabheader.setCssClass("DQXTabs");
-
                     var tabbody = DocEl.Div({ parent: theclientdiv, id: this.getClientDivID() + '_tabbody' });
                     tabbody.setCssClass("DQXTabBody");
                     this.activeTabNr = 0;
-
                     for (var fnr = 0; fnr < this.memberFrames.length; fnr++) {
                         var tabid = this.getClientDivID() + '_tab_' + fnr;
-
                         var tabcontent = DocEl.Div({ parent: tabbody, id: 'C' + tabid });
                         tabcontent.setCssClass("DQXTabContent");
                         tabcontent.addElem(this.memberFrames[fnr].createElements(level + 1));
                     }
-
                     Msg.listen('', { type: 'ClickTab', id: this.getClientDivID() }, that._reactClickTab, that);
+                }
 
+                if (this.frameClassClient.length > 0) {
+                    theclientdiv.setCssClass(this.frameClassClient);
+                    theclientcontainerdiv.setCssClass(this.frameClassClient);
                 }
 
                 return thediv;
@@ -377,7 +403,6 @@
             }
 
             that._handleSplitterOnMouseMove = function (ev) {
-                var frameel = $('#' + this.myID);
                 var clientel = $('#' + this.getClientDivID());
                 var posx = ev.pageX - clientel.offset().left;
                 var posy = ev.pageY - clientel.offset().top;
@@ -386,7 +411,7 @@
                     var totsize = this.isHorSplitter() ? clientel.width() : clientel.height();
                     var pos = this.isHorSplitter() ? posx : posy;
                     this._calculateNewFrameSizeFractions(this.dragSepNr, pos - this.dragOffset, totsize);
-                    this.setPosition(frameel.position().left, frameel.position().top, frameel.width(), frameel.height());
+                    this.setSubFramesPosition();
                     return false;
                 }
             }
@@ -475,27 +500,39 @@
 
             }
 
-            that.setPosition = function (x0, y0, sx, sy) {
+            that.setSubFramesPosition = function () {
                 var frameel = $('#' + this.myID);
-                frameel.css('position', 'absolute');
-                frameel.css('left', x0 + 'px');
-                frameel.css('top', y0 + 'px');
-                frameel.css('width', sx + 'px');
-                frameel.css('height', sy + 'px');
+                this.setPosition(frameel.position().left, frameel.position().top, frameel.width(), frameel.height(), true);
+            }
 
-                var clientLeft = this.marginLeft;
-                var clientRight = sx - this.marginRight;
-                var clientTop = this.marginTop;
-                var clientBottom = sy - this.marginBottom;
-                var clientWidth = clientRight - clientLeft - 0;
-                var clientHeight = clientBottom - clientTop - 0;
+            that.setPosition = function (x0, y0, sx, sy, subFramesOnly) {
+                var frameel = $('#' + this.myID);
 
-                var clientel = $('#' + this.getClientDivID());
-                clientel.css('position', 'absolute');
-                clientel.css('left', clientLeft + 'px');
-                clientel.css('top', clientTop + 'px');
-                clientel.css('width', clientWidth + 'px');
-                clientel.css('height', clientHeight + 'px');
+                if (!subFramesOnly) {
+                    frameel.css('position', 'absolute');
+                    frameel.css('left', x0 + 'px');
+                    frameel.css('top', y0 + 'px');
+                    frameel.css('width', sx + 'px');
+                    frameel.css('height', sy + 'px');
+                }
+
+                var clientWidth = sx - this.marginRight - this.marginLeft;
+                var clientHeight = sy - this.getTitleBarHeight() - this.marginBottom - this.marginTop;
+
+                if (!subFramesOnly) {
+                    var clientcontainerel = $('#' + this.getClientContainerDivID());
+                    clientcontainerel.css('position', 'absolute');
+                    clientcontainerel.css('left', '0px');
+                    clientcontainerel.css('top', this.getTitleBarHeight() + 'px');
+                    clientcontainerel.css('width', sx + 'px');
+                    clientcontainerel.css('height', (sy - this.getTitleBarHeight()) + 'px');
+                    var clientel = $('#' + this.getClientDivID());
+                    clientel.css('position', 'absolute');
+                    clientel.css('left', this.marginLeft + 'px');
+                    clientel.css('top', this.marginTop + 'px');
+                    clientel.css('width', clientWidth + 'px');
+                    clientel.css('height', clientHeight + 'px');
+                }
 
                 //normalise size weights
                 var totsubsizeweight = 0.0;
@@ -514,7 +551,7 @@
                             var splitterel = $('#' + this.getSeparatorDivID(fnr));
                             splitterel.css('position', 'absolute');
                             splitterel.css('left', (framePosits[fnr].pos2 + this.marginLeft) + 'px');
-                            splitterel.css('top', this.marginTop + 'px');
+                            splitterel.css('top', this.getMarginTop() + 'px');
                             splitterel.css('width', this.sepSize + 'px');
                             splitterel.css('height', clientHeight + 'px');
                         }
@@ -530,7 +567,7 @@
                         if (fnr < this.memberFrames.length - 1) {
                             var splitterel = $('#' + this.getSeparatorDivID(fnr));
                             splitterel.css('position', 'absolute');
-                            splitterel.css('top', (framePosits[fnr].pos2 + this.marginTop) + 'px');
+                            splitterel.css('top', (framePosits[fnr].pos2 + this.getMarginTop()) + 'px');
                             splitterel.css('left', this.marginLeft + 'px');
                             splitterel.css('height', this.sepSize + 'px');
                             splitterel.css('width', clientWidth + 'px');
@@ -546,7 +583,8 @@
                     }
                 }
 
-                if (this.isTabber()) this._createTabItems();
+                if (!subFramesOnly)
+                    if (this.isTabber()) this._createTabItems();
 
 
                 if (this.isFinalPanel()) {

@@ -503,6 +503,8 @@
 
                 var container = DocEl.Div();
                 container.addStyle('float', 'left');
+                container.addStyle('margin-left', '9px');
+                container.addStyle('margin-top', '8px');
                 container.setWidthPx(sizex);
 
                 var createstartendpoint = function (txt) {
@@ -586,6 +588,7 @@
                 container.addElem(spacer);
 
                 var rs = container.toString();
+
 
 
                 $('#' + this.myDivID).html(rs);

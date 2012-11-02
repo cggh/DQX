@@ -426,7 +426,7 @@ body
 
 .DQXLight
 {
-    background-color: rgb(170,170,170);
+    background-color: rgb(170,170,170) !important;
     border-width:0px;
 }
 
