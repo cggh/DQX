@@ -259,8 +259,8 @@
     
     DQX.initPostCreate = function () {
     
-        // Initialise functionality for tabbed environments
-    
+        // Initialise functionality for tabbed environments NOTE: this is likely to be depreciated, since this is handled in the framework
+/*    
         $('.DQXTabSet').each(function (idx, tabset) {
     
             var id = tabset.id;
@@ -287,7 +287,7 @@
             });
     
         });
-    
+*/    
     
         // Initialise functionality for help buttons
         $('.DQXInfoButton').each(function (idx, tabset) {
