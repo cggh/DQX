@@ -91,8 +91,8 @@ body
 .DQXQueryTable td    
 { 
     border-width: 1px; 
-    border-style: solid;
-    border-color: rgb(210,210,210);
+    border-style: dotted;
+    border-color: rgb(190,190,190);
     padding-left: 3px;
     padding-right: 3px;
     padding-top: 2px;
@@ -113,6 +113,14 @@ body
 {
     color: rgb(100,100,200) !important;
 	cursor:pointer;
+}
+
+.DQXTableRowHover td
+{
+    /*color: rgb(255,0,0) !important;*/
+    //outline: rgb(150,150,255) 1px solid !important; 
+    border-top: rgb(150,150,255) solid 1px !important;
+    border-bottom: rgb(150,150,255) solid 1px !important;
 }
 
 
