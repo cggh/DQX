@@ -269,7 +269,7 @@
                             // rs_table[tbnr] += '&nbsp;<a onclick=\"QueryTable._reflectOwnMessage(\'' + this.myBaseID + '\',\'Collapse\',\'' + thecol.myCompID + '\')\" href=\"javascript:void(0)\">></a>'
                         }
                         if (thecol._hyperlinkHeaderMessageScope) {
-                            var st = '<IMG class="DQXQueryTableLinkHeader" id="{id}" SRC=Bitmaps/link1.png border=0 class="DQXBitmapLink" ALT="Link" style="position:absolute;right:-2px;top:-5px">'.
+                            var st = '<IMG class="DQXQueryTableLinkHeader" id="{id}" SRC=Bitmaps/link2.png border=0 class="DQXBitmapLink" ALT="Link" style="position:absolute;right:-3px;top:-6px">'.
                             DQXformat({ id: thecol.myCompID + '~headerlink~' + this.myBaseID });
                             rs_table[tbnr] += ' ' + st;
                         }
