@@ -20,6 +20,8 @@
 
             that.CellToText = function (content) { return content; }
             that.CellToColor = function (content) { return "white"; }
+            if (that.TablePart==0)
+                that.CellToColor = function (content) { return "rgb(240,240,240)"; }
 
             //Use this function to convert a column cell into a hyperlink.
             //A message will be sent when the user clicks the link
