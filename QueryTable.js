@@ -97,15 +97,19 @@
                 return null;
             }
 
+            //finds and returns a column definition, providing the column identifier
+            that.findColumnRequired = function (iColID) {
+                var rs = this.findColumn(iColID);
+                if (!rs)
+                    throw 'Column id "{id}" not found in query table'.DQXformat({ id: iColID });
+                return rs;
+            }
+
             //Adds a new sort option to the table
-            //iOption: of type DQXTableSort
+            //iOption: of type DQX.TableSort
             that.addSortOption = function (iName, iOption) {
                 this.mySortOptions.push({ name: iName, Option: iOption });
-                var rs = "";
-                for (var optnr in this.mySortOptions) {
-                    rs += '<option value="' + optnr + '">' + this.mySortOptions[optnr].name + '</option>';
-                }
-                this.getElement('SortOptions').html(rs);
+                this.findColumnRequired(iOption.getPrimaryColumnID()).sortOption = iOption;
             }
 
             //This function is called by the datafetcher to inform the table that new data is ready
@@ -164,21 +168,6 @@
                 this.myTableOffset = Math.min(this.totalRecordCount - this.myPageSize + 4, this.myTableOffset + message2);
                 this.render();
                 return false;
-            }
-
-
-            that._onChangeSort = function () {
-                //determine sort option
-                var sortoptnr = this.getElement('SortOptions').val();
-                var sortdir = this.getElement('SortDir').attr('checked');
-                var SortOption = this.mySortOptions[sortoptnr].Option;
-
-                this.myDataFetcher.positionField = SortOption.toString();
-                this.myDataFetcher.sortReverse = sortdir;
-                this.myDataFetcher.clearData();
-
-                this.myTableOffset = 0;
-                this.render();
             }
 
             //Forces a reload of the table information
@@ -275,6 +264,18 @@
                             DQXformat({ id: thecol.myCompID + '~headerlink~' + this.myBaseID });
                         rs_table[tbnr] += ' ' + st;
                     }
+                    if (thecol.sortOption) {
+                        var bitmapname = "arrow5down.png";
+                        if (this.myDataFetcher.positionField == thecol.sortOption.toString()) {
+                            if (!this.myDataFetcher.sortReverse)
+                                bitmapname = "arrow4down.png";
+                            else
+                                bitmapname = "arrow4up.png";
+                        }
+                        var st = '<IMG class="DQXQueryTableSortHeader" id="{id}" SRC=Bitmaps/{bmp} border=0 class="DQXBitmapLink" ALT="Link">'.
+                            DQXformat({ id: thecol.myCompID + '~sort~' + this.myBaseID, bmp:bitmapname });
+                        rs_table[tbnr] += ' ' + st;
+                    }
                     rs_table[tbnr] += "</th>";
                 }
 
@@ -333,6 +334,7 @@
                 }
                 $('#' + this.myBaseID).find('.DQXQueryTableLinkCell').click($.proxy(that._onClickLinkCell, that));
                 $('#' + this.myBaseID).find('.DQXQueryTableLinkHeader').click($.proxy(that._onClickLinkHeader, that));
+                $('#' + this.myBaseID).find('.DQXQueryTableSortHeader').click($.proxy(that._onClickSortHeader, that));
             }
 
             that._onClickLinkCell = function (ev) {
@@ -345,6 +347,23 @@
                 var tokens = ev.target.id.split('~');
                 var column = this.findColumn(tokens[0]);
                 Msg.send(column._hyperlinkHeaderMessageScope, tokens[0]);
+            }
+
+            that._onClickSortHeader = function (ev) {
+                var tokens = ev.target.id.split('~');
+                var column = this.findColumn(tokens[0]);
+                //Msg.send(column._hyperlinkHeaderMessageScope, tokens[0]);
+
+                var newPositionField = column.sortOption.toString();
+                if (this.myDataFetcher.positionField != newPositionField)
+                    this.myDataFetcher.sortReverse = false;
+                else
+                    this.myDataFetcher.sortReverse = !this.myDataFetcher.sortReverse;
+                this.myDataFetcher.positionField = newPositionField;
+                this.myDataFetcher.clearData();
+                this.myTableOffset = 0;
+                this.render();
+
             }
 
             //This function is called when a key was pressed
@@ -379,9 +398,6 @@
 
 
             //Initialise some event handlers
-            that.getElement("SortOptions").change($.proxy(that._onChangeSort, that));
-            that.getElement("SortDir").change($.proxy(that._onChangeSort, that));
-
             that.getElement('Body1').bind('DOMMouseScroll mousewheel', $.proxy(that.OnMouseWheel, that));
             that.getElement('Body2').bind('DOMMouseScroll mousewheel', $.proxy(that.OnMouseWheel, that));
 
@@ -402,18 +418,6 @@
                 var header = DocEl.Div();
                 header.addStyle('padding-bottom', '5px');
                 var pager_txt = DocEl.Span({ parent: header, id: that.getSubId("Pager") });
-
-                var sortgroup = DocEl.Span({ parent: header });
-                sortgroup.addStyle('float', 'right');
-                sortgroup.addStyle('vertical-align', 'bottom');
-                sortgroup.addStyle('position', 'relative');
-                sortgroup.addStyle('top', '10px');
-                sortgroup.addElem("&nbsp;&nbsp;&nbsp;Sort by: ");
-                var pager_SortOptions = DocEl.Select([], '', { parent: sortgroup, id: that.getSubId("SortOptions") });
-                sortgroup.addElem("&nbsp;");
-                var pager_SortDir = DocEl.Check({ parent: sortgroup, id: (that.getSubId("SortDir")) });
-                sortgroup.addElem("Inverted");
-
                 html += header;
             }
 

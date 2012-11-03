@@ -684,10 +684,13 @@
 
             //sets thequery for this builder, providing a class tree defined with SQL.WhereClause stuff
             this.setQuery = function (queryTree) {
-                if (queryTree.Tpe == '')
-                    this.root=this._createCompAND();
+                this.root = this._createCompAND();
+                if (queryTree.Tpe != '')
+                    this.root.myComponents.push(this._importQuery(queryTree));
+                /*                if (queryTree.Tpe == '')
+                this.root=this._createCompAND();
                 else
-                    this.root = this._importQuery(queryTree);
+                this.root = this._importQuery(queryTree);*/
                 this.render();
             }
 

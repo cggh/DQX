@@ -95,7 +95,7 @@
                 String: true, Float: true, Integer: true,
                 Create: function () { return SQL.WhereClause.DiffersField() }
             },
-            {ID: '<FIELD', name: '< Field',//Performs a < operation with a linear function of another field
+            { ID: '<FIELD', name: '< Field', //Performs a < operation with a linear function of another field
                 Float: true, Integer: true,
                 Create: function () { return SQL.WhereClause.CompareField('<FIELD') }
             },
@@ -396,6 +396,10 @@
         SQL.TableSort = function (icollist) {
             var that = {};
             that.columnList = icollist;
+
+            that.getPrimaryColumnID = function () {
+                return this.columnList[this.columnList.length - 1];
+            }
 
             that.toString = function () {
                 var rs = "";
