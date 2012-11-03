@@ -20,7 +20,7 @@
 
             that.CellToText = function (content) { return content; }
             that.CellToColor = function (content) { return "white"; }
-            if (that.TablePart==0)
+            if (that.TablePart == 0)
                 that.CellToColor = function (content) { return "rgb(240,240,240)"; }
 
             //Use this function to convert a column cell into a hyperlink.
@@ -257,36 +257,37 @@
                         rs_table[tbnr] = '<table class="DQXQueryTable DQXQueryTableInvalid">';
 
                 //write headers
-                for (var colnr in this.myColumns) {
-                    var thecol = this.myColumns[colnr];
-                    var tbnr = thecol.TablePart;
-                    rs_table[tbnr] += '<th TITLE="{comment}">'.DQXformat({ comment: thecol.myComment });
-                    if (!thecol.Collapsed) {
-                        rs_table[tbnr] += thecol.myName;
-                        //                        rs_table[tbnr] += '&nbsp;<a onclick=\"QueryTable._reflectOwnMessage(\'' + this.myBaseID + '\',\'Collapse\',\'' + thecol.myCompID + '\')\" href=\"javascript:void(0)\"><</a>'
-                    }
-                    else {
-                        //                      rs_table[tbnr] += '&nbsp;<a onclick=\"QueryTable._reflectOwnMessage(\'' + this.myBaseID + '\',\'Collapse\',\'' + thecol.myCompID + '\')\" href=\"javascript:void(0)\">></a>'
-                    }
-                    if (thecol._hyperlinkHeaderMessageScope) {
-                        var st = '<IMG class="DQXQueryTableLinkHeader" id="{id}" SRC=Bitmaps/link1.png border=0 class="DQXBitmapLink" ALT="Link">'.
-                            DQXformat({ id: thecol.myCompID + '~headerlink~' + this.myBaseID });
-                        rs_table[tbnr] += ' ' + st;
-                    }
-                    if (thecol.sortOption) {
-                        var bitmapname = "arrow5down.png";
-                        if (this.myDataFetcher.positionField == thecol.sortOption.toString()) {
-                            if (!this.myDataFetcher.sortReverse)
-                                bitmapname = "arrow4down.png";
-                            else
-                                bitmapname = "arrow4up.png";
+                    for (var colnr in this.myColumns) {
+                        var thecol = this.myColumns[colnr];
+                        var tbnr = thecol.TablePart;
+                        rs_table[tbnr] += '<th TITLE="{comment}"><div style="position:relative;padding-right:15px">'.DQXformat({ comment: thecol.myComment });
+                        if (!thecol.Collapsed) {
+                            rs_table[tbnr] += thecol.myName;
+                            // rs_table[tbnr] += '&nbsp;<a onclick=\"QueryTable._reflectOwnMessage(\'' + this.myBaseID + '\',\'Collapse\',\'' + thecol.myCompID + '\')\" href=\"javascript:void(0)\"><</a>'
                         }
-                        var st = '<IMG class="DQXQueryTableSortHeader" id="{id}" SRC=Bitmaps/{bmp} border=0 class="DQXBitmapLink" ALT="Link">'.
+                        else {
+                            // rs_table[tbnr] += '&nbsp;<a onclick=\"QueryTable._reflectOwnMessage(\'' + this.myBaseID + '\',\'Collapse\',\'' + thecol.myCompID + '\')\" href=\"javascript:void(0)\">></a>'
+                        }
+                        if (thecol._hyperlinkHeaderMessageScope) {
+                            var st = '<IMG class="DQXQueryTableLinkHeader" id="{id}" SRC=Bitmaps/link1.png border=0 class="DQXBitmapLink" ALT="Link" style="position:absolute;right:-2px;top:-5px">'.
+                            DQXformat({ id: thecol.myCompID + '~headerlink~' + this.myBaseID });
+                            rs_table[tbnr] += ' ' + st;
+                        }
+                        if (thecol.sortOption) {
+                            var bitmapname = "arrow5down.png";
+                            if (this.myDataFetcher.positionField == thecol.sortOption.toString()) {
+                                if (!this.myDataFetcher.sortReverse)
+                                    bitmapname = "arrow4down.png";
+                                else
+                                    bitmapname = "arrow4up.png";
+                            }
+                            var st = '<IMG class="DQXQueryTableSortHeader" id="{id}" SRC=Bitmaps/{bmp} border=0 class="DQXBitmapLink" ALT="Link" style="position:absolute;right:-4px;bottom:-4px">'.
                             DQXformat({ id: thecol.myCompID + '~sort~' + this.myBaseID, bmp: bitmapname });
-                        rs_table[tbnr] += ' ' + st;
+                            rs_table[tbnr] += ' ' + st;
+                        }
+                        rs_table[tbnr] += "</div></th>";
                     }
-                    rs_table[tbnr] += "</th>";
-                }
+
 
 
                 if ((this._dataValid) && (!datacomplete)) rs_pager += '&nbsp;<span style="background-color:rgb(192,0,0);font-weight:bold">FETCHING...</span>';
