@@ -156,7 +156,7 @@
 
             //internal
             this._ajaxFailure_FetchRange = function (resp) {
-                alert('###error');
+                //alert('###error');
                 this.hasFetchFailed = true;
                 this._isFetching = false;
                 //tell the consumer of this that the data are 'ready'
@@ -188,8 +188,8 @@
                     this.hasFetchFailed = false;
                     this._isFetching = false;
                     range = rangemax - rangemin;
-                    rangemin -= 1.5 * range;
-                    rangemax += 1.5 * range;
+                    rangemin = Math.round(rangemin - 1.5 * range);
+                    rangemax = Math.round(rangemax + 1.5 * range);
                     this._currentRangeMin = rangemin;
                     this._currentRangeMax = rangemax;
                     this.myDownloadPointsX = [];
