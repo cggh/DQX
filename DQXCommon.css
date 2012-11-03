@@ -197,6 +197,7 @@ body
 ** DQX Dark frame styling elements
 ******************************************************************************************/
 
+
 .DQXDarkFrame
 {
     background-color:rgb(60,60,60);
@@ -298,7 +299,7 @@ body
 }
 
 .DQXTab {
-	font-size:10pt;
+	/*font-size:10pt;*/
 	border-top-left-radius:8px;
 	border-top-right-radius:8px;
 	margin-right:3px;

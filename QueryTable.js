@@ -147,13 +147,13 @@
             }
 
             that._onMoreLines = function () {
-                that.myPageSize += 3;
+                that.myPageSize += 1;
                 this.render();
                 return false;
             }
 
             that._onLessLines = function () {
-                that.myPageSize = Math.max(1, that.myPageSize - 3);
+                that.myPageSize = Math.max(1, that.myPageSize - 1);
                 this.render();
                 return false;
             }
@@ -233,14 +233,16 @@
                     rightgroup.addStyle('position', 'relative');
                     rightgroup.addStyle('top', '5px');
                     rightgroup.addStyle('right', '5px');
-                    rightgroup.addElem('<a href=" + downloadlink + "><IMG class="DQXBitmapLink" SRC=Bitmaps/download.png border=0 title="Download this data as TAB-delimited file" ALT="Download"></a>')
+                    rightgroup.addElem('<a href=' + downloadlink + '><IMG class="DQXBitmapLink" SRC=Bitmaps/download.png border=0 title="Download this data as TAB-delimited file" ALT="Download"></a>')
                     rs_pager += rightgroup.toString();
                 }
 
-                rs_pager += "&nbsp;&nbsp;";
-                rs_pager += addBitmapButton("_onMoreLines", 'Bitmaps/morelines.png', "More lines on page");
-                rs_pager += "&nbsp;";
-                rs_pager += addBitmapButton("_onLessLines", 'Bitmaps/lesslines.png', "Less lines on page");
+                if (!this.autoSizeHeight) {
+                    rs_pager += "&nbsp;&nbsp;";
+                    rs_pager += addBitmapButton("_onMoreLines", 'Bitmaps/morelines.png', "More lines on page");
+                    rs_pager += "&nbsp;";
+                    rs_pager += addBitmapButton("_onLessLines", 'Bitmaps/lesslines.png', "Less lines on page");
+                }
 
                 rs_pager += "&nbsp;&nbsp;&nbsp;Current: ";
                 rs_pager += (this.myTableOffset + 1) + "-" + (this.myTableOffset + this.myPageSize);
@@ -401,6 +403,10 @@
                 return false;
             }
 
+            that.onResize = function () {
+            }
+
+
 
             //Initialise some event handlers
             that.getElement('Body1').bind('DOMMouseScroll mousewheel', $.proxy(that.OnMouseWheel, that));
@@ -413,6 +419,7 @@
         // Query table GUI component
         //////////////////////////////////////////////////////////////////////////////////////////
 
+
         QueryTable.GUI = function (iid, idatafetcher, args) {
             var that = DQX.Gui.GuiComponent(iid, args);
 
@@ -421,13 +428,14 @@
 
             {//Create header
                 var header = DocEl.Div();
+                header.setCssClass("DQXLight");
                 header.addStyle('padding-bottom', '5px');
                 var pager_txt = DocEl.Span({ parent: header, id: that.getSubId("Pager") });
                 html += header;
             }
 
             {//Create tables
-                var holder = DocEl.Div();
+                var holder = DocEl.Div({ id: that.getSubId("BodyHolder") });
                 //holder.addStyle("overflow", "auto");
 
 
@@ -477,8 +485,33 @@
 
 
             that.myTable = QueryTable.Table(iid, idatafetcher);
+            that.myTable.autoSizeHeight = true;
 
             DQX.setKeyDownReceiver(iid, $.proxy(that.myTable.onKeyDown, that.myTable));
+
+            that.getVerticalUserSize = function () {
+                return $('#' + that.getSubId("BodyHolder")).outerHeight() + $('#' + that.getSubId("Pager")).outerHeight() + $('#' + that.getSubId("Footer")).outerHeight(); ;
+            }
+
+            that.onResize = function () {
+                var availabeH = this.rootelem.innerHeight() - DQX.scrollBarWidth - 15;
+                if (availabeH != this.lastAvailabeH) {
+                    do {
+                        var requiredH = this.getVerticalUserSize();
+                        if (requiredH < availabeH)
+                            this.myTable._onMoreLines();
+                    }
+                    while (requiredH < availabeH)
+                    do {
+                        var requiredH = this.getVerticalUserSize();
+                        if (requiredH > availabeH)
+                            this.myTable._onLessLines();
+                    }
+                    while (requiredH > availabeH)
+                }
+                this.lastAvailabeH = availabeH;
+            }
+
 
             return that;
         }
