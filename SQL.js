@@ -39,93 +39,71 @@
 
         //A list of all comparison operators that act on a field
         SQL.WhereClause._fieldComparisonOperators = [
-
-    { ID: '=', name: 'Equals',
-        String: true, Float: true, Integer: true, MultiChoiceInt: true,
-        Create: function () { return SQL.WhereClause.CompareFixed('', '=', '') }
-    },
-
-    { ID: '<>', name: 'Differs from',
-        String: true, Float: true, Integer: true, MultiChoiceInt: true,
-        Create: function () { return SQL.WhereClause.CompareFixed('', '<>', '') }
-    },
-
-    { ID: '<', name: '<',
-        Float: true, Integer: true,
-        Create: function () { return SQL.WhereClause.CompareFixed('', '<', '') }
-    },
-
-    { ID: '>', name: '>',
-        Float: true, Integer: true,
-        Create: function () { return SQL.WhereClause.CompareFixed('', '>', '') }
-    },
-
-    { ID: '<=', name: '<=',
-        Float: true, Integer: true,
-        Create: function () { return SQL.WhereClause.CompareFixed('', '<=', '') }
-    },
-
-    { ID: '>=', name: '>=',
-        Float: true, Integer: true,
-        Create: function () { return SQL.WhereClause.CompareFixed('', '>=', '') }
-    },
-
-    { ID: 'CONTAINS', name: 'Contains',
-        String: true,
-        Create: function () { return SQL.WhereClause.CompareFixed('', 'CONTAINS', '') }
-    },
-
-    { ID: 'NOTCONTAINS', name: 'Does not contain',
-        String: true,
-        Create: function () { return SQL.WhereClause.CompareFixed('', 'NOTCONTAINS', '') }
-    },
-
-    { ID: 'STARTSWITH', name: 'Starts with',
-        String: true,
-        Create: function () { return SQL.WhereClause.CompareFixed('', 'STARTSWITH', '') }
-    },
-
-    { ID: 'LIKE', name: 'Like',
-        String: true,
-        Create: function () { return SQL.WhereClause.CompareFixed('', 'LIKE', '') }
-    },
-
-    { ID: 'ISPRESENT', name: 'Is present', MultiChoiceInt: true,
-        String: true, Float: true, Integer: true,
-        Create: function () { return SQL.WhereClause.IsPresent() }
-    },
-
-    { ID: 'ISABSENT', name: 'Is absent', MultiChoiceInt: true,
-        String: true, Float: true, Integer: true,
-        Create: function () { return SQL.WhereClause.IsAbsent() }
-    },
-
-        //test the equality with another database field
-    {ID: '=FIELD', name: 'Equals field', MultiChoiceInt: true,
-    String: true, Float: true, Integer: true,
-    Create: function () { return SQL.WhereClause.EqualsField() }
-},
-
-        //test the difference with another database field
-    {ID: '<>FIELD', name: 'Differs from field', MultiChoiceInt: true,
-    String: true, Float: true, Integer: true,
-    Create: function () { return SQL.WhereClause.DiffersField() }
-},
-
-        //Performs a < operation with a linear function of another field
-    {ID: '<FIELD', name: '< Field',
-    Float: true, Integer: true,
-    Create: function () { return SQL.WhereClause.CompareField('<FIELD') }
-},
-
-        //Performs a > operation with a linear function of another field
-    {ID: '>FIELD', name: '> Field',
-    Float: true, Integer: true,
-    Create: function () { return SQL.WhereClause.CompareField('>FIELD') }
-}
-
-
-    ];
+            { ID: '=', name: 'Equals',
+                String: true, Float: true, Integer: true, MultiChoiceInt: true,
+                Create: function () { return SQL.WhereClause.CompareFixed('', '=', '') }
+            },
+            { ID: '<>', name: 'Differs from',
+                String: true, Float: true, Integer: true, MultiChoiceInt: true,
+                Create: function () { return SQL.WhereClause.CompareFixed('', '<>', '') }
+            },
+            { ID: '<', name: '<',
+                Float: true, Integer: true,
+                Create: function () { return SQL.WhereClause.CompareFixed('', '<', '') }
+            },
+            { ID: '>', name: '>',
+                Float: true, Integer: true,
+                Create: function () { return SQL.WhereClause.CompareFixed('', '>', '') }
+            },
+            { ID: '<=', name: '<=',
+                Float: true, Integer: true,
+                Create: function () { return SQL.WhereClause.CompareFixed('', '<=', '') }
+            },
+            { ID: '>=', name: '>=',
+                Float: true, Integer: true,
+                Create: function () { return SQL.WhereClause.CompareFixed('', '>=', '') }
+            },
+            { ID: 'CONTAINS', name: 'Contains',
+                String: true,
+                Create: function () { return SQL.WhereClause.CompareFixed('', 'CONTAINS', '') }
+            },
+            { ID: 'NOTCONTAINS', name: 'Does not contain',
+                String: true,
+                Create: function () { return SQL.WhereClause.CompareFixed('', 'NOTCONTAINS', '') }
+            },
+            { ID: 'STARTSWITH', name: 'Starts with',
+                String: true,
+                Create: function () { return SQL.WhereClause.CompareFixed('', 'STARTSWITH', '') }
+            },
+            { ID: 'LIKE', name: 'Like',
+                String: true,
+                Create: function () { return SQL.WhereClause.CompareFixed('', 'LIKE', '') }
+            },
+            { ID: 'ISPRESENT', name: 'Is present', MultiChoiceInt: true,
+                String: true, Float: true, Integer: true,
+                Create: function () { return SQL.WhereClause.IsPresent() }
+            },
+            { ID: 'ISABSENT', name: 'Is absent', MultiChoiceInt: true,
+                String: true, Float: true, Integer: true,
+                Create: function () { return SQL.WhereClause.IsAbsent() }
+            },
+            { ID: '=FIELD', name: 'Equals field', MultiChoiceInt: true, //test the equality with another database field
+                String: true, Float: true, Integer: true,
+                Create: function () { return SQL.WhereClause.EqualsField() }
+            },
+            { ID: '<>FIELD', name: 'Differs from field', MultiChoiceInt: true, //test the difference with another database field
+                String: true, Float: true, Integer: true,
+                Create: function () { return SQL.WhereClause.DiffersField() }
+            },
+            {ID: '<FIELD', name: '< Field',//Performs a < operation with a linear function of another field
+                Float: true, Integer: true,
+                Create: function () { return SQL.WhereClause.CompareField('<FIELD') }
+            },
+            { ID: '>FIELD', name: '> Field', //Performs a > operation with a linear function of another field
+                Float: true, Integer: true,
+                Create: function () { return SQL.WhereClause.CompareField('>FIELD') }
+            }
+        ];
 
         //Returns the field comparison operator that corresponds to a specific id
         SQL.WhereClause.getFieldComparisonOperatorInfo = function (ID) {

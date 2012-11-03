@@ -654,13 +654,44 @@
                 }
             }
 
-            //returns the query defined by this builder, as a class tree defined with SQL.WhereClause things
+            //returns the query defined by this builder, returning a class tree defined with SQL.WhereClause stuff
             this.getQuery = function () {
                 this._fetchStatementContent(this.root);
                 if (this.root.myComponents.length == 0)
                     return SQL.WhereClause.Trivial();
                 return this._extractQueryContent(this.root);
             }
+
+            this._importQuery = function (statement) {
+                if (statement.isCompound) {
+                    if (statement.Tpe == 'OR')
+                        var newcomp = this._createCompOR();
+                    else
+                        var newcomp = this._createCompAND();
+                    for (var i = 0; i < statement.Components.length; i++) {
+                        var subcomp = this._importQuery(statement.Components[i]);
+                        newcomp.myComponents.push(subcomp);
+                    }
+                    return newcomp;
+                }
+                else {
+                    var newcomp = {};
+                    newcomp.isCompound = false;
+                    newcomp.myOperator = statement;
+                    return newcomp;
+                }
+            }
+
+            //sets thequery for this builder, providing a class tree defined with SQL.WhereClause stuff
+            this.setQuery = function (queryTree) {
+                if (queryTree.Tpe == '')
+                    this.root=this._createCompAND();
+                else
+                    this.root = this._importQuery(queryTree);
+                this.render();
+            }
+
+
         }
 
         //////////////////////////////////////////////////////////////////////////////////////////
