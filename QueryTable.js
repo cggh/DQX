@@ -226,10 +226,15 @@
                 rs_pager += "</span>";
                 if (datacomplete && this._dataValid) {
                     var downloadlink = this.myDataFetcher.createDownloadUrl();
-                    rs_footer += "<a href=" + downloadlink + ">Download as TAB-delimited file</a>";
-                }
-                else {
-                    rs_footer += "&nbsp;";
+
+                    var rightgroup = DocEl.Span();
+                    rightgroup.addStyle('float', 'right');
+                    rightgroup.addStyle('vertical-align', 'bottom');
+                    rightgroup.addStyle('position', 'relative');
+                    rightgroup.addStyle('top', '5px');
+                    rightgroup.addStyle('right', '5px');
+                    rightgroup.addElem('<a href=" + downloadlink + "><IMG class="DQXBitmapLink" SRC=Bitmaps/download.png border=0 title="Download this data as TAB-delimited file" ALT="Download"></a>')
+                    rs_pager += rightgroup.toString();
                 }
 
                 rs_pager += "&nbsp;&nbsp;";
@@ -273,7 +278,7 @@
                                 bitmapname = "arrow4up.png";
                         }
                         var st = '<IMG class="DQXQueryTableSortHeader" id="{id}" SRC=Bitmaps/{bmp} border=0 class="DQXBitmapLink" ALT="Link">'.
-                            DQXformat({ id: thecol.myCompID + '~sort~' + this.myBaseID, bmp:bitmapname });
+                            DQXformat({ id: thecol.myCompID + '~sort~' + this.myBaseID, bmp: bitmapname });
                         rs_table[tbnr] += ' ' + st;
                     }
                     rs_table[tbnr] += "</th>";
