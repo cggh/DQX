@@ -115,14 +115,20 @@ body
 	cursor:pointer;
 }
 
-.DQXTableRowHover td
-{
+.DQXTableRowHover td {
     /*color: rgb(255,0,0) !important;*/
-    //outline: rgb(150,150,255) 1px solid !important; 
-    border-top: rgb(150,150,255) solid 1px !important;
-    border-bottom: rgb(150,150,255) solid 1px !important;
+    border-top: rgb(170,170,255) solid 1px !important;
+    border-bottom: rgb(170,170,255) solid 1px !important;
 }
 
+.DQXTableRowSelected td 
+{
+    color: rgb(0,0,192) !important;
+    border-top: rgb(80,80,255) solid 1px !important;
+    border-bottom: rgb(80,80,255) solid 1px !important;
+    /*font-weight:bolder;*/
+    text-shadow: 0.75px 0.75px 1.5px rgb(80,80,80) !important;
+}
 
 
 

@@ -69,6 +69,7 @@
             that.myColumns = [];
             that.mySortOptions = [];
             that.myPageSize = 20;
+            that.selectedDownloadRowNr = -1;
             that.myDataFetcher.myDataConsumer = that;
 
             that._dataValid = false; //false= does not have valid data
@@ -177,12 +178,14 @@
                 this.totalRecordCount = -1; //means not yet determined
                 this.myDataFetcher.clearData();
                 this.myTableOffset = 0;
+                this.selectedDownloadRowNr = -1;
                 this.render();
             }
 
             //Causes the current table information to be invalidated (does not initiate a reload)
             that.invalidate = function () {
                 if (this._dataValid) {
+                    this.selectedDownloadRowNr = -1;
                     this._dataValid = false;
                     this.render();
                 }
@@ -190,6 +193,7 @@
 
             //Defines the query that is used to return the table content
             that.setQuery = function (iquery) {
+                this.selectedDownloadRowNr = -1;
                 this.myDataFetcher._userQuery = iquery;
                 this._dataValid = true;
             }
@@ -343,18 +347,36 @@
                     $('#' + this.myBaseID + id).click($.proxy(that[id], that));
                 }
 
+                if (this.selectedDownloadRowNr >= 0)
+                    for (var tbnr = 0; tbnr <= 1; tbnr++)
+                        $('#' + that.myBaseID).find('#' + this.selectedDownloadRowNr + '_row_' + that.myBaseID + '_' + tbnr).addClass("DQXTableRowSelected");
+
+
                 $('#' + this.myBaseID).find('.DQXQueryTableLinkCell').click($.proxy(that._onClickLinkCell, that));
                 $('#' + this.myBaseID).find('.DQXQueryTableLinkHeader').click($.proxy(that._onClickLinkHeader, that));
                 $('#' + this.myBaseID).find('.DQXQueryTableSortHeader').click($.proxy(that._onClickSortHeader, that));
                 $('#' + this.myBaseID).find('.DQXTableRow').mouseenter(that._onRowMouseEnter);
                 $('#' + this.myBaseID).find('.DQXTableRow').mouseleave(that._onRowMouseLeave);
+                $('#' + this.myBaseID).find('.DQXTableRow').mousedown(that._onRowMouseDown);
             }
+
+            that._onRowMouseDown = function (ev) {
+                var id = $(this).attr('id');
+                var downloadrownr = id.split('_')[0];
+                if (downloadrownr >= 0) {
+                    that.selectedDownloadRowNr = downloadrownr;
+                    $('#' + that.myBaseID).find('.DQXTableRow').removeClass("DQXTableRowSelected");
+                    for (var tbnr = 0; tbnr <= 1; tbnr++)
+                        $('#' + that.myBaseID).find('#' + downloadrownr + '_row_' + that.myBaseID + '_' + tbnr).addClass("DQXTableRowSelected");
+                }
+            }
+
 
             that._onRowMouseEnter = function (ev) {
                 var id = $(this).attr('id');
                 var downloadrownr = id.split('_')[0];
                 if (downloadrownr >= 0) {
-                    for (var tbnr=0; tbnr<=1; tbnr++)
+                    for (var tbnr = 0; tbnr <= 1; tbnr++)
                         $('#' + that.myBaseID).find('#' + downloadrownr + '_row_' + that.myBaseID + '_' + tbnr).addClass("DQXTableRowHover");
                 }
             }
@@ -393,6 +415,7 @@
                 this.myDataFetcher.positionField = newPositionField;
                 this.myDataFetcher.clearData();
                 this.myTableOffset = 0;
+                this.selectedDownloadRowNr = -1;
                 this.render();
 
             }
