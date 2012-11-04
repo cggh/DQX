@@ -47,6 +47,143 @@
         }
 
 
+        Controls.CompoundVert = function (icontrols) {
+            var that = {};
+            that._legend = '';
+            that._controls = [];
+            if (icontrols)
+                that._controls = icontrols;
+
+            that.setLegend = function (txt) {
+                this._legend = txt;
+            }
+
+            that.clear = function () {
+                that._controls = [];
+            }
+
+            that.addControl = function (item) {
+                that._controls.push(item);
+            }
+
+            that.getID = function () {
+                if (this._controls.length == 0) throw 'Compound control has no components';
+                return this._controls[0].getID(id);
+            }
+
+            that.setContextID = function (id) {
+                for (var i = 0; i < this._controls.length; i++)
+                    this._controls[i].setContextID(id);
+            }
+
+
+            that.modifyEnabled = function (newstate) {
+                for (var i = 0; i < this._controls.length; i++)
+                    this._controls[i].modifyEnabled(id);
+            }
+
+
+            that.renderHtml = function () {
+                var st = '';
+                if (this._legend.length > 0) {
+                    st += '<fieldset class="DQXFormFieldSet">';
+                    st += '<legend>' + this._legend + '</legend>';
+                }
+                for (var i = 0; i < this._controls.length; i++) {
+                    if (i > 0) st += '<br/>';
+                    st += this._controls[i].renderHtml();
+                }
+                if (this._legend.length > 0) {
+                    st += '</fieldset>';
+                }
+                return st;
+            }
+
+            that.postCreateHtml = function () {
+                for (var i = 0; i < this._controls.length; i++)
+                    this._controls[i].postCreateHtml(id);
+            }
+
+            return that;
+        }
+
+
+
+        Controls.CompoundGrid = function () {
+            var that = {};
+            that._controlRows = [];
+            that.sepH = 12;
+            that.sepV = 5;
+
+            that.clear = function () {
+                that._controlRows = [];
+            }
+
+            that.setItem = function (rowNr, colNr, item) {
+                while (this._controlRows.length <= rowNr)
+                    this._controlRows.push([]);
+                while (this._controlRows[rowNr].length <= colNr)
+                    this._controlRows[rowNr].push(null);
+                this._controlRows[rowNr][colNr] = item;
+            }
+
+            that.getItem = function (rowNr, colNr) {
+                if ((rowNr < 0) || (rowNr >= this._controlRows.length))
+                    return null;
+                if ((colNr < 0) || (colNr >= this._controlRows[rowNr].length))
+                    return null;
+                return this._controlRows[rowNr][colNr];
+            }
+
+            that._loopItems = function (fnc) {
+                for (var rowNr = 0; rowNr < this._controlRows.length; rowNr++)
+                    for (var colNr = 0; colNr < this._controlRows[rowNr].length; colNr++)
+                        if (this._controlRows[rowNr][colNr] != null)
+                            fnc(this._controlRows[rowNr][colNr]);
+            }
+
+
+            that.getID = function () {
+                if (!this.getItem(0, 0)) throw 'Compound control has no components';
+                return this.getItem(0, 0).getID(id);
+            }
+
+            that.setContextID = function (id) {
+                this._loopItems(function (it) { it.setContextID(id); });
+            }
+
+
+            that.modifyEnabled = function (newstate) {
+                this._loopItems(function (it) { it.modifyEnabled(id); });
+            }
+
+
+            that.renderHtml = function () {
+                var st = '<table style="padding-top:{pt}px;">'.DQXformat({ pt: this.sepV });
+                for (var rowNr = 0; rowNr < this._controlRows.length; rowNr++) {
+                    st += '<tr>';
+                    for (var colNr = 0; colNr < this._controlRows[rowNr].length; colNr++) {
+                        st += '<td style="padding-right:{sepH}px;padding-bottom:{sepV}px;">'.DQXformat({ sepH: this.sepH, sepV: this.sepV });
+                        var item = this.getItem(rowNr, colNr);
+                        if (item != null)
+                            st += item.renderHtml();
+                        st += '</td>';
+                    }
+                    st += '</tr>';
+                }
+                st += '</table>';
+                return st;
+            }
+
+            that.postCreateHtml = function () {
+                this._loopItems(function (it) { it.postCreateHtml(); });
+            }
+
+            return that;
+        }
+
+
+
 
         //////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -139,6 +276,36 @@
         }
 
 
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        Controls.Static = function (content) {
+            var that = Controls.Control('');
+            that.myContent = content;
+
+            that._controlExtensionList.push('');
+
+            that.renderHtml = function () {
+                var lb = DocEl.Span();
+                lb.addElem(this.myContent);
+                return lb.toString();
+            }
+
+            that.postCreateHtml = function () {
+            }
+
+            that._onChange = function () {
+            }
+
+            that.getValue = function () {
+                return null;
+            }
+
+            that.modifyValue = function (newstate) {
+            }
+
+            return that;
+        }
+
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -201,7 +368,9 @@
             that._controlExtensionList.push('');
 
             that.renderHtml = function () {
-                var bt = DocEl.Span({ id: this.getFullID('') });
+                var bt = DocEl.Div({ id: this.getFullID('') });
+                bt.addStyle('display','inline-block');
+                //bt.addStyle('position', 'absolute');
                 bt.setCssClass("DQXGlowButton");
                 bt.addElem(that.content);
                 return '&nbsp;&nbsp;' + bt.toString();

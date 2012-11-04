@@ -394,8 +394,6 @@ body
 .DQXGlowButton
 {
 	padding:3px;
-	padding-left:6px;
-	padding-right:6px;
 	border:2px solid rgb(255,255,200);
 	background-color:rgb(230,230,210);
 	font-weight:bold;
@@ -409,11 +407,12 @@ body
 .DQXGlowButton:hover
 {
 	background-color:rgb(255,255,150);
-    -ms-transform:scale(1.1);
+    box-shadow: 0px 0px 16px rgba(255,128,0,1);
+    /*-ms-transform:scale(1.1);
     transform:scale(1.1);
     -moz-transform:scale(1.1);
     -webkit-transform:scale(1.1);
-    -o-transform:scale(1.1);
+    -o-transform:scale(1.1);*/
 }
 
 .DQXShadow {
@@ -595,3 +594,22 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7f7f7', end
 	/*height:33px;*/
     
 }
+
+.DQXFormFieldSet  
+{
+    border:1px solid rgb(128,128,128);
+    box-shadow: 2px 2px 6px rgba(0,0,0,0.35); 
+    background-color:rgb(240,240,240);
+    padding:15px;
+    margin-right:6px;
+    margin-top:12px;
+}
+
+.DQXFormFieldSet legend {
+    font-weight:bold;
+    /*background-color:rgb(235,235,235);
+    border:1px solid rgb(220,220,220);
+    padding:2px 6px;*/
+  /*padding: 0.2em 0.5em;
+  color:green;*/
+  }

@@ -588,11 +588,23 @@
 
 
                 if (this.isFinalPanel()) {
+                    this._needUpdateSize = true;
+                    //                    if (this.myClientObject != null) {
+                    //                        this.myClientObject.handleResize();
+                    //                    }
+                }
+
+            }
+
+            that._updateSize = function () {
+                for (var fnr = 0; fnr < this.memberFrames.length; fnr++)
+                    this.memberFrames[fnr]._updateSize();
+                if ((this.isFinalPanel()) && (this._needUpdateSize)) {
+                    this._needUpdateSize = false;
                     if (this.myClientObject != null) {
                         this.myClientObject.handleResize();
                     }
                 }
-
             }
 
 
@@ -681,6 +693,14 @@
             var sy = myparent.innerHeight();
             Framework.frameRoot.setPosition(0, 0, sx, sy);
         }
+
+        //This function is called periodically the monitor the required size updates of panels in frames
+        Framework._updateSize = function () {
+            if (Framework.frameRoot)
+                Framework.frameRoot._updateSize();
+            setTimeout(Framework._updateSize, 100);
+        }
+        Framework._updateSize();
 
 
 
