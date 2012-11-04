@@ -69,6 +69,7 @@
             that.myColumns = [];
             that.mySortOptions = [];
             that.myPageSize = 20;
+            that.hasHighlight = true;
             that._highlightRowNr = -1;
             that.myDataFetcher.myDataConsumer = that;
 
@@ -172,6 +173,19 @@
                 this.render();
                 return false;
             }
+
+            that.scrollHighlightRowInView = function () {
+                if (this._highlightRowNr < 0) return;
+                if (this._highlightRowNr < this.myTableOffset) {
+                    this.myTableOffset = Math.max(0, this._highlightRowNr - 3);
+                    this.render();
+                }
+                if (this._highlightRowNr >= this.myTableOffset + this.myPageSize) {
+                    this.myTableOffset = Math.max(0, Math.min(this.totalRecordCount - this.myPageSize + 4, this._highlightRowNr - this.myPageSize + 4));
+                    this.render();
+                }
+            }
+
 
             //Forces a reload of the table information
             that.reLoadTable = function () {
@@ -361,15 +375,25 @@
             }
 
             that.modifyHightlightRow = function (newRowNr) {
-                that._highlightRowNr = newRowNr;
-                $('#' + that.myBaseID).find('.DQXTableRow').removeClass("DQXTableRowSelected");
-                for (var tbnr = 0; tbnr <= 1; tbnr++)
-                    $('#' + that.myBaseID).find('#' + newRowNr + '_row_' + that.myBaseID + '_' + tbnr).addClass("DQXTableRowSelected");
-                Msg.send({ type: "HighlightRowModified", id: this.myBaseID }, this);
+                if (this.hasHighlight) {
+                    if (newRowNr >= 0) {
+                        if ((!this._dataValid) || (this.totalRecordCount <= 0)) return;
+                        newRowNr = Math.max(0, newRowNr);
+                        newRowNr = Math.min(this.totalRecordCount - 1, newRowNr);
+                    }
+                    else newRowNr = -1;
+                    if (that._highlightRowNr != newRowNr) {
+                        that._highlightRowNr = newRowNr;
+                        $('#' + that.myBaseID).find('.DQXTableRow').removeClass("DQXTableRowSelected");
+                        for (var tbnr = 0; tbnr <= 1; tbnr++)
+                            $('#' + that.myBaseID).find('#' + newRowNr + '_row_' + that.myBaseID + '_' + tbnr).addClass("DQXTableRowSelected");
+                        Msg.send({ type: "HighlightRowModified", id: this.myBaseID }, this);
+                    }
+                }
             }
 
             that.hasHighlightRow = function () {
-                return that._highlightRowNr>=0;
+                return that._highlightRowNr >= 0;
             }
 
             that.getHighlightRowNr = function () {
@@ -440,19 +464,39 @@
             //This function is called when a key was pressed
             that.onKeyDown = function (ev) {
                 if (ev.keyCode == 40) {//line down
-                    this._onLineDown(1);
+                    if (this.hasHighlight) {
+                        this.modifyHightlightRow(this._highlightRowNr + 1);
+                        this.scrollHighlightRowInView();
+                    }
+                    else
+                        this._onLineDown(1);
                     return true;
                 }
-                if (ev.keyCode == 38) {//line down
-                    this._onLineUp(1);
+                if (ev.keyCode == 38) {//line up
+                    if (this.hasHighlight) {
+                        this.modifyHightlightRow(Math.max(0,this._highlightRowNr - 1));
+                        this.scrollHighlightRowInView();
+                    }
+                    else
+                        this._onLineUp(1);
                     return true;
                 }
                 if (ev.keyCode == 33) {//page up
-                    that._onBack();
+                    if (this.hasHighlight) {
+                        this.modifyHightlightRow(Math.max(0, this._highlightRowNr - this.myPageSize));
+                        this.scrollHighlightRowInView();
+                    }
+                    else
+                        that._onBack();
                     return true;
                 }
                 if (ev.keyCode == 34) {//page down
-                    that._onForward();
+                    if (this.hasHighlight) {
+                        this.modifyHightlightRow(Math.max(0, this._highlightRowNr + this.myPageSize));
+                        this.scrollHighlightRowInView();
+                    }
+                    else
+                        that._onForward();
                     return true;
                 }
                 return false;
