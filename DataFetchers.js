@@ -326,6 +326,7 @@
             this.getColumnPoint = function (currentloadindex, cid) {
                 if ((currentloadindex < 0) || (currentloadindex >= this.myDownloadPointsX.length)) return null;
                 var mycol = this.myColumns[cid];
+                if (!mycol) throw 'Invalid column ID "{id}"'.DQXformat({ id: cid });
                 return mycol.myDownloadValues[currentloadindex];
             }
 

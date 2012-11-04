@@ -69,7 +69,7 @@
             that.myColumns = [];
             that.mySortOptions = [];
             that.myPageSize = 20;
-            that.selectedDownloadRowNr = -1;
+            that._highlightRowNr = -1;
             that.myDataFetcher.myDataConsumer = that;
 
             that._dataValid = false; //false= does not have valid data
@@ -178,14 +178,14 @@
                 this.totalRecordCount = -1; //means not yet determined
                 this.myDataFetcher.clearData();
                 this.myTableOffset = 0;
-                this.selectedDownloadRowNr = -1;
+                this._highlightRowNr = -1;
                 this.render();
             }
 
             //Causes the current table information to be invalidated (does not initiate a reload)
             that.invalidate = function () {
                 if (this._dataValid) {
-                    this.selectedDownloadRowNr = -1;
+                    this._highlightRowNr = -1;
                     this._dataValid = false;
                     this.render();
                 }
@@ -193,7 +193,7 @@
 
             //Defines the query that is used to return the table content
             that.setQuery = function (iquery) {
-                this.selectedDownloadRowNr = -1;
+                this._highlightRowNr = -1;
                 this.myDataFetcher._userQuery = iquery;
                 this._dataValid = true;
             }
@@ -304,7 +304,7 @@
                     {
                         var downloadrownr = this.myDataFetcher.findIndexByXVal(rownr);
                         for (var tbnr = 0; tbnr <= 1; tbnr++)
-                            rs_table[tbnr] += '<tr class="DQXTableRow" id="{id}">'.DQXformat({ id: downloadrownr + '_row_' + this.myBaseID + '_' + tbnr });
+                            rs_table[tbnr] += '<tr class="DQXTableRow" id="{id}">'.DQXformat({ id: rownr + '_row_' + this.myBaseID + '_' + tbnr });
                         for (var colnr in this.myColumns) {
                             var thecol = this.myColumns[colnr];
                             var tbnr = thecol.TablePart;
@@ -324,7 +324,7 @@
                             }
                             rs_table[tbnr] += "<td  TITLE='" + cell_title + "' style='background-color:" + cell_color + "'>";
                             if ((thecol._hyperlinkCellMessageScope) && (hascontent))
-                                rs_table[tbnr] += '<a class="DQXQueryTableLinkCell" id="' + thecol.myCompID + '~' + downloadrownr + '~link~' + this.myBaseID + '">';
+                                rs_table[tbnr] += '<a class="DQXQueryTableLinkCell" id="' + thecol.myCompID + '~' + rownr + '~link~' + this.myBaseID + '">';
                             rs_table[tbnr] += cell_content;
                             if ((thecol._hyperlinkCellMessageScope) && (hascontent))
                                 rs_table[tbnr] += '</a>';
@@ -347,9 +347,9 @@
                     $('#' + this.myBaseID + id).click($.proxy(that[id], that));
                 }
 
-                if (this.selectedDownloadRowNr >= 0)
+                if (this._highlightRowNr >= 0)
                     for (var tbnr = 0; tbnr <= 1; tbnr++)
-                        $('#' + that.myBaseID).find('#' + this.selectedDownloadRowNr + '_row_' + that.myBaseID + '_' + tbnr).addClass("DQXTableRowSelected");
+                        $('#' + that.myBaseID).find('#' + this._highlightRowNr + '_row_' + that.myBaseID + '_' + tbnr).addClass("DQXTableRowSelected");
 
 
                 $('#' + this.myBaseID).find('.DQXQueryTableLinkCell').click($.proxy(that._onClickLinkCell, that));
@@ -360,33 +360,50 @@
                 $('#' + this.myBaseID).find('.DQXTableRow').mousedown(that._onRowMouseDown);
             }
 
+            that.modifyHightlightRow = function (newRowNr) {
+                that._highlightRowNr = newRowNr;
+                $('#' + that.myBaseID).find('.DQXTableRow').removeClass("DQXTableRowSelected");
+                for (var tbnr = 0; tbnr <= 1; tbnr++)
+                    $('#' + that.myBaseID).find('#' + newRowNr + '_row_' + that.myBaseID + '_' + tbnr).addClass("DQXTableRowSelected");
+                Msg.send({ type: "HighlightRowModified", id: this.myBaseID }, this);
+            }
+
+            that.hasHighlightRow = function () {
+                return that._highlightRowNr>=0;
+            }
+
+            that.getHighlightRowNr = function () {
+                return that._highlightRowNr;
+            }
+
+            that.getCellValue = function (rownr, colID) {
+                var downloadrownr = this.myDataFetcher.findIndexByXVal(rownr);
+                if (downloadrownr < 0) return null;
+                return that.myDataFetcher.getColumnPoint(downloadrownr, colID);
+            }
+
             that._onRowMouseDown = function (ev) {
                 var id = $(this).attr('id');
                 var downloadrownr = id.split('_')[0];
-                if (downloadrownr >= 0) {
-                    that.selectedDownloadRowNr = downloadrownr;
-                    $('#' + that.myBaseID).find('.DQXTableRow').removeClass("DQXTableRowSelected");
-                    for (var tbnr = 0; tbnr <= 1; tbnr++)
-                        $('#' + that.myBaseID).find('#' + downloadrownr + '_row_' + that.myBaseID + '_' + tbnr).addClass("DQXTableRowSelected");
-                }
+                if (downloadrownr >= 0) that.modifyHightlightRow(downloadrownr);
             }
 
 
             that._onRowMouseEnter = function (ev) {
                 var id = $(this).attr('id');
-                var downloadrownr = id.split('_')[0];
-                if (downloadrownr >= 0) {
+                var rownr = id.split('_')[0];
+                if (rownr >= 0) {
                     for (var tbnr = 0; tbnr <= 1; tbnr++)
-                        $('#' + that.myBaseID).find('#' + downloadrownr + '_row_' + that.myBaseID + '_' + tbnr).addClass("DQXTableRowHover");
+                        $('#' + that.myBaseID).find('#' + rownr + '_row_' + that.myBaseID + '_' + tbnr).addClass("DQXTableRowHover");
                 }
             }
 
             that._onRowMouseLeave = function (ev) {
                 var id = $(this).attr('id');
-                var downloadrownr = id.split('_')[0];
-                if (downloadrownr >= 0) {
+                var rownr = id.split('_')[0];
+                if (rownr >= 0) {
                     for (var tbnr = 0; tbnr <= 1; tbnr++)
-                        $('#' + that.myBaseID).find('#' + downloadrownr + '_row_' + that.myBaseID + '_' + tbnr).removeClass("DQXTableRowHover");
+                        $('#' + that.myBaseID).find('#' + rownr + '_row_' + that.myBaseID + '_' + tbnr).removeClass("DQXTableRowHover");
                 }
             }
 
@@ -415,7 +432,7 @@
                 this.myDataFetcher.positionField = newPositionField;
                 this.myDataFetcher.clearData();
                 this.myTableOffset = 0;
-                this.selectedDownloadRowNr = -1;
+                this._highlightRowNr = -1;
                 this.render();
 
             }
