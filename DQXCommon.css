@@ -88,6 +88,11 @@ body
     padding: 4px;
 }
 
+.DQXQueryTable td, .DQXQueryTableInvalid td 
+{ 
+    height:17px;
+}
+
 .DQXQueryTable td    
 { 
     border-width: 1px; 
@@ -95,8 +100,8 @@ body
     border-color: rgb(190,190,190);
     padding-left: 3px;
     padding-right: 3px;
-    padding-top: 2px;
-    padding-bottom: 2px;
+    padding-top: 1px;
+    padding-bottom: 0px;
     color:rgb(0,0,0);
     font-size:8pt;
     white-space:nowrap;
@@ -113,6 +118,13 @@ body
 {
     color: rgb(100,100,200) !important;
 	cursor:pointer;
+}
+
+.DQXQueryTableLinkCell 
+{
+    padding:0px;
+    border:0px;
+    margin:0px;
 }
 
 .DQXTableRowHover td {

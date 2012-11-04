@@ -337,11 +337,11 @@
                                     cell_content = "";
                             }
                             rs_table[tbnr] += "<td  TITLE='" + cell_title + "' style='background-color:" + cell_color + "'>";
-                            if ((thecol._hyperlinkCellMessageScope) && (hascontent))
-                                rs_table[tbnr] += '<a class="DQXQueryTableLinkCell" id="' + thecol.myCompID + '~' + rownr + '~link~' + this.myBaseID + '">';
+                            if ((thecol._hyperlinkCellMessageScope) && (hascontent)) {
+                                rs_table[tbnr] += '<IMG class="DQXQueryTableLinkCell" id="{id}" SRC="Bitmaps/link1.png" border=0  ALT="Link"> '.
+                                    DQXformat({ id: thecol.myCompID + '~' + rownr + '~link~' + this.myBaseID });
+                            }
                             rs_table[tbnr] += cell_content;
-                            if ((thecol._hyperlinkCellMessageScope) && (hascontent))
-                                rs_table[tbnr] += '</a>';
                             rs_table[tbnr] += "</td>";
                         }
                     }
@@ -474,7 +474,7 @@
                 }
                 if (ev.keyCode == 38) {//line up
                     if (this.hasHighlight) {
-                        this.modifyHightlightRow(Math.max(0,this._highlightRowNr - 1));
+                        this.modifyHightlightRow(Math.max(0, this._highlightRowNr - 1));
                         this.scrollHighlightRowInView();
                     }
                     else
