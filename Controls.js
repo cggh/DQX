@@ -313,16 +313,23 @@
             var that = Controls.Control(iid);
             that.myLabel = args.label;
             that.isChecked = false;
-            if ('value' in args)
+            if (args.value)
                 that.isChecked = args.value;
+            that._hint = false;
+            if (args.hint)
+                that._hint = args.hint;
 
             that._controlExtensionList.push('');
 
             that.renderHtml = function () {
                 var chk = DocEl.Check({ id: this.getFullID('') });
+                if (this.hint)
+                    chk.addHint(this.hint);
                 if (that.isChecked)
                     chk.addAttribute('checked', "checked");
                 var label = DocEl.Label({ target: this.getFullID('') });
+                if (this._hint)
+                    label.addHint(this._hint);
                 label.addElem(this.myLabel);
                 return chk.toString() + label.toString();
             }
@@ -366,10 +373,14 @@
             var that = Controls.Control(iid);
             that.content = args.content;
             that._controlExtensionList.push('');
+            if (args.hint)
+                that._hint = args.hint;
 
             that.renderHtml = function () {
                 var bt = DocEl.Div({ id: this.getFullID('') });
-                bt.addStyle('display','inline-block');
+                if (this._hint)
+                    bt.addHint(this._hint);
+                bt.addStyle('display', 'inline-block');
                 //bt.addStyle('position', 'absolute');
                 bt.setCssClass("DQXGlowButton");
                 bt.addElem(that.content);
@@ -399,11 +410,15 @@
             that.size = 6;
             if ('size' in args)
                 that.size = args.size;
+            if (args.hint)
+                that._hint = args.hint;
 
             that._controlExtensionList.push('');
 
             that.renderHtml = function () {
                 var edt = DocEl.Edit(that.value, { id: this.getFullID('') });
+                if (this._hint)
+                    edt.addHint(this._hint);
                 edt.addAttribute('size', that.size);
                 return edt.toString();
             }
@@ -446,6 +461,8 @@
             that._selectedState = '';
             if ('value' in args)
                 that._selectedState = args.value;
+            if (args.hint)
+                that._hint = args.hint;
 
             that._controlExtensionList.push('');
 
@@ -475,6 +492,8 @@
 
             that.renderHtml = function () {
                 var cmb = DocEl.Create('select', { id: this.getFullID('') });
+                if (this._hint)
+                    cmb.addHint(this._hint);
                 cmb.addElem(this._buildSelectContent());
                 var label = DocEl.Label({ target: this.getFullID('Label') });
                 label.addElem(this.myLabel);
@@ -517,8 +536,8 @@
             var that = Controls.Control(iid);
             that.myBitmap = args.bitmap;
             that.description = '';
-            if ('description' in args)
-                that.description = args.description;
+            if (args.hint)
+                that._hint = args.hint;
 
             that._controlExtensionList.push('');
 
@@ -526,7 +545,7 @@
             that.renderHtml = function () {
                 var st = '<IMG id="{id}" SRC="' + this.myBitmap + '" border=0 class="DQXBitmapLink" ALT="{desc1}" TITLE="{desc2}">';
                 st = st.DQXformat(
-                { id: this.getFullID(''), desc1: that.description, desc2: that.description });
+                { id: this.getFullID(''), desc1: that.description, desc2: that._hint });
                 return st;
             }
 

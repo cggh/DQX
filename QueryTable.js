@@ -17,7 +17,9 @@
             that._visible = true;
             that.Collapsed = false;
             that._hyperlinkCellMessageScope = null;
+            that._hyperlinkCellHint = '';
             that._hyperlinkHeaderMessageScope = null;
+            that._hyperlinkHeaderHint = '';
 
             that.CellToText = function (content) { return content; }
             that.CellToColor = function (content) { return "white"; }
@@ -26,14 +28,18 @@
 
             //Use this function to convert a column cell into a hyperlink.
             //A message will be sent when the user clicks the link
-            that.makeHyperlinkCell = function (messageScope) {
+            that.makeHyperlinkCell = function (messageScope, hint) {
                 this._hyperlinkCellMessageScope = messageScope;
+                if (hint)
+                    this._hyperlinkCellHint = hint;
             }
 
             //Use this function to convert a column header into a hyperlink.
             //A message will be sent when the user clicks the link
-            that.makeHyperlinkHeader = function (messageScope) {
+            that.makeHyperlinkHeader = function (messageScope, hint) {
                 this._hyperlinkHeaderMessageScope = messageScope;
+                if (hint)
+                    this._hyperlinkHeaderHint = hint;
             }
 
             that.isVisible = function () {
@@ -296,8 +302,8 @@
                             // rs_table[tbnr] += '&nbsp;<a onclick=\"QueryTable._reflectOwnMessage(\'' + this.myBaseID + '\',\'Collapse\',\'' + thecol.myCompID + '\')\" href=\"javascript:void(0)\">></a>'
                         }
                         if (thecol._hyperlinkHeaderMessageScope) {
-                            var st = '<IMG class="DQXQueryTableLinkHeader" id="{id}" SRC=Bitmaps/link2.png border=0 class="DQXBitmapLink" ALT="Link" style="position:absolute;right:-3px;top:-6px">'.
-                                DQXformat({ id: thecol.myCompID + '~headerlink~' + this.myBaseID });
+                            var st = '<IMG class="DQXQueryTableLinkHeader" id="{id}" SRC=Bitmaps/link2.png border=0 class="DQXBitmapLink" ALT="Link" title="{hint}" style="position:absolute;right:-3px;top:-6px">'.
+                                DQXformat({ hint: thecol._hyperlinkHeaderHint, id: thecol.myCompID + '~headerlink~' + this.myBaseID });
                             rs_table[tbnr] += ' ' + st;
                         }
                         if (thecol.sortOption) {
@@ -308,7 +314,7 @@
                                 else
                                     bitmapname = "arrow4up.png";
                             }
-                            var st = '<IMG class="DQXQueryTableSortHeader" id="{id}" SRC=Bitmaps/{bmp} border=0 class="DQXBitmapLink" ALT="Link" style="position:absolute;right:-4px;bottom:-4px">'.
+                            var st = '<IMG class="DQXQueryTableSortHeader" id="{id}" SRC=Bitmaps/{bmp} border=0 class="DQXBitmapLink" title="Sort by this column" ALT="Link" style="position:absolute;right:-4px;bottom:-4px">'.
                                 DQXformat({ id: thecol.myCompID + '~sort~' + this.myBaseID, bmp: bitmapname });
                             rs_table[tbnr] += ' ' + st;
                         }
@@ -347,10 +353,10 @@
                                     if (thecol.Collapsed)
                                         cell_content = "";
                                 }
-                                rs_table[tbnr] += "<td  TITLE='" + cell_title + "' style='background-color:" + cell_color + "'>";
+                                rs_table[tbnr] += "<td style='background-color:" + cell_color + "'>";
                                 if ((thecol._hyperlinkCellMessageScope) && (hascontent)) {
-                                    rs_table[tbnr] += '<IMG class="DQXQueryTableLinkCell" id="{id}" SRC="Bitmaps/link3.png" border=0  ALT="Link"> '.
-                                        DQXformat({ id: thecol.myCompID + '~' + rownr + '~link~' + this.myBaseID });
+                                    rs_table[tbnr] += '<IMG class="DQXQueryTableLinkCell" id="{id}" SRC="Bitmaps/link3.png" border=0  title="{hint}" ALT="Link"> '.
+                                        DQXformat({ hint: thecol._hyperlinkCellHint, id: thecol.myCompID + '~' + rownr + '~link~' + this.myBaseID });
                                 }
                                 rs_table[tbnr] += cell_content;
                                 rs_table[tbnr] += "</td>";
