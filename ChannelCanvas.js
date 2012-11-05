@@ -88,12 +88,30 @@
             }
 
 
-            that.drawStandardGradient = function (drawInfo, ctx) {
-                var backgrad = ctx.createLinearGradient(0, 0, 0, drawInfo.sizeY);
+            that.drawStandardGradientCenter = function (drawInfo) {
+                var backgrad = drawInfo.centerContext.createLinearGradient(0, 0, 0, drawInfo.sizeY);
                 backgrad.addColorStop(0, "rgb(255,255,255)");
                 backgrad.addColorStop(1, "rgb(210,210,210)");
-                ctx.fillStyle = backgrad;
-                ctx.fillRect(0, 0, drawInfo.sizeX, drawInfo.sizeY);
+                drawInfo.centerContext.fillStyle = backgrad;
+                drawInfo.centerContext.fillRect(0, 0, drawInfo.sizeCenterX, drawInfo.sizeY);
+            }
+
+            that.drawStandardGradientLeft = function (drawInfo) {
+                var backgrad = drawInfo.leftContext.createLinearGradient(0, 0, 0, drawInfo.sizeY);
+                backgrad.addColorStop(0, "rgb(230,230,230)");
+                backgrad.addColorStop(1, "rgb(180,180,180)");
+                drawInfo.leftContext.fillStyle = backgrad;
+                drawInfo.leftContext.fillRect(0, 0, drawInfo.sizeLeftX, drawInfo.sizeY);
+            }
+
+            that.drawStandardGradientRight = function (drawInfo) {
+                if (drawInfo.sizeRightX > 2) {
+                    var backgrad = drawInfo.rightContext.createLinearGradient(0, 0, 0, drawInfo.sizeY);
+                    backgrad.addColorStop(0, "rgb(230,230,230)");
+                    backgrad.addColorStop(1, "rgb(180,180,180)");
+                    drawInfo.rightContext.fillStyle = backgrad;
+                    drawInfo.rightContext.fillRect(0, 0, drawInfo.sizeRightX, drawInfo.sizeY);
+                }
             }
 
             that.render = function (drawInfo) {
@@ -105,7 +123,9 @@
                     leftContext: this.getCanvasElement('left').getContext("2d"),
                     centerContext: this.getCanvasElement('center').getContext("2d"),
                     rightContext: this.getCanvasElement('right').getContext("2d"),
-                    sizeX: drawInfo.sizeX,
+                    sizeLeftX: drawInfo.sizeLeftX,
+                    sizeCenterX: drawInfo.sizeCenterX,
+                    sizeRightX: drawInfo.sizeRightX,
                     sizeY: this._height
                 };
                 this.draw(locDrawInfo);
@@ -125,7 +145,13 @@
                 backgrad.addColorStop(0, "rgb(180,180,180)");
                 backgrad.addColorStop(1, "rgb(120,120,120)");
                 drawInfo.centerContext.fillStyle = backgrad;
-                drawInfo.centerContext.fillRect(0, 0, drawInfo.sizeX, drawInfo.sizeY);
+                drawInfo.centerContext.fillRect(0, 0, drawInfo.sizeCenterX, drawInfo.sizeY);
+
+                var backgrad = drawInfo.leftContext.createLinearGradient(0, 0, 0, drawInfo.sizeY);
+                backgrad.addColorStop(0, "rgb(150,150,150)");
+                backgrad.addColorStop(1, "rgb(100,100,100)");
+                drawInfo.leftContext.fillStyle = backgrad;
+                drawInfo.leftContext.fillRect(0, 0, drawInfo.sizeLeftX, drawInfo.sizeY);
 
                 drawInfo.centerContext.fillStyle = "black";
                 drawInfo.centerContext.font = '10px sans-serif';
@@ -134,13 +160,13 @@
 
                 var i1 = Math.round(((-50 + drawInfo.offsetX) / drawInfo.zoomFactX) / drawInfo.HorAxisScaleJumps.Jump1);
                 if (i1 < 0) i1 = 0;
-                var i2 = Math.round(((drawInfo.sizeX + 50 + drawInfo.offsetX) / drawInfo.zoomFactX) / drawInfo.HorAxisScaleJumps.Jump1);
+                var i2 = Math.round(((drawInfo.sizeCenterX + 50 + drawInfo.offsetX) / drawInfo.zoomFactX) / drawInfo.HorAxisScaleJumps.Jump1);
 
                 for (i = i1; i <= i2; i++) {
                     drawInfo.centerContext.beginPath();
                     var value = i * drawInfo.HorAxisScaleJumps.Jump1;
                     var psx = Math.round((value) * drawInfo.zoomFactX - drawInfo.offsetX) + 0.5;
-                    if ((psx >= -50) && (psx <= drawInfo.sizeX + 50)) {
+                    if ((psx >= -50) && (psx <= drawInfo.sizeCenterX + 50)) {
                         drawInfo.centerContext.moveTo(psx, 0);
                         drawInfo.centerContext.lineTo(psx, 15);
                         drawInfo.centerContext.strokeStyle = "gray";

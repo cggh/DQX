@@ -8,7 +8,9 @@
             var that = ChannelCanvas.Base(id);
 
             that.draw = function (drawInfo) {
-                this.drawStandardGradient(drawInfo, drawInfo.centerContext);
+                this.drawStandardGradientCenter(drawInfo);
+                this.drawStandardGradientLeft(drawInfo);
+                this.drawStandardGradientRight(drawInfo);
             }
 
             return that;

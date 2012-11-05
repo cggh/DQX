@@ -8,7 +8,7 @@
         ChannelPlotter.Plotter = function (iDivID, args) {
             var that = {};
             that._leftWidth = 120;
-            that._rightWidth = 50;
+            that._rightWidth = 10;
             that._headerHeight = 30;
             that._footerHeight = 40;
             that._navigatorHeight = 30;
@@ -226,7 +226,9 @@
                 var drawInfo = {
                     offsetX: this._offsetX,
                     zoomFactX: this._zoomFactX,
-                    sizeX: this._sizeX,
+                    sizeLeftX: that._leftWidth,
+                    sizeCenterX: this._sizeX - that._leftWidth - that._rightWidth,
+                    sizeRightX: that._rightWidth,
                     HorAxisScaleJumps: DQX.DrawUtil.getScaleJump(20 / this._zoomFactX)
                 };
                 for (var i = 0; i < this._channels.length; i++)
@@ -235,7 +237,7 @@
             }
 
             that.handleResize = function () {
-                var W = this.getElemJQ('').innerWidth();
+                var W = this.getElemJQ('').innerWidth() - DQX.scrollBarWidth;
                 var H = this.getElemJQ('').innerHeight();
                 var bodyH = H - this._headerHeight - this._footerHeight - this._navigatorHeight;
                 this._sizeX = W;
@@ -253,7 +255,7 @@
                 this.getElemJQ('BodyScroll').height(bodyH-fixedChannelHeight);
 
                 for (var i = 0; i < this._channels.length; i++)
-                    this._channels[i].handleResizeX(W - DQX.scrollBarWidth);
+                    this._channels[i].handleResizeX(W);
 
                 this.render();
             };
