@@ -30,14 +30,17 @@
             that.getLeftWidth = function () { return that._leftWidth; }
             that.getRightWidth = function () { return that._rightWidth; }
 
-            that.addChannel = function (channel) {
+            that.addChannel = function (channel, onTop) {
+                if (onTop)
+                    channel._isOnTopPart=true;
                 if (channel._myID in that._idChannelMap) throw "Channel id already present: " + channel._myID;
                 this._channels.push(channel);
                 that._idChannelMap[channel._myID] = channel;
                 channel._myPlotter = this;
-                this.getElemJQ('Body').append(channel.renderHtml());
+                this.getElemJQ(onTop ? 'BodyFixed' : 'BodyScroll').append(channel.renderHtml());
                 channel.postCreateHtml();
             }
+
 
             //////////////////////////////////////////////////////////////////////////////////////////
             // Create basic html emelents
@@ -55,8 +58,18 @@
             {//Create body
                 var body = DocEl.Div({ id: that.getSubID("Body") });
                 body.setWidthFull();
-                body.addStyle('overflow-x', 'hidden');
-                body.addStyle('overflow-y', 'scroll');
+                body.addStyle('overflow', 'hidden');
+                {//Create non-scrolling part of body
+                    var body1 = DocEl.Div({ id: that.getSubID("BodyFixed"), parent: body });
+                    body1.setWidthFull();
+                    body1.addStyle('overflow', 'hidden');
+                }
+                {//Create scrolling part of body
+                    var body2 = DocEl.Div({ id: that.getSubID("BodyScroll"), parent: body });
+                    body2.setWidthFull();
+                    body2.addStyle('overflow-x', 'hidden');
+                    body2.addStyle('overflow-y', 'scroll');
+                }
                 html += body;
             }
             {//Create navigator (scrollbar & zoomslider)
@@ -81,6 +94,8 @@
             that._myNavigator.myConsumer = that;
 
             //add some random channels
+            that.addChannel(ChannelCanvas.XScale('idp'), true);
+            that.addChannel(ChannelYVals.Channel('idf'), true);
             for (var i = 0; i < 10; i++) {
                 that.addChannel(ChannelYVals.Channel('n' + i));
                 that.addChannel(ChannelCanvas.XScale('id' + i));
@@ -184,7 +199,7 @@
 
             that.handleMouseWheel = function (ev) {
                 if (this._channels[0].length == 0) return;
-                var PosX = this._channels[0].getEventPosX(ev);//a dirty solution to find the offset inside a center panel of a channel
+                var PosX = this._channels[0].getEventPosX(ev); //a dirty solution to find the offset inside a center panel of a channel
                 var delta = DQX.getMouseWheelDelta(ev);
 
                 var dff = 1.3 * Math.abs(delta); //unit zoom factor
@@ -222,11 +237,20 @@
             that.handleResize = function () {
                 var W = this.getElemJQ('').innerWidth();
                 var H = this.getElemJQ('').innerHeight();
+                var bodyH = H - this._headerHeight - this._footerHeight - this._navigatorHeight;
                 this._sizeX = W;
                 this.getElemJQ('Header').height(this._headerHeight);
-                this.getElemJQ('Body').height(H - this._headerHeight - this._footerHeight - this._navigatorHeight);
+                this.getElemJQ('Body').height(bodyH);
                 this.getElemJQ('Footer').height(this._footerHeight);
                 that._myNavigator.resize(W);
+
+                //measure total height of fixed channels
+                var fixedChannelHeight = 0
+                for (var i = 0; i < this._channels.length; i++)
+                    if (this._channels[i]._isOnTopPart)
+                        fixedChannelHeight += this._channels[i].getHeight();
+                this.getElemJQ('BodyFixed').height(fixedChannelHeight);
+                this.getElemJQ('BodyScroll').height(bodyH-fixedChannelHeight);
 
                 for (var i = 0; i < this._channels.length; i++)
                     this._channels[i].handleResizeX(W - DQX.scrollBarWidth);
