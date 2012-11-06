@@ -148,6 +148,27 @@
                 drawInfo.centerContext.fillText("Fetching data...", drawInfo.sizeCenterX / 2, 5);
             }
 
+            that.drawMark = function (drawInfo) {
+                if (drawInfo.mark.present) {
+                    var psx1 = Math.round((drawInfo.mark.pos1) * drawInfo.zoomFactX - drawInfo.offsetX) - 1;
+                    var psx2 = Math.round((drawInfo.mark.pos2) * drawInfo.zoomFactX - drawInfo.offsetX) + 1;
+                    drawInfo.centerContext.globalAlpha = 0.15;
+                    drawInfo.centerContext.fillStyle = "rgb(255,0,0)";
+                    drawInfo.centerContext.fillRect(psx1, 0, psx2 - psx1, drawInfo.sizeY);
+                    drawInfo.centerContext.globalAlpha = 1;
+/*
+                    centercontext.fillStyle = "rgb(192,0,0)";
+                    centercontext.font = '11px sans-serif';
+                    centercontext.textBaseline = 'top';
+                    centercontext.textAlign = 'right';
+                    centercontext.fillText(this._markPos1.toFixed(0), psx1, 7);
+                    centercontext.textAlign = 'left';
+                    var size = this._markPos2 - this._markPos1;
+                    centercontext.fillText(size.toFixed(0) + 'bp', psx2, 7);*/
+                }
+            }
+
+
 
             that.render = function (drawInfo) {
                 // X position conversion: X_screen = X_logical * drawInfo._zoomFactX - drawInfo._offsetX
@@ -161,12 +182,15 @@
                     sizeLeftX: drawInfo.sizeLeftX,
                     sizeCenterX: drawInfo.sizeCenterX,
                     sizeRightX: drawInfo.sizeRightX,
+                    mark:drawInfo.mark,
                     sizeY: this._height
                 };
                 this.draw(locDrawInfo);
             }
             return that;
         }
+
+
 
 
 

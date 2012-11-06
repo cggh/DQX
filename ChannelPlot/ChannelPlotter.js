@@ -239,6 +239,13 @@
                     this._myDataFetchers[i].clearData();
             }
 
+            that.setMark = function (pos1, pos2) {
+                this._markPresent = true;
+                this._markPos1 = pos1;
+                this._markPos2 = pos2;
+                this.render();
+            }
+
             that.render = function () {
                 var drawInfo = {
                     offsetX: this._offsetX,
@@ -246,6 +253,7 @@
                     sizeLeftX: that._leftWidth,
                     sizeCenterX: this._sizeCenterX,
                     sizeRightX: that._rightWidth,
+                    mark: { present: this._markPresent, pos1: this._markPos1, pos2: this._markPos2 },
                     HorAxisScaleJumps: DQX.DrawUtil.getScaleJump(20 / this._zoomFactX)
                 };
                 for (var i = 0; i < this._channels.length; i++)
@@ -254,13 +262,12 @@
             }
 
             that.getViewPortWidth = function () {
-                var W = this.getElemJQ('').innerWidth() - DQX.scrollBarWidth;
-                return W - this._leftWidth - this._rightWidth;
+                return this._sizeX;
             }
 
             that.handleResize = function () {
                 var W = this.getElemJQ('').innerWidth() - DQX.scrollBarWidth;
-                if (W < 1) W = 1;
+                if (W < 5) W = 600;
                 var H = this.getElemJQ('').innerHeight();
                 var bodyH = H - this._headerHeight - this._footerHeight - this._navigatorHeight;
                 this._sizeX = W - this._leftWidth - this._rightWidth;

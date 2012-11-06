@@ -93,13 +93,13 @@
                     }
                     if (slotnr == slotcount) {
                         drawInfo.centerContext.fillStyle = "rgb(255,200,100)";
-                        drawInfo.centerContext.fillRect(Math.round(psx1 + 2) + 0.5, this.getHeight()-2 + 0.5, 20, 1.5);
+                        drawInfo.centerContext.fillRect(Math.round(psx1 + 2) + 0.5, this.getHeight() - 2 + 0.5, 20, 1.5);
                     }
 
                     ps += len;
                 }
 
-
+                this.drawMark(drawInfo);
             }
 
             return that;

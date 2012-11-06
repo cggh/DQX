@@ -1,5 +1,5 @@
-﻿define(["jquery",  "DQX/Msg", "DQX/ChannelPlot/ChannelPlotter", "DQX/DataFetcher/DataFetcherAnnotation", "DQX/ChannelPlot/ChannelAnnotation", "DQX/SQL", "DQX/DocEl"],
-    function ($,   Msg,       ChannelPlotter,                   DataFetcherAnnotation,                   ChannelAnnotation,                   SQL,       DocEl) {
+﻿define(["jquery", "DQX/Msg", "DQX/ChannelPlot/ChannelPlotter", "DQX/DataFetcher/DataFetcherAnnotation", "DQX/ChannelPlot/ChannelAnnotation", "DQX/SQL", "DQX/DocEl"],
+    function ($, Msg, ChannelPlotter, DataFetcherAnnotation, ChannelAnnotation, SQL, DocEl) {
         var GenomePlotter = {};
 
 
@@ -26,6 +26,11 @@
                     if (this._chromosomes[chromnr].id == chromoid)
                         return chromnr + 1;
                 return null;
+            }
+
+            //converts a chromosome id to a chromosome number
+            that.getChromoID = function (chromonr) {
+                return this._chromosomes[chromonr - 1].id;
             }
 
             //Call this function to switch to another chromosome
@@ -68,6 +73,16 @@
                 for (var chromnr = 0; chromnr < this._chromosomes.length; chromnr++)
                     rs += '<option value="' + (chromnr + 1).toString() + '">' + this._chromosomes[chromnr].name + '</option>';
                 that.getElemJQ("ChromoPicker").html(rs);
+            }
+
+            //Call this function to highlight a particular region
+            that.highlightRegion = function (chromid, pos, size) {
+                this.setChromosome(chromid, true, false);
+                if (size < 10) size = 10;
+                this.setMark(pos - size / 2, pos + size / 2);
+                var winsize = size * 6;
+                if (winsize < 60000) winsize = 60000;
+                this.setPosition(pos, winsize);
             }
 
             //Call this function to show a particular region
