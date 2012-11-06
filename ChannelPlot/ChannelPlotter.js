@@ -40,6 +40,7 @@
                 channel._myPlotter = this;
                 this.getElemJQ(onTop ? 'BodyFixed' : 'BodyScroll').append(channel.renderHtml());
                 channel.postCreateHtml();
+                $('#' + channel.getCenterElementID()).bind('DOMMouseScroll mousewheel', $.proxy(that.handleMouseWheel, that));
             }
 
 
@@ -94,13 +95,6 @@
             that._myNavigator = Scroller.HScrollBar(that.getSubID("HScroller"));
             that._myNavigator.myConsumer = that;
 
-            //add scale channels
-            that.addChannel(ChannelCanvas.XScale('idp'), true);
-/*            that.addChannel(ChannelYVals.Channel('idf'), true);
-            for (var i = 0; i < 10; i++) {
-                that.addChannel(ChannelYVals.Channel('n' + i));
-                that.addChannel(ChannelCanvas.XScale('id' + i));
-            }*/
 
 
             ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -117,10 +111,13 @@
 
             //sets the position and width
             that.setPosition = function (centerpos, width) {
-                this._zoomFactX = this.sizeX / width;
-                this._offsetX = (centerpos - 0.5 * width) * this._zoomFactX;
-                this.render();
-                this.updateNavigator();
+                var viewPortWidth = this.getViewPortWidth();
+                if (viewPortWidth > 0) {
+                    this._zoomFactX = viewPortWidth / width;
+                    this._offsetX = (centerpos - 0.5 * width) * this._zoomFactX;
+                    this.render();
+                    this.updateNavigator();
+                }
             }
 
             //Converts canvas screen X coordinate to logical X coordinate
@@ -131,7 +128,7 @@
             //Updates the navigator
             that.updateNavigator = function () {
                 var ps1 = (this.screenPos2XVal(0) - this._fullRangeMin) / (this._fullRangeMax - this._fullRangeMin);
-                var ps2 = (this.screenPos2XVal(this._sizeX) - this._fullRangeMin) / (this._fullRangeMax - this._fullRangeMin);
+                var ps2 = (this.screenPos2XVal(this._sizeCenterX) - this._fullRangeMin) / (this._fullRangeMax - this._fullRangeMin);
                 this._myNavigator.setRange(this._fullRangeMin / 1.0e6, this._fullRangeMax / 1.0e6);
                 this._myNavigator.setValue(ps1, ps2 - ps1);
             }
@@ -145,15 +142,15 @@
 
             //responds to a navigator notification
             that.zoomScrollTo = function (scrollPosFraction, scrollSizeFraction) {
-                this._zoomFactX = this._sizeX / ((this._fullRangeMax - this._fullRangeMin) * scrollSizeFraction);
+                this._zoomFactX = this._sizeCenterX / ((this._fullRangeMax - this._fullRangeMin) * scrollSizeFraction);
                 var psx = this._fullRangeMin + scrollPosFraction * (this._fullRangeMax - this._fullRangeMin);
                 this._offsetX = psx * this._zoomFactX;
                 this.render();
             }
 
             that.clipViewRange = function (ev) {
-                this._zoomFactX = Math.max(this._zoomFactX, this._sizeX / (this._fullRangeMax - this._fullRangeMin));
-                this._offsetX = Math.min(this._fullRangeMax * this._zoomFactX - this._sizeX, this._offsetX);
+                this._zoomFactX = Math.max(this._zoomFactX, this._sizeCenterX / (this._fullRangeMax - this._fullRangeMin));
+                this._offsetX = Math.min(this._fullRangeMax * this._zoomFactX - this._sizeCenterX, this._offsetX);
                 this._offsetX = Math.max(this._fullRangeMin * this._zoomFactX, this._offsetX);
             }
 
@@ -206,6 +203,7 @@
                 }
             }
 
+
             that.handleMouseWheel = function (ev) {
                 if (this._channels[0].length == 0) return;
                 var PosX = this._channels[0].getEventPosX(ev); //a dirty solution to find the offset inside a center panel of a channel
@@ -230,13 +228,23 @@
                 return false;
             }
 
+            //Internal: this function is called by e.g. DQX.DataFetcher.Curve class to notify that data is ready and the plot should be redrawn
+            that.notifyDataReady = function () {
+                this.render();
+            }
+
+            //Invalidate all the data downloaded by the plot, forcing a reload upon the next drawing
+            that.clearData = function () {
+                for (var i = 0; i < this._myDataFetchers.length; i++)
+                    this._myDataFetchers[i].clearData();
+            }
 
             that.render = function () {
                 var drawInfo = {
                     offsetX: this._offsetX,
                     zoomFactX: this._zoomFactX,
                     sizeLeftX: that._leftWidth,
-                    sizeCenterX: this._sizeX - that._leftWidth - that._rightWidth,
+                    sizeCenterX: this._sizeCenterX,
                     sizeRightX: that._rightWidth,
                     HorAxisScaleJumps: DQX.DrawUtil.getScaleJump(20 / this._zoomFactX)
                 };
@@ -245,11 +253,20 @@
                 this._myNavigator.draw();
             }
 
+            that.getViewPortWidth = function () {
+                var W = this.getElemJQ('').innerWidth() - DQX.scrollBarWidth;
+                return W - this._leftWidth - this._rightWidth;
+            }
+
             that.handleResize = function () {
                 var W = this.getElemJQ('').innerWidth() - DQX.scrollBarWidth;
+                if (W < 1) W = 1;
                 var H = this.getElemJQ('').innerHeight();
                 var bodyH = H - this._headerHeight - this._footerHeight - this._navigatorHeight;
-                this._sizeX = W;
+                this._sizeX = W - this._leftWidth - this._rightWidth;
+                if (this._sizeX < 1) this._sizeX = 1;
+                this._sizeCenterX = W - this._leftWidth - this._rightWidth;
+                if (this._sizeCenterX < 1) this._sizeCenterX = 1;
                 this.getElemJQ('Header').height(this._headerHeight);
                 this.getElemJQ('Body').height(bodyH);
                 this.getElemJQ('Footer').height(this._footerHeight);
@@ -266,11 +283,13 @@
                 for (var i = 0; i < this._channels.length; i++)
                     this._channels[i].handleResizeX(W);
 
+                this.zoomScrollTo(this._myNavigator.scrollPos, this._myNavigator.ScrollSize);
+
                 this.render();
             };
 
-            //some final code that needs to run after the functions are defined
-            $('#' + that.getSubID("Body")).find(".DQXChannelPlotChannelCenter").bind('DOMMouseScroll mousewheel', $.proxy(that.handleMouseWheel, that));
+            //Add scale channel
+            that.addChannel(ChannelCanvas.XScale('_XScale'), true);
 
             return that;
         }

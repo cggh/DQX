@@ -44,7 +44,7 @@
             this.AjaxResponse = function (resp) {
                 this.hasFetchFailed = false;
                 this._isFetching = false;
-                var vallistdecoder = DQX.ValueListDecoder();
+                var vallistdecoder = DataDecoders.ValueListDecoder();
                 var keylist = DQX.parseResponse(resp);
                 if ("Error" in keylist) {
                     this.hasFetchFailed = true;
@@ -73,7 +73,7 @@
 
             this._fetchRange = function (rangemin, rangemax) {
                 if (!this._isFetching) {
-                    range = rangemax - rangemin;
+                    range = Math.max(0,rangemax - rangemin)+1;
                     rangemin -= range;
                     rangemax += range;
                     var myurl = DQX.Url(this.config.serverURL);

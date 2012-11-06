@@ -20,6 +20,10 @@
                 return this.getMyPlotter().getSubID() + '_channel_' + this._myID + '_' + ext;
             }
 
+            that.getCenterElementID = function (ext) {
+                return this.getCanvasID('center');
+            }
+
             that.getCanvasElement = function (ext) {
                 return $("#" + this.getCanvasID(ext))[0];
             }
@@ -113,6 +117,37 @@
                     drawInfo.rightContext.fillRect(0, 0, drawInfo.sizeRightX, drawInfo.sizeY);
                 }
             }
+
+            //Draws a message in the center panel of the channel
+            that.drawMessage = function (drawInfo, txt1, txt2) {
+                drawInfo.centerContext.fillStyle = "black";
+                drawInfo.centerContext.globalAlpha = 0.2;
+                drawInfo.centerContext.fillRect(0, drawInfo.PosY - drawInfo.sizeY, drawInfo.sizeX, drawInfo.sizeY);
+                drawInfo.centerContext.globalAlpha = 1.0;
+                drawInfo.leftContext.fillStyle = "black";
+                drawInfo.leftContext.globalAlpha = 0.2;
+                drawInfo.leftContext.fillRect(0, drawInfo.PosY - drawInfo.sizeY, drawInfo.LeftSizeX, drawInfo.sizeY);
+                drawInfo.leftContext.globalAlpha = 1.0;
+                drawInfo.centerContext.fillStyle = "black";
+                drawInfo.centerContext.font = '25px sans-serif';
+                drawInfo.centerContext.textBaseline = 'bottom';
+                drawInfo.centerContext.textAlign = 'center';
+                drawInfo.centerContext.globalAlpha = 0.6;
+                drawInfo.centerContext.fillText(txt1, drawInfo.sizeCenterX / 2, drawInfo.sizeY / 2 + 0);
+                if (txt2) {
+                    drawInfo.centerContext.fillText(txt2, drawInfo.sizeCenterX / 2, drawInfo.sizeY / 2 + 27);
+                }
+                drawInfo.centerContext.globalAlpha = 1.0;
+            }
+
+            that.drawFetchMessage = function (drawInfo) {
+                drawInfo.centerContext.fillStyle = "rgb(0,192,0)";
+                drawInfo.centerContext.font = '25px sans-serif';
+                drawInfo.centerContext.textBaseline = 'top';
+                drawInfo.centerContext.textAlign = 'center';
+                drawInfo.centerContext.fillText("Fetching data...", drawInfo.sizeCenterX / 2, 5);
+            }
+
 
             that.render = function (drawInfo) {
                 // X position conversion: X_screen = X_logical * drawInfo._zoomFactX - drawInfo._offsetX
