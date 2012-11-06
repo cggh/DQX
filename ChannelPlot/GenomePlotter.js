@@ -7,7 +7,12 @@
 
         GenomePlotter.Plotter = function (iDivID, args) {
             var that = ChannelPlotter.Plotter(iDivID, args);
+
+
             that._chromosomes = [];
+
+            DQX.assertPresence(args, 'chromnrfield');
+            that.chromoNrField = args.chromnrfield;
 
 
             //Create the data fetcher for the gen annotation information

@@ -26,7 +26,7 @@
                 var imax = Math.round((drawInfo.sizeCenterX + 10 + drawInfo.offsetX) / drawInfo.zoomFactX);
 
                 if (!this._annotationFetcher.IsDataReady(imin, imax))
-                    this.drawFetchMessage(drawInfo);
+                    this.drawFetchBusyMessage(drawInfo);
 
                 var annot = this._annotationFetcher.getData(imin, imax);
 

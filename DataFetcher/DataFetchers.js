@@ -1,12 +1,12 @@
 ﻿define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
     function ($, SQL, DQX, DataDecoders) {
-        var DataFetcher = {}
+        var DataFetchers = {}
 
         //////////////////////////////////////////////////////////////////////////////////////
-        //  Class DataFetcher.CurveColumn
+        //  Class DataFetchers.CurveColumn
         //////////////////////////////////////////////////////////////////////////////////////
 
-        DataFetcher.CurveColumn = function (iEncoding) {
+        DataFetchers.CurveColumn = function (iEncoding) {
             var that = {};
             that.myEncodingList = {
                 "String": "ST",    //returns string data
@@ -40,10 +40,10 @@
 
 
         //////////////////////////////////////////////////////////////////////////////////////
-        //  Class DataFetcher.Curve
+        //  Class DataFetchers.Curve
         //////////////////////////////////////////////////////////////////////////////////////
 
-        DataFetcher.Curve = function (iserverurl, itablename, ipositionfield) {
+        DataFetchers.Curve = function (iserverurl, itablename, ipositionfield) {
             if (!(this instanceof arguments.callee)) throw "Should be called as constructor!";
 
             this.serverurl = iserverurl; //The server url to contact for this
@@ -60,7 +60,7 @@
             this._currentRangeMax = -1000.0;
 
             this.myDownloadPointsX = []; //X positions of all the currently downloaded points
-            this.myColumns = {}; //maps column IDs to DataFetcher.CurveColumn objects
+            this.myColumns = {}; //maps column IDs to DataFetchers.CurveColumn objects
             this.totalRecordCount = -1;
 
             this._isFetching = false; //If true, an ajax request was sent out and wasn't finished yet
@@ -86,7 +86,7 @@
 
             //adds a column to be fetched, providing a column id and a color
             this.addFetchColumn = function (cid, encoding, colr) {
-                this.myColumns[cid] = DataFetcher.CurveColumn(encoding, colr);
+                this.myColumns[cid] = DataFetchers.CurveColumn(encoding, colr);
                 this.clearData();
                 return this.myColumns[cid];
             }
@@ -355,7 +355,7 @@
             }
 
         }
-        return DataFetcher;
+        return DataFetchers;
     });    
     
 

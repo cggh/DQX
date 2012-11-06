@@ -9,12 +9,21 @@
             var that = {};
             that._myID = id;
             that._height = 120;
+            that._title = '';
+            that._subTitle = '';
 
             that.getMyPlotter = function () {
                 if (!this._myPlotter) throw "Channel is not yet associated to a plotter";
                 return this._myPlotter;
             }
             that.getHeight = function () { return this._height; }
+
+            that.setTitle = function (ititle) {
+                this._title = ititle;
+            }
+            that.setSubTitle = function (isubtitle) {
+                this._subTitle = isubtitle;
+            }
 
             that.getCanvasID = function (ext) {
                 return this.getMyPlotter().getSubID() + '_channel_' + this._myID + '_' + ext;
@@ -122,11 +131,11 @@
             that.drawMessage = function (drawInfo, txt1, txt2) {
                 drawInfo.centerContext.fillStyle = "black";
                 drawInfo.centerContext.globalAlpha = 0.2;
-                drawInfo.centerContext.fillRect(0, drawInfo.PosY - drawInfo.sizeY, drawInfo.sizeX, drawInfo.sizeY);
+                drawInfo.centerContext.fillRect(0, drawInfo.PosY - drawInfo.sizeY, drawInfo.sizeCenterX, drawInfo.sizeY);
                 drawInfo.centerContext.globalAlpha = 1.0;
                 drawInfo.leftContext.fillStyle = "black";
                 drawInfo.leftContext.globalAlpha = 0.2;
-                drawInfo.leftContext.fillRect(0, drawInfo.PosY - drawInfo.sizeY, drawInfo.LeftSizeX, drawInfo.sizeY);
+                drawInfo.leftContext.fillRect(0, drawInfo.PosY - drawInfo.sizeY, drawInfo.sizeLeftX, drawInfo.sizeY);
                 drawInfo.leftContext.globalAlpha = 1.0;
                 drawInfo.centerContext.fillStyle = "black";
                 drawInfo.centerContext.font = '25px sans-serif';
@@ -140,12 +149,74 @@
                 drawInfo.centerContext.globalAlpha = 1.0;
             }
 
-            that.drawFetchMessage = function (drawInfo) {
+            that.drawFetchBusyMessage = function (drawInfo) {
                 drawInfo.centerContext.fillStyle = "rgb(0,192,0)";
                 drawInfo.centerContext.font = '25px sans-serif';
                 drawInfo.centerContext.textBaseline = 'top';
                 drawInfo.centerContext.textAlign = 'center';
                 drawInfo.centerContext.fillText("Fetching data...", drawInfo.sizeCenterX / 2, 5);
+            }
+
+            that.drawFetchFailedMessage = function (drawInfo) {
+                drawInfo.centerContext.fillStyle = "rgb(255,0,0)";
+                drawInfo.centerContext.font = '25px sans-serif';
+                drawInfo.centerContext.textBaseline = 'top';
+                drawInfo.centerContext.textAlign = 'center';
+                drawInfo.centerContext.fillText("Fetch failed !", drawInfo.sizeCenterX / 2, 5);
+            }
+
+            //Draws a vertical scale in the left panel of the channel
+            that.drawVertScale = function (drawInfo, minvl, maxvl) {
+                var jumps = DQX.DrawUtil.getScaleJump((maxvl - minvl) / 15);
+
+                drawInfo.leftContext.fillStyle = "black";
+                drawInfo.leftContext.font = '10px sans-serif';
+                drawInfo.leftContext.textBaseline = 'bottom';
+                drawInfo.leftContext.textAlign = 'right';
+
+                drawInfo.leftContext.strokeStyle = "black";
+                drawInfo.centerContext.strokeStyle = "black";
+                drawInfo.leftContext.globalAlpha = 0.6;
+                drawInfo.centerContext.globalAlpha = 0.2;
+                for (j = Math.ceil(minvl / jumps.Jump1); j <= Math.floor(maxvl / jumps.Jump1); j++) {
+                    vl = j * jumps.Jump1;
+                    yp = Math.round(drawInfo.sizeY - drawInfo.sizeY * 0.1 - (vl - minvl) / (maxvl - minvl) * drawInfo.sizeY * 0.8) - 0.5;
+                    if (j % jumps.JumpReduc == 0) {
+                        drawInfo.leftContext.beginPath();
+                        drawInfo.leftContext.moveTo(drawInfo.sizeLeftX - 8, yp);
+                        drawInfo.leftContext.lineTo(drawInfo.sizeLeftX, yp);
+                        drawInfo.leftContext.stroke();
+                        drawInfo.leftContext.fillText(vl.toFixed(jumps.textDecimalCount), drawInfo.sizeLeftX - 12, yp + 5);
+                        drawInfo.centerContext.beginPath();
+                        drawInfo.centerContext.moveTo(0, yp);
+                        drawInfo.centerContext.lineTo(drawInfo.sizeCenterX, yp);
+                        drawInfo.centerContext.stroke();
+                    }
+                    else {
+                        drawInfo.leftContext.beginPath();
+                        drawInfo.leftContext.moveTo(drawInfo.sizeLeftX - 4, yp);
+                        drawInfo.leftContext.lineTo(drawInfo.sizeLeftX, yp);
+                        drawInfo.leftContext.stroke();
+                    }
+                }
+                drawInfo.leftContext.globalAlpha = 1;
+                drawInfo.centerContext.globalAlpha = 1;
+
+            }
+
+            that.drawTitle = function (drawInfo) {
+                drawInfo.leftContext.save();
+                drawInfo.leftContext.translate(0, drawInfo.sizeY / 2);
+                drawInfo.leftContext.rotate(-Math.PI / 2);
+                drawInfo.leftContext.textBaseline = 'top';
+                drawInfo.leftContext.textAlign = "center";
+                drawInfo.leftContext.font = '11px sans-serif';
+                drawInfo.leftContext.fillStyle = "black";
+                drawInfo.leftContext.fillText(this._title, 0, 5);
+                drawInfo.leftContext.font = '10px sans-serif';
+                drawInfo.leftContext.fillStyle = "rgb(100,100,100)";
+                drawInfo.leftContext.fillText(this._subTitle, 0, 25);
+                drawInfo.leftContext.restore();
             }
 
             that.drawMark = function (drawInfo) {
@@ -156,7 +227,7 @@
                     drawInfo.centerContext.fillStyle = "rgb(255,0,0)";
                     drawInfo.centerContext.fillRect(psx1, 0, psx2 - psx1, drawInfo.sizeY);
                     drawInfo.centerContext.globalAlpha = 1;
-/*
+                    /*
                     centercontext.fillStyle = "rgb(192,0,0)";
                     centercontext.font = '11px sans-serif';
                     centercontext.textBaseline = 'top';
@@ -182,7 +253,7 @@
                     sizeLeftX: drawInfo.sizeLeftX,
                     sizeCenterX: drawInfo.sizeCenterX,
                     sizeRightX: drawInfo.sizeRightX,
-                    mark:drawInfo.mark,
+                    mark: drawInfo.mark,
                     sizeY: this._height
                 };
                 this.draw(locDrawInfo);
@@ -236,6 +307,7 @@
                         drawInfo.centerContext.stroke();
                     }
                 }
+                this.drawMark(drawInfo);
             }
 
             return that;
