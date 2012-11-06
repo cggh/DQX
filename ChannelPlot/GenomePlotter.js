@@ -33,6 +33,7 @@
                 return null;
             }
 
+
             //converts a chromosome id to a chromosome number
             that.getChromoID = function (chromonr) {
                 return this._chromosomes[chromonr - 1].id;

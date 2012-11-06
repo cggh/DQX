@@ -25,7 +25,6 @@
             that.myDownloadValues = []; //holds the currently downloaded values of this column
 
 
-
             that.clearData = function () {
                 this.myDownloadValues = [];
             }
@@ -54,6 +53,11 @@
             this.useLimit = (ipositionfield == 'LIMIT'); //if true, position information are record numbers rather than positions in a columnn (used for paged table fetching)
 
             this._userQuery = null; //an optional restricting query, defined as a DQXWhereClause style object
+
+            this._customQuery = null;
+            this.setCustomQuery = function (qry) {
+                this._customQuery = qry;
+            }
 
             //The currently fetched range of data
             this._currentRangeMin = 1000.0;
@@ -214,9 +218,15 @@
                         qry.addComponent(SQL.WhereClause.CompareFixed(this.positionField, '>=', rangemin));
                         qry.addComponent(SQL.WhereClause.CompareFixed(this.positionField, '<=', rangemax));
                         if (this._userQuery != null) qry.addComponent(this._userQuery);
+                        if (this._customQuery != null) qry.addComponent(this._customQuery);
                     }
                     else {
-                        if (this._userQuery != null) qry = this._userQuery;
+                        if (this._userQuery != null) {
+                            qry = this._userQuery;
+                            if (this._customQuery) {
+                                qry = SQL.WhereClause.AND([qry, this._customQuery]);
+                            }
+                        }
                     }
 
                     var qrytype = "qry";

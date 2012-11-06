@@ -267,7 +267,7 @@
 
             that.handleResize = function () {
                 var W = this.getElemJQ('').innerWidth() - DQX.scrollBarWidth;
-                if (W < 5) W = 600;
+                if (W < 5) return;
                 var H = this.getElemJQ('').innerHeight();
                 var bodyH = H - this._headerHeight - this._footerHeight - this._navigatorHeight;
                 this._sizeX = W - this._leftWidth - this._rightWidth;

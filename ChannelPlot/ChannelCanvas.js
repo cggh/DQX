@@ -17,6 +17,7 @@
                 return this._myPlotter;
             }
             that.getHeight = function () { return this._height; }
+            that.setHeight = function (vl) { this._height = vl; }
 
             that.setTitle = function (ititle) {
                 this._title = ititle;
@@ -101,27 +102,27 @@
             }
 
 
-            that.drawStandardGradientCenter = function (drawInfo) {
+            that.drawStandardGradientCenter = function (drawInfo, fc) {
                 var backgrad = drawInfo.centerContext.createLinearGradient(0, 0, 0, drawInfo.sizeY);
-                backgrad.addColorStop(0, "rgb(255,255,255)");
-                backgrad.addColorStop(1, "rgb(210,210,210)");
+                backgrad.addColorStop(0, DQX.Color(fc, fc, fc));
+                backgrad.addColorStop(1, DQX.Color(0.8 * fc, 0.8 * fc, 0.8 * fc));
                 drawInfo.centerContext.fillStyle = backgrad;
                 drawInfo.centerContext.fillRect(0, 0, drawInfo.sizeCenterX, drawInfo.sizeY);
             }
 
-            that.drawStandardGradientLeft = function (drawInfo) {
+            that.drawStandardGradientLeft = function (drawInfo, fc) {
                 var backgrad = drawInfo.leftContext.createLinearGradient(0, 0, 0, drawInfo.sizeY);
-                backgrad.addColorStop(0, "rgb(230,230,230)");
-                backgrad.addColorStop(1, "rgb(180,180,180)");
+                backgrad.addColorStop(0, DQX.Color(0.9 * fc, 0.9 * fc, 0.9 * fc));
+                backgrad.addColorStop(1, DQX.Color(0.7 * fc, 0.7 * fc, 0.7 * fc));
                 drawInfo.leftContext.fillStyle = backgrad;
                 drawInfo.leftContext.fillRect(0, 0, drawInfo.sizeLeftX, drawInfo.sizeY);
             }
 
-            that.drawStandardGradientRight = function (drawInfo) {
+            that.drawStandardGradientRight = function (drawInfo, fc) {
                 if (drawInfo.sizeRightX > 2) {
                     var backgrad = drawInfo.rightContext.createLinearGradient(0, 0, 0, drawInfo.sizeY);
-                    backgrad.addColorStop(0, "rgb(230,230,230)");
-                    backgrad.addColorStop(1, "rgb(180,180,180)");
+                    backgrad.addColorStop(0, DQX.Color(0.9 * fc, 0.9 * fc, 0.9 * fc));
+                    backgrad.addColorStop(1, DQX.Color(0.7 * fc, 0.7 * fc, 0.7 * fc));
                     drawInfo.rightContext.fillStyle = backgrad;
                     drawInfo.rightContext.fillRect(0, 0, drawInfo.sizeRightX, drawInfo.sizeY);
                 }
@@ -177,7 +178,7 @@
                 drawInfo.leftContext.strokeStyle = "black";
                 drawInfo.centerContext.strokeStyle = "black";
                 drawInfo.leftContext.globalAlpha = 0.6;
-                drawInfo.centerContext.globalAlpha = 0.2;
+                drawInfo.centerContext.globalAlpha = 0.15;
                 for (j = Math.ceil(minvl / jumps.Jump1); j <= Math.floor(maxvl / jumps.Jump1); j++) {
                     vl = j * jumps.Jump1;
                     yp = Math.round(drawInfo.sizeY - drawInfo.sizeY * 0.1 - (vl - minvl) / (maxvl - minvl) * drawInfo.sizeY * 0.8) - 0.5;
@@ -239,6 +240,27 @@
                 }
             }
 
+            that.drawXScale = function (drawInfo) {
+                drawInfo.centerContext.strokeStyle = "black";
+                var i1 = Math.round(((-50 + drawInfo.offsetX) / drawInfo.zoomFactX) / drawInfo.HorAxisScaleJumps.Jump1);
+                if (i1 < 0) i1 = 0;
+                var i2 = Math.round(((drawInfo.sizeCenterX + 50 + drawInfo.offsetX) / drawInfo.zoomFactX) / drawInfo.HorAxisScaleJumps.Jump1);
+                for (i = i1; i <= i2; i++) {
+                    var value = i * drawInfo.HorAxisScaleJumps.Jump1;
+                    var psx = Math.round((value) * drawInfo.zoomFactX - drawInfo.offsetX) + 0.5;
+                    if ((psx >= -50) && (psx <= drawInfo.sizeCenterX + 50)) {
+                        drawInfo.centerContext.globalAlpha = 0.075;
+                        if (i % drawInfo.HorAxisScaleJumps.JumpReduc == 0)
+                            drawInfo.centerContext.globalAlpha = 0.15;
+                        drawInfo.centerContext.beginPath();
+                        drawInfo.centerContext.moveTo(psx, 0);
+                        drawInfo.centerContext.lineTo(psx, drawInfo.sizeY);
+                        drawInfo.centerContext.stroke();
+                    }
+                }
+                drawInfo.centerContext.globalAlpha = 1;
+            }
+
 
 
             that.render = function (drawInfo) {
@@ -267,24 +289,15 @@
 
         ChannelCanvas.XScale = function (id) {
             var that = ChannelCanvas.Base(id);
-            that._height = 30;
+            that._height = 23;
 
             that.draw = function (drawInfo) {
-                //center background
-                var backgrad = drawInfo.centerContext.createLinearGradient(0, 0, 0, drawInfo.sizeY);
-                backgrad.addColorStop(0, "rgb(180,180,180)");
-                backgrad.addColorStop(1, "rgb(120,120,120)");
-                drawInfo.centerContext.fillStyle = backgrad;
-                drawInfo.centerContext.fillRect(0, 0, drawInfo.sizeCenterX, drawInfo.sizeY);
+                this.drawStandardGradientCenter(drawInfo, 0.4);
+                this.drawStandardGradientLeft(drawInfo, 0.4);
+                this.drawStandardGradientRight(drawInfo, 0.4);
 
-                var backgrad = drawInfo.leftContext.createLinearGradient(0, 0, 0, drawInfo.sizeY);
-                backgrad.addColorStop(0, "rgb(150,150,150)");
-                backgrad.addColorStop(1, "rgb(100,100,100)");
-                drawInfo.leftContext.fillStyle = backgrad;
-                drawInfo.leftContext.fillRect(0, 0, drawInfo.sizeLeftX, drawInfo.sizeY);
-
-                drawInfo.centerContext.fillStyle = "black";
-                drawInfo.centerContext.font = '10px sans-serif';
+                drawInfo.centerContext.fillStyle = DQX.Color(0.85, 0.85, 0.85).toString();
+                drawInfo.centerContext.font = '11px sans-serif';
                 drawInfo.centerContext.textBaseline = 'top';
                 drawInfo.centerContext.textAlign = 'center';
 
@@ -297,14 +310,19 @@
                     var value = i * drawInfo.HorAxisScaleJumps.Jump1;
                     var psx = Math.round((value) * drawInfo.zoomFactX - drawInfo.offsetX) + 0.5;
                     if ((psx >= -50) && (psx <= drawInfo.sizeCenterX + 50)) {
-                        drawInfo.centerContext.moveTo(psx, 0);
-                        drawInfo.centerContext.lineTo(psx, 15);
-                        drawInfo.centerContext.strokeStyle = "gray";
                         if (i % drawInfo.HorAxisScaleJumps.JumpReduc == 0) {
-                            drawInfo.centerContext.strokeStyle = "black";
-                            drawInfo.centerContext.fillText((value / 1.0e6), psx, 15);
+                            drawInfo.centerContext.strokeStyle = DQX.Color(0.6, 0.6, 0.6).toString();
+                            drawInfo.centerContext.moveTo(psx, 15);
+                            drawInfo.centerContext.lineTo(psx, 30);
+                            drawInfo.centerContext.stroke();
+                            drawInfo.centerContext.fillText((value / 1.0e6), psx, 2);
                         }
-                        drawInfo.centerContext.stroke();
+                        else {
+                            drawInfo.centerContext.strokeStyle = DQX.Color(0.5, 0.5, 0.5).toString();
+                            drawInfo.centerContext.moveTo(psx, 18);
+                            drawInfo.centerContext.lineTo(psx, 23);
+                            drawInfo.centerContext.stroke();
+                        }
                     }
                 }
                 this.drawMark(drawInfo);

@@ -195,9 +195,9 @@
             }
 
             that.draw = function (drawInfo) {
-                this.drawStandardGradientCenter(drawInfo);
-                this.drawStandardGradientLeft(drawInfo);
-                this.drawStandardGradientRight(drawInfo);
+                this.drawStandardGradientCenter(drawInfo,1);
+                this.drawStandardGradientLeft(drawInfo,1);
+                this.drawStandardGradientRight(drawInfo,1);
 
                 this.drawVertScale(drawInfo, this._minVal, this._maxVal);
 
@@ -248,6 +248,7 @@
 
                 this.drawMark(drawInfo);
                 this.drawTitle(drawInfo);
+                this.drawXScale(drawInfo);
             }
 
             return that;

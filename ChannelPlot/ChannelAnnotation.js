@@ -13,9 +13,9 @@
             that.getTitle = function () { return "Annotation"; }
 
             that.draw = function (drawInfo) {
-                this.drawStandardGradientCenter(drawInfo);
-                this.drawStandardGradientLeft(drawInfo);
-                this.drawStandardGradientRight(drawInfo);
+                this.drawStandardGradientCenter(drawInfo,0.85);
+                this.drawStandardGradientLeft(drawInfo,0.85);
+                this.drawStandardGradientRight(drawInfo,0.85);
 
                 if (drawInfo.zoomFactX < this._minDrawZoomFactX) {
                     this.drawMessage(drawInfo, "Zoom in to see " + this.getTitle());
@@ -100,6 +100,7 @@
                 }
 
                 this.drawMark(drawInfo);
+                this.drawXScale(drawInfo);
             }
 
             return that;
