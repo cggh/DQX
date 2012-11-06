@@ -1,4 +1,4 @@
-﻿define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller", "DQX/ChannelCanvas", "DQX/ChannelYVals"],
+﻿define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller", "DQX/ChannelPlot/ChannelCanvas", "DQX/ChannelPlot/ChannelYVals"],
     function ($, DocEl, Msg, Scroller, ChannelCanvas, ChannelYVals) {
         var ChannelPlotter = {};
 
@@ -23,6 +23,7 @@
             that._fullRangeMin = -0.25E6; //start point of the full x range
             that._fullRangeMax = 250.0E6; //end point of the full x range
             that._zoomFactX = that._BaseZoomFactX;
+            that._myDataFetchers = [];
 
             that.getSubID = function (ext) { return that._myDivID + ext; }
             that.getElemJQ = function (ext) { return $('#' + this.getSubID(ext)); }
@@ -32,7 +33,7 @@
 
             that.addChannel = function (channel, onTop) {
                 if (onTop)
-                    channel._isOnTopPart=true;
+                    channel._isOnTopPart = true;
                 if (channel._myID in that._idChannelMap) throw "Channel id already present: " + channel._myID;
                 this._channels.push(channel);
                 that._idChannelMap[channel._myID] = channel;
@@ -93,12 +94,20 @@
             that._myNavigator = Scroller.HScrollBar(that.getSubID("HScroller"));
             that._myNavigator.myConsumer = that;
 
-            //add some random channels
+            //add scale channels
             that.addChannel(ChannelCanvas.XScale('idp'), true);
-            that.addChannel(ChannelYVals.Channel('idf'), true);
+/*            that.addChannel(ChannelYVals.Channel('idf'), true);
             for (var i = 0; i < 10; i++) {
                 that.addChannel(ChannelYVals.Channel('n' + i));
                 that.addChannel(ChannelCanvas.XScale('id' + i));
+            }*/
+
+
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////
+            //Add a DataFetcher object to the plot
+            that.addDataFetcher = function (idatafetcher) {
+                this._myDataFetchers.push(idatafetcher);
+                idatafetcher.myDataConsumer = this;
             }
 
 
@@ -252,7 +261,7 @@
                     if (this._channels[i]._isOnTopPart)
                         fixedChannelHeight += this._channels[i].getHeight();
                 this.getElemJQ('BodyFixed').height(fixedChannelHeight);
-                this.getElemJQ('BodyScroll').height(bodyH-fixedChannelHeight);
+                this.getElemJQ('BodyScroll').height(bodyH - fixedChannelHeight);
 
                 for (var i = 0; i < this._channels.length; i++)
                     this._channels[i].handleResizeX(W);
