@@ -24,7 +24,7 @@
             that._fullRangeMax = 250.0E6; //end point of the full x range
             that._zoomFactX = that._BaseZoomFactX;
             that._myDataFetchers = [];
-            that._sizeCenterX=null; //indicates that panel is not yet initialised
+            that._sizeCenterX = null; //indicates that panel is not yet initialised
 
             that.getSubID = function (ext) { return that._myDivID + ext; }
             that.getElemJQ = function (ext) { return $('#' + this.getSubID(ext)); }
@@ -42,6 +42,10 @@
                 this.getElemJQ(onTop ? 'BodyFixed' : 'BodyScroll').append(channel.renderHtml());
                 channel.postCreateHtml();
                 $('#' + channel.getCenterElementID()).bind('DOMMouseScroll mousewheel', $.proxy(that.handleMouseWheel, that));
+            }
+
+            that.findChannel = function (id) {
+                return that._idChannelMap[id];
             }
 
 
@@ -104,6 +108,15 @@
                 idatafetcher.myDataConsumer = this;
             }
 
+
+
+            that.activateChannel = function (channelID, newStatus) {
+                var theChannel = this._idChannelMap[channelID];
+                if (!theChannel) throw "Invalid channel id " + channelID;
+                theChannel._setVisible(newStatus);
+                this.render();
+                //this.handleResize();
+            }
 
             ///////////////////////////////////////////////////////////////////////////////////////////////////////
             // Some internally used functions
@@ -249,7 +262,7 @@
             }
 
             that.render = function () {
-                if (!this._sizeCenterX) return;//not yet initialised
+                if (!this._sizeCenterX) return; //not yet initialised
                 var drawInfo = {
                     offsetX: this._offsetX,
                     zoomFactX: this._zoomFactX,
@@ -280,7 +293,7 @@
                 this.getElemJQ('Header').height(this._headerHeight);
                 this.getElemJQ('Body').height(bodyH);
                 this.getElemJQ('Footer').height(this._footerHeight);
-                that._myNavigator.resize(W);
+                that._myNavigator.resize(W + DQX.scrollBarWidth);
 
                 //measure total height of fixed channels
                 var fixedChannelHeight = 0

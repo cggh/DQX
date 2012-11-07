@@ -12,6 +12,30 @@
             that._title = '';
             that._subTitle = '';
 
+            that._isVisible = true;
+            that.canHide = true;
+
+            that.getID = function () { return that._myID; }
+
+            that.getVisible = function () { return this._isVisible; }
+
+            that._setVisible = function (newStatus) {
+                if (!newStatus) {
+                    if (this._isOnTopPart) throw "Invalid action";
+                    if (!this.canHide) throw "Channel cannot be hidden";
+                }
+                this._isVisible = newStatus;
+                this._updateVisibility();
+            }
+
+            that._updateVisibility = function () {
+                if (!this._isVisible)
+                    $('#' + this.getCanvasID('wrapper')).hide();
+                else
+                    $('#' + this.getCanvasID('wrapper')).show();
+            }
+
+
             that.getMyPlotter = function () {
                 if (!this._myPlotter) throw "Channel is not yet associated to a plotter";
                 return this._myPlotter;
@@ -39,7 +63,7 @@
             }
 
             that.renderHtml = function () {
-                var wrapper = DocEl.Div();
+                var wrapper = DocEl.Div({ id: this.getCanvasID('wrapper') });
                 wrapper.addStyle("white-space", "nowrap").addStyle("overflow", "hidden");
                 var elemLeft = DocEl.Create('canvas', { id: this.getCanvasID('left'), parent: wrapper });
                 elemLeft.addAttribute("width", this.getMyPlotter().getLeftWidth());
@@ -61,6 +85,7 @@
 
             that.postCreateHtml = function () {
                 $('#' + this.getCanvasID('center')).mousedown($.proxy(that._onMouseDown, that));
+                this._updateVisibility();
             }
 
             that.handleResizeX = function (width) {
@@ -108,6 +133,8 @@
                 backgrad.addColorStop(1, DQX.Color(0.8 * fc, 0.8 * fc, 0.8 * fc));
                 drawInfo.centerContext.fillStyle = backgrad;
                 drawInfo.centerContext.fillRect(0, 0, drawInfo.sizeCenterX, drawInfo.sizeY);
+                drawInfo.centerContext.fillStyle = DQX.Color(0.5 * fc, 0.5 * fc, 0.5 * fc).toString();
+                drawInfo.centerContext.fillRect(0, drawInfo.sizeY - 1, drawInfo.sizeCenterX, 1);
             }
 
             that.drawStandardGradientLeft = function (drawInfo, fc) {
@@ -116,6 +143,8 @@
                 backgrad.addColorStop(1, DQX.Color(0.7 * fc, 0.7 * fc, 0.7 * fc));
                 drawInfo.leftContext.fillStyle = backgrad;
                 drawInfo.leftContext.fillRect(0, 0, drawInfo.sizeLeftX, drawInfo.sizeY);
+                drawInfo.leftContext.fillStyle = DQX.Color(0.4 * fc, 0.4 * fc, 0.4 * fc).toString();
+                drawInfo.leftContext.fillRect(0, drawInfo.sizeY - 1, drawInfo.sizeLeftX, 1);
             }
 
             that.drawStandardGradientRight = function (drawInfo, fc) {
@@ -125,6 +154,8 @@
                     backgrad.addColorStop(1, DQX.Color(0.7 * fc, 0.7 * fc, 0.7 * fc));
                     drawInfo.rightContext.fillStyle = backgrad;
                     drawInfo.rightContext.fillRect(0, 0, drawInfo.sizeRightX, drawInfo.sizeY);
+                    drawInfo.rightContext.fillStyle = DQX.Color(0.4 * fc, 0.4 * fc, 0.4 * fc).toString();
+                    drawInfo.rightContext.fillRect(0, drawInfo.sizeY - 1, drawInfo.sizeRightX, 1);
                 }
             }
 
@@ -264,6 +295,8 @@
 
 
             that.render = function (drawInfo) {
+                if (!this._isVisible) 
+                    return;
                 // X position conversion: X_screen = X_logical * drawInfo._zoomFactX - drawInfo._offsetX
                 var locDrawInfo = {
                     offsetX: drawInfo.offsetX,

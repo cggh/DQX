@@ -202,14 +202,14 @@
             }
 
             var headerDiv = DocEl.Div();
-            headerDiv.addStyle('padding', '5px');
+            headerDiv.addStyle('padding', '3px');
             headerDiv.addElem('Chromosome: ');
             var chromopicker = DocEl.Select([], '', { id: that.getSubID("ChromoPicker"), parent: headerDiv });
             that.getElemJQ('Header').html(headerDiv.toString());
             that.getElemJQ("ChromoPicker").change($.proxy(that._onChangeChromosome, that));
 
             var footerDiv = DocEl.Div();
-            footerDiv.addStyle('padding', '5px');
+            footerDiv.addStyle('padding', '3px');
             footerDiv.addElem('Find feature: ');
             var featurepicker = DocEl.Edit('', { id: that.getSubID("FeaturePicker"), parent: footerDiv });
             footerDiv.addElem(' ');
