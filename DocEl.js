@@ -40,6 +40,12 @@
     DocEl._Element.prototype.getElem = function (nr) {
         return this.myComponents[nr];
     }
+
+    DocEl._Element.prototype.addHint = function (hint) {
+        this.addAttribute('title', hint);
+        return this;
+    }
+
     
     DocEl._Element.prototype.setCssClass = function (iclss) {
         this.addAttribute('class', iclss);
