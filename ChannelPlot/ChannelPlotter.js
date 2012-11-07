@@ -24,6 +24,7 @@
             that._fullRangeMax = 250.0E6; //end point of the full x range
             that._zoomFactX = that._BaseZoomFactX;
             that._myDataFetchers = [];
+            that._sizeCenterX=null; //indicates that panel is not yet initialised
 
             that.getSubID = function (ext) { return that._myDivID + ext; }
             that.getElemJQ = function (ext) { return $('#' + this.getSubID(ext)); }
@@ -127,6 +128,7 @@
 
             //Updates the navigator
             that.updateNavigator = function () {
+                if (!this._sizeCenterX) return; //not yet initialised
                 var ps1 = (this.screenPos2XVal(0) - this._fullRangeMin) / (this._fullRangeMax - this._fullRangeMin);
                 var ps2 = (this.screenPos2XVal(this._sizeCenterX) - this._fullRangeMin) / (this._fullRangeMax - this._fullRangeMin);
                 this._myNavigator.setRange(this._fullRangeMin / 1.0e6, this._fullRangeMax / 1.0e6);
@@ -142,6 +144,7 @@
 
             //responds to a navigator notification
             that.zoomScrollTo = function (scrollPosFraction, scrollSizeFraction) {
+                if (!this._sizeCenterX) return; //not yet initialised
                 this._zoomFactX = this._sizeCenterX / ((this._fullRangeMax - this._fullRangeMin) * scrollSizeFraction);
                 var psx = this._fullRangeMin + scrollPosFraction * (this._fullRangeMax - this._fullRangeMin);
                 this._offsetX = psx * this._zoomFactX;
@@ -247,6 +250,7 @@
             }
 
             that.render = function () {
+                if (!this._sizeCenterX) return;//not yet initialised
                 var drawInfo = {
                     offsetX: this._offsetX,
                     zoomFactX: this._zoomFactX,

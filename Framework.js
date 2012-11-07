@@ -646,12 +646,16 @@
             }
 
             that.makeVisible = function () {
+                if (this.isVisible())
+                    return;
                 var fr = this;
                 while (fr.myParent != null) {
                     if (fr.myParent.isTabber())
                         fr.myParent.switchTab(fr.myFrameID);
                     fr = fr.myParent;
                 }
+                if (this.myClientObject != null)
+                    this.myClientObject.handleResize(); //this triggers immediate correct sizing of the panel;
                 return true;
             }
 
