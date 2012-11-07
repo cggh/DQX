@@ -1,5 +1,5 @@
-﻿define(["jquery", "DQX/Msg", "DQX/ChannelPlot/ChannelPlotter", "DQX/DataFetcher/DataFetcherAnnotation", "DQX/ChannelPlot/ChannelAnnotation", "DQX/SQL", "DQX/DocEl"],
-    function ($, Msg, ChannelPlotter, DataFetcherAnnotation, ChannelAnnotation, SQL, DocEl) {
+﻿define(["jquery", "DQX/Msg", "DQX/ChannelPlot/ChannelPlotter", "DQX/DataFetcher/DataFetcherAnnotation", "DQX/ChannelPlot/ChannelAnnotation", "DQX/SQL", "DQX/DocEl", "DQX/DataDecoders"],
+    function ($, Msg, ChannelPlotter, DataFetcherAnnotation, ChannelAnnotation, SQL, DocEl, DataDecoders) {
         var GenomePlotter = {};
 
 
@@ -111,9 +111,114 @@
             }
 
 
-            var chromopicker = DocEl.Select([], '', { id: that.getSubID("ChromoPicker") });
-            that.getElemJQ('Header').html(chromopicker.toString());
+            //internal: request gene list was succesful
+            that._ajaxResponse_FindGene = function (resp) {
+                var keylist = DQX.parseResponse(resp); //unpack the response
+                if ("Error" in keylist) {
+                    this.getElemJQ("FeatureHits").html("Failed to fetch data");
+                    return;
+                }
+                var vallistdecoder = DataDecoders.ValueListDecoder();
+                var genelist = vallistdecoder.doDecode(keylist['Hits']);
+                var chromidlist = vallistdecoder.doDecode(keylist['Chroms']);
+                var startlist = vallistdecoder.doDecode(keylist['Starts']);
+                var endlist = vallistdecoder.doDecode(keylist['Ends']);
+                rs = '';
+                this._uniqueFeatureHit = null;
+                var pattern = this.getElemJQ("FeaturePicker").val().toLowerCase()
+                if ((genelist.length > 0) && (genelist[0].length > 0)) {
+                    for (genenr in genelist) {
+                        if (genelist[genenr].toLowerCase() == pattern)
+                            this._uniqueFeatureHit = { chromid: chromidlist[0], start: startlist[0], end: endlist[0] }
+                        var winsize = endlist[genenr] - startlist[genenr];
+                        var lnk = DocEl.Create("a", args);
+                        lnk.addAttribute("href", "javascript:void(0)");
+                        lnk.addElem(genelist[genenr]);
+                        lnk.addAttribute("id", "ChromoBrowserFeatureLink_" + genenr);
+                        rs += ' ' + lnk.toString();
+                        //that.addAttribute("onclick", functionstr);
+                        //rs += " <span>{name}</span>".DQXformat({ name: genelist[genenr] });
+                        //rs += this.createLinkToRegion(chromidlist[genenr], (startlist[genenr] + endlist[genenr]) / 2, winsize, genelist[genenr]);
+                        //rs += '<SMALL>(' + chromidlist[genenr] + ':' + (startlist[genenr] / 1e6).toFixed(2) + '-' + (endlist[genenr] / 1.e6).toFixed(2) + ') </SMALL>';
+                        //rs += '&nbsp; ';
+                    }
+                    if (genelist.length >= 6)
+                        rs += " ...";
+                    this.getElemJQ("FeatureHits").html(rs);
+                    for (genenr in genelist) {
+                        (function dummy(nr) {
+                            var theGeneNr = nr;
+                            $('#' + "ChromoBrowserFeatureLink_" + genenr).mousedown(function (ev) {
+                                Msg.send({ type: 'JumpgenomeRegion' }, {
+                                    chromNr: that.getChromoNr(chromidlist[theGeneNr]),
+                                    start: startlist[theGeneNr],
+                                    end: endlist[theGeneNr]
+                                });
+                            });
+                        })(genenr);
+                    }
+                }
+                else {
+                    this.getElemJQ("FeatureHits").html("No hits found");
+                }
+            }
+
+            //internal: request gene list has failed
+            that._ajaxFailure_FindGene = function (resp) {
+                this.getElemJQ("FeatureHits").html("Failed to fetch data");
+            }
+
+
+            //internal: called as event handler
+            that._onChangeFeaturePicker = function () {
+                var pattern = this.getElemJQ("FeaturePicker").val();
+                if (pattern.length == 0) {
+                    this.getElemJQ("FeatureHits").html("");
+                }
+                else {
+                    var myurl = DQX.Url(this._annotationFetcher.config.serverURL);
+                    myurl.addUrlQueryItem('datatype', 'findgene');
+                    myurl.addUrlQueryItem('pattern', pattern);
+                    myurl.addUrlQueryItem('table', this._annotationFetcher.annotTableName);
+                    myurl.addUrlQueryItem('chromnrfield', this.chromoNrField);
+                    /*                    myurl.addUrlQueryItem('startfield', this.config.annotstartfield);
+                    myurl.addUrlQueryItem('stopfield', this.config.annotstopfield);
+                    myurl.addUrlQueryItem('namefield', this.config.annotnamefield);*/
+                    /*                    if ("altpositionfindtablename" in this.config) {
+                    myurl.addUrlQueryItem('alttablename', this.config.altpositionfindtablename);
+                    myurl.addUrlQueryItem('altidfield', this.config.altpositionfindidfield);
+                    myurl.addUrlQueryItem('altchromnrfield', this.config.altpositionfindchromnrfield);
+                    myurl.addUrlQueryItem('altposfield', this.config.altpositionfindposfield);
+                    myurl.addUrlQueryItem('altpositionchromprefix', this.config.altpositionchromprefix);
+                    }*/
+                    this.getElemJQ("FeatureHits").html("Fetching data...");
+                    $.ajax({
+                        url: myurl.toString(),
+                        success: function (resp) { that._ajaxResponse_FindGene(resp); },
+                        error: function (resp) { that._ajaxFailure_FindGene(resp); }
+                    });
+
+                }
+            }
+
+            var headerDiv = DocEl.Div();
+            headerDiv.addStyle('padding', '5px');
+            headerDiv.addElem('Chromosome: ');
+            var chromopicker = DocEl.Select([], '', { id: that.getSubID("ChromoPicker"), parent: headerDiv });
+            that.getElemJQ('Header').html(headerDiv.toString());
             that.getElemJQ("ChromoPicker").change($.proxy(that._onChangeChromosome, that));
+
+            var footerDiv = DocEl.Div();
+            footerDiv.addStyle('padding', '5px');
+            footerDiv.addElem('Find feature: ');
+            var featurepicker = DocEl.Edit('', { id: that.getSubID("FeaturePicker"), parent: footerDiv });
+            footerDiv.addElem(' ');
+            footerDiv.addElem(DocEl.Span({ id: that.getSubID("FeatureHits"), parent: footerDiv }));
+            that.getElemJQ('Footer').html(footerDiv.toString());
+            var elem = that.getElemJQ('FeaturePicker');
+            var reactfunc = $.proxy(that._onChangeFeaturePicker, that);
+            elem.change(reactfunc); elem.keyup(reactfunc); elem.keydown(reactfunc);
+            elem.bind('paste', function () { setTimeout(reactfunc, 50) });
 
             return that;
         }

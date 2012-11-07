@@ -10,7 +10,7 @@
             that._leftWidth = 120;
             that._rightWidth = 10;
             that._headerHeight = 30;
-            that._footerHeight = 40;
+            that._footerHeight = 30;
             that._navigatorHeight = 30;
             that._myDivID = iDivID;
             that._channels = [];
@@ -55,7 +55,6 @@
                 header.setWidthFull();
                 header.setCssClass('DQXLight');
                 header.addStyle('overflow', 'hidden');
-                //header.addStyle('padding-bottom', '5px');
                 html += header;
             }
             {//Create body
