@@ -31,7 +31,7 @@
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        //NOTE: a channel is identified by a DataFetcher.Curve, and a column id in this fetcher
+        //NOTE: a channel component is identified by a DataFetcher.Curve, and a column id in this fetcher
         ChannelYVals.Comp = function (iID, imyDataFetcher, iValueID) {
             var that = {};
             that.myfetcher = imyDataFetcher; //DataFetcher.Curve used
@@ -51,6 +51,7 @@
                 this.myPlotHints.color = icolor
             }
 
+            //modifies the activity status of this component
             that.modifyComponentActiveStatus = function (newstatus) {
                 if (this.isActive == newstatus)
                     return;
@@ -171,6 +172,7 @@
                 return icomp;
             }
 
+            //Modifies the activity status of a component inside this channel
             that.modifyComponentActiveStatus = function (cmpid, newstatus, redraw) {
                 this.myComponents[cmpid].modifyComponentActiveStatus(newstatus);
                 if (redraw)

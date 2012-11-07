@@ -58,8 +58,8 @@
                 //Defines the restricting query for all channels
                 var chromoquery = SQL.WhereClause.CompareFixed(that.chromoNrField, '=', that.currentChromoNr);
                 for (var fetchnr = 0; fetchnr < this._myDataFetchers.length; fetchnr++) {
-                    if ('setUserQuery' in this._myDataFetchers[fetchnr])
-                        this._myDataFetchers[fetchnr].setUserQuery(chromoquery);
+                    if ('setUserQuery1' in this._myDataFetchers[fetchnr])
+                        this._myDataFetchers[fetchnr].setUserQuery1(chromoquery);
                     if ('setChromoID' in this._myDataFetchers[fetchnr])
                         this._myDataFetchers[fetchnr].setChromoID(this._chromosomes[this.currentChromoNr - 1].id);
                 }

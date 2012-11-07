@@ -52,12 +52,22 @@
             this.sortReverse = false;
             this.useLimit = (ipositionfield == 'LIMIT'); //if true, position information are record numbers rather than positions in a columnn (used for paged table fetching)
 
-            this._userQuery = null; //an optional restricting query, defined as a DQXWhereClause style object
+            //Two optional restricting queries, defined as a DQXWhereClause style object
+            this._userQuery1 = null;
+            this._userQuery2 = null;
 
-            this._customQuery = null;
-            this.setCustomQuery = function (qry) {
-                this._customQuery = qry;
+            //defines a custom query to apply on the data records
+            this.setUserQuery1 = function (iquery) {
+                this._userQuery1 = iquery;
+                this.clearData();
             }
+
+            this.setUserQuery2 = function (qry) {
+                this._userQuery2 = qry;
+                this.clearData();
+            }
+
+
 
             //The currently fetched range of data
             this._currentRangeMin = 1000.0;
@@ -81,11 +91,6 @@
                 this._isFetching = false;
             }
 
-            //defines a custom query to apply on the data records
-            this.setUserQuery = function (iquery) {
-                this._userQuery = iquery;
-                this.clearData();
-            }
 
 
             //adds a column to be fetched, providing a column id and a color
@@ -181,14 +186,14 @@
             }
 
             this.isValid = function () {
-                if (this._userQuery == null) return true;
-                return !this._userQuery.isNone;
+                if (this._userQuery1 == null) return true;
+                return !this._userQuery1.isNone;
             }
 
             //internal: initiates the ajax data fetching call
             this._fetchRange = function (rangemin, rangemax, needtotalrecordcount) {
 
-                if ((this._userQuery) && (this._userQuery.isNone)) {//Query indicates that we should fetch nothing!
+                if ((this._userQuery1) && (this._userQuery1.isNone)) {//Query indicates that we should fetch nothing!
                     this.hasFetchFailed = false;
                     this._isFetching = false;
                     range = rangemax - rangemin;
@@ -217,14 +222,14 @@
                         qry = SQL.WhereClause.AND();
                         qry.addComponent(SQL.WhereClause.CompareFixed(this.positionField, '>=', rangemin));
                         qry.addComponent(SQL.WhereClause.CompareFixed(this.positionField, '<=', rangemax));
-                        if (this._userQuery != null) qry.addComponent(this._userQuery);
-                        if (this._customQuery != null) qry.addComponent(this._customQuery);
+                        if (this._userQuery1 != null) qry.addComponent(this._userQuery1);
+                        if (this._userQuery2 != null) qry.addComponent(this._userQuery2);
                     }
                     else {
-                        if (this._userQuery != null) {
-                            qry = this._userQuery;
-                            if (this._customQuery) {
-                                qry = SQL.WhereClause.AND([qry, this._customQuery]);
+                        if (this._userQuery1 != null) {
+                            qry = this._userQuery1;
+                            if (this._userQuery2) {
+                                qry = SQL.WhereClause.AND([qry, this._userQuery2]);
                             }
                         }
                     }
@@ -270,8 +275,8 @@
                 //prepare the url
                 var collist = this._createActiveColumnListString();
                 var thequery = SQL.WhereClause.Trivial();
-                if (this._userQuery != null)
-                    thequery = this._userQuery;
+                if (this._userQuery1 != null)
+                    thequery = this._userQuery1;
                 var myurl = DQX.Url(this.serverurl);
                 myurl.addUrlQueryItem("datatype", "downloadtable");
                 myurl.addUrlQueryItem("qry", SQL.WhereClause.encode(thequery));

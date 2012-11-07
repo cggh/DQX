@@ -110,7 +110,7 @@
 
 
 
-            that.activateChannel = function (channelID, newStatus) {
+            that.channelModifyVisibility = function (channelID, newStatus) {
                 var theChannel = this._idChannelMap[channelID];
                 if (!theChannel) throw "Invalid channel id " + channelID;
                 theChannel._setVisible(newStatus);

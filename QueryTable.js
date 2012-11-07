@@ -222,7 +222,7 @@
             //Defines the query that is used to return the table content
             that.setQuery = function (iquery) {
                 this._highlightRowNr = -1;
-                this.myDataFetcher._userQuery = iquery;
+                this.myDataFetcher._userQuery1 = iquery;
                 this._dataValid = true;
             }
 
