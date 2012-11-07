@@ -1,5 +1,5 @@
-﻿define(["jquery", "DQX/Msg", "DQX/Utils", "async!https://maps.googleapis.com/maps/api/js?libraries=visualization&sensor=false"], 
-    function ($, Msg, DQX) {
+﻿define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/Msg", "DQX/Utils", "async!https://maps.googleapis.com/maps/api/js?libraries=visualization&sensor=false"], 
+    function ($, Countries, GeoJSON, Msg, DQX) {
 
     var GMaps = {}
     
@@ -39,9 +39,37 @@
     
         return that;
     }
+
+    //////////////////////////////////////////////////////////////////////////////////////////
+    // Class displaying a Country
+    //////////////////////////////////////////////////////////////////////////////////////////
+    GMaps.Country = function(iid, imapobject, country_name, gmap_options) {
+        google_objs = GeoJSON(Countries.geo_json_by_fullname[country_name], gmap_options);
+        if (google_objs.error) {
+                console.log(google_objs);
+                return;
+        }
+        var that = {};
+        that.myID = iid;
+        that.myMapObject = imapobject
+        that.myMapObject._addOverlay(that);
+        that.myData = country_name;
+        that.myObjects = [];
+        for (var i = 0; i < google_objs.length; i++) {
+            that.myObjects.push(google_objs[i]);
+            google_objs[i].setMap(that.myMapObject.myMap);
+            google.maps.event.addListener(google_objs[i], 'click',
+                function () { Msg.send({ type: 'ClickMapPoint', id: that.myID }, that.myID); }
+            );
+        }
+        that.remove = function () {
+            for (var i = 0; i < this.myObjects.length; i++) {
+                this.myObjects[i].setMap(null);
+            }
+        }
     
-    
-    
+        return that;
+    }
     //////////////////////////////////////////////////////////////////////////////////////////
     // Class displaying a Polygon
     //////////////////////////////////////////////////////////////////////////////////////////
@@ -71,7 +99,6 @@
         that.remove = function () {
             this.myObject.setMap(null);
         }
-    
         return that;
     }
     
@@ -81,11 +108,12 @@
     // Class displaying a set of points
     //////////////////////////////////////////////////////////////////////////////////////////
     
-    GMaps.PointSet = function (iid, imapobject, iminzoomlevel, bitmapfile) {
+    GMaps.PointSet = function (iid, imapobject, iminzoomlevel, bitmapfile, polygon_options) {
         var that = {};
     
         that.myID = iid;
         that.myMapObject = imapobject;
+        that.polygon_options = polygon_options;
         that.minZoomlevel = iminzoomlevel;
         that.myMapObject._addOverlay(that);
         that.myPointSet = [];
@@ -94,11 +122,12 @@
             that.image = new google.maps.MarkerImage(bitmapfile, null, null, new google.maps.Point(10, 10));
         that.visibleUser = true;
         that.visibleZoomlevel = imapobject.myMap.zoom >= iminzoomlevel;
-        that._currentVisible = true;
+        that._currentVisible = false;
     
         that.clearPoints = function () {
             for (var pointnr = 0; pointnr < this.myPointSet.length; pointnr++)
-                this.myPointSet[pointnr].marker.setMap(null);
+                for (var marknr = 0; marknr < this.myPointSet[pointnr].markers.length; marknr++)
+                    this.myPointSet[pointnr].markers[marknr].setMap(null);
             this.myPointSet = [];
         }
     
@@ -113,9 +142,13 @@
                 this._currentVisible = newstatus;
                 for (var pointnr = 0; pointnr < this.myPointSet.length; pointnr++) {
                     if (!newstatus)
-                        this.myPointSet[pointnr].marker.setMap(null);
+                        for (var marknr = 0; marknr < this.myPointSet[pointnr].markers.length; marknr++)
+                            this.myPointSet[pointnr].markers[marknr].setMap(null);
                     else
-                        this.myPointSet[pointnr].marker.setMap(this.myMapObject.myMap);
+                        for (var marknr = 0; marknr < this.myPointSet[pointnr].markers.length; marknr++)
+                        {
+                            this.myPointSet[pointnr].markers[marknr].setMap(this.myMapObject.myMap);
+                        }
                 }
             }
         }
@@ -133,10 +166,26 @@
                     }
                     if ('image' in obj)
                         markerobject.icon = obj.image;
-                    obj.myPointSet[pointnr].marker = new google.maps.Marker(markerobject);
-                    google.maps.event.addListener(obj.myPointSet[pointnr].marker, 'click',
-                    function () { obj._handleOnPointClicked(pointnr); }
-                    );
+                    if (obj.myPointSet[pointnr].location_type == 'country') {
+                        google_objs = GeoJSON(Countries.geo_json_by_fullname[obj.myPointSet[pointnr].given_name], obj.polygon_options);
+                        if (!google_objs[0].error) {
+                            obj.myPointSet[pointnr].markers = google_objs;
+                            for (var j = 0; j < google_objs.length; j++) {
+                                google.maps.event.addListener(obj.myPointSet[pointnr].markers[j], 'click',
+                                   function () { obj._handleOnPointClicked(pointnr); });
+                            }
+                        } else {
+                            console.log(obj.myPointSet[pointnr].given_name);
+                            console.log(google_objs);
+                        }
+                        
+                    } else {
+                        obj.myPointSet[pointnr].markers = [new google.maps.Marker(markerobject)];
+                        google.maps.event.addListener(obj.myPointSet[pointnr].markers[0], 'click',
+                            function () { obj._handleOnPointClicked(pointnr); }
+                        );
+                    }
+                    
                 })(i);
             }
             this._updateVisible();
