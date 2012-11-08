@@ -701,16 +701,19 @@
         // Interactive query builder GUI component
         //////////////////////////////////////////////////////////////////////////////////////////
 
-        QueryBuilder.GUI = function (iid, args) {
-            var that = DQX.Gui.GuiComponent(iid, args);
+        QueryBuilder.Panel = function (iid, args) {
+            var that = new QueryBuilder(iid);
+            that.myID = iid;
+            if ($('#' + that.myID).length == 0) throw "Invalid Gui component " + iid;
+            that.rootelem = $('#' + that.myID);
 
-            that.myBuilder = new QueryBuilder(iid);
-
-            that.onResize = function () {
-                this.myBuilder._reRender();
+            that.handleResize = function () {
+                if ((that.rootelem.width() > 5) && (that.rootelem.height() > 5))
+                    this._reRender();
             }
 
             return that;
         }
+
         return QueryBuilder;
     });
