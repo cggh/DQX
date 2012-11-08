@@ -5,8 +5,8 @@
 
 
 
-        GenomePlotter.Plotter = function (iDivID, args) {
-            var that = ChannelPlotter.Plotter(iDivID, args);
+        GenomePlotter.Panel = function (iDivID, args) {
+            var that = ChannelPlotter.Panel(iDivID, args);
 
 
             that._chromosomes = [];

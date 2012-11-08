@@ -5,7 +5,7 @@
 
 
 
-        ChannelPlotter.Plotter = function (iDivID, args) {
+        ChannelPlotter.Panel = function (iDivID, args) {
             var that = {};
             that._leftWidth = 120;
             that._rightWidth = 10;

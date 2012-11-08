@@ -546,7 +546,7 @@
         //////////////////////////////////////////////////////////////////////////////////////////
 
 
-        QueryTable.GUI = function (iid, idatafetcher, args) {
+        QueryTable.Panel = function (iid, idatafetcher, args) {
             var that = DQX.Gui.GuiComponent(iid, args);
 
             var html = '';
