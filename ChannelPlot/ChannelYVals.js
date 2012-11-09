@@ -73,6 +73,10 @@
                 if (xvals.length > 10000) psz = 2;
                 var plothints = this.myPlotHints;
                 var hasYFunction = "YFunction" in this;
+                this._pointsX = []; this._pointsY = []; this._pointsIndex = [];
+                var pointsX = this._pointsX;
+                var pointsY = this._pointsY;
+                var pointsIndex = this._pointsIndex;
 
                 var psy_fact = 1.0 / (rangemax - rangemin) * drawInfo.sizeY * 0.8;
                 var psy_offset = drawInfo.sizeY - drawInfo.sizeY * 0.1 + rangemin * psy_fact;
@@ -130,6 +134,7 @@
                                 y = this.YFunction(y);
                             var psx = Math.round(x * drawInfo.zoomFactX - drawInfo.offsetX);
                             var psy = Math.round(psy_offset - y * psy_fact);
+                            pointsX.push(psx); pointsY.push(psy); pointsIndex.push(i + points.startIndex);
                             switch (pointstyle) {
                                 case 0:
                                     drawInfo.centerContext.fillRect(psx - 1, psy - 1, psz, psz);
@@ -152,6 +157,26 @@
                 }
             }
 
+            that.getClosestPoint = function (px, py) {
+                var mindst = 6;
+                var closestPointIndex = null; var mpx = null; var mpy = null;
+                var pointsX = this._pointsX;
+                var pointsY = this._pointsY;
+                var pointsIndex = this._pointsIndex;
+                var len = pointsX.length;
+                for (var i = 0; i < len; i++) {
+                    var dst = Math.abs(pointsX[i] - px) + Math.abs(pointsY[i] - py);
+                    if (dst < mindst) {
+                        mindst = dst;
+                        closestPointIndex = pointsIndex[i];
+                        mpx = pointsX[i];
+                        mpy = pointsY[i];
+                    }
+                }
+                return { minDistance: mindst, closestPointIndex: closestPointIndex, px: mpx, py: mpy, highlightPoint: true };
+            }
+
+
             return that;
         }
 
@@ -170,6 +195,12 @@
                 this.myComponents[icomp.getID()] = icomp;
                 icomp.myChannel = this;
                 return icomp;
+            }
+
+            that.getComponentCount = function () { return this.myComponents.length; }
+
+            that.getComponent = function (nr) {
+                return this.myComponents[nr];
             }
 
             //Modifies the activity status of a component inside this channel
@@ -197,9 +228,9 @@
             }
 
             that.draw = function (drawInfo) {
-                this.drawStandardGradientCenter(drawInfo,1);
-                this.drawStandardGradientLeft(drawInfo,1);
-                this.drawStandardGradientRight(drawInfo,1);
+                this.drawStandardGradientCenter(drawInfo, 1);
+                this.drawStandardGradientLeft(drawInfo, 1);
+                this.drawStandardGradientRight(drawInfo, 1);
 
                 this.drawVertScale(drawInfo, this._minVal, this._maxVal);
 
@@ -237,7 +268,6 @@
                 if (alldataready)
                     var q = 0;
 
-                var NrPointsDrawn = 0;
                 for (var levelnr = 0; levelnr < 2; levelnr++) {
                     for (var compid in this.myComponents) {
                         var comp = this.myComponents[compid];
@@ -246,15 +276,43 @@
                         }
                     }
                 }
-                this.allowToolTipsInCurrentView = NrPointsDrawn < 5000;
 
                 this.drawMark(drawInfo);
                 this.drawTitle(drawInfo);
                 this.drawXScale(drawInfo);
             }
 
+            that.getToolTipInfo = function (px, py) {
+                var bestMatch = { minDistance: 6, closestPointIndex: null };
+                for (var compid in this.myComponents) {
+                    var comp = this.myComponents[compid];
+                    if (comp.isActive) {
+                        var tryMatch = comp.getClosestPoint(px, py);
+                        if (tryMatch.minDistance < bestMatch.minDistance) {
+                            bestMatch = tryMatch;
+                            bestMatch.compID = compid;
+                            bestMatch.ID = compid + '_' + bestMatch.closestPointIndex;
+                        }
+                    }
+                }
+                if (bestMatch.ID) {
+                    bestMatch.content = this.getToolTipContent(bestMatch.compID, bestMatch.closestPointIndex);
+                    return bestMatch;
+                }
+                else
+                    return null;
+            }
+
+            //Returns the tooltip content for a given point. This function can be overridden to implement a specific behaviour
+            that.getToolTipContent = function (compID, pointIndex) {
+                var comp = this.myComponents[compID];
+                var value = comp.myfetcher.getColumnPoint(pointIndex, compID);
+                return compID + '= ' + value;
+            }
+
             return that;
         }
+
 
 
 

@@ -100,6 +100,12 @@
                 return this.myColumns[cid];
             }
 
+            this.getFetchColumn = function (cid) {
+                var rs = this.myColumns[cid];
+                if (rs == null) throw "Invalid fetcher column id " + cid;
+                return rs;
+            }
+
             //removes a column
             this.delFetchColumn = function (cid) {
                 delete this.myColumns[cid];

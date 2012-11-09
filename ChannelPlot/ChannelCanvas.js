@@ -11,6 +11,7 @@
             that._height = 120;
             that._title = '';
             that._subTitle = '';
+            that._toolTipInfo = { ID: null };
 
             that._isVisible = true;
             that.canHide = true;
@@ -62,6 +63,15 @@
                 return $("#" + this.getCanvasID(ext))[0];
             }
 
+            that.posXCenterCanvas2Screen = function (px) {
+                return px + $(this.getCanvasElement('center')).offset().left;
+            }
+
+            that.posYCenterCanvas2Screen = function (py) {
+                return py + $(this.getCanvasElement('center')).offset().top;
+            }
+
+
             that.renderHtml = function () {
                 var wrapper = DocEl.Div({ id: this.getCanvasID('wrapper') });
                 wrapper.addStyle("white-space", "nowrap").addStyle("overflow", "hidden");
@@ -85,6 +95,9 @@
 
             that.postCreateHtml = function () {
                 $('#' + this.getCanvasID('center')).mousedown($.proxy(that._onMouseDown, that));
+                $('#' + this.getCanvasID('center')).mousemove($.proxy(that._onMouseMove, that));
+                $('#' + this.getCanvasID('center')).mouseenter($.proxy(that._onMouseEnter, that));
+                $('#' + this.getCanvasID('center')).mouseleave($.proxy(that._onMouseLeave, that));
                 this._updateVisibility();
             }
 
@@ -95,14 +108,14 @@
             }
 
             that._onMouseDown = function (ev) {
-                $(document).bind("mouseup.ChannelCanvas", $.proxy(that._onMouseUp, that));
-                $(document).bind("mousemove.ChannelCanvas", $.proxy(that._onMouseMove, that));
+                $(document).bind("mouseup.ChannelCanvas", $.proxy(that._onMouseDragUp, that));
+                $(document).bind("mousemove.ChannelCanvas", $.proxy(that._onMouseDragMove, that));
                 this.getMyPlotter().handleMouseDown(that, ev, { x: this.getEventPosX(ev), Y: this.getEventPosY(ev) });
                 ev.returnValue = false;
                 return false;
             }
 
-            that._onMouseUp = function (ev) {
+            that._onMouseDragUp = function (ev) {
                 $(document).unbind("mouseup.ChannelCanvas");
                 $(document).unbind("mousemove.ChannelCanvas");
                 this.getMyPlotter().handleMouseUp(that, ev, { x: this.getEventPosX(ev), Y: this.getEventPosY(ev) });
@@ -110,11 +123,12 @@
                 return false;
             }
 
-            that._onMouseMove = function (ev) {
+            that._onMouseDragMove = function (ev) {
                 this.getMyPlotter().handleMouseMove(that, ev, { x: this.getEventPosX(ev), Y: this.getEventPosY(ev) });
                 ev.returnValue = false;
                 return false;
             }
+
 
             //Returns the position X coordinate of an event, relative to the center canvas element
             that.getEventPosX = function (ev) {
@@ -124,6 +138,53 @@
             //Returns the position Y coordinate of an event, relative to the center canvas element
             that.getEventPosY = function (ev) {
                 return ev.pageY - $(this.getCanvasElement('center')).offset().top;
+            }
+
+
+            that._onMouseEnter = function (ev) {
+            }
+
+            that._onMouseLeave = function (ev) {
+                this.hideToolTip();
+            }
+
+            that.getToolTipInfo = function (px, py) {
+                return null;
+            }
+
+            that._onMouseMove = function (ev) {
+                var px = this.getEventPosX(ev);
+                var py = this.getEventPosY(ev);
+                var newToolTipInfo = this.getToolTipInfo(px, py);
+                if (newToolTipInfo) {
+                    if (this._toolTipInfo.ID != newToolTipInfo.ID) {
+                        this.hideToolTip();
+                        this._toolTipInfo = newToolTipInfo;
+                        var tooltip = DocEl.Div();
+                        tooltip.setCssClass("DQXChannelToolTip");
+                        tooltip.addStyle("position", "absolute");
+                        tooltip.addStyle("left", (this.posXCenterCanvas2Screen(this._toolTipInfo.px) + 10) + 'px');
+                        tooltip.addStyle("top", (this.posYCenterCanvas2Screen(this._toolTipInfo.py) + 10) + 'px');
+                        tooltip.addElem(this._toolTipInfo.content);
+                        $('#DQXUtilContainer').append(tooltip.toString());
+                        if (this._toolTipInfo.highlightPoint) {
+                            var tooltip = DocEl.Div();
+                            tooltip.setCssClass("DQXChannelToolTipHighlightPoint");
+                            tooltip.addStyle("position", "absolute");
+                            tooltip.addStyle("left", (this.posXCenterCanvas2Screen(this._toolTipInfo.px) -5) + 'px');
+                            tooltip.addStyle("top", (this.posYCenterCanvas2Screen(this._toolTipInfo.py) -5) + 'px');
+                            $('#DQXUtilContainer').append(tooltip.toString());
+                        }
+                    }
+                }
+                else
+                    this.hideToolTip();
+            }
+
+            that.hideToolTip = function () {
+                this._toolTipInfo.ID = null;
+                $('#DQXUtilContainer').find('.DQXChannelToolTip').remove();
+                $('#DQXUtilContainer').find('.DQXChannelToolTipHighlightPoint').remove();
             }
 
 
@@ -295,7 +356,7 @@
 
 
             that.render = function (drawInfo) {
-                if (!this._isVisible) 
+                if (!this._isVisible)
                     return;
                 // X position conversion: X_screen = X_logical * drawInfo._zoomFactX - drawInfo._offsetX
                 var locDrawInfo = {
@@ -313,6 +374,8 @@
                 };
                 this.draw(locDrawInfo);
             }
+
+
             return that;
         }
 
