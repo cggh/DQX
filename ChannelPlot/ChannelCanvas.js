@@ -94,6 +94,7 @@
             }
 
             that.postCreateHtml = function () {
+                $('#' + this.getCanvasID('center')).click($.proxy(that._onMouseClick, that));
                 $('#' + this.getCanvasID('center')).mousedown($.proxy(that._onMouseDown, that));
                 $('#' + this.getCanvasID('center')).mousemove($.proxy(that._onMouseMove, that));
                 $('#' + this.getCanvasID('center')).mouseenter($.proxy(that._onMouseEnter, that));
@@ -107,10 +108,20 @@
                 this.getCanvasElement('center').width = w2;
             }
 
+
+            that._onMouseClick = function (ev) {
+                if (!this.getMyPlotter()._hasMouseMoved) {
+                    var px = this.getEventPosX(ev);
+                    var py = this.getEventPosY(ev);
+                    this.handleMouseClicked(px, py);
+                }
+
+            }
+
             that._onMouseDown = function (ev) {
                 $(document).bind("mouseup.ChannelCanvas", $.proxy(that._onMouseDragUp, that));
                 $(document).bind("mousemove.ChannelCanvas", $.proxy(that._onMouseDragMove, that));
-                this.getMyPlotter().handleMouseDown(that, ev, { x: this.getEventPosX(ev), Y: this.getEventPosY(ev) });
+                this.getMyPlotter().handleMouseDown(that, ev, { x: this.getEventPosX(ev), y: this.getEventPosY(ev) });
                 ev.returnValue = false;
                 return false;
             }
@@ -118,13 +129,13 @@
             that._onMouseDragUp = function (ev) {
                 $(document).unbind("mouseup.ChannelCanvas");
                 $(document).unbind("mousemove.ChannelCanvas");
-                this.getMyPlotter().handleMouseUp(that, ev, { x: this.getEventPosX(ev), Y: this.getEventPosY(ev) });
+                this.getMyPlotter().handleMouseUp(that, ev, { x: this.getEventPosX(ev), y: this.getEventPosY(ev) });
                 ev.returnValue = false;
                 return false;
             }
 
             that._onMouseDragMove = function (ev) {
-                this.getMyPlotter().handleMouseMove(that, ev, { x: this.getEventPosX(ev), Y: this.getEventPosY(ev) });
+                this.getMyPlotter().handleMouseMove(that, ev, { x: this.getEventPosX(ev), y: this.getEventPosY(ev) });
                 ev.returnValue = false;
                 return false;
             }
@@ -147,6 +158,10 @@
             that._onMouseLeave = function (ev) {
                 this.hideToolTip();
             }
+
+            that.handleMouseClicked = function(px, py) {
+            }
+
 
             that.getToolTipInfo = function (px, py) {
                 return null;
@@ -171,8 +186,8 @@
                             var tooltip = DocEl.Div();
                             tooltip.setCssClass("DQXChannelToolTipHighlightPoint");
                             tooltip.addStyle("position", "absolute");
-                            tooltip.addStyle("left", (this.posXCenterCanvas2Screen(this._toolTipInfo.px) -5) + 'px');
-                            tooltip.addStyle("top", (this.posYCenterCanvas2Screen(this._toolTipInfo.py) -5) + 'px');
+                            tooltip.addStyle("left", (this.posXCenterCanvas2Screen(this._toolTipInfo.px) - 5) + 'px');
+                            tooltip.addStyle("top", (this.posYCenterCanvas2Screen(this._toolTipInfo.py) - 5) + 'px');
                             $('#DQXUtilContainer').append(tooltip.toString());
                         }
                     }

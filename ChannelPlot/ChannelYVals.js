@@ -282,6 +282,13 @@
                 this.drawXScale(drawInfo);
             }
 
+            that.handleMouseClicked = function (px, py) {
+                var tooltipInfo = that.getToolTipInfo(px, py);
+                if (tooltipInfo) {
+                    this.handlePointClicked(tooltipInfo.compID, tooltipInfo.closestPointIndex);
+                }
+            }
+
             that.getToolTipInfo = function (px, py) {
                 var bestMatch = { minDistance: 6, closestPointIndex: null };
                 for (var compid in this.myComponents) {
@@ -309,6 +316,11 @@
                 var value = comp.myfetcher.getColumnPoint(pointIndex, compID);
                 return compID + '= ' + value;
             }
+
+            //Reacts on a click event on a point. This function can be overridden to implement a specific behaviour
+            this.handlePointClicked = function (compID, pointIndex) {
+            }
+
 
             return that;
         }
