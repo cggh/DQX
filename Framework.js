@@ -83,6 +83,7 @@
             that.sepSize = 10;
             that.frameClass = ''; //css class of the div that makes the border of this panel
             that.frameClassClient = ''; //css class of the div that makes the client area this panel
+            that._handleInitialise = null; //this function will be called the first time this frame goes live
 
             that.allowYScrollbar = true;
             that.allowXScrollbar = false;
@@ -150,6 +151,10 @@
             }
 
             ///////////////// TO BE CALLED CREATION TIME
+
+            that.setInitialiseFunction = function (handler) {
+                this._handleInitialise = handler;
+            }
 
             that.setFixedSize = function (dim, sz) {
                 Framework.isValidDim(dim);
@@ -228,14 +233,13 @@
             /////////////// INTERNAL FUNCTIONS
 
             that._reactClickTab = function (scope, id) {
-                this.setSubFramesPosition();
                 for (var fnr = 0; fnr < this.memberFrames.length; fnr++) {
                     var tabid = this.getClientDivID() + '_tab_' + fnr;
-                    if (tabid == id) {
+                    if (tabid == id)
                         this.activeTabNr = fnr;
-                        this.onChangeTab(this.memberFrames[fnr].myFrameID);
-                    }
                 }
+                this.setSubFramesPosition();
+                this.onChangeTab(this.memberFrames[this.activeTabNr].myFrameID);
             }
 
             that.createElements = function (level) {
@@ -502,10 +506,10 @@
 
             that.setSubFramesPosition = function () {
                 var frameel = $('#' + this.myID);
-                this.setPosition(frameel.position().left, frameel.position().top, frameel.width(), frameel.height(), true);
+                this.setPosition(frameel.position().left, frameel.position().top, frameel.width(), frameel.height(), true, false);
             }
 
-            that.setPosition = function (x0, y0, sx, sy, subFramesOnly) {
+            that.setPosition = function (x0, y0, sx, sy, subFramesOnly, isHidden) {
                 var frameel = $('#' + this.myID);
 
                 if (!subFramesOnly) {
@@ -546,7 +550,7 @@
                     this.sepPosits = [];
                     var framePosits = that._calculateFramePositions(clientWidth);
                     for (var fnr = 0; fnr < this.memberFrames.length; fnr++) {
-                        this.memberFrames[fnr].setPosition(framePosits[fnr].pos1, 0, framePosits[fnr].pos2 - framePosits[fnr].pos1 + 1, clientHeight);
+                        this.memberFrames[fnr].setPosition(framePosits[fnr].pos1, 0, framePosits[fnr].pos2 - framePosits[fnr].pos1 + 1, clientHeight, false, isHidden);
                         if (fnr < this.memberFrames.length - 1) {
                             var splitterel = $('#' + this.getSeparatorDivID(fnr));
                             splitterel.css('position', 'absolute');
@@ -563,7 +567,7 @@
                     this.sepPosits = [];
                     var framePosits = that._calculateFramePositions(clientHeight);
                     for (var fnr = 0; fnr < this.memberFrames.length; fnr++) {
-                        this.memberFrames[fnr].setPosition(0, framePosits[fnr].pos1, clientWidth, framePosits[fnr].pos2 - framePosits[fnr].pos1 + 1);
+                        this.memberFrames[fnr].setPosition(0, framePosits[fnr].pos1, clientWidth, framePosits[fnr].pos2 - framePosits[fnr].pos1 + 1, false, isHidden);
                         if (fnr < this.memberFrames.length - 1) {
                             var splitterel = $('#' + this.getSeparatorDivID(fnr));
                             splitterel.css('position', 'absolute');
@@ -579,19 +583,24 @@
                     $('#' + this.getClientDivID() + '_tabbody').css('height', clientHeight - 47);
                     //tabbody.setCssClass("DQXTabBody");
                     for (var fnr = 0; fnr < this.memberFrames.length; fnr++) {
-                        this.memberFrames[fnr].setPosition(0, 30, clientWidth, clientHeight - 30);
+                        this.memberFrames[fnr].setPosition(0, 30, clientWidth, clientHeight - 30, false, isHidden || (fnr != this.activeTabNr));
                     }
                 }
 
                 if (!subFramesOnly)
                     if (this.isTabber()) this._createTabItems();
 
+                if (!this._initialised && (!isHidden)) {
+                    if (this._handleInitialise)
+                        this._handleInitialise();
+                    this._initialised = true;
+                }
 
                 if (this.isFinalPanel()) {
-                    this._needUpdateSize = true;
-                    //                    if (this.myClientObject != null) {
-                    //                        this.myClientObject.handleResize();
-                    //                    }
+                    if (this.myClientObject != null)
+                        this.myClientObject.handleResize();
+                    else
+                        this._needUpdateSize = true;
                 }
 
             }
@@ -695,7 +704,7 @@
             var v2 = myparent.get(0).tagName;
             var sx = myparent.innerWidth();
             var sy = myparent.innerHeight();
-            Framework.frameRoot.setPosition(0, 0, sx, sy);
+            Framework.frameRoot.setPosition(0, 0, sx, sy, false, false);
         }
 
         //This function is called periodically the monitor the required size updates of panels in frames
