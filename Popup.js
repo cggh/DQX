@@ -73,6 +73,7 @@
                 $('#DQXUtilContainer').append(content);
                 MakeDrag(ID);
             }
+            return ID;
         }
 
         return Popup;
