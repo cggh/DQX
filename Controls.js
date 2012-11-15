@@ -285,7 +285,9 @@
             that._controlExtensionList.push('');
 
             that.renderHtml = function () {
-                var lb = DocEl.Span();
+                var lb = DocEl.Div();
+                lb.addStyle("padding-top","5px");
+                lb.addStyle("padding-bottom","5px");
                 lb.addElem(this.myContent);
                 return lb.toString();
             }
@@ -568,5 +570,90 @@
 
             return that;
         }
+
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        Controls.RadioGroup = function (iid, args) {
+            var that = Controls.Control(iid);
+            that.myLabel = args.label;
+            that.myStates = args.states;
+            that._selectedState = '';
+            if ('value' in args)
+                that._selectedState = args.value;
+            if (args.hint)
+                that._hint = args.hint;
+
+            that._controlExtensionList.push('');
+
+            that._buildStatesMap = function () {
+                this._statesMap = {};
+                for (var i = 0; i < this.myStates.length; i++)
+                    this._statesMap[this.myStates[i].id] = this.myStates[i].name;
+            }
+            that._buildStatesMap();
+
+            that.isState = function (id) {
+                if (!('_statesMap' in this)) return false;
+                return (id in this._statesMap);
+            }
+
+
+            that._buildSelectContent = function () {
+                var st = '';
+                for (var i = 0; i < this.myStates.length; i++) {
+                    var stateid = /*this.getFullID('') + '_' + */this.myStates[i].id;
+                    st += '<div style="padding:5px">';
+                    st += '<input type="radio" name={controlid} id={id2} value="{id}" {selected}></input>'.DQXformat({
+                        controlid: this.getFullID(''),
+                        id: stateid, id2: stateid,
+                        selected: (this.myStates[i].id == this._selectedState) ? 'checked="yes"' : ''
+                    });
+                    st += '<label for="{id}">{title}</label>'.DQXformat({
+                        id: stateid,
+                        title: this.myStates[i].name
+                    });
+                    st += "</div>";
+                }
+                return st;
+            }
+
+            that.renderHtml = function () {
+                var cmb = DocEl.Div({ id: this.getFullID('') });
+                cmb.addElem(this._buildSelectContent());
+                /*                var label = DocEl.Label({ target: this.getFullID('Label') });
+                label.addElem(this.myLabel);*/
+                return cmb.toString();
+            }
+
+            that.postCreateHtml = function () {
+                var target = 'change.controlevent';
+                this.getJQElement('').unbind(target).bind(target, $.proxy(that._onChange, that));
+            }
+
+            that._onChange = function () {
+                this._selectedState = this.getValue();
+                this._notifyChanged();
+            }
+
+            that.getValue = function () {
+                this._selectedState = this.getJQElement('').find(":checked").attr('value');
+                return this._selectedState;
+            }
+
+            that.modifyValue = function (newstate) {
+                if (newstate == this.getValue()) return;
+                if (!this.isState(newstate))
+                    throw 'Invalid combo box state';
+                this._selectedState = newstate;
+                this.getJQElement('').val(this._selectedState);
+                this._notifyChanged();
+            }
+
+
+            return that;
+        }
+
+
         return Controls;
     });
