@@ -366,7 +366,12 @@
                 myurl.addUrlQueryItem("qry", SQL.WhereClause.encode(whereclause));
                 myurl.addUrlQueryItem("tbname", this.tablename); //tablename to fetch from
                 var _ajaxResponse_FetchPoint = function (resp) {
-                    theCallbackFunction(DQX.parseResponse(resp).Data);
+                    var keylist = DQX.parseResponse(resp);
+                    if ("Error" in keylist) {
+                        theFailFunction(keylist.Error);
+                        return;
+                    }
+                    theCallbackFunction(keylist.Data);
                 }
                 $.ajax({
                     url: myurl.toString(),
