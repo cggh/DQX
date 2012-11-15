@@ -50,8 +50,8 @@
                 var thebox = DocEl.Div({ id: ID });
                 thebox.setCssClass("DQXFloatBox");
                 thebox.addStyle("position", "absolute");
-                thebox.addStyle("left", posx + 'px');
-                thebox.addStyle("top", posy + 'px');
+                thebox.addStyle("left", '0px');
+                thebox.addStyle("top", '0px');
 
                 var theheader = DocEl.Div({ id: ID + 'Handler', parent: thebox });
                 theheader.setCssClass("DQXFloatBoxHeader");
@@ -72,6 +72,11 @@
                 var content = thebox.toString();
                 $('#DQXUtilContainer').append(content);
                 MakeDrag(ID);
+                var w = $('#' + ID).width();
+                var h = $('#' + ID).height();
+                var pageSizeX = $(window).width();
+                var pageSizeY = $(window).height();
+                $('#' + ID).offset({ left: (pageSizeX - w) / 2, top: (pageSizeY-h) / 2 });
             }
             return ID;
         }

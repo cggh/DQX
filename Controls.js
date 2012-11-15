@@ -43,6 +43,14 @@
                     this._controls[i].postCreateHtml(id);
             }
 
+            that.findControl = function (id) {
+                for (var i = 0; i < this._controls.length; i++) {
+                    var rs = this._controls[i].findControl(id);
+                    if (rs != null) return rs;
+                }
+                return null;
+            }
+
             return that;
         }
 
@@ -102,6 +110,14 @@
             that.postCreateHtml = function () {
                 for (var i = 0; i < this._controls.length; i++)
                     this._controls[i].postCreateHtml(id);
+            }
+
+            that.findControl = function (id) {
+                for (var i = 0; i < this._controls.length; i++) {
+                    var rs = this._controls[i].findControl(id);
+                    if (rs != null) return rs;
+                }
+                return null;
             }
 
             return that;
@@ -178,6 +194,15 @@
             that.postCreateHtml = function () {
                 this._loopItems(function (it) { it.postCreateHtml(); });
             }
+
+            that.findControl = function (id) {
+                this._loopItems(function (it) {
+                    var rs = it.findControl(id);
+                    if (rs != null) return rs;
+                });
+                return null;
+            }
+
 
             return that;
         }
@@ -270,6 +295,10 @@
                 Msg.send({ type: 'CtrlValueChanged', id: this.myID, contextid: this.myContextID }, this);
             }
 
+            that.findControl = function (id) {
+                if (id == this.myID) return this;
+                else return null;
+            }
 
 
             return that;
@@ -286,8 +315,8 @@
 
             that.renderHtml = function () {
                 var lb = DocEl.Div();
-                lb.addStyle("padding-top","5px");
-                lb.addStyle("padding-bottom","5px");
+                lb.addStyle("padding-top", "5px");
+                lb.addStyle("padding-bottom", "5px");
                 lb.addElem(this.myContent);
                 return lb.toString();
             }
@@ -653,6 +682,8 @@
 
             return that;
         }
+
+
 
 
         return Controls;

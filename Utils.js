@@ -98,9 +98,14 @@
             DQX._currentProcessingID = null;
         }
 
-        //Creates a function that reports a failire
+        //Creates a function that reports a failure
         DQX.createFailFunction = function (msg) {
             return function () { alert(msg); };
+        }
+
+        //Creates a function that reports a failire
+        DQX.createMessageFailFunction = function () {
+            return function (msg) { alert(msg); };
         }
 
         //A class that encapsulates the creation of an url with query strings
