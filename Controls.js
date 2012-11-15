@@ -4,13 +4,19 @@
 
         Controls.CompoundHor = function (icontrols) {
             var that = {};
+            that._legend = '';
             that._controls = icontrols;
+
+            that.setLegend = function (txt) {
+                this._legend = txt;
+                return this;
+            }
 
             that.clear = function () {
                 that._controls = [];
             }
 
-            that.append = function (item) {
+            that.addControl = function (item) {
                 that._controls.push(item);
             }
 
@@ -33,8 +39,15 @@
 
             that.renderHtml = function () {
                 var st = '';
+                if (this._legend.length > 0) {
+                    st += '<fieldset class="DQXFormFieldSet">';
+                    st += '<legend>' + this._legend + '</legend>';
+                }
                 for (var i = 0; i < this._controls.length; i++)
                     st += this._controls[i].renderHtml();
+                if (this._legend.length > 0) {
+                    st += '</fieldset>';
+                }
                 return st;
             }
 
@@ -64,6 +77,7 @@
 
             that.setLegend = function (txt) {
                 this._legend = txt;
+                return this;
             }
 
             that.clear = function () {
@@ -292,6 +306,8 @@
             }
 
             that._notifyChanged = function () {
+                if (this.onChanged)
+                    this.onChanged();
                 Msg.send({ type: 'CtrlValueChanged', id: this.myID, contextid: this.myContextID }, this);
             }
 
@@ -315,8 +331,9 @@
 
             that.renderHtml = function () {
                 var lb = DocEl.Div();
-                lb.addStyle("padding-top", "5px");
-                lb.addStyle("padding-bottom", "5px");
+                lb.addStyle("padding-top", "2px");
+                lb.addStyle("padding-bottom", "2px");
+                lb.addStyle('display', 'inline-block');
                 lb.addElem(this.myContent);
                 return lb.toString();
             }
@@ -428,6 +445,39 @@
 
             return that;
         }
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        Controls.Hyperlink = function (iid, args) {
+            var that = Controls.Control(iid);
+            that.content = args.content;
+            that._controlExtensionList.push('');
+            if (args.hint)
+                that._hint = args.hint;
+
+            that.renderHtml = function () {
+                var bt = DocEl.Div({ id: this.getFullID('') });
+                if (this._hint)
+                    bt.addHint(this._hint);
+                bt.addStyle('display', 'inline-block');
+                bt.setCssClass("DQXHyperlink");
+                bt.addElem(that.content);
+                bt.addStyle("padding-top", "2px");
+                bt.addStyle("padding-bottom", "2px");
+                return bt.toString();
+            }
+
+            that.postCreateHtml = function () {
+                this.getJQElement('').mousedown($.proxy(that._onChange, that));
+            }
+
+            that._onChange = function () {
+                this._notifyChanged();
+            }
+
+            return that;
+        }
+
 
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

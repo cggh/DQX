@@ -44,7 +44,7 @@
                 background.addStyle("top", '0px');
                 background.addStyle('width', '100%');
                 background.addStyle('height', '100%');
-//                background.addStyle('background-color', 'rgba(0,0,0,0.25)');
+                //                background.addStyle('background-color', 'rgba(0,0,0,0.25)');
                 background.addStyle('background-color', 'rgba(100,100,100,0.4)');
                 background.addStyle('z-index', '2000');
                 $('#DQXUtilContainer').append(background.toString());
@@ -53,7 +53,7 @@
                 var pageSizeY = $(window).height();
 
                 var boxSizeX = 600;
-                var boxSizeY = 400;
+                var boxSizeY = 500;
 
                 this._pageTrace = [];
 
@@ -146,9 +146,13 @@
                 }
                 if (this.getCurrentPage().onFinish)
                     this.getCurrentPage().onFinish();
+                this.performFinish();
+                return false;
+            }
+
+            that.performFinish = function () {
                 $('#WizBackGround').remove();
                 this._onFinishFunction();
-                return false;
             }
 
             that._onNext = function () {

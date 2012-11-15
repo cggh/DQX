@@ -32,16 +32,21 @@
 
         Popup.create = function (title, content) {
             var wasSet = false;
+            var popupID = '';
             $(".DQXFloatBox").each(function (index, Element) {
                 if (!wasSet) {
                     if ($(this).find(".DQXPinBoxUnpinned").length > 0) {
                         $(this).find(".DQXFloatBoxHeader").html(title);
                         $(this).find(".DQXFloatBoxContent").html(content);
                         wasSet = true;
+                        popupID = $(this).attr('id');
                     }
                 }
             });
-            if (!wasSet) {
+            if (wasSet) {
+                return popupID;
+            }
+            else {
 
                 var posx = DQX.mousePosX + 10;
                 var posy = DQX.mousePosY + 10;
@@ -76,7 +81,7 @@
                 var h = $('#' + ID).height();
                 var pageSizeX = $(window).width();
                 var pageSizeY = $(window).height();
-                $('#' + ID).offset({ left: (pageSizeX - w) / 2, top: (pageSizeY-h) / 2 });
+                $('#' + ID).offset({ left: (pageSizeX - w) / 2, top: (pageSizeY - h) / 2 });
             }
             return ID;
         }
