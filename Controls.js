@@ -348,7 +348,40 @@
                 return null;
             }
 
-            that.modifyValue = function (newstate) {
+            return that;
+        }
+
+
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        Controls.Html = function (iid, content) {
+            var that = Controls.Control(iid);
+            that.myContent = content;
+
+            that._controlExtensionList.push('');
+
+            that.renderHtml = function () {
+                var lb = DocEl.Div({ id: this.getFullID('') });
+                lb.addStyle("padding-top", "2px");
+                lb.addStyle("padding-bottom", "2px");
+                lb.addStyle('display', 'inline-block');
+                lb.addElem(this.myContent);
+                return lb.toString();
+            }
+
+            that.postCreateHtml = function () {
+            }
+
+            that._onChange = function () {
+            }
+
+            that.getValue = function () {
+                return null;
+            }
+
+            that.modifyValue = function (newContent) {
+                this.getJQElement('').html(newContent);
             }
 
             return that;
@@ -430,7 +463,7 @@
                     bt.addHint(this._hint);
                 bt.addStyle('display', 'inline-block');
                 //bt.addStyle('position', 'absolute');
-                bt.setCssClass("DQXGlowButton");
+                bt.setCssClass("DQXToolButton1");
                 bt.addElem(that.content);
                 return '&nbsp;&nbsp;' + bt.toString();
             }
