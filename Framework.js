@@ -752,12 +752,12 @@
             }
 
             that.addControl = function (ctrl) {
-                that._content.append(ctrl);
+                that._content.addControl(ctrl);
                 return ctrl;
             }
 
             that.addHtml = function (content) {
-                that._content.append(Controls.Label(content));
+                that._content.addControl(Controls.Label(content));
             }
 
 

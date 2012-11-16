@@ -84,28 +84,47 @@
         }
 
 
-        DQX._currentProcessingID = null;
-
         //Draws a message on the screen indicating that some processing is being done
         DQX.setProcessing = function (msg) {
-            DQX._currentProcessingID = DQX.CreateFloatBox(msg, "");
+            var DocEl = require("DQX/DocEl");
+            var background = DocEl.Div({ id: 'InfoBoxProcessing' });
+            background.addStyle("position", "absolute");
+            background.addStyle("left", '0px');
+            background.addStyle("top", '0px');
+            background.addStyle('width', '100%');
+            background.addStyle('height', '100%');
+            //background.addStyle('background-color', 'rgba(100,100,100,0.2)');
+            background.addStyle('z-index', '9999');
+
+            var box = DocEl.Div({ id: 'Box', parent:background });
+            box.addStyle("position", "fixed");
+            box.addStyle("top", '50%');
+            box.addStyle("left", '50%');
+            box.addStyle("margin-top", '-30px');
+            box.addStyle("margin-left", '-30px');
+            box.addElem('<img src="Bitmaps/ProgressAnimation3.gif" alt="Progress animation" />');
+            $('#DQXUtilContainer').append(background.toString());
         }
 
         //Removes the processing message
         DQX.stopProcessing = function () {
-            if (DQX._currentProcessingID != null)
-                $("#" + DQX._currentProcessingID).remove();
-            DQX._currentProcessingID = null;
+            $("#InfoBoxProcessing").remove();
         }
 
         //Creates a function that reports a failure
         DQX.createFailFunction = function (msg) {
-            return function () { alert(msg); };
+            return function () {
+                DQX.stopProcessing();
+                alert(msg);
+            };
         }
 
         //Creates a function that reports a failire
         DQX.createMessageFailFunction = function () {
-            return function (msg) { alert(msg); };
+            return function (msg) {
+                DQX.stopProcessing();
+                alert(msg);
+            };
         }
 
         //A class that encapsulates the creation of an url with query strings
