@@ -104,6 +104,11 @@
                     $('#' + button.id).mousedown($.proxy(button.handler, this));
                 }
 
+                $('#WizBackGround').mousedown(function () {
+                    alert("Please close the wizard if you want to return to the application"); 
+                });
+                $('#WizBox').mousedown(function () { return false; });
+
                 this._setPage(0);
             }
 
