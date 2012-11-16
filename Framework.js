@@ -658,11 +658,14 @@
                 if (this.isVisible())
                     return;
                 var fr = this;
+                var tabSwitchList = [];
                 while (fr.myParent != null) {
                     if (fr.myParent.isTabber())
-                        fr.myParent.switchTab(fr.myFrameID);
+                        tabSwitchList.unshift(fr);
                     fr = fr.myParent;
                 }
+                for (var i = 0; i < tabSwitchList.length; i++)
+                    tabSwitchList[i].myParent.switchTab(tabSwitchList[i].myFrameID);
                 if (this.myClientObject != null)
                     this.myClientObject.handleResize(); //this triggers immediate correct sizing of the panel;
                 return true;
