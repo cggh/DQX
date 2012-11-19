@@ -307,7 +307,7 @@
 
             that._notifyChanged = function () {
                 if (this.onChanged)
-                    this.onChanged();
+                    this.onChanged(this.myID);
                 Msg.send({ type: 'CtrlValueChanged', id: this.myID, contextid: this.myContextID }, this);
             }
 
@@ -326,6 +326,9 @@
         Controls.Static = function (content) {
             var that = Controls.Control('');
             that.myContent = content;
+            that._isComment = false;
+
+            that.makeComment = function () { this._isComment = true; return this; }
 
             that._controlExtensionList.push('');
 
@@ -334,6 +337,8 @@
                 lb.addStyle("padding-top", "2px");
                 lb.addStyle("padding-bottom", "2px");
                 lb.addStyle('display', 'inline-block');
+                if (this._isComment)
+                    lb.setCssClass("DQXFormComment");
                 lb.addElem(this.myContent);
                 return lb.toString();
             }
@@ -452,10 +457,16 @@
 
         Controls.Button = function (iid, args) {
             var that = Controls.Control(iid);
+            if (!args.content) throw "No button content provided";
             that.content = args.content;
             that._controlExtensionList.push('');
             if (args.hint)
                 that._hint = args.hint;
+            that._buttonClass = 'DQXWizardButton'; // "DQXToolButton1"
+            if (args.buttonClass)
+                that._buttonClass = args.buttonClass;
+            if (args.width)
+                that._width = args.width;
 
             that.renderHtml = function () {
                 var bt = DocEl.Div({ id: this.getFullID('') });
@@ -463,8 +474,10 @@
                     bt.addHint(this._hint);
                 bt.addStyle('display', 'inline-block');
                 //bt.addStyle('position', 'absolute');
-                bt.setCssClass("DQXToolButton1");
+                bt.setCssClass(this._buttonClass);
                 bt.addElem(that.content);
+                if (this._width)
+                    bt.setWidthPx(this._width);
                 return '&nbsp;&nbsp;' + bt.toString();
             }
 

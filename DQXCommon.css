@@ -157,13 +157,13 @@ body
 
 .DQXFloatBox
 { 
-    border-width:3px;
+    border-width:6px;
     border-style:solid;
     border-color:rgb(20,20,120);
     position:absolute; 
     left:850px; 
     top:100px; 
-    box-shadow: 5px 5px 10px rgb(0,0,64); 
+    box-shadow: 8px 8px 14px rgba(0,0,0,0.85); 
  	z-index:999;
 }
 .DQXFloatBoxHeader
@@ -601,6 +601,11 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7f7f7', end
     
 }
 
+.DQXFormComment 
+{
+    color:rgb(128,128,128);
+}
+
 .DQXFormFieldSet  
 {
     border:1px solid rgb(128,128,128);
@@ -650,15 +655,17 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7f7f7', end
 {
     margin:5px;
     cursor:pointer;
-    border:1px solid black;
+    border:2px solid black;
     box-shadow: 2px 2px 6px rgba(0,0,0,0.45); 
     padding:8px;
+    border-radius: 5px;
+	/*border-style: outset;*/
 }  
 
 .DQXToolButton1:hover, .DQXToolButton2:hover
 {
-    outline:1px solid rgb(0,0,0);
-    box-shadow: 2px 2px 9px rgba(0,0,0,0.75); 
+    /*border:2px solid rgb(0,0,0);*/
+    box-shadow: 2px 2px 11px rgba(0,0,0,0.75); 
 }
   
 .DQXToolButton1
@@ -742,6 +749,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffe4c9', end
 	height:17px;
     box-shadow: 1.5px 1.5px 4px rgba(0,0,0,0.30); 
     cursor:pointer;
+    font-weight:bold;
 }
 
 .DQXWizardButton:hover

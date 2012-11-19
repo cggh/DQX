@@ -105,7 +105,7 @@
                 }
 
                 $('#WizBackGround').mousedown(function () {
-                    alert("Please close the wizard if you want to return to the application"); 
+                    alert("Please close the wizard if you want to return to the application");
                 });
                 $('#WizBox').mousedown(function () { return false; });
 
@@ -122,7 +122,10 @@
                 }
                 else {
                     $('#WizBoxButtonFinish').hide();
-                    $('#WizBoxButtonNext').show();
+                    if (this._pages[this.pageNr].hideNext)
+                        $('#WizBoxButtonNext').hide();
+                    else
+                        $('#WizBoxButtonNext').show();
                 }
                 if (this.pageNr == 0) {
                     $('#WizBoxButtonPrevious').hide();
@@ -158,6 +161,11 @@
             that.performFinish = function () {
                 $('#WizBackGround').remove();
                 this._onFinishFunction();
+            }
+
+            that.jumpToPage = function (id) {
+                this._pageTrace.push(this.pageNr);
+                this._setPage(this.getPageNr(id));
             }
 
             that._onNext = function () {
