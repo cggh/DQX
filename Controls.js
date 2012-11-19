@@ -547,6 +547,7 @@
                 if (this._hint)
                     edt.addHint(this._hint);
                 edt.addAttribute('size', that.size);
+                edt.addAttribute('name', this.getFullID(''));
                 return edt.toString();
             }
 
@@ -780,6 +781,87 @@
         }
 
 
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        Controls.List = function (iid, args) {
+            var that = Controls.Control(iid);
+            that._width = 300;
+            that._height = 200;
+            if ('width' in args)
+                that._width = args.width;
+            if ('height' in args)
+                that._height = args.height;
+            that._items = [];
+            that._activeItem = null;
+
+            that._controlExtensionList.push('');
+
+            that._renderItems = function () {
+                var lst = '';
+                for (var i = 0; i < this._items.length; i++) {
+                    var line = DocEl.Div();
+                    line.setID(this._items[i].id);
+                    if (this._activeItem == this._items[i].id)
+                        line.setCssClass('DQXLargeListItemSelected');
+                    else
+                        line.setCssClass('DQXLargeListItem');
+                    //                    if (this.items[i].icon) {
+                    //                        line.addElem('<IMG SRC="' + this.items[i].icon + '" border=0 ALT="" TITLE="" style="float:left;padding-right:6px">');
+                    //                    }
+                    line.addElem(this._items[i].content);
+                    lst += line.toString();
+                }
+                return lst;
+            }
+
+            that.setItems = function (lst, activeItem) {
+                this._items = lst;
+                if (typeof activeItem != 'undefined')
+                    this._activeItem = activeItem;
+                this.getJQElement('').html(this._renderItems());
+                //this.postCreateHtml();
+            }
+
+            that.renderHtml = function () {
+                var dv = DocEl.Div({ id: this.getFullID('') });
+                dv.setCssClass('DQXFormControl');
+                dv.addStyle('overflow-y', 'auto');
+                dv.setWidthPx(this._width);
+                dv.setHeightPx(this._height);
+                dv.addElem(this._renderItems());
+                return dv.toString();
+            }
+
+            that.postCreateHtml = function () {
+                this.getJQElement('').mousedown($.proxy(that._onChange, that));
+            }
+
+            that._onChange = function (ev) {
+                var id = ev.target.id;
+                if (id == '')
+                    id = $(ev.target).parent().attr('id');
+                var inList = false;
+                for (var i = 0; i < this._items.length; i++)
+                    if (id==this._items[i].id)
+                        inList = true;
+                if (inList)
+                    this.modifyValue(id);
+            }
+
+            that.getValue = function () {
+                return this._activeItem;
+            }
+
+            that.modifyValue = function (newvalue) {
+                if (this._activeItem)
+                    this.getJQElement('').children('#' + this._activeItem).addClass('DQXLargeListItem').removeClass('DQXLargeListItemSelected');
+                this.getJQElement('').children('#' + newvalue).removeClass('DQXLargeListItem').addClass('DQXLargeListItemSelected');
+                this._activeItem = newvalue;
+                this._notifyChanged();
+            }
+
+            return that;
+        }
 
 
         return Controls;
