@@ -86,8 +86,8 @@
                 this.setChromosome(chromid, true, false);
                 if (size < 10) size = 10;
                 this.setMark(pos - size / 2, pos + size / 2);
-                var winsize = size * 6;
-                if (winsize < 60000) winsize = 60000;
+                var winsize = size * 3;
+                if (winsize < 30000) winsize = 30000;
                 this.setPosition(pos, winsize);
             }
 
