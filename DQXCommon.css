@@ -601,6 +601,12 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7f7f7', end
     
 }
 
+.DQXFormControl
+{
+    border:1px solid rgb(128,128,128);
+}
+
+
 .DQXFormComment 
 {
     color:rgb(128,128,128);
