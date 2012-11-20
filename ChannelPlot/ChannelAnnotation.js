@@ -9,13 +9,15 @@
             that._annotationFetcher = annotationFetcher;
             that._height = 105;
             that._minDrawZoomFactX = 1 / 300.0;
+            that._clickInfo = []; //will hold info about clickable areas
 
             that.getTitle = function () { return "Annotation"; }
 
             that.draw = function (drawInfo) {
-                this.drawStandardGradientCenter(drawInfo,0.85);
-                this.drawStandardGradientLeft(drawInfo,0.85);
-                this.drawStandardGradientRight(drawInfo,0.85);
+                this.drawStandardGradientCenter(drawInfo, 0.85);
+                this.drawStandardGradientLeft(drawInfo, 0.85);
+                this.drawStandardGradientRight(drawInfo, 0.85);
+                this._clickInfo = [];
 
                 if (drawInfo.zoomFactX < this._minDrawZoomFactX) {
                     this.drawMessage(drawInfo, "Zoom in to see " + this.getTitle());
@@ -89,7 +91,7 @@
                         clickpt.XCent = Math.round((psx1 + psx2) / 2);
                         clickpt.X1 = psx2 + labellen;
 
-                        //this._clickInfo.push(clickpt);
+                        this._clickInfo.push(clickpt);
                     }
                     if (slotnr == slotcount) {
                         drawInfo.centerContext.fillStyle = "rgb(255,200,100)";
@@ -102,6 +104,40 @@
                 this.drawMark(drawInfo);
                 this.drawXScale(drawInfo);
             }
+
+            that.getClickInfoAtPoint = function (xp, yp) {
+                for (var clicknr = 0; clicknr < this._clickInfo.length; clicknr++) {
+                    var clickpt = this._clickInfo[clicknr];
+                    if ((xp >= clickpt.x0) && (xp <= clickpt.X1) && (yp >= clickpt.y0) && (yp <= clickpt.Y1))
+                        return clickpt;
+                }
+                return null;
+            }
+
+            that.getToolTipInfo = function (px, py) {
+                var clickpt = this.getClickInfoAtPoint(px, py);
+                var thetip = null;
+                if (clickpt != null) {
+                    thetip = {};
+                    thetip.px = Math.min(clickpt.X1 - 50, Math.max(clickpt.x0, px));
+                    thetip.py = clickpt.Y1 - 5;
+                    thetip.content = clickpt.name + "<br>" + clickpt.ID;
+                    thetip.ID = clickpt.ID;
+                }
+                return thetip;
+            }
+
+            that.handleMouseClicked = function (px, py) {
+                var tooltipInfo = that.getToolTipInfo(px, py);
+                if (tooltipInfo) {
+                    this.handleGeneClicked(tooltipInfo.ID);
+                }
+            }
+
+
+            that.handleGeneClicked = function (geneID) { //override this to implement behavour when a gene is clicked
+            }
+
 
             return that;
         }
