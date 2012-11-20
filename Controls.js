@@ -260,6 +260,12 @@
             that.myContextID = '';
             that._enabled = true;
             that._controlExtensionList = [];
+            that._hasDefaultFocus = false;
+
+            that.setHasDefaultFocus = function () {
+                this._hasDefaultFocus = true;
+                return this;
+            }
 
             that.getID = function () { return this.myID; }
 
@@ -553,6 +559,8 @@
 
             that.postCreateHtml = function () {
                 this.getJQElement('').bind("propertychange keyup input paste", $.proxy(that._onChange, that));
+                if (this._hasDefaultFocus)
+                    this.getJQElement('').focus();
             }
 
             that._onChange = function () {
@@ -842,7 +850,7 @@
                     id = $(ev.target).parent().attr('id');
                 var inList = false;
                 for (var i = 0; i < this._items.length; i++)
-                    if (id==this._items[i].id)
+                    if (id == this._items[i].id)
                         inList = true;
                 if (inList)
                     this.modifyValue(id);
