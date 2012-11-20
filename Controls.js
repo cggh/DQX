@@ -124,6 +124,11 @@
             that.postCreateHtml = function () {
                 for (var i = 0; i < this._controls.length; i++)
                     this._controls[i].postCreateHtml(id);
+                setTimeout(function () {
+                    for (var i = 0; i < that._controls.length; i++)
+                        if (that._controls[i]._hasDefaultFocus)
+                            that._controls[i].setFocus();
+                }, 200);
             }
 
             that.findControl = function (id) {
@@ -322,6 +327,10 @@
                 else return null;
             }
 
+            that.setFocus = function () {
+                //this.getJQElement('').focus();
+                document.getElementById(this.getFullID('')).focus();
+            }
 
             return that;
         }
@@ -559,8 +568,6 @@
 
             that.postCreateHtml = function () {
                 this.getJQElement('').bind("propertychange keyup input paste", $.proxy(that._onChange, that));
-                if (this._hasDefaultFocus)
-                    this.getJQElement('').focus();
             }
 
             that._onChange = function () {
