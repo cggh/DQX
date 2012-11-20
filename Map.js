@@ -1,4 +1,4 @@
-﻿define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/Msg", "DQX/Utils", "async!https://maps.googleapis.com/maps/api/js?libraries=visualization&sensor=false"],
+﻿define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/Msg", "DQX/Utils", /*"async!https://maps.googleapis.com/maps/api/js?libraries=visualization&sensor=false"],*/
     function ($, Countries, GeoJSON, Msg, DQX) {
 
         var GMaps = {}
