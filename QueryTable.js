@@ -183,7 +183,7 @@
             }
 
             that._onLineDown = function (message2) {
-                this.myTableOffset = Math.min(this.totalRecordCount - this.myPageSize + 4, this.myTableOffset + message2);
+                this.myTableOffset = Math.max(0,Math.min(this.totalRecordCount - this.myPageSize + 4, this.myTableOffset + message2));
                 this.render();
                 return false;
             }
