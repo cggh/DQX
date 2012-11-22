@@ -592,7 +592,7 @@
 
             that.modifyValue = function (newvalue) {
                 if (newvalue == this.getValue()) return;
-                this.value = nevalue;
+                this.value = newvalue;
                 this.getJQElement('').val(newvalue);
                 this._notifyChanged();
             }
