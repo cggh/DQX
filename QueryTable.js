@@ -357,9 +357,10 @@
                                 var isLink = false;
                                 if ((thecol._hyperlinkCellMessageScope) && (hascontent)) {
                                     isLink = true;
-                                    rs_table[tbnr] += '<span class="DQXQueryTableLinkCell" id="{id}">'.DQXformat({ id: thecol.myCompID + '~' + rownr + '~link~' + this.myBaseID });
-                                    rs_table[tbnr] += '<IMG SRC="Bitmaps/link3.png" border=0  title="{hint}" ALT="Link"> '.
-                                        DQXformat({ hint: thecol._hyperlinkCellHint });
+                                    var linkID = thecol.myCompID + '~' + rownr + '~link~' + this.myBaseID;
+                                    rs_table[tbnr] += '<span class="DQXQueryTableLinkCell" id="{id}">'.DQXformat({ id: linkID });
+                                    rs_table[tbnr] += '<IMG SRC="Bitmaps/link3.png" border=0  id={id} title="{hint}" ALT="Link"> '.
+                                        DQXformat({ hint: thecol._hyperlinkCellHint, id:linkID });
                                 }
                                 rs_table[tbnr] += cell_content;
                                 if (isLink)
