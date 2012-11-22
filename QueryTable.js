@@ -183,7 +183,7 @@
             }
 
             that._onLineDown = function (message2) {
-                this.myTableOffset = Math.max(0,Math.min(this.totalRecordCount - this.myPageSize + 4, this.myTableOffset + message2));
+                this.myTableOffset = Math.max(0, Math.min(this.totalRecordCount - this.myPageSize + 4, this.myTableOffset + message2));
                 this.render();
                 return false;
             }
@@ -354,11 +354,16 @@
                                         cell_content = "";
                                 }
                                 rs_table[tbnr] += "<td style='background-color:" + cell_color + "'>";
+                                var isLink = false;
                                 if ((thecol._hyperlinkCellMessageScope) && (hascontent)) {
-                                    rs_table[tbnr] += '<IMG class="DQXQueryTableLinkCell" id="{id}" SRC="Bitmaps/link3.png" border=0  title="{hint}" ALT="Link"> '.
-                                        DQXformat({ hint: thecol._hyperlinkCellHint, id: thecol.myCompID + '~' + rownr + '~link~' + this.myBaseID });
+                                    isLink = true;
+                                    rs_table[tbnr] += '<span class="DQXQueryTableLinkCell" id="{id}">'.DQXformat({ id: thecol.myCompID + '~' + rownr + '~link~' + this.myBaseID });
+                                    rs_table[tbnr] += '<IMG SRC="Bitmaps/link3.png" border=0  title="{hint}" ALT="Link"> '.
+                                        DQXformat({ hint: thecol._hyperlinkCellHint });
                                 }
                                 rs_table[tbnr] += cell_content;
+                                if (isLink)
+                                    rs_table[tbnr] += '</span>';
                                 rs_table[tbnr] += "</td>";
                             }
                         }
