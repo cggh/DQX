@@ -563,7 +563,13 @@
                     edt.addHint(this._hint);
                 edt.addAttribute('size', that.size);
                 edt.addAttribute('name', this.getFullID(''));
-                return edt.toString();
+                var rs = '';
+                if (this.myLabel) {
+                    var label = DocEl.Label({ target: this.getFullID('Label') });
+                    label.addElem(this.myLabel);
+                    rs=label.toString() + ' ';
+                }
+                return rs+edt.toString();
             }
 
             that.postCreateHtml = function () {
