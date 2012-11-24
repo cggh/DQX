@@ -112,7 +112,9 @@
                     st += '<legend>' + this._legend + '</legend>';
                 }
                 for (var i = 0; i < this._controls.length; i++) {
-                    if (i > 0) st += '<br/>';
+                    if (i > 0) {
+                        st += '<p/>';
+                    }
                     st += this._controls[i].renderHtml();
                 }
                 if (this._legend.length > 0) {
@@ -567,9 +569,9 @@
                 if (this.myLabel) {
                     var label = DocEl.Label({ target: this.getFullID('Label') });
                     label.addElem(this.myLabel);
-                    rs=label.toString() + ' ';
+                    rs = label.toString() + ' ';
                 }
-                return rs+edt.toString();
+                return rs + edt.toString();
             }
 
             that.postCreateHtml = function () {
