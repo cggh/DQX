@@ -403,6 +403,12 @@
                 that._myOverlays.push(obj);
             }
 
+            that.getOverlayCount = function () { return that._myOverlays.length; }
+
+            that.getOverlay = function (nr) {
+                return this._myOverlays[nr];
+            }
+
             that.removeOverlay = function (id) {
                 for (var i = 0; i < that._myOverlays.length; i++) {
                     if (that._myOverlays[i].myID == id) {
