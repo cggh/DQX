@@ -35,7 +35,7 @@ define(["DQX/Utils"],
 
             that._renderPie = function (x0, y0, ang1, ang2, rd, color, id, hint) {
                 if (ang2 - ang1 >= 2 * Math.PI - 0.0001) {
-                    var rs = '<circleclass="piepart" cx="{cx}" cy="{cy}" r="{rd}"'.DQXformat({ cx: x0, cy: y0, rd: rd });
+                    var rs = '<circle class="piepart" cx="{cx}" cy="{cy}" r="{rd}"'.DQXformat({ cx: x0, cy: y0, rd: rd });
                     var elemName = 'circle';
                 }
                 else {
