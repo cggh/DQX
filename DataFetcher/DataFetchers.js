@@ -379,8 +379,79 @@
                     error: theFailFunction
                 });
             }
-
         }
+
+        //////////////////////////////////////////////////////////////////////////////////////
+        //  RecordsetFetcher: fetches a set of records from the server
+        /// !!!NOTE: in the server code, a kind of authorisation check will have to be built, validating that the client can have read access to this table
+        //////////////////////////////////////////////////////////////////////////////////////
+
+
+        DataFetchers.RecordsetFetcher = function (iserverUrl, itableName) {
+            var that = {};
+            that.serverUrl = iserverUrl; //The server url to contact for this
+            that.tableName = itableName; //The name of the table to fetch from
+            that.columns = [];
+
+            that.addColumn = function (id, encoding) {
+                this.columns.push({ id: id, encoding: encoding });
+            }
+
+            that._ajaxResponse_FetchRange = function (resp, respHandler, failHandler) {
+                var keylist = DQX.parseResponse(resp); //unpack the response
+                if ("Error" in keylist) {
+                    failHandler(keylist.Error);
+                    return;
+                }
+                var data = {};
+                var DataDecoders = require("DQX/DataDecoders");
+                var b64codec = DataDecoders.B64();
+                var vallistdecoder = DataDecoders.ValueListDecoder();
+                for (var i = 0; i < this.columns.length; i++)
+                    data[this.columns[i].id] = vallistdecoder.doDecode(keylist[this.columns[i].id]);
+                respHandler(data);
+            }
+
+            that._ajaxFailure_FetchRange = function (resp) {
+                alert(resp);
+            }
+
+            that._createActiveColumnListString = function () {
+                var collist = "";
+                for (var i = 0; i < this.columns.length; i++) {
+                    if (collist.length > 0) collist += "~";
+                    collist += this.columns[i].encoding;
+                    collist += this.columns[i].id;
+                }
+                return collist;
+            }
+
+
+            that.getData = function (query, orderField, respHandler, failHandler) {
+                //prepare the url
+                var myurl = DQX.Url(this.serverUrl);
+                myurl.addUrlQueryItem("datatype", "pageqry");
+                myurl.addUrlQueryItem("qry", SQL.WhereClause.encode(query));
+                myurl.addUrlQueryItem("tbname", this.tableName);
+                myurl.addUrlQueryItem("collist", this._createActiveColumnListString());
+                //myurl.addUrlQueryItem("posfield", this.positionField);
+                myurl.addUrlQueryItem("order", orderField);
+                myurl.addUrlQueryItem("sortreverse", 0);
+                myurl.addUrlQueryItem("needtotalcount", 0);
+                myurl.addUrlQueryItem("limit", "0~100000");
+                var urlstring = myurl.toString();
+                this._isFetching = true;
+                var thethis = this;
+                $.ajax({
+                    url: urlstring,
+                    success: function (resp) { thethis._ajaxResponse_FetchRange(resp, respHandler, failHandler) },
+                    error: function (resp) { thethis._ajaxFailure_FetchRange(resp) }
+                });
+            }
+
+            return that;
+        }
+
         return DataFetchers;
     });    
     
