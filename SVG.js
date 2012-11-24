@@ -7,8 +7,8 @@ define(["DQX/Utils"],
             that.myCallbackObject = null;
             that.myParts = [];
 
-            that.addPart = function (ifrac, icolor, iid) {
-                that.myParts.push({ frac: ifrac, color: icolor, id: iid });
+            that.addPart = function (ifrac, icolor, iid, ihint) {
+                that.myParts.push({ frac: ifrac, color: icolor, id: iid, hint: ihint });
             }
 
             that.render = function (x0, y0, rd) {
@@ -25,7 +25,7 @@ define(["DQX/Utils"],
                         data += this._renderPie(x0, y0,
                             sumpart / sum * 2 * Math.PI,
                             sumpart2 / sum * 2 * Math.PI, rd - 1,
-                            this.myParts[i].color, i);
+                            this.myParts[i].color, i, this.myParts[i].hint);
                         sumpart = sumpart2;
                     }
                 }
@@ -33,11 +33,13 @@ define(["DQX/Utils"],
                 return data;
             }
 
-            that._renderPie = function (x0, y0, ang1, ang2, rd, color, id) {
+            that._renderPie = function (x0, y0, ang1, ang2, rd, color, id, hint) {
                 if (ang2 - ang1 >= 2 * Math.PI - 0.0001) {
-                    var rs = '<circle class="piepart" cx="{cx}" cy="{cy}" r="{rd}"'.DQXformat({ cx: x0, cy: y0, rd: rd });
+                    var rs = '<circleclass="piepart" cx="{cx}" cy="{cy}" r="{rd}"'.DQXformat({ cx: x0, cy: y0, rd: rd });
+                    var elemName = 'circle';
                 }
                 else {
+                    var elemName = 'path';
                     var rs = '<path class="piepart" d="';
                     var stx0 = x0.toFixed(3);
                     var sty0 = y0.toFixed(3);
@@ -55,7 +57,10 @@ define(["DQX/Utils"],
                 rs += ' style="fill:' + color.toString() + '; "';
                 if (this.myCallbackObject)
                     rs += 'onclick="{fn}"'.DQXformat({ fn: DQX.ObjectMapper.CreateCallBackFunctionString(this.myCallbackObject, 'pieClick', id) });
-                rs += '/>';
+                rs += '>';
+                if (hint)
+                    rs += "<title>"+hint+"</title>";
+                rs += '</' + elemName + '>';
                 return rs;
             }
 

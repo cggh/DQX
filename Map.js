@@ -368,7 +368,7 @@
             that.pieClick = function (pienr) {
                 //alert('clicked ' + that.myID + ' ' + pienr);
                 if (that.onClick)
-                    that.onClick(this,pienr);
+                    that.onClick(this, pienr);
             }
 
             return that;
