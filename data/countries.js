@@ -203,7 +203,8 @@ define(
             if (countryName == 'Myanmar') { y = 20.797201; 95.799866; }
             if (countryName == 'Thailand') { y = 15.411319; x = 100.67688; }
             if (countryName == 'Laos') { y = 20.112682; x = 102.45758; }
-            if (countryName == 'Vietnam') { y = 12.951029; x = 109.125366 }
+            if (countryName == 'Vietnam') { y = 12.951029; x = 109.125366; }
+            if (countryName == 'Papua New Guinea') { y = -6.184246, x = 143.433837; }
             self.raw_geo_json.features[i].centerLong = x;
             self.raw_geo_json.features[i].centerLatt = y;
             self.geo_json_by_fullname[self.raw_geo_json.features[i].properties.name] = self.raw_geo_json.features[i];
