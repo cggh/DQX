@@ -106,6 +106,7 @@
 
         DQX._processingRequestCount = 0;
 
+
         //Draws a message on the screen indicating that some processing is being done
         DQX.setProcessing = function (msg) {
             if (DQX._processingRequestCount == 0) {
@@ -116,6 +117,7 @@
                 background.addStyle("top", '0px');
                 background.addStyle('width', '100%');
                 background.addStyle('height', '100%');
+                background.addStyle('cursor', 'wait');
                 //background.addStyle('background-color', 'rgba(100,100,100,0.2)');
                 background.addStyle('z-index', '9999');
                 var box = DocEl.Div({ id: 'Box', parent: background });
@@ -128,6 +130,15 @@
                 $('#DQXUtilContainer').append(background.toString());
             }
             DQX._processingRequestCount++;
+        }
+
+        //Executes a function and show a processing indication during the execution
+        DQX.executeProcessing = function (fnc) {
+            DQX.setProcessing();
+            setTimeout(function () {
+                fnc();
+                DQX.stopProcessing();
+            }, 100);
         }
 
         //Removes the processing message
