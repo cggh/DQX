@@ -366,7 +366,9 @@
             }
 
             that.pieClick = function (pienr) {
-                alert('clicked ' + that.myID + ' ' + pienr);
+                //alert('clicked ' + that.myID + ' ' + pienr);
+                if (that.onClick)
+                    that.onClick(this,pienr);
             }
 
             return that;
@@ -407,13 +409,13 @@
                 { visibility: "off" }
               ]
             }
-/*            ,
+            /*            ,
             {
-                featureType: 'administrative.country',
-                elementType: "all",
-                stylers: [
-                { gamma: "0.3" }
-              ]
+            featureType: 'administrative.country',
+            elementType: "all",
+            stylers: [
+            { gamma: "0.3" }
+            ]
             }*/
             ];
 
