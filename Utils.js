@@ -3,6 +3,27 @@
         //Inject DQX into the global namespace so that click handlers can find it
         DQX = {};
 
+        //Sort helpers
+        DQX.ByProperty = function (prop) {
+            return function (a, b) {
+                if (typeof a[prop] == "number") {
+                    return (a[prop] - b[prop]);
+                } else {
+                    return ((a[prop] < b[prop]) ? -1 : ((a[prop] > b[prop]) ? 1 : 0));
+                }
+            };
+        };
+        DQX.ByPropertyReverse = function (prop) {
+            return function (b, a) {
+                if (typeof a[prop] == "number") {
+                    return (a[prop] - b[prop]);
+                } else {
+                    return ((a[prop] < b[prop]) ? -1 : ((a[prop] > b[prop]) ? 1 : 0));
+                }
+            };
+        };
+
+
         DQX.Gui = {};
         DQX.Gui.GuiComponent = function (iid, args) {
             var that = {};
