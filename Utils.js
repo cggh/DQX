@@ -23,6 +23,11 @@
             };
         };
 
+        DQX.highlightText = function(data, search) {
+            function preg_quote(str) { return (str + '').replace(/([\\\.\+\*\?\[\^\]\$\(\)\{\}\=\!\<\>\|\:])/g, "\\$1"); }
+            return data.replace(new RegExp("(" + preg_quote(search) + ")", 'gi'), '<span class="DQXHighlight">$1</span>');
+        }
+
 
         DQX.Gui = {};
         DQX.Gui.GuiComponent = function (iid, args) {

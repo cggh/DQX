@@ -32,6 +32,12 @@ body
     font-weight:bold;
 }
 
+.DQXHighlight
+{
+    background-color:rgb(255,192,128);
+    font-weight:bold;
+}
+
 
 /******************************************************************************************
 ** DQX Help
