@@ -366,7 +366,9 @@
             }
 
             that.pieClick = function (pienr) {
-                alert('clicked ' + that.myID + ' ' + pienr);
+                //alert('clicked ' + that.myID + ' ' + pienr);
+                if (that.onClick)
+                    that.onClick(this, pienr);
             }
 
             return that;
@@ -384,23 +386,64 @@
 
             $('#' + idivid).css('background-color', 'rgb(210,230,255)');
 
+            var styles = [
+            {
+                featureType: "road",
+                elementType: "geometry",
+                stylers: [
+                { lightness: 100 },
+                { visibility: "off" }
+              ]
+            },
+            {
+                featureType: "road",
+                elementType: "labels",
+                stylers: [
+                { visibility: "off" }
+              ]
+            },
+            {
+                featureType: 'poi',
+                elementType: "all",
+                stylers: [
+                { visibility: "off" }
+              ]
+            }
+            /*            ,
+            {
+            featureType: 'administrative.country',
+            elementType: "all",
+            stylers: [
+            { gamma: "0.3" }
+            ]
+            }*/
+            ];
+
+
+            var styledMap = new google.maps.StyledMapType(styles, { name: "Simple" });
+
             var mapoptions = {
                 zoom: istartzoomlevel,
                 center: new google.maps.LatLng(istartcoord.lattit, istartcoord.longit),
-                //        mapTypeId: google.maps.MapTypeId.ROADMAP
                 mapTypeControlOptions: {
                     mapTypeIds: [google.maps.MapTypeId.ROADMAP, google.maps.MapTypeId.TERRAIN, google.maps.MapTypeId.SATELLITE, 'map_style_simple']
                 }
             };
 
-            //var el=document.getElementById(idivid);
-
             that.myMap = new google.maps.Map(document.getElementById(idivid), mapoptions);
+            that.myMap.mapTypes.set('map_style_simple', styledMap);
+            that.myMap.setMapTypeId('map_style_simple');
 
             that._myOverlays = [];
 
             that._addOverlay = function (obj) {
                 that._myOverlays.push(obj);
+            }
+
+            that.getOverlayCount = function () { return that._myOverlays.length; }
+
+            that.getOverlay = function (nr) {
+                return this._myOverlays[nr];
             }
 
             that.removeOverlay = function (id) {
@@ -421,42 +464,7 @@
 
             google.maps.event.addListener(that.myMap, 'zoom_changed', $.proxy(that._handleOnZoomChanged, that));
 
-            var styles = [
-            {
-                featureType: "road",
-                elementType: "geometry",
-                stylers: [
-                { lightness: 100 },
-                { visibility: "simplified" }
-              ]
-            },
-            {
-                featureType: "road",
-                elementType: "labels",
-                stylers: [
-                { visibility: "off" }
-              ]
-            },
-            {
-                featureType: 'poi',
-                elementType: "all",
-                stylers: [
-                { visibility: "off" }
-              ]
-            },
-            {
-                featureType: 'administrative.country',
-                elementType: "all",
-                stylers: [
-                { gamma: "0.1" }
-              ]
-            }
-          ];
 
-            var styledMap = new google.maps.StyledMapType(styles, { name: "Simple" });
-
-            that.myMap.mapTypes.set('map_style_simple', styledMap);
-            that.myMap.setMapTypeId('map_style_simple');
 
             that.handleResize = function () {
                 google.maps.event.trigger(this.myMap, 'resize');
