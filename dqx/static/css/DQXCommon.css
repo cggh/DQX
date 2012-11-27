@@ -116,7 +116,7 @@ body
 
 .DQXQueryTableInvalid td 
 {
-    background-image:url(Bitmaps/diagpattern.jpg) !important;
+    background-image:url(/dqx/static/img/diagpattern.jpg) !important;
     background-repeat:repeat;
 }
 
@@ -602,7 +602,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7f7f7', end
     line-height:28px;
     
     background: rgb(80,80,80); /* Old browsers */
-	background-image:url(Bitmaps/barback1a.png);
+	background-image:url(/dqx/static/img/barback1a.png);
 	background-repeat:repeat-x;
 	border-top-left-radius:12px;
 	border-top-right-radius:12px;
@@ -725,7 +725,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffe4c9', end
     color:rgb(255,220,0);
 	font-size:11pt;
 	font-weight:bold;
-	background-image:url(Bitmaps/barback1a.png);
+	background-image:url(/dqx/static/img/barback1a.png);
 }
 
 .DQXWizardBoxBody
