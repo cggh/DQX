@@ -51,8 +51,8 @@
                     setTimeout($.proxy(this.myDataConsumer.notifyDataReady, this.myDataConsumer), DQX.timeoutRetry);
                     return;
                 }
-                this._currentRangeMin = parseFloat(keylist["start"]);
-                this._currentRangeMax = parseFloat(keylist["stop"]);
+                this._currentRangeMin = parseFloat(keylist["fstart"]);
+                this._currentRangeMax = parseFloat(keylist["fstop"]);
                 this.myStartList = vallistdecoder.doDecode(keylist['Starts']);
                 var sizes = vallistdecoder.doDecode(keylist['Sizes']);
                 this.myStopList = [];
@@ -77,10 +77,10 @@
                     rangemin -= range;
                     rangemax += range;
                     var myurl = DQX.Url(this.config.serverURL);
-                    myurl.addUrlQueryItem('datatype', 'annot');
-                    myurl.addUrlQueryItem('chrom', this.myChromoID);
-                    myurl.addUrlQueryItem('start', rangemin);
-                    myurl.addUrlQueryItem('stop', rangemax);
+                    //myurl.addUrlQueryItem('datatype', 'annot');
+                    myurl.addUrlQueryItem('chromid', this.myChromoID);
+                    myurl.addUrlQueryItem('fstart', rangemin);
+                    myurl.addUrlQueryItem('fstop', rangemax);
                     myurl.addUrlQueryItem('table', this.annotTableName);
                     myurl.addUrlQueryItem('ftype', this.ftype);
                     myurl.addUrlQueryItem('fsubtype', this.fsubtype);

@@ -32,9 +32,9 @@
 
                 //Right channel view
                 var browserConfig = {
-                    serverURL: 'serverUrl',
-                    annotTableName: 'TableName',
-                    chromnrfield: 'chrom'
+                    serverURL: 'dqx/annot',
+                    annotTableName: 'pfannot',
+                    chromnrfield: 'chromid'
                 };
                 this.panelBrowser = GenomePlotter.Panel(this.frameBrowser.getClientDivID(), browserConfig);
                 this.frameBrowser.setClientObject(this.panelBrowser);
@@ -72,7 +72,7 @@
 //                    }
 //                }
 
-                this.panelBrowser.showRegion("MAL1", 0, 100000);
+                this.panelBrowser.showRegion("Pf3D7_01", 0, 100000);
 
             };
             return GenomeBrowser;

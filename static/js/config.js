@@ -2,20 +2,20 @@ define(
     function () {
         return {
             chromosomes: [
-                { name: 'MAL1', len: 0.7 },
-                { name: 'MAL2', len: 1 },
-                { name: 'MAL3', len: 1 },
-                { name: 'MAL4', len: 2 },
-                { name: 'MAL5', len: 2 },
-                { name: 'MAL6', len: 2 },
-                { name: 'MAL7', len: 2 },
-                { name: 'MAL8', len: 2 },
-                { name: 'MAL9', len: 2 },
-                { name: 'MAL10', len: 2 },
-                { name: 'MAL11', len: 4 },
-                { name: 'MAL12', len: 4 },
-                { name: 'MAL13', len: 4 },
-                { name: 'MAL14', len: 4 }
+                { name: 'Pf3D7_01', len: 0.7 },
+                { name: 'Pf3D7_02', len: 1 },
+                { name: 'Pf3D7_03', len: 1 },
+                { name: 'Pf3D7_04', len: 2 },
+                { name: 'Pf3D7_05', len: 2 },
+                { name: 'Pf3D7_06', len: 2 },
+                { name: 'Pf3D7_07', len: 2 },
+                { name: 'Pf3D7_08', len: 2 },
+                { name: 'Pf3D7_09', len: 2 },
+                { name: 'Pf3D7_10', len: 2 },
+                { name: 'Pf3D7_11', len: 4 },
+                { name: 'Pf3D7_12', len: 4 },
+                { name: 'Pf3D7_13', len: 4 },
+                { name: 'Pf3D7_14', len: 4 }
             ]
         };
     }
