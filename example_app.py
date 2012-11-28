@@ -1,13 +1,13 @@
 from flask import Flask, render_template
 import dqx
+import yaml
 
-db_config = dict(host='129.67.45.41',
-                 user='ben',
-                 passwd='******',
-                 db='test')
+with open('config.yaml') as f:
+    config = yaml.load(f)
+
 
 dqx_blueprint = dqx.Blueprint()
-dqx_blueprint.add_view("annot", dqx.views.Annotation, db_config)
+dqx_blueprint.add_view("annot", dqx.views.Annotation, config['db'])
 
 app = Flask(__name__)
 app.register_blueprint(dqx_blueprint)
