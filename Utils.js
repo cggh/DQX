@@ -632,7 +632,7 @@
             for (key in data) {
                 resp += "<tr>";
                 resp += "<td>" + key + "</td>";
-                resp += "<td>" + data[key] + "</td>";
+                resp += '<td style="max-width:300px;word-wrap:break-word;">' + data[key] + "</td>";
                 resp += "</tr>";
             }
             resp += "</table>"
