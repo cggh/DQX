@@ -1,0 +1,5 @@
+db:
+  host: 129.67.45.41
+  user: ben
+  passwd: fasbat
+  db: panoptes_crosses

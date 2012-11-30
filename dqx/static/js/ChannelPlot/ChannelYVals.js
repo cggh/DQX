@@ -181,7 +181,6 @@
         }
 
 
-
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////
         // Class ChannelYVals.YRangeComp: implements a single component for ChannelYVals.Channel,
@@ -292,11 +291,11 @@
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        ChannelYVals.Channel = function (id, args) {
+        ChannelYVals.Channel = function (id, min_val, max_val) {
             var that = ChannelCanvas.Base(id);
             that._height = 120;
-            that._minVal = args.minVal;
-            that._maxVal = args.maxVal;
+            that._minVal = min_val;
+            that._maxVal = max_val;
             that.myComponents = {}; //maps components ids to ChannelPlotChannelYValsComp objects
             that.minDrawZoomFactX = 0; //if the zoom factor drops below this point, the channel isn't drawn anymore
 

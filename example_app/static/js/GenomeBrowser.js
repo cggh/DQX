@@ -1,5 +1,5 @@
-﻿define(["require", "DQX/Framework", "DQX/Controls", "DQX/Msg", "DQX/DocEl", "DQX/Utils", "DQX/FrameTree", "DQX/Popup", "DQX/ChannelPlot/GenomePlotter", "DQX/ChannelPlot/ChannelYVals", "DQX/DataFetcher/DataFetchers", "config"],
-    function (require, Framework, Controls, Msg, DocEl, DQX, FrameTree, Popup, GenomePlotter, ChannelYVals, DataFetchers, config) {
+﻿define(["require", "DQX/Framework", "DQX/Controls", "DQX/Msg", "DQX/DocEl", "DQX/Utils", "DQX/FrameTree", "DQX/Popup", "DQX/ChannelPlot/GenomePlotter", "DQX/ChannelPlot/ChannelYVals", "DQX/DataFetcher/DataFetchers", "DQX/DataFetcher/DataFetcherSummary", "config"],
+    function (require, Framework, Controls, Msg, DocEl, DQX, FrameTree, Popup, GenomePlotter, ChannelYVals, DataFetchers, DataFetcherSummary, config) {
         var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
         var GenomeBrowser = (function() {
@@ -19,7 +19,6 @@
                 this.frameBrowser.allowYScrollbar = false;
                 Msg.listen("", { type: 'JumpgenomePosition' }, $.proxy(this.onJumpGenomePosition, this));
                 Msg.listen("", { type: 'JumpgenomeRegion' }, $.proxy(this.onJumpGenomeRegion, this));
-                this.dataFetcher = new DataFetchers.Curve('serverUrl', 'tableName', 'pos');
             }
 
             GenomeBrowser.prototype.createPanels = function() {
@@ -36,43 +35,29 @@
                     annotTableName: 'pfannot',
                     chromnrfield: 'chromid'
                 };
-                this.panelBrowser = GenomePlotter.Panel(this.frameBrowser.getClientDivID(), browserConfig);
-                this.frameBrowser.setClientObject(this.panelBrowser);
+                this.genome_panel = GenomePlotter.Panel(this.frameBrowser.getClientDivID(), browserConfig);
+                this.frameBrowser.setClientObject(this.genome_panel);
 
                 for (var i = 0; i < config.chromosomes.length; i++) {
-                    this.panelBrowser.addChromosome(config.chromosomes[i].name, config.chromosomes[i].name, config.chromosomes[i].len);
+                    this.genome_panel.addChromosome(config.chromosomes[i].name, config.chromosomes[i].name, config.chromosomes[i].len);
                 }
 
-//                //Prepare the channels
-//                var dataFetcherSNPS = this.dataFetcherSNPs;
-//                var channelValues = [];
-//
-//                this.panelBrowser.addDataFetcher(this.dataFetcherSNPs);
-//                for (var fieldNr = 0; fieldNr < MetaData.fieldList.length; fieldNr++) {
-//                    var fieldInfo = MetaData.fieldList[fieldNr];
-//                    if (fieldInfo.fieldGroupID) {
-//                        var compid = fieldInfo.id;
-//                        var dataType = MetaData.MGDataType(fieldInfo.dataTypeID);
-//                        if (dataType.isFloat()) {
-//                            var theChannel = ChannelYVals.Channel(compid, { minVal: dataType.getMinValue(), maxVal: dataType.getMaxValue() });
-//                            theChannel.setTitle(fieldInfo.name);
-//                            this.panelBrowser.addChannel(theChannel, false);
-//                            this.panelBrowser.channelModifyVisibility(theChannel.getID(), fieldInfo.channelDefaultVisible);
-//                            var colinfo = this.dataFetcherSNPs.addFetchColumn(compid, "Float2");
-//                            plotcomp = theChannel.addComponent(ChannelYVals.Comp(compid, this.dataFetcherSNPs, compid));
-//                            plotcomp.myPlotHints.color = DQX.Color(0, 0, 0);
-//                            plotcomp.myPlotHints.pointStyle = 1;
-//                            theChannel.modifyComponentActiveStatus(compid, fieldInfo.channelDefaultVisible);
-//                            this.panelBrowser.channelModifyVisibility(theChannel.getID(), fieldInfo.channelDefaultVisible);
-//                            channelValues.push({ id: compid, dataType: dataType });
-//                            theChannel.getToolTipContent = createChannelToolTip;
-//                            theChannel.handlePointClicked = handleChannelPointClick;
-//
-//                        }
-//                    }
-//                }
+                this.data_fetcher = new DataFetcherSummary.Summary('dqx/filterbank', 1, 1100);
+                this.genome_panel.addDataFetcher(this.data_fetcher);
+                
+                var test_channel = ChannelYVals.Channel('fasbat', 0, 1000);
+                test_channel.setTitle("Test");
+                this.genome_panel.addChannel(test_channel, false);
+                this.genome_panel.channelModifyVisibility(test_channel.getID(), true);
+                var col_info = this.data_fetcher.addFetchColumn('ERR012788-num_reads', DQX.Color(0, 0, 0));
+                var component = test_channel.addComponent(ChannelYVals.Comp('compID', this.data_fetcher, col_info.myID));
+                test_channel.modifyComponentActiveStatus('compID', true);
+                component.myPlotHints.makeDrawLines(3000000.0); //This causes the points to be connected with lines
+                component.myPlotHints.interruptLineAtAbsent = true;
+                component.myPlotHints.drawPoints = false;
 
-                this.panelBrowser.showRegion("Pf3D7_01", 0, 100000);
+
+                this.genome_panel.showRegion("Pf3D7_01", 0, 100000);
 
             };
             return GenomeBrowser;
@@ -119,14 +104,14 @@
 //            onJumpGenomePosition: function (context, args) {
 //                DQX.assertPresence(args, 'chromNr'); DQX.assertPresence(args, 'position');
 //                this.activate();
-//                this.panelBrowser.highlightRegion(this.panelBrowser.getChromoID(args.chromNr), args.position, 20);
+//                this.genome_panel.highlightRegion(this.genome_panel.getChromoID(args.chromNr), args.position, 20);
 //            },
 //
 //            //Call this function to jump to & highlight a specific region on the genome
 //            onJumpGenomeRegion: function (context, args) {
 //                DQX.assertPresence(args, 'chromNr'); DQX.assertPresence(args, 'start'); DQX.assertPresence(args, 'end');
 //                this.activate();
-//                this.panelBrowser.highlightRegion(this.panelBrowser.getChromoID(args.chromNr), (args.start + args.end) / 2, args.end - args.start);
+//                this.genome_panel.highlightRegion(this.genome_panel.getChromoID(args.chromNr), (args.start + args.end) / 2, args.end - args.start);
 //            },
 //
 //            jumpSNP: function (snpid) {

@@ -9,7 +9,7 @@ import string
 safe_set = set(string.ascii_lowercase + 
                string.ascii_uppercase + 
                string.digits + 
-               '_-')
+               '_-~')
 def sanitise(str):
     return ''.join(char for char in str if char in safe_set)
 

@@ -3,6 +3,8 @@ from dqx import dbtools
 import MySQLdb
 from flask.views import View
 from flask import request, jsonify
+
+
 #Return annotation information for a chromosome region
 class Annotation(View):
     def __init__(self, db_config):
@@ -31,6 +33,7 @@ class Annotation(View):
             print(statement + '\n')
             cur.execute(statement)
             starts, stops, names, ids, types, parentids = zip(*cur.fetchall())
+            cur.close()
 
             return jsonify(**{'DataType': 'Points',
                     'Starts': ListEncoder.encode_integers_by_difference_B64(starts),

@@ -8,6 +8,7 @@ with open('config.yaml') as f:
 
 dqx_blueprint = dqx.Blueprint()
 dqx_blueprint.add_view("annot", dqx.views.Annotation, config['db'])
+dqx_blueprint.add_view("filterbank", dqx.views.FilterBank, config['db'], "filterbank_tracks", "/data/malariagen2/plasmodium/pf-crosses/data/3d7_v3/bwa_default/panoptes_tracks")
 
 app = Flask(__name__)
 app.register_blueprint(dqx_blueprint)
