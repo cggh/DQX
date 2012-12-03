@@ -10,7 +10,7 @@
 
         ChannelSequence.Channel = function (serverurl,iFolder, iConfig) {
             var that = ChannelCanvas.Base("Sequence");
-            that._height = 16;
+            that._height = 17;
             that.myFolder = iFolder;
             that.myConfig = iConfig;
             //that.canHide = false;
@@ -65,7 +65,7 @@
                 //drawInfo.centerContext.fillStyle = 'rgb(128,128,128)';
                 //drawInfo.centerContext.fillRect(0, 0, drawInfo.sizeCenterX, h);
 
-
+                drawInfo.centerContext.globalAlpha = 0.75;
                 if (blockwidth <= 2) {
                     for (var basenr = 0; basenr < 4; basenr++) {
                         var base = ['a', 'c', 'g', 't'][basenr];
@@ -89,13 +89,14 @@
                 else {
                     for (i = 0; i < xvals.length - 1; i++) {
                         var base = yvals[i];
-                        var psx1 = xvals[i] * drawInfo.zoomFactX - drawInfo.offsetX;
-                        var psx2 = xvals[i + 1] * drawInfo.zoomFactX - drawInfo.offsetX;
+                        var psx1 = Math.round(xvals[i] * drawInfo.zoomFactX - drawInfo.offsetX);
+                        var psx2 = Math.round(xvals[i + 1] * drawInfo.zoomFactX - drawInfo.offsetX);
                         var ofs = 0;
                         drawInfo.centerContext.fillStyle = colors[base];
                         drawInfo.centerContext.fillRect(psx1, 0, psx2 - psx1 + 1, h);
                     }
                 }
+                drawInfo.centerContext.globalAlpha = 1;
 
 
                 if (!alldataready) {
