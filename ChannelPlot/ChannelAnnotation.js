@@ -7,7 +7,7 @@
         ChannelAnnotation.Channel = function (id, annotationFetcher) {
             var that = ChannelCanvas.Base(id);
             that._annotationFetcher = annotationFetcher;
-            that._height = 105;
+            that.setHeight(55);
             that._minDrawZoomFactX = 1 / 300.0;
             that._clickInfo = []; //will hold info about clickable areas
 
@@ -35,7 +35,7 @@
                 var ps = -4500;
                 ranseed = 0;
                 drawInfo.centerContext.strokeStyle = "black";
-                var slotcount = 10;
+                var slotcount = Math.floor((this._height-5)/10);
                 var slotmaxpos = [];
                 for (var i = 0; i < 3; i++) slotmaxpos[i] = -100;
 
@@ -95,7 +95,7 @@
                     }
                     if (slotnr == slotcount) {
                         drawInfo.centerContext.fillStyle = "rgb(255,200,100)";
-                        drawInfo.centerContext.fillRect(Math.round(psx1 + 2) + 0.5, this.getHeight() - 2 + 0.5, 20, 1.5);
+                        drawInfo.centerContext.fillRect(Math.round(psx1 + 2) + 0.5, this.getHeight() - 4 + 0.5, 20, 1.5);
                     }
 
                     ps += len;
