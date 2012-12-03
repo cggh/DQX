@@ -84,7 +84,7 @@
             //Call this function to highlight a particular region
             that.highlightRegion = function (chromid, pos, size) {
                 this.setChromosome(chromid, true, false);
-                if (size < 3) size = 3;
+                if (size < 1) size = 1;
                 this.setMark(pos - size / 2, pos + size / 2);
                 var winsize = size * 3;
                 if (winsize < 600) winsize = 600;
