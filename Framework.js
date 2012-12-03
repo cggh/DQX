@@ -439,6 +439,8 @@
                 this.sepPosits = [];
                 var framePosits = [];
                 for (var fnr = 0; fnr < this.memberFrames.length; fnr++) {
+                    if (!this.memberFrames[fnr].mySizeWeight)
+                        throw 'Frame "' + this.memberFrames[fnr].myFrameID + '" does not have size weight information';
                     if (fnr > 0) this.sepPosits.push(pos);
                     var pos2 = pos + totsize * this.memberFrames[fnr].mySizeWeight;
                     var mar1 = Math.round(pos + ((fnr > 0) ? (this.sepSize / 2) : 0));
