@@ -5,6 +5,9 @@
         var GenomeBrowser = (function() {
             function GenomeBrowser(parentFrame) {
                 this.createPanels = __bind(this.createPanels, this);
+                this.createChannel = __bind(this.createChannel, this);
+                this.channelModifyVisibility = __bind(this.channelModifyVisibility, this);
+
                 //Constructor
                 parentFrame.setInitialiseFunction(this.createPanels);
                 this.frameChannels = parentFrame.addMemberFrame(Framework.FrameFinal('GenomeChannels', 0.1));
@@ -24,10 +27,30 @@
             GenomeBrowser.prototype.createPanels = function() {
                 //Left channel selection area
                 this.treeChannels = FrameTree.Tree('treeChannels', this.frameChannels.getClientDivID());
+                var branch = FrameTree.Branch('channels', DocEl.StyledText('Channels', 'DQXLarge'));
+                var branch_channels = this.treeChannels.root.addItem(branch);
+                branch_channels.canSelect = false;
+                var that = this;
+                for (var key in config.tracks) {
+                    var channel_type_group = branch_channels.addItem(FrameTree.Branch(key.replace(/\s+/g, ''), DocEl.StyledText(key, 'DQXSemiLarge')));
+                    channel_type_group.collapsed = true;
+                    for (var i = 0; i < config.tracks[key].length; i++) {
+                        (function() { //Closure to get proper binding.... le sigh
+                            var chan_name = config.tracks[key][i].short_name;
+                            var check = Controls.Check(
+                                'ChannelControl' + chan_name,
+                                {label: config.tracks[key][i].name, value: false});
+                            channel_type_group.addItem(FrameTree.Control(check));
+                            Msg.listen('CtrlValueChanged' + chan_name, { type: 'CtrlValueChanged', id: check.getID() },
+                                function (scope, ctrl) {
+                                    that.channelModifyVisibility(chan_name, check.getValue());
+                                });
+                        })();
+                    }
+                }
                 this.frameChannels.setClientObject(this.treeChannels);
-                var branchChannels = this.treeChannels.root.addItem(FrameTree.Branch('channels', DocEl.StyledText('Channels', 'DQXLarge')));
-                branchChannels.canSelect = false;
                 this.treeChannels.render();
+
 
                 //Right channel view
                 var browserConfig = {
@@ -42,23 +65,44 @@
                     this.genome_panel.addChromosome(config.chromosomes[i].name, config.chromosomes[i].name, config.chromosomes[i].len);
                 }
 
-                this.data_fetcher = new DataFetcherSummary.Summary('dqx/filterbank', 1, 1100);
-                this.genome_panel.addDataFetcher(this.data_fetcher);
-                
-                var test_channel = ChannelYVals.Channel('fasbat', 0, 1000);
-                test_channel.setTitle("Test");
+                this.data_fetchers = {}
+                //for (var i = 0; i < config.samples.length; i++) {
+                for (var i = 0; i < 5; i++) {
+                    this.data_fetchers[config.samples[i]] = new DataFetcherSummary.Summary('dqx/filterbank', 1, 1100);
+                    this.genome_panel.addDataFetcher(this.data_fetchers[config.samples[i]]);
+                }
+
+                for (var key in config.tracks) {
+                    for (var i = 0; i < config.tracks[key].length; i++) {
+                        this.createChannel(config.tracks[key][i].short_name, config.samples.slice(0,5), config.tracks[key][i].name, config.tracks[key][i].range);
+                    }
+                }
+
+                //this.createChannel("normed_coverage", config.samples, "Normalised Coverage", [0,50]);
+                //this.createChannel("num_reads", ["ERR012788"], "title");
+                this.genome_panel.showRegion("Pf3D7_01", 0, 1000000);
+
+            };
+
+            GenomeBrowser.prototype.createChannel = function(short_name, component_names, title, range) {
+                var test_channel = ChannelYVals.Channel(short_name, range[0], range[1]);
+                test_channel.setTitle(title);
                 this.genome_panel.addChannel(test_channel, false);
-                this.genome_panel.channelModifyVisibility(test_channel.getID(), true);
-                var col_info = this.data_fetcher.addFetchColumn('ERR012788-num_reads', DQX.Color(0, 0, 0));
-                var component = test_channel.addComponent(ChannelYVals.Comp('compID', this.data_fetcher, col_info.myID));
-                test_channel.modifyComponentActiveStatus('compID', true);
-                component.myPlotHints.makeDrawLines(3000000.0); //This causes the points to be connected with lines
-                component.myPlotHints.interruptLineAtAbsent = true;
-                component.myPlotHints.drawPoints = false;
+                this.genome_panel.channelModifyVisibility(test_channel.getID(), false);
 
+                for (var i = 0; i < component_names.length; i++) {
+                    var col_info = this.data_fetchers[component_names[i]].addFetchColumn(component_names[i]+'-'+short_name, DQX.Color(0, 0, 0));
+                    var component = test_channel.addComponent(ChannelYVals.Comp(component_names[i], this.data_fetchers[component_names[i]], col_info.myID));
+                    test_channel.modifyComponentActiveStatus(component_names[i], false);
+                    component.myPlotHints.makeDrawLines(3000000.0); //This causes the points to be connected with lines
+                    component.myPlotHints.interruptLineAtAbsent = true;
+                    component.myPlotHints.drawPoints = false;
+                }
+            };
 
-                this.genome_panel.showRegion("Pf3D7_01", 0, 100000);
-
+            GenomeBrowser.prototype.channelModifyVisibility = function (id, status) {
+                this.genome_panel.findChannel(id).modifyComponentsActiveStatus(status);
+                this.genome_panel.channelModifyVisibility(id, status);
             };
             return GenomeBrowser;
         })();

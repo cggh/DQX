@@ -48,7 +48,6 @@
             return new TreeCtrl._objectBranch(iID, icontent);
         }
 
-
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // Encapsulates a form control into a tree item
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -120,7 +119,7 @@
             }
 
             that._createButtonHtml = function (collapsed) {
-                return '<IMG SRC="Bitmaps/' + (collapsed ? 'morelines' : 'lesslines') + '.png" border=0 ALT="" TITLE="" class="DQXTreeButtonImage" style="float:left;padding-right:6px">';
+                return '<IMG SRC="dqx/static/img/' + (collapsed ? 'morelines' : 'lesslines') + '.png" border=0 ALT="" TITLE="" class="DQXTreeButtonImage" style="float:left;padding-right:6px">';
             }
 
             that._renderSub = function (parentDiv, item, level) {

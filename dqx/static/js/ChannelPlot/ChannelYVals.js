@@ -305,7 +305,7 @@
                 this.myComponents[icomp.getID()] = icomp;
                 icomp.myChannel = this;
                 return icomp;
-            }
+            };
 
 /*            that.getComponentList = function () {
                 return this.myComponents.length; 
@@ -320,7 +320,14 @@
                 this.myComponents[cmpid].modifyComponentActiveStatus(newstatus);
                 if (redraw)
                     this.myPlot.render();
-            }
+            };
+
+            that.modifyComponentsActiveStatus = function (newstatus, redraw) {
+                for (var key in this.myComponents)
+                    this.myComponents[key].modifyComponentActiveStatus(newstatus);
+                if (redraw)
+                    this.myPlot.render();
+            };
 
             //returns a list of all fetchers that are currently active in this plot (i.e. correspond to active components)
             that.getActiveDataFetchers = function () {
@@ -337,7 +344,7 @@
                     }
                 }
                 return lst;
-            }
+            };
 
             that.draw = function (drawInfo) {
                 this.drawStandardGradientCenter(drawInfo, 1);
@@ -392,14 +399,14 @@
                 this.drawMark(drawInfo);
                 this.drawTitle(drawInfo);
                 this.drawXScale(drawInfo);
-            }
+            };
 
             that.handleMouseClicked = function (px, py) {
                 var tooltipInfo = that.getToolTipInfo(px, py);
                 if (tooltipInfo) {
                     this.handlePointClicked(tooltipInfo.compID, tooltipInfo.closestPointIndex);
                 }
-            }
+            };
 
             that.getToolTipInfo = function (px, py) {
                 var bestMatch = { minDistance: 6, closestPointIndex: null };
@@ -420,23 +427,22 @@
                 }
                 else
                     return null;
-                return null;
-            }
+            };
 
             //Returns the tooltip content for a given point. This function can be overridden to implement a specific behaviour
             that.getToolTipContent = function (compID, pointIndex) {
                 var comp = this.myComponents[compID];
                 var value = comp.myfetcher.getColumnPoint(pointIndex, compID);
                 return compID + '= ' + value;
-            }
+            };
 
             //Reacts on a click event on a point. This function can be overridden to implement a specific behaviour
             this.handlePointClicked = function (compID, pointIndex) {
-            }
+            };
 
 
             return that;
-        }
+        };
 
 
 
