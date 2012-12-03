@@ -191,7 +191,7 @@
                     this._lastmouseposx = args.x;
                 }
                 else {
-                    this.mousemarking = true;
+                    this._mousemarking = true;
                     this._markPresent = false;
                     this._markPos1 = this.screenPos2XVal(args.x);
                     this._markPos2 = this.markPos1;
@@ -217,7 +217,7 @@
                     this.render();
                     this._lastmouseposx = mouseposx;
                 }
-                if (this.mousemarking) {
+                if (this._mousemarking) {
                     this._markPos2 = this.screenPos2XVal(mousePressX1);
                     this._markPresent = true;
                     this.hideToolTip();
