@@ -48,6 +48,12 @@
                 return that._idChannelMap[id];
             }
 
+            that.findChannelRequired = function (id) {
+                rs = that._idChannelMap[id];
+                if (!rs)
+                    throw "Invalid channel " + id;
+                return rs;
+            }
 
             //////////////////////////////////////////////////////////////////////////////////////////
             // Create basic html emelents

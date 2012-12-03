@@ -181,6 +181,117 @@
         }
 
 
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Class ChannelYVals.YRangeComp: implements a single component for ChannelYVals.Channel,
+        // drawing a range between a minimum Y value and a maximum Y value
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        //NOTE: a channel component is identified by a DataFetcher.Curve, and a column id in this fetcher
+        ChannelYVals.YRange = function (iID, imyDataFetcher, iYIDMin, iYIDMax, iColor) {
+            var that = {};
+            that.myfetcher = imyDataFetcher; //DataFetcher.Curve used
+            that.ID = iID; // id of this component
+            that.YIDMin = iYIDMin; //id of the minimum value in the datafetcher
+            that.YIDMax = iYIDMax; //id of the maximum value in the datafetcher
+            that.myColor = iColor;
+            that.isActive = false;
+            that.myPlotHints = ChannelYVals.PlotHints();
+
+            that.getID = function () { return this.ID; }
+
+            //return the color used to draw this channel
+            that.getColor = function () {
+                return this.myPlotHints.color;
+            }
+
+            that.setColor = function (icolor) {
+                this.myPlotHints.color = icolor
+            }
+
+            //modifies the activity status of this component
+            that.modifyComponentActiveStatus = function (newstatus) {
+                if (this.isActive == newstatus)
+                    return;
+                this.isActive = newstatus;
+                if (newstatus) {
+                    this.myfetcher.activateFetchColumn(this.YIDMin);
+                    this.myfetcher.activateFetchColumn(this.YIDMax);
+                }
+                else {
+                    this.myfetcher.deactivateFetchColumn(this.YIDMin);
+                    this.myfetcher.deactivateFetchColumn(this.YIDMax);
+                }
+            }
+
+
+            that.draw = function (drawInfo, args) {
+                var rangemin = args.rangemin;
+                var rangemax = args.rangemax;
+                var points1 = this.myfetcher.getColumnPoints(args.PosMin, args.PosMax, this.YIDMin);
+                var points2 = this.myfetcher.getColumnPoints(args.PosMin, args.PosMax, this.YIDMax);
+                var xvals1 = points1.xVals;
+                var yvals1 = points1.YVals;
+                var xvals2 = points1.xVals;
+                var yvals2 = points2.YVals;
+                var thefirst = true;
+                drawInfo.centerContext.beginPath();
+                drawInfo.centerContext.fillStyle = this.myColor.toStringCanvas();
+
+                var psy_fact = 1.0 / (rangemax - rangemin) * drawInfo.sizeY * 0.8;
+                var psy_offset = drawInfo.sizeY - drawInfo.sizeY * 0.1 + rangemin * psy_fact;
+                var hasYFunction = "YFunction" in this;
+
+                var psx, psy;
+                for (i = 0; i < xvals1.length; i++) {
+                    psx = xvals1[i] * drawInfo.zoomFactX - drawInfo.offsetX;
+                    if (yvals1[i] != null) {
+                        var y = yvals1[i];
+                        if (hasYFunction)
+                            y = this.YFunction(y);
+                        psy = psy_offset - y * psy_fact;
+                    }
+                    else
+                        psy = psy_offset;
+                    if (thefirst) {
+                        drawInfo.centerContext.moveTo(psx, psy);
+                        thefirst = false;
+                    }
+                    else drawInfo.centerContext.lineTo(psx, psy);
+                }
+                for (i = xvals2.length - 1; i >= 0; i--) {
+                    var psx = xvals2[i] * drawInfo.zoomFactX - drawInfo.offsetX;
+                    if (yvals2[i] != null) {
+                        var y = yvals2[i];
+                        if (hasYFunction)
+                            y = this.YFunction(y);
+                        psy = psy_offset - y * psy_fact;
+                    }
+                    else
+                        psy = psy_offset;
+                    drawInfo.centerContext.lineTo(psx, psy);
+                }
+                drawInfo.centerContext.fill();
+            }
+
+            that.getClosestPoint = function (px, py) {
+                return null;
+            }
+
+
+            return that;
+        }
+
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Class ChannelYVals.Channel: implements a channel that displays an X-Y plot
+        // This plot consists of one or more components
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
         ChannelYVals.Channel = function (id, args) {
             var that = ChannelCanvas.Base(id);
             that._height = 120;
@@ -197,11 +308,13 @@
                 return icomp;
             }
 
-            that.getComponentCount = function () { return this.myComponents.length; }
+/*            that.getComponentList = function () {
+                return this.myComponents.length; 
+            }
 
             that.getComponent = function (nr) {
                 return this.myComponents[nr];
-            }
+            }*/
 
             //Modifies the activity status of a component inside this channel
             that.modifyComponentActiveStatus = function (cmpid, newstatus, redraw) {
@@ -295,7 +408,7 @@
                     var comp = this.myComponents[compid];
                     if (comp.isActive) {
                         var tryMatch = comp.getClosestPoint(px, py);
-                        if (tryMatch.minDistance < bestMatch.minDistance) {
+                        if (tryMatch&&(tryMatch.minDistance < bestMatch.minDistance)) {
                             bestMatch = tryMatch;
                             bestMatch.compID = compid;
                             bestMatch.ID = compid + '_' + bestMatch.closestPointIndex;
@@ -308,6 +421,7 @@
                 }
                 else
                     return null;
+                return null;
             }
 
             //Returns the tooltip content for a given point. This function can be overridden to implement a specific behaviour
