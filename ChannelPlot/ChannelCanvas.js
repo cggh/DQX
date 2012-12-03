@@ -339,6 +339,10 @@
                 if (drawInfo.mark.present) {
                     var psx1 = Math.round((drawInfo.mark.pos1) * drawInfo.zoomFactX - drawInfo.offsetX) - 1;
                     var psx2 = Math.round((drawInfo.mark.pos2) * drawInfo.zoomFactX - drawInfo.offsetX) + 1;
+                    if (psx2 - psx1 < 5) {
+                        psx1--;
+                        psx2++;
+                    }
                     drawInfo.centerContext.globalAlpha = 0.15;
                     drawInfo.centerContext.fillStyle = "rgb(255,0,0)";
                     drawInfo.centerContext.fillRect(psx1, 0, psx2 - psx1, drawInfo.sizeY);
