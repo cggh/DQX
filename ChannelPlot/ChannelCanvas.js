@@ -56,8 +56,9 @@
                 this._subTitle = isubtitle;
             }
 
-            that.setPlotter = function (thePlotter) {
-            }
+            that.setPlotter = function (thePlotter) { } //can override
+
+            that.hideToolTip = function () { } //can override en remove any tooltip if this function was called
 
             that.getCanvasID = function (ext) {
                 return this.getMyPlotter().getSubID() + '_channel_' + this._myID + '_' + ext;
@@ -335,10 +336,11 @@
                 drawInfo.leftContext.restore();
             }
 
-            that.drawMark = function (drawInfo) {
+            that.drawMark = function (drawInfo, showText) {
                 if (drawInfo.mark.present) {
                     var psx1 = Math.round((drawInfo.mark.pos1) * drawInfo.zoomFactX - drawInfo.offsetX) - 1;
                     var psx2 = Math.round((drawInfo.mark.pos2) * drawInfo.zoomFactX - drawInfo.offsetX) + 1;
+                    if (psx2 < psx1) { var psxtmp = psx1; psx1 = psx2; psx2 = psxtmp; }
                     if (psx2 - psx1 < 5) {
                         psx1--;
                         psx2++;
@@ -347,15 +349,17 @@
                     drawInfo.centerContext.fillStyle = "rgb(255,0,0)";
                     drawInfo.centerContext.fillRect(psx1, 0, psx2 - psx1, drawInfo.sizeY);
                     drawInfo.centerContext.globalAlpha = 1;
-                    /*
-                    centercontext.fillStyle = "rgb(192,0,0)";
-                    centercontext.font = '11px sans-serif';
-                    centercontext.textBaseline = 'top';
-                    centercontext.textAlign = 'right';
-                    centercontext.fillText(this._markPos1.toFixed(0), psx1, 7);
-                    centercontext.textAlign = 'left';
-                    var size = this._markPos2 - this._markPos1;
-                    centercontext.fillText(size.toFixed(0) + 'bp', psx2, 7);*/
+
+                    if (showText) {
+                        drawInfo.centerContext.fillStyle = "rgb(255,0,0)";
+                        drawInfo.centerContext.font = 'bold 11px sans-serif';
+                        drawInfo.centerContext.textBaseline = 'top';
+                        drawInfo.centerContext.textAlign = 'right';
+                        drawInfo.centerContext.fillText(Math.min(drawInfo.mark.pos1, drawInfo.mark.pos2).toFixed(0), psx1, 11);
+                        drawInfo.centerContext.textAlign = 'left';
+                        var size = Math.abs(drawInfo.mark.pos2 - drawInfo.mark.pos1);
+                        drawInfo.centerContext.fillText(size.toFixed(0) + 'bp', psx2, 11);
+                    }
                 }
             }
 
@@ -453,7 +457,7 @@
                         }
                     }
                 }
-                this.drawMark(drawInfo);
+                this.drawMark(drawInfo, true);
             }
 
             return that;

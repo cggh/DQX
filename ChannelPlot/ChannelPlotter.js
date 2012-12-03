@@ -193,7 +193,7 @@
                 else {
                     this.mousemarking = true;
                     this._markPresent = false;
-                    this._markPos1 = this.screenPos2XVal(this.getEventPosX(ev));
+                    this._markPos1 = this.screenPos2XVal(args.x);
                     this._markPos2 = this.markPos1;
                     this.render();
                 }
@@ -220,9 +220,14 @@
                 if (this.mousemarking) {
                     this._markPos2 = this.screenPos2XVal(mousePressX1);
                     this._markPresent = true;
-                    this.delToolTip();
+                    this.hideToolTip();
                     this.render();
                 }
+            }
+
+            that.hideToolTip = function () {
+                for (var i = 0; i < this._channels.length; i++)
+                    this._channels[i].hideToolTip();
             }
 
 
