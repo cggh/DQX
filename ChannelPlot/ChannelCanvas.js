@@ -56,6 +56,9 @@
                 this._subTitle = isubtitle;
             }
 
+            that.setPlotter = function (thePlotter) {
+            }
+
             that.getCanvasID = function (ext) {
                 return this.getMyPlotter().getSubID() + '_channel_' + this._myID + '_' + ext;
             }
@@ -164,7 +167,7 @@
                 this.hideToolTip();
             }
 
-            that.handleMouseClicked = function(px, py) {
+            that.handleMouseClicked = function (px, py) {
             }
 
 

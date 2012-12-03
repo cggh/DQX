@@ -42,6 +42,7 @@
                 this.getElemJQ(onTop ? 'BodyFixed' : 'BodyScroll').append(channel.renderHtml());
                 channel.postCreateHtml();
                 $('#' + channel.getCenterElementID()).bind('DOMMouseScroll mousewheel', $.proxy(that.handleMouseWheel, that));
+                channel.setPlotter(this);
             }
 
             that.findChannel = function (id) {
