@@ -30,6 +30,8 @@
             this._isFetching = false;
             this.hasFetchFailed = false;
 
+            this.translateChromoId = function (id) { return id; }
+
             this.clearData = function () {
                 this._currentRangeMin = 1000.0;
                 this._currentRangeMax = -1000.0;
@@ -78,7 +80,7 @@
                     rangemax += range;
                     var myurl = DQX.Url(this.config.serverURL);
                     myurl.addUrlQueryItem('datatype', 'annot');
-                    myurl.addUrlQueryItem('chrom', this.myChromoID);
+                    myurl.addUrlQueryItem('chrom', this.translateChromoId(this.myChromoID));
                     myurl.addUrlQueryItem('start', rangemin);
                     myurl.addUrlQueryItem('stop', rangemax);
                     myurl.addUrlQueryItem('table', this.annotTableName);
