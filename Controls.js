@@ -707,6 +707,7 @@
 
             that._onClick = function () {
                 Msg.send({ type: 'CtrlClicked', id: this.myID, contextid: this.myContextID }, this);
+                return false;
             }
 
             that.getValue = function () {
