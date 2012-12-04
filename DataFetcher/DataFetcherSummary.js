@@ -354,8 +354,8 @@
                     var collist = this._createActiveColumnListString();
                     //create some buffer around the requested range. This reduces the number of requests and gives the user a smoother experience when scrolling or zooming out
                     var range = rangemax - rangemin;
-                    rangemin -= 1.5 * range;
-                    rangemax += 1.5 * range;
+                    rangemin -= Math.round(1.5 * range);
+                    rangemax += Math.round(1.5 * range);
 
                     var blockStart = Math.max(0, Math.floor(rangemin / blockSize));
                     var blockCount = Math.ceil((rangemax - rangemin) / blockSize);
