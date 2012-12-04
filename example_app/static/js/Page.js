@@ -8,10 +8,12 @@
 
                 this.METHOD = __bind(this.METHOD, this);
 
-                this.frameRoot = Framework.FrameGroupVert('');
+                this.frameRoot = Framework.FrameGroupHor('Genome');//Framework.FrameGroupVert('defghjk');
                 this.frameRoot.myID = 'myroot';
                 this.frameRoot.setMargins(0);
-                this.frameGenome = this.frameRoot.addMemberFrame(Framework.FrameGroupHor('Genome', 1)).setMargins(10);
+                this.frameGenome=this.frameRoot
+                //this.frameGenome = Framework.FrameGroupHor('Genome');//this.frameRoot.addMemberFrame(Framework.FrameGroupHor('Genome', 1))
+                //this.frameGenome.setMargins(10);
                 this.genomeBrowser = new GenomeBrowser(this.frameGenome);
             }
             Page.prototype.METHOD = function() {

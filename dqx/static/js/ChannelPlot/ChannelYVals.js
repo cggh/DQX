@@ -48,6 +48,7 @@
             }
 
             that.setColor = function (icolor) {
+                console.log(icolor);
                 this.myPlotHints.color = icolor
             }
 
@@ -318,13 +319,6 @@
             //Modifies the activity status of a component inside this channel
             that.modifyComponentActiveStatus = function (cmpid, newstatus, redraw) {
                 this.myComponents[cmpid].modifyComponentActiveStatus(newstatus);
-                if (redraw)
-                    this.myPlot.render();
-            };
-
-            that.modifyComponentsActiveStatus = function (newstatus, redraw) {
-                for (var key in this.myComponents)
-                    this.myComponents[key].modifyComponentActiveStatus(newstatus);
                 if (redraw)
                     this.myPlot.render();
             };
