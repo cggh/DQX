@@ -23,6 +23,8 @@
             //that._myNavigator.minScrollSize = 0.0001;
 
             that.annotationChannel = ChannelAnnotation.Channel("_Annotation", that._annotationFetcher);
+            that.annotationChannel.setTitle('Genes');
+            that.annotationChannel.darkenFactor = 0.85;
             that.addChannel(that.annotationChannel, true);
 
             //converts a chromosome id to a chromosome number

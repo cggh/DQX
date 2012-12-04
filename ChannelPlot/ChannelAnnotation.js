@@ -10,17 +10,16 @@
             that.setHeight(55);
             that._minDrawZoomFactX = 1 / 300.0;
             that._clickInfo = []; //will hold info about clickable areas
-
-            that.getTitle = function () { return "Annotation"; }
+            that.darkenFactor = 1.0;
 
             that.draw = function (drawInfo) {
-                this.drawStandardGradientCenter(drawInfo, 0.85);
-                this.drawStandardGradientLeft(drawInfo, 0.85);
-                this.drawStandardGradientRight(drawInfo, 0.85);
+                this.drawStandardGradientCenter(drawInfo, this.darkenFactor);
+                this.drawStandardGradientLeft(drawInfo, this.darkenFactor);
+                this.drawStandardGradientRight(drawInfo, this.darkenFactor);
                 this._clickInfo = [];
 
                 if (drawInfo.zoomFactX < this._minDrawZoomFactX) {
-                    this.drawMessage(drawInfo, "Zoom in to see " + this.getTitle());
+                    this.drawMessage(drawInfo, "Zoom in to see " + this._title);
                     return;
                 }
 
@@ -35,7 +34,7 @@
                 var ps = -4500;
                 ranseed = 0;
                 drawInfo.centerContext.strokeStyle = "black";
-                var slotcount = Math.floor((this._height-5)/10);
+                var slotcount = Math.floor((this._height - 5) / 10);
                 var slotmaxpos = [];
                 for (var i = 0; i < 3; i++) slotmaxpos[i] = -100;
 
@@ -103,6 +102,7 @@
 
                 this.drawMark(drawInfo);
                 this.drawXScale(drawInfo);
+                this.drawTitle(drawInfo);
             }
 
             that.getClickInfoAtPoint = function (xp, yp) {
@@ -130,12 +130,12 @@
             that.handleMouseClicked = function (px, py) {
                 var tooltipInfo = that.getToolTipInfo(px, py);
                 if (tooltipInfo) {
-                    this.handleGeneClicked(tooltipInfo.ID);
+                    this.handleFeatureClicked(tooltipInfo.ID);
                 }
             }
 
 
-            that.handleGeneClicked = function (geneID) { //override this to implement behavour when a gene is clicked
+            that.handleFeatureClicked = function (geneID) { //override this to implement behavour when a gene is clicked
             }
 
 
