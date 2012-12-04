@@ -42,7 +42,7 @@
                         editDiv.addStyle('padding-top', '2px');
                         editDiv.addStyle('padding-bottom', '5px');
                         editDiv.addStyle('background-color', 'rgb(180,180,180)');
-                        editDiv.addElem('<IMG SRC="bitmaps/magnif2.png" border=0 ALT="" TITLE="" style="position:absolute;left:3px;top:2px">');
+                        editDiv.addElem('<IMG SRC="Bitmaps/magnif2.png" border=0 ALT="" TITLE="" style="position:absolute;left:3px;top:2px">');
                         var edit = DocEl.Edit('', { id: this.myFilterDivID, parent: editDiv });
                         edit.addStyle('width', '100%');
                         edit.addStyle('height', '18px');
