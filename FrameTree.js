@@ -8,10 +8,17 @@
             this.myID = iID;
             this.content = icontent;
             this.items = []; //member items of this branch
-            this.canSelect = true;
+            this._canSelect = true;
             this.myParent = null;
             this.myTree = null;
         }
+
+        //determine whether or not the branch can be selected by the user
+        TreeCtrl._objectBranch.prototype.setCanSelect = function (status) {
+            this._canSelect = status;
+            return this;
+        }
+
 
         TreeCtrl._objectBranch.prototype.renderHtml = function () {
             return this.content.toString();
@@ -56,7 +63,7 @@
         TreeCtrl.Control = function (icontrol) {
             var that = TreeCtrl.Branch(icontrol.getID(), '');
             that.control = icontrol;
-            that.canSelect = false;
+            that._canSelect = false;
 
             that._setTreeSub = function (tree) {
                 this.control.setContextID(tree.myID);
@@ -129,7 +136,7 @@
                 var hasSubItems = subItems.length > 0;
 
                 var titledv = DocEl.Div({ parent: parentDiv, id: this._getDivIDItem(item.myID) });
-                if (item.canSelect)
+                if (item._canSelect)
                     titledv.setCssClass('DQXTreeItem');
                 else
                     titledv.setCssClass('DQXTreeItemNoSelect');
