@@ -128,6 +128,11 @@
                 return (this.isHorSplitter()) || (this.isVertSplitter());
             }
 
+            that.checkSplitter = function () {
+                if (!this.isSplitter())
+                    throw "Frame is not a splitter";
+            }
+
             that.splitterDim = function () {
                 if (this.isHorSplitter()) return 0;
                 if (this.isVertSplitter()) return 1;
@@ -152,13 +157,29 @@
 
             ///////////////// TO BE CALLED CREATION TIME
 
+            //Sets an initialisation handler function. This function will be called the first time the frame becomes visible
             that.setInitialiseFunction = function (handler) {
                 this._handleInitialise = handler;
+                return this;
+            }
+
+            that.setMinSize = function (dim, sze) {
+                Framework.isValidDim(dim);
+                this.sizeRange[dim].setMinSize(sze);
+                return this;
             }
 
             that.setFixedSize = function (dim, sz) {
                 Framework.isValidDim(dim);
                 this.sizeRange[dim].setFixedSize(sz);
+                return this;
+            }
+
+            that.setMarginsIndividual = function (left, top, right, bottom) {
+                this.marginLeft = left;
+                this.marginRight = right;
+                this.marginTop = top;
+                this.marginBottom = bottom;
                 return this;
             }
 
@@ -172,7 +193,35 @@
 
             that.setDisplayTitle = function (ttle) {
                 this.myDisplayTitle = ttle;
+                return this;
             }
+
+
+            that.setAllowScrollBars = function (allowX, allowY) {
+                this.allowXScrollbar = allowX;
+                this.allowYScrollbar = allowY;
+                return this;
+            }
+
+            //css class of the div that defines the border of this panel
+            that.setFrameClass = function (styleClass) {
+                this.frameClass = styleClass;
+                return this;
+            }
+
+            //css class of the div that defines the client area of this panel
+            that.setFrameClassClient = function (clientStyleClass) {
+                this.frameClassClient = clientStyleClass;
+                return this;
+            }
+
+            that.setSeparatorSize = function (sepsize) {
+                this.checkSplitter();
+                this.sepsize = sepsize;
+                return this;
+            }
+
+
 
             that.getMarginTop = function () {
                 return this.marginTop + (this.hasTitleBar() ? Framework.frameTitleBarH : 0);
@@ -462,7 +511,7 @@
                 posits[sepnr] = pos;
                 var prevposit = 0;
                 for (var i = 0; i < this.memberFrames.length; i++) {
-                    this.memberFrames[i].mySizeWeight = (posits[i] - prevposit) / totsize;
+                    this.memberFrames[i].mySizeWeight = Math.max(1.0e-9,(posits[i] - prevposit) / totsize);
                     prevposit = posits[i];
                 }
                 this._adjustFrameSizeFractions(totsize);
@@ -502,7 +551,7 @@
                 }
 
                 for (var fnr = 0; fnr < this.memberFrames.length; fnr++)
-                    this.memberFrames[fnr].mySizeWeight = widths[fnr] / totsize;
+                    this.memberFrames[fnr].mySizeWeight = Math.max(1.0e-9,widths[fnr] / totsize);
 
             }
 
