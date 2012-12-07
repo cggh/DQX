@@ -66,6 +66,12 @@
             return membername in tryobj;
         }
 
+        DQX.requireMember = function (tryobj, membername) {
+            if (typeof (tryobj) != 'object') throw 'variable cannot have a member because it is not an object';
+            if (!(membername in tryobj)) throw 'Object should have member "{memb}"'.DQXformat({memb:membername});
+        }
+
+
         //A formatter extension for strings
         //usage: "Hello {name}".DQXformat({ name: 'World' })
         String.prototype.DQXformat = function (args) {
