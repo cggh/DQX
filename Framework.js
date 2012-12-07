@@ -15,10 +15,10 @@
 
 
         Framework.FrameTypes = {
-        'Final':0, //contains no more subpanels, and holds a client area
-        'GroupHor':1, //Contains a horizontally spread set of subframes
-        'GroupVert':2, //Contains a vertically spread set of subframes
-        'Tab':3//Contains a set of subframes organised as tabs
+            'Final': 0, //contains no more subpanels, and holds a client area
+            'GroupHor': 1, //Contains a horizontally spread set of subframes
+            'GroupVert': 2, //Contains a vertically spread set of subframes
+            'Tab': 3//Contains a set of subframes organised as tabs
         };
 
         Framework.SizeRange = function () {
@@ -69,7 +69,7 @@
             if (!(itype in Framework.FrameTypes)) throw 'Invalid frame type';
             var that = {};
 
-            that.myParent = null;
+            that._parentFrame = null;
             that.myFrameID = iid;
             that.myDisplayTitle = '';
             that.myType = itype;
@@ -82,7 +82,7 @@
             that.memberFrames = [];
             that.myClientObject = null;
             that.myID = '';
-            that.sepSize = 10;
+            that._separatorSize = 10;
             that.frameClass = ''; //css class of the div that makes the border of this panel
             that.frameClassClient = ''; //css class of the div that makes the client area this panel
             that._handleInitialise = null; //this function will be called the first time this frame goes live
@@ -92,7 +92,7 @@
 
             ////////////////// GENERAL GETTERS
 
-            that.getVisibleTyleDivID = function () {
+            that.getVisibleTitleDivID = function () {
                 return this.myID + '_DisplayTitle';
             }
 
@@ -147,7 +147,7 @@
             }
 
             that.hasTitleBar = function () {
-                return (this.myDisplayTitle) && ((!this.myParent) || (!this.myParent.isTabber()));
+                return (this.myDisplayTitle) && ((!this._parentFrame) || (!this._parentFrame.isTabber()));
             }
 
             that.getTitleBarHeight = function () {
@@ -246,6 +246,7 @@
             }
 
             that.getMinSize = function (dim) {
+                Framework.isValidDim(dim);
                 var subminsize = 0;
                 if ((this.isSplitter()) && (this.splitterDim() == dim)) {
                     for (var i = 0; i < this.memberFrames.length; i++)
@@ -262,6 +263,7 @@
             }
 
             that.getMaxSize = function (dim) {
+                Framework.isValidDim(dim);
                 var submaxsize = 0;
                 if ((this.isSplitter()) && (this.splitterDim() == dim)) {
                     for (var i = 0; i < this.memberFrames.length; i++)
@@ -277,12 +279,15 @@
                 return maxsize;
             }
 
+            that.setParentFrame = function (pframe) {
+                this._parentFrame = pframe;
+            }
 
             that.addMemberFrame = function (iframe) {
                 if (this.isFinalPanel()) throw "Can't add frames to a final panel";
                 iframe.myID = this.myID + '_' + this.memberFrames.length.toString();
                 this.memberFrames.push(iframe);
-                iframe.myParent = this;
+                iframe.setParentFrame(this);
                 return iframe;
             }
 
@@ -325,14 +330,14 @@
                 }
 
                 if (this.hasTitleBar()) {
-                    var titlediv = DocEl.Div({ parent: thediv, id: this.getVisibleTyleDivID() });
+                    var titlediv = DocEl.Div({ parent: thediv, id: this.getVisibleTitleDivID() });
                     titlediv.setHeightPx(Framework.frameTitleBarH);
                     titlediv.setCssClass('DQXTitleBar');
                     titlediv.addElem(this.myDisplayTitle);
                 }
 
                 /*                if (this.marginTop > 0) {
-                var titlediv = DocEl.Div({ parent: thediv, id: this.getVisibleTyleDivID() });
+                var titlediv = DocEl.Div({ parent: thediv, id: this.getVisibleTitleDivID() });
                 }*/
 
                 if (this.isSplitter()) {
@@ -505,8 +510,8 @@
                         throw 'Frame "' + this.memberFrames[fnr].myFrameID + '" does not have size weight information';
                     if (fnr > 0) this.sepPosits.push(pos);
                     var pos2 = pos + totsize * this.memberFrames[fnr].mySizeWeight;
-                    var mar1 = Math.round(pos + ((fnr > 0) ? (this.sepSize / 2) : 0));
-                    var mar2 = Math.round(pos2 - ((fnr < this.memberFrames.length - 1) ? (this.sepSize / 2) : 0));
+                    var mar1 = Math.round(pos + ((fnr > 0) ? (this._separatorSize / 2) : 0));
+                    var mar2 = Math.round(pos2 - ((fnr < this.memberFrames.length - 1) ? (this._separatorSize / 2) : 0));
                     framePosits.push({ pos1: mar1, pos2: mar2 });
                     pos = pos2;
                 }
@@ -620,7 +625,7 @@
                             splitterel.css('position', 'absolute');
                             splitterel.css('left', (framePosits[fnr].pos2 + this.marginLeft) + 'px');
                             splitterel.css('top', this.getMarginTop() + 'px');
-                            splitterel.css('width', this.sepSize + 'px');
+                            splitterel.css('width', this._separatorSize + 'px');
                             splitterel.css('height', clientHeight + 'px');
                         }
                     }
@@ -637,7 +642,7 @@
                             splitterel.css('position', 'absolute');
                             splitterel.css('top', (framePosits[fnr].pos2 + this.getMarginTop()) + 'px');
                             splitterel.css('left', this.marginLeft + 'px');
-                            splitterel.css('height', this.sepSize + 'px');
+                            splitterel.css('height', this._separatorSize + 'px');
                             splitterel.css('width', clientWidth + 'px');
                         }
                     }
@@ -703,17 +708,17 @@
 
 
             that.modifyDisplayTitle = function (newtitle) {
-                $('#' + this.getVisibleTyleDivID()).text(newtitle);
+                $('#' + this.getVisibleTitleDivID()).text(newtitle);
             }
 
             //Determines if a frame is currently visible (e.g. not hidden behind a tab)
             that.isVisible = function () {
                 var fr = this;
-                while (fr.myParent != null) {
-                    if (fr.myParent.isTabber())
-                        if (fr.myParent.getActiveTabFrameID() != fr.myFrameID)
+                while (fr._parentFrame != null) {
+                    if (fr._parentFrame.isTabber())
+                        if (fr._parentFrame.getActiveTabFrameID() != fr.myFrameID)
                             return false;
-                    fr = fr.myParent;
+                    fr = fr._parentFrame;
                 }
                 return true;
             }
@@ -723,13 +728,13 @@
                     return;
                 var fr = this;
                 var tabSwitchList = [];
-                while (fr.myParent != null) {
-                    if (fr.myParent.isTabber())
+                while (fr._parentFrame != null) {
+                    if (fr._parentFrame.isTabber())
                         tabSwitchList.unshift(fr);
-                    fr = fr.myParent;
+                    fr = fr._parentFrame;
                 }
                 for (var i = 0; i < tabSwitchList.length; i++)
-                    tabSwitchList[i].myParent.switchTab(tabSwitchList[i].myFrameID);
+                    tabSwitchList[i]._parentFrame.switchTab(tabSwitchList[i].myFrameID);
                 if (this.myClientObject != null)
                     this.myClientObject.handleResize(); //this triggers immediate correct sizing of the panel;
                 return true;
