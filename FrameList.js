@@ -97,6 +97,7 @@
             that._onChangeFilter = function () {
                 this._filterText = $('#' + this.myFilterDivID).val().toUpperCase();
                 this.render();
+                $('#' + this.myListDivID).scrollTop(0);
             }
 
             that.setActiveItem = function (id, noEvent) {
