@@ -14,12 +14,12 @@
         Framework.sepSizeSmall = 6;
 
 
-        Framework.FrameTypes = [
-        'Final', //contains no more subpanels, and holds a client area
-        'GroupHor', //Contains a horizontally spread set of subframes
-        'GroupVert', //Contains a vertically spread set of subframes
-        'Tab'//Contains a set of subframes organised as tabs
-        ];
+        Framework.FrameTypes = {
+        'Final':0, //contains no more subpanels, and holds a client area
+        'GroupHor':1, //Contains a horizontally spread set of subframes
+        'GroupVert':2, //Contains a vertically spread set of subframes
+        'Tab':3//Contains a set of subframes organised as tabs
+        };
 
         Framework.SizeRange = function () {
             var that = {};
@@ -65,6 +65,8 @@
 
 
         Framework.Frame = function (iid, itype, isizeweight) {
+            DQX.checkIsString(iid);
+            if (!(itype in Framework.FrameTypes)) throw 'Invalid frame type';
             var that = {};
 
             that.myParent = null;
@@ -88,7 +90,7 @@
             that.allowYScrollbar = true;
             that.allowXScrollbar = false;
 
-            ////////////////// GETNERAL GETTERS
+            ////////////////// GENERAL GETTERS
 
             that.getVisibleTyleDivID = function () {
                 return this.myID + '_DisplayTitle';
@@ -159,23 +161,27 @@
 
             //Sets an initialisation handler function. This function will be called the first time the frame becomes visible
             that.setInitialiseFunction = function (handler) {
+                DQX.checkIsFunction(handler);
                 this._handleInitialise = handler;
                 return this;
             }
 
             that.setMinSize = function (dim, sze) {
                 Framework.isValidDim(dim);
+                DQX.checkIsNumber(sze);
                 this.sizeRange[dim].setMinSize(sze);
                 return this;
             }
 
             that.setFixedSize = function (dim, sz) {
                 Framework.isValidDim(dim);
+                DQX.checkIsNumber(sz);
                 this.sizeRange[dim].setFixedSize(sz);
                 return this;
             }
 
             that.setMarginsIndividual = function (left, top, right, bottom) {
+                DQX.checkIsNumber(left); DQX.checkIsNumber(top); DQX.checkIsNumber(right); DQX.checkIsNumber(bottom);
                 this.marginLeft = left;
                 this.marginRight = right;
                 this.marginTop = top;
@@ -183,7 +189,9 @@
                 return this;
             }
 
+
             that.setMargins = function (sz) {
+                DQX.checkIsNumber(sz);
                 this.marginLeft = sz;
                 this.marginRight = sz;
                 this.marginTop = sz;
@@ -192,12 +200,14 @@
             }
 
             that.setDisplayTitle = function (ttle) {
+                DQX.checkIsString(ttle);
                 this.myDisplayTitle = ttle;
                 return this;
             }
 
 
             that.setAllowScrollBars = function (allowX, allowY) {
+                DQX.checkIsBoolean(allowX); DQX.checkIsBoolean(allowY);
                 this.allowXScrollbar = allowX;
                 this.allowYScrollbar = allowY;
                 return this;
@@ -205,17 +215,20 @@
 
             //css class of the div that defines the border of this panel
             that.setFrameClass = function (styleClass) {
+                DQX.checkIsString(styleClass);
                 this.frameClass = styleClass;
                 return this;
             }
 
             //css class of the div that defines the client area of this panel
             that.setFrameClassClient = function (clientStyleClass) {
+                DQX.checkIsString(clientStyleClass);
                 this.frameClassClient = clientStyleClass;
                 return this;
             }
 
             that.setSeparatorSize = function (sepsize) {
+                DQX.checkIsNumber(sepsize);
                 this.checkSplitter();
                 this.sepsize = sepsize;
                 return this;
@@ -511,7 +524,7 @@
                 posits[sepnr] = pos;
                 var prevposit = 0;
                 for (var i = 0; i < this.memberFrames.length; i++) {
-                    this.memberFrames[i].mySizeWeight = Math.max(1.0e-9,(posits[i] - prevposit) / totsize);
+                    this.memberFrames[i].mySizeWeight = Math.max(1.0e-9, (posits[i] - prevposit) / totsize);
                     prevposit = posits[i];
                 }
                 this._adjustFrameSizeFractions(totsize);
@@ -551,7 +564,7 @@
                 }
 
                 for (var fnr = 0; fnr < this.memberFrames.length; fnr++)
-                    this.memberFrames[fnr].mySizeWeight = Math.max(1.0e-9,widths[fnr] / totsize);
+                    this.memberFrames[fnr].mySizeWeight = Math.max(1.0e-9, widths[fnr] / totsize);
 
             }
 

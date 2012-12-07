@@ -23,7 +23,7 @@
             };
         };
 
-        DQX.highlightText = function(data, search) {
+        DQX.highlightText = function (data, search) {
             function preg_quote(str) { return (str + '').replace(/([\\\.\+\*\?\[\^\]\$\(\)\{\}\=\!\<\>\|\:])/g, "\\$1"); }
             return data.replace(new RegExp("(" + preg_quote(search) + ")", 'gi'), '<span class="DQXHighlight">$1</span>');
         }
@@ -68,9 +68,24 @@
 
         DQX.requireMember = function (tryobj, membername) {
             if (typeof (tryobj) != 'object') throw 'variable cannot have a member because it is not an object';
-            if (!(membername in tryobj)) throw 'Object should have member "{memb}"'.DQXformat({memb:membername});
+            if (!(membername in tryobj)) throw 'Object should have member "{memb}"'.DQXformat({ memb: membername });
         }
 
+        DQX.checkIsString = function (value) {
+            if (typeof value != 'string') throw 'Expected string value';
+        }
+
+        DQX.checkIsBoolean = function (value) {
+            if (typeof value != 'boolean') throw 'Expected boolean value';
+        }
+
+        DQX.checkIsNumber = function (value) {
+            if (typeof value != 'number') throw 'Expected number value';
+        }
+
+        DQX.checkIsFunction = function (value) {
+            if (typeof value != 'function') throw 'Expected function';
+        }
 
         //A formatter extension for strings
         //usage: "Hello {name}".DQXformat({ name: 'World' })
