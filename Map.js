@@ -131,6 +131,10 @@
                 this.myPointSet = [];
             }
 
+            that.remove = function () {
+                this.clearPoints();
+            }
+
             that._handleOnPointClicked = function (pointnr) {
                 //alert('clicked point ' + pointnr);
                 Msg.send({ type: 'ClickMapPoint', id: this.myID }, this.myPointSet[pointnr].id);
