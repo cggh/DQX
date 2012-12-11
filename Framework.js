@@ -13,14 +13,15 @@
         Framework.sepSizeLarge = 14;
         Framework.sepSizeSmall = 6;
 
-
+        //Enumerates the possible types of frames
         Framework.FrameTypes = {
-            'Final': 0, //contains no more subpanels, and holds a client area
+            'Final': 0, //contains no more subpanels, and holds a client area (= a 'panel')
             'GroupHor': 1, //Contains a horizontally spread set of subframes
             'GroupVert': 2, //Contains a vertically spread set of subframes
             'Tab': 3//Contains a set of subframes organised as tabs
         };
 
+        //A class that encapsulates a Range of possible sizes for a frame (used for both X and Y sizes)
         Framework.SizeRange = function () {
             var that = {};
             that.minSize = 120;
@@ -33,37 +34,41 @@
                 this.maxSize = sz;
                 return this;
             }
-            that.isFixedSize = function () {
+            that._isFixedSize = function () {
                 return this.maxSize == this.minSize;
             }
-            that.getMinSize = function () {
+            that._getMinSize = function () {
                 if (this.minSize == 510)
                     var q = 0;
                 return this.minSize;
             }
-            that.getMaxSize = function () {
+            that._getMaxSize = function () {
                 return this.maxSize;
             }
             return that;
         }
 
+        //Creates an instance of a frame that groups a set of subframes in a horizontal way (i.e. with vertical separators)
         Framework.FrameGroupHor = function (iid, isizeweight) {
             return Framework.Frame(iid, 'GroupHor', isizeweight);
         }
 
+        //Creates an instance of a frame that groups a set of subframes in a vertical way (i.e. with horizontal separators)
         Framework.FrameGroupVert = function (iid, isizeweight) {
             return Framework.Frame(iid, 'GroupVert', isizeweight);
         }
 
+        //Creates an instance of a frame that groups a set of subframes as a set of tabs
         Framework.FrameGroupTab = function (iid, isizeweight) {
             return Framework.Frame(iid, 'Tab', isizeweight);
         }
 
+        //Creates an instance of a frame contains a single client panel holding actual content
         Framework.FrameFinal = function (iid, isizeweight) {
             return Framework.Frame(iid, 'Final', isizeweight);
         }
 
-
+        //A class that implements a frame
         Framework.Frame = function (iid, itype, isizeweight) {
             DQX.checkIsString(iid);
             if (!(itype in Framework.FrameTypes)) throw 'Invalid frame type';
@@ -95,67 +100,57 @@
             that.getVisibleTitleDivID = function () {
                 return this.myID + '_DisplayTitle';
             }
-
             that.getClientContainerDivID = function () {
                 return this.myID + '_clientcontainer';
             }
-
             that.getClientDivID = function () {
                 return this.myID + '_client';
             }
-
             that.getSeparatorDivID = function (sepnr) {
                 return this.myID + '_sep_' + sepnr;
             }
-
-
             that.isFinalPanel = function () {
                 return (this.myType == 'Final');
             }
-
             that.isTabber = function () {
                 return (this.myType == 'Tab');
             }
-
-
             that.isHorSplitter = function () {
                 return (this.myType == 'GroupHor');
             }
-
             that.isVertSplitter = function () {
                 return (this.myType == 'GroupVert');
             }
-
             that.isSplitter = function () {
                 return (this.isHorSplitter()) || (this.isVertSplitter());
             }
-
-            that.checkSplitter = function () {
+            that.checkSplitter = function () {//This function throws an error of the frame is not of the splitter type
                 if (!this.isSplitter())
                     throw "Frame is not a splitter";
             }
-
-            that.splitterDim = function () {
+            that.checkFinalPanel = function () {//This function throws an error of the frame is not of the final type
+                if (!this.isFinalPanel())
+                    throw "Frame is not a final frame (i.e. containing a client panel)";
+            }
+            that.splitterDim = function () {//returns the orientation of the splitter
                 if (this.isHorSplitter()) return 0;
                 if (this.isVertSplitter()) return 1;
                 throw "Frame is not a splitter";
             }
-
-            that.getTitle = function () {
+            that.getTitle = function () {//return the display title
                 if (this.myDisplayTitle.length > 0) return this.myDisplayTitle;
                 return this.myFrameID;
             }
-
-            that.hasTitleBar = function () {
+            that.hasTitleBar = function () {//returns true of the frame has a visible title bar
                 return (this.myDisplayTitle) && ((!this._parentFrame) || (!this._parentFrame.isTabber()));
             }
-
-            that.getTitleBarHeight = function () {
+            that.getTitleBarHeight = function () {//returns the height of the title bar (0 if none)
                 if (this.hasTitleBar())
                     return Framework.frameTitleBarH;
                 else
                     return 0;
             }
+
 
             ///////////////// TO BE CALLED CREATION TIME
 
@@ -166,6 +161,7 @@
                 return this;
             }
 
+            //Specifies the minimum size of the frame in a given dimension
             that.setMinSize = function (dim, sze) {
                 Framework.isValidDim(dim);
                 DQX.checkIsNumber(sze);
@@ -173,10 +169,21 @@
                 return this;
             }
 
+            //Specifies the frame to have a fixed size in a given dimension
             that.setFixedSize = function (dim, sz) {
                 Framework.isValidDim(dim);
                 DQX.checkIsNumber(sz);
                 this.sizeRange[dim].setFixedSize(sz);
+                return this;
+            }
+
+            //Set the margin size (i.e. the space between the outer border of this frame and the outer border of its client frame, containing subframes or the final panel)
+            that.setMargins = function (sz) {
+                DQX.checkIsNumber(sz);
+                this.marginLeft = sz;
+                this.marginRight = sz;
+                this.marginTop = sz;
+                this.marginBottom = sz;
                 return this;
             }
 
@@ -189,24 +196,16 @@
                 return this;
             }
 
-
-            that.setMargins = function (sz) {
-                DQX.checkIsNumber(sz);
-                this.marginLeft = sz;
-                this.marginRight = sz;
-                this.marginTop = sz;
-                this.marginBottom = sz;
-                return this;
-            }
-
+            //Set the title that will be visible for this frame
             that.setDisplayTitle = function (ttle) {
                 DQX.checkIsString(ttle);
                 this.myDisplayTitle = ttle;
                 return this;
             }
 
-
+            //For final frames: specify for both dimensions whether or not scroll bars will show up if the client panel grows larger than the frame
             that.setAllowScrollBars = function (allowX, allowY) {
+                this.checkFinalPanel();
                 DQX.checkIsBoolean(allowX); DQX.checkIsBoolean(allowY);
                 this.allowXScrollbar = allowX;
                 this.allowYScrollbar = allowY;
@@ -227,6 +226,7 @@
                 return this;
             }
 
+            //For splitter type frames, sets the size of the separator(s) that separate the subframes
             that.setSeparatorSize = function (sepsize) {
                 DQX.checkIsNumber(sepsize);
                 this.checkSplitter();
@@ -234,63 +234,16 @@
                 return this;
             }
 
-
-
-            that.getMarginTop = function () {
-                return this.marginTop + (this.hasTitleBar() ? Framework.frameTitleBarH : 0);
-            }
-
-            that.isFixedSize = function (dim) {
-                Framework.isValidDim(dim);
-                return this.sizeRange[dim].isFixedSize();
-            }
-
-            that.getMinSize = function (dim) {
-                Framework.isValidDim(dim);
-                var subminsize = 0;
-                if ((this.isSplitter()) && (this.splitterDim() == dim)) {
-                    for (var i = 0; i < this.memberFrames.length; i++)
-                        subminsize += this.memberFrames[i].getMinSize(dim);
-                }
-                else {
-                    for (var i = 0; i < this.memberFrames.length; i++)
-                        subminsize = Math.max(subminsize, this.memberFrames[i].getMinSize(dim));
-                }
-                var minsize = Math.max(subminsize, this.sizeRange[dim].getMinSize());
-                if ((dim == Framework.dimY) && this.hasTitleBar())
-                    minsize += Framework.frameTitleBarH;
-                return minsize;
-            }
-
-            that.getMaxSize = function (dim) {
-                Framework.isValidDim(dim);
-                var submaxsize = 0;
-                if ((this.isSplitter()) && (this.splitterDim() == dim)) {
-                    for (var i = 0; i < this.memberFrames.length; i++)
-                        submaxsize += this.memberFrames[i].getMaxSize(dim);
-                }
-                else {
-                    for (var i = 0; i < this.memberFrames.length; i++)
-                        submaxsize = Math.max(submaxsize, this.memberFrames[i].getMaxSize(dim));
-                }
-                var maxsize = Math.max(submaxsize, this.sizeRange[dim].getMaxSize());
-                if ((dim == Framework.dimY) && this.hasTitleBar())
-                    maxsize += Framework.frameTitleBarH;
-                return maxsize;
-            }
-
-            that.setParentFrame = function (pframe) {
-                this._parentFrame = pframe;
-            }
-
+            //Adds a new subframe to an existing container-style frame (= splitter or tab)
             that.addMemberFrame = function (iframe) {
                 if (this.isFinalPanel()) throw "Can't add frames to a final panel";
                 iframe.myID = this.myID + '_' + this.memberFrames.length.toString();
                 this.memberFrames.push(iframe);
-                iframe.setParentFrame(this);
+                iframe._setParentFrame(this);
                 return iframe;
             }
 
+            //Sets the client panel for a final frame
             that.setClientObject = function (iobj) {
                 this.myClientObject = iobj;
             }
@@ -299,17 +252,66 @@
 
             /////////////// INTERNAL FUNCTIONS
 
+            that._setParentFrame = function (pframe) {
+                this._parentFrame = pframe;
+            }
+
+            that._getMinSize = function (dim) {
+                Framework.isValidDim(dim);
+                var subminsize = 0;
+                if ((this.isSplitter()) && (this.splitterDim() == dim)) {
+                    for (var i = 0; i < this.memberFrames.length; i++)
+                        subminsize += this.memberFrames[i]._getMinSize(dim);
+                }
+                else {
+                    for (var i = 0; i < this.memberFrames.length; i++)
+                        subminsize = Math.max(subminsize, this.memberFrames[i]._getMinSize(dim));
+                }
+                var minsize = Math.max(subminsize, this.sizeRange[dim]._getMinSize());
+                if ((dim == Framework.dimY) && this.hasTitleBar())
+                    minsize += Framework.frameTitleBarH;
+                return minsize;
+            }
+
+            that._getMaxSize = function (dim) {
+                Framework.isValidDim(dim);
+                var submaxsize = 0;
+                if ((this.isSplitter()) && (this.splitterDim() == dim)) {
+                    for (var i = 0; i < this.memberFrames.length; i++)
+                        submaxsize += this.memberFrames[i]._getMaxSize(dim);
+                }
+                else {
+                    for (var i = 0; i < this.memberFrames.length; i++)
+                        submaxsize = Math.max(submaxsize, this.memberFrames[i]._getMaxSize(dim));
+                }
+                var maxsize = Math.max(submaxsize, this.sizeRange[dim]._getMaxSize());
+                if ((dim == Framework.dimY) && this.hasTitleBar())
+                    maxsize += Framework.frameTitleBarH;
+                return maxsize;
+            }
+
+            //Returns the total margin at the top, including the header area
+            that._getMarginTop = function () {
+                return this.marginTop + (this.hasTitleBar() ? Framework.frameTitleBarH : 0);
+            }
+
+            //Returns true if the frame has a fixed size in a specified dimension
+            that._isFixedSize = function (dim) {
+                Framework.isValidDim(dim);
+                return this.sizeRange[dim]._isFixedSize();
+            }
+
             that._reactClickTab = function (scope, id) {
                 for (var fnr = 0; fnr < this.memberFrames.length; fnr++) {
                     var tabid = this.getClientDivID() + '_tab_' + fnr;
                     if (tabid == id)
                         this.activeTabNr = fnr;
                 }
-                this.setSubFramesPosition();
-                this.onChangeTab(this.memberFrames[this.activeTabNr].myFrameID);
+                this._setSubFramesPosition();
+                this._onChangeTab(this.memberFrames[this.activeTabNr].myFrameID);
             }
 
-            that.createElements = function (level) {
+            that._createElements = function (level) {
                 if (this.myID.length == 0) throw "Frame without ID";
                 var thediv = DocEl.Div({ id: this.myID });
 
@@ -343,7 +345,7 @@
                 if (this.isSplitter()) {
                     for (var fnr = 0; fnr < this.memberFrames.length - 1; fnr++) {
                         var splitdiv = DocEl.Div({ parent: thediv, id: this.getSeparatorDivID(fnr) });
-                        if (this.canMoveSeparator(fnr)) {
+                        if (this._canMoveSeparator(fnr)) {
                             if (this.isHorSplitter())
                                 splitdiv.addStyle('cursor', 'col-resize');
                             else
@@ -351,7 +353,7 @@
                         }
                     }
                     for (var fnr = 0; fnr < this.memberFrames.length; fnr++)
-                        theclientdiv.addElem(this.memberFrames[fnr].createElements(level + 1));
+                        theclientdiv.addElem(this.memberFrames[fnr]._createElements(level + 1));
                 }
 
                 if (this.isTabber()) {
@@ -365,7 +367,7 @@
                         var tabid = this.getClientDivID() + '_tab_' + fnr;
                         var tabcontent = DocEl.Div({ parent: tabbody, id: 'C' + tabid });
                         tabcontent.setCssClass("DQXTabContent");
-                        tabcontent.addElem(this.memberFrames[fnr].createElements(level + 1));
+                        tabcontent.addElem(this.memberFrames[fnr]._createElements(level + 1));
                     }
                     Msg.listen('', { type: 'ClickTab', id: this.getClientDivID() }, that._reactClickTab, that);
                 }
@@ -429,7 +431,7 @@
             }
 
 
-            that.postCreateHTML = function () {
+            that._postCreateHTML = function () {
                 var clientel = $('#' + this.getClientDivID());
                 clientel.mousedown($.proxy(this._handleOnMouseDown, this));
                 clientel.mousemove($.proxy(this._handleOnMouseMove, this));
@@ -439,19 +441,19 @@
                         $('#' + this.getSeparatorDivID(fnr)).mousemove($.proxy(this._handleSplitterOnMouseMove, this));
                         clientel.mousemove($.proxy(this._handleSplitterOnMouseMove, this));
                     }
-                    this.memberFrames[fnr].postCreateHTML();
+                    this.memberFrames[fnr]._postCreateHTML();
                 }
 
             }
 
-            that.canMoveSeparator = function (sepnr) {
+            that._canMoveSeparator = function (sepnr) {
                 var flex1 = false;
                 for (var i = 0; i <= sepnr; i++)
-                    if (!this.memberFrames[i].isFixedSize(this.splitterDim()))
+                    if (!this.memberFrames[i]._isFixedSize(this.splitterDim()))
                         flex1 = true;
                 var flex2 = false;
                 for (var i = sepnr + 1; i < this.memberFrames.length; i++)
-                    if (!this.memberFrames[i].isFixedSize(this.splitterDim()))
+                    if (!this.memberFrames[i]._isFixedSize(this.splitterDim()))
                         flex2 = true;
                 return flex1 && flex2;
             }
@@ -464,7 +466,7 @@
                 var pos = this.isHorSplitter() ? posx : posy;
                 var idcomps = ev.target.id.split('_');
                 var sepnr = parseInt(idcomps[idcomps.length - 1]);
-                if (this.canMoveSeparator(sepnr)) {
+                if (this._canMoveSeparator(sepnr)) {
                     this.dragSep = true;
                     this.dragSepNr = sepnr;
                     this.dragOffset = pos - this.sepPosits[sepnr];
@@ -482,7 +484,7 @@
                     var totsize = this.isHorSplitter() ? clientel.width() : clientel.height();
                     var pos = this.isHorSplitter() ? posx : posy;
                     this._calculateNewFrameSizeFractions(this.dragSepNr, pos - this.dragOffset, totsize);
-                    this.setSubFramesPosition();
+                    this._setSubFramesPosition();
                     return false;
                 }
             }
@@ -548,7 +550,7 @@
                 for (var iter = 0; (iter < 5) && modif; iter++) {
                     modif = false;
                     for (var fnr = 0; fnr < this.memberFrames.length; fnr++) {
-                        var theminsize = this.memberFrames[fnr].getMinSize(this.splitterDim());
+                        var theminsize = this.memberFrames[fnr]._getMinSize(this.splitterDim());
                         if (widths[fnr] < theminsize) {
                             var extra = theminsize - widths[fnr];
                             widths[fnr] += extra;
@@ -557,8 +559,8 @@
                                     widths[i] -= extra / (this.memberFrames.length - 1);
                             modif = true;
                         }
-                        if (widths[fnr] > this.memberFrames[fnr].getMaxSize(this.splitterDim())) {
-                            var extra = this.memberFrames[fnr].getMaxSize(this.splitterDim()) - widths[fnr];
+                        if (widths[fnr] > this.memberFrames[fnr]._getMaxSize(this.splitterDim())) {
+                            var extra = this.memberFrames[fnr]._getMaxSize(this.splitterDim()) - widths[fnr];
                             widths[fnr] += extra;
                             for (var i = 0; i < this.memberFrames.length; i++)
                                 if (i != fnr)
@@ -573,12 +575,12 @@
 
             }
 
-            that.setSubFramesPosition = function () {
+            that._setSubFramesPosition = function () {
                 var frameel = $('#' + this.myID);
-                this.setPosition(frameel.position().left, frameel.position().top, frameel.width(), frameel.height(), true, false);
+                this._setPosition(frameel.position().left, frameel.position().top, frameel.width(), frameel.height(), true, false);
             }
 
-            that.setPosition = function (x0, y0, sx, sy, subFramesOnly, isHidden) {
+            that._setPosition = function (x0, y0, sx, sy, subFramesOnly, isHidden) {
                 var frameel = $('#' + this.myID);
 
                 if (!subFramesOnly) {
@@ -619,12 +621,12 @@
                     this.sepPosits = [];
                     var framePosits = that._calculateFramePositions(clientWidth);
                     for (var fnr = 0; fnr < this.memberFrames.length; fnr++) {
-                        this.memberFrames[fnr].setPosition(framePosits[fnr].pos1, 0, framePosits[fnr].pos2 - framePosits[fnr].pos1 + 1, clientHeight, false, isHidden);
+                        this.memberFrames[fnr]._setPosition(framePosits[fnr].pos1, 0, framePosits[fnr].pos2 - framePosits[fnr].pos1 + 1, clientHeight, false, isHidden);
                         if (fnr < this.memberFrames.length - 1) {
                             var splitterel = $('#' + this.getSeparatorDivID(fnr));
                             splitterel.css('position', 'absolute');
                             splitterel.css('left', (framePosits[fnr].pos2 + this.marginLeft) + 'px');
-                            splitterel.css('top', this.getMarginTop() + 'px');
+                            splitterel.css('top', this._getMarginTop() + 'px');
                             splitterel.css('width', this._separatorSize + 'px');
                             splitterel.css('height', clientHeight + 'px');
                         }
@@ -636,11 +638,11 @@
                     this.sepPosits = [];
                     var framePosits = that._calculateFramePositions(clientHeight);
                     for (var fnr = 0; fnr < this.memberFrames.length; fnr++) {
-                        this.memberFrames[fnr].setPosition(0, framePosits[fnr].pos1, clientWidth, framePosits[fnr].pos2 - framePosits[fnr].pos1 + 1, false, isHidden);
+                        this.memberFrames[fnr]._setPosition(0, framePosits[fnr].pos1, clientWidth, framePosits[fnr].pos2 - framePosits[fnr].pos1 + 1, false, isHidden);
                         if (fnr < this.memberFrames.length - 1) {
                             var splitterel = $('#' + this.getSeparatorDivID(fnr));
                             splitterel.css('position', 'absolute');
-                            splitterel.css('top', (framePosits[fnr].pos2 + this.getMarginTop()) + 'px');
+                            splitterel.css('top', (framePosits[fnr].pos2 + this._getMarginTop()) + 'px');
                             splitterel.css('left', this.marginLeft + 'px');
                             splitterel.css('height', this._separatorSize + 'px');
                             splitterel.css('width', clientWidth + 'px');
@@ -652,7 +654,7 @@
                     $('#' + this.getClientDivID() + '_tabbody').css('height', clientHeight - 47);
                     //tabbody.setCssClass("DQXTabBody");
                     for (var fnr = 0; fnr < this.memberFrames.length; fnr++) {
-                        this.memberFrames[fnr].setPosition(0, 30, clientWidth, clientHeight - 30, false, isHidden || (fnr != this.activeTabNr));
+                        this.memberFrames[fnr]._setPosition(0, 30, clientWidth, clientHeight - 30, false, isHidden || (fnr != this.activeTabNr));
                     }
                 }
 
@@ -688,6 +690,8 @@
 
             ///////////// RUNTIME CALLS
 
+            //Activates another subframe in a tabbed frame, specified by its ID
+            //The function returns true if this invoked an actual change
             that.switchTab = function (newtab) {
                 if (!this.isTabber()) throw "Container is not a tab";
                 if (this.getActiveTabFrameID() == newtab)
@@ -701,12 +705,13 @@
                 return true;
             }
 
+            //Returns the ID of the active subframe in a tabbed frame
             that.getActiveTabFrameID = function () {
                 if (!this.isTabber()) throw "Container is not a tab";
                 return this.memberFrames[this.activeTabNr].myFrameID;
             }
 
-
+            //Sets a new display title
             that.modifyDisplayTitle = function (newtitle) {
                 $('#' + this.getVisibleTitleDivID()).text(newtitle);
             }
@@ -723,6 +728,7 @@
                 return true;
             }
 
+            //Ensures that a frame is visible (e.g. by activating all required tabs in the parent chain)
             that.makeVisible = function () {
                 if (this.isVisible())
                     return;
@@ -740,8 +746,9 @@
                 return true;
             }
 
-
+            //Fills a final frame with some static content
             that.setStaticContent = function (divid) {
+                this.checkFinalPanel();
                 var content = $('#' + divid).html();
                 $('#' + this.getClientDivID()).html(content);
             }
@@ -749,7 +756,7 @@
 
             /////////////// NOTIFICATION FUNCTIONS
 
-            that.onChangeTab = function (newtab) {
+            that._onChangeTab = function (newtab) {
                 Msg.send({ type: 'ChangeTab', id: this.myFrameID }, this.getActiveTabFrameID());
             }
 
@@ -776,7 +783,7 @@
             var v2 = myparent.get(0).tagName;
             var sx = myparent.innerWidth();
             var sy = myparent.innerHeight();
-            Framework.frameRoot.setPosition(0, 0, sx, sy, false, false);
+            Framework.frameRoot._setPosition(0, 0, sx, sy, false, false);
         }
 
         //This function is called periodically the monitor the required size updates of panels in frames
@@ -793,9 +800,9 @@
         //Renders the framework to the html page, in a div
         Framework.render = function (frameRoot, divid) {
             Framework.frameRoot = frameRoot;
-            var html = frameRoot.createElements(1).toString();
+            var html = frameRoot._createElements(1).toString();
             $('#' + divid).html(html);
-            frameRoot.postCreateHTML();
+            frameRoot._postCreateHTML();
 
             $(window).resize(Framework._handleResize)
 
