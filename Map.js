@@ -349,21 +349,36 @@
         GMaps.Overlay.PieChart = function (imapobject, iid, icentercoord, iradius, ichart) {
             var that = GMaps.Overlay._Base(imapobject, iid);
             that.myID = iid;
-            that.myCenterCoord = icentercoord;
+            that._centerCoordPieChart = icentercoord;
+            that._centerCoord = GMaps.Coord(0, 0);
             that.myRadius = iradius;
             that.myChart = ichart;
             that.myChart.myCallbackObject = that;
             DQX.ObjectMapper.Add(that);
 
             that.render = function () {
-                var ps = this.convCoordToPixels(this.myCenterCoord, this.myRadius);
+                var ps = this.convCoordToPixels(this._centerCoordPieChart, this.myRadius);
+                var ps0 = this.convCoordToPixels(this._centerCoord, 0);
                 var bb = {};
-                bb.x0 = ps.x - ps.dist;
-                bb.y0 = ps.y - ps.dist;
-                bb.x1 = ps.x + ps.dist;
-                bb.y1 = ps.y + ps.dist;
+                bb.x0 = Math.min(ps0.x, ps.x - ps.dist);
+                bb.y0 = Math.min(ps0.y, ps.y - ps.dist);
+                bb.x1 = Math.max(ps0.x, ps.x + ps.dist);
+                bb.y1 = Math.max(ps0.y, ps.y + ps.dist);
                 var data = "<svg width={w} height={h}>".DQXformat({ w: 2 * ps.dist, h: 2 * ps.dist });
-                data += this.myChart.render(ps.dist, ps.dist, ps.dist);
+                data += this.myChart.render(ps.x - bb.x0, ps.y - bb.y0, ps.dist);
+                var dfx = ps0.x - ps.x;
+                var dfy = ps0.y - ps.y;
+                var dst = Math.sqrt(dfx * dfx + dfy * dfy);
+                if (dst > 2) {
+                    var ps2x = ps.x + ps.dist*dfx/dst;
+                    var ps2y = ps.y + ps.dist*dfy/dst;
+                    data += '<line x1="{x1}px" y1="{y1}px" x2="{x2}px" y2="{y2}px" style="stroke-width: 2px; stroke: black;"/>'.DQXformat({
+                        x1: ps0.x - bb.x0,
+                        y1: ps0.y - bb.y0,
+                        x2: ps2x - bb.x0,
+                        y2: ps2y - bb.y0
+                    });
+                }
                 data += "</svg>";
                 this.myDiv.innerHTML = data;
                 return bb;
