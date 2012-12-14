@@ -48,6 +48,11 @@
             return that;
         }
 
+        //Creates an instance of a frame has a not yet determined function
+        Framework.FrameGeneric = function (iid, isizeweight) {
+            return Framework.Frame(iid, '-', isizeweight);
+        }
+
         //Creates an instance of a frame that groups a set of subframes in a horizontal way (i.e. with vertical separators)
         Framework.FrameGroupHor = function (iid, isizeweight) {
             return Framework.Frame(iid, 'GroupHor', isizeweight);
@@ -71,7 +76,8 @@
         //A class that implements a frame
         Framework.Frame = function (iid, itype, isizeweight) {
             DQX.checkIsString(iid);
-            if (!(itype in Framework.FrameTypes)) throw 'Invalid frame type';
+            if (itype!='-')
+                if (!(itype in Framework.FrameTypes)) throw 'Invalid frame type';
             var that = {};
 
             that._parentFrame = null;
@@ -159,6 +165,13 @@
                 DQX.checkIsFunction(handler);
                 this._handleInitialise = handler;
                 return this;
+            }
+
+            //Converts a generic frame into a vertical splitter
+            that.makeGroupVert = function () {
+                if (this.myType != '-')
+                    throw 'Frame is not generic';
+                this.myType = 'GroupVert';
             }
 
             //Specifies the minimum size of the frame in a given dimension
