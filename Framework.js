@@ -76,7 +76,7 @@
         //A class that implements a frame
         Framework.Frame = function (iid, itype, isizeweight) {
             DQX.checkIsString(iid);
-            if (itype!='-')
+            if (itype != '-')
                 if (!(itype in Framework.FrameTypes)) throw 'Invalid frame type';
             var that = {};
 
@@ -172,6 +172,7 @@
                 if (this.myType != '-')
                     throw 'Frame is not generic';
                 this.myType = 'GroupVert';
+                return this;
             }
 
             //Specifies the minimum size of the frame in a given dimension
@@ -243,7 +244,7 @@
             that.setSeparatorSize = function (sepsize) {
                 DQX.checkIsNumber(sepsize);
                 this.checkSplitter();
-                this.sepsize = sepsize;
+                this._separatorSize = sepsize;
                 return this;
             }
 
