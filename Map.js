@@ -350,14 +350,19 @@
             var that = GMaps.Overlay._Base(imapobject, iid);
             that.myID = iid;
             that._centerCoordPieChart = icentercoord;
-            that._centerCoord = GMaps.Coord(0, 0);
+            that._centerCoord = icentercoord;
             that.myRadius = iradius;
             that.myChart = ichart;
             that.myChart.myCallbackObject = that;
             DQX.ObjectMapper.Add(that);
 
+            that.setOrigCoord = function (coord) {
+                that._centerCoord = coord;
+            }
+
             that.render = function () {
                 var ps = this.convCoordToPixels(this._centerCoordPieChart, this.myRadius);
+                var diskSize = ps.dist;
                 var ps0 = this.convCoordToPixels(this._centerCoord, 0);
                 var bb = {};
                 bb.x0 = Math.min(ps0.x, ps.x - ps.dist);
@@ -370,13 +375,18 @@
                 var dfy = ps0.y - ps.y;
                 var dst = Math.sqrt(dfx * dfx + dfy * dfy);
                 if (dst > 2) {
-                    var ps2x = ps.x + ps.dist*dfx/dst;
-                    var ps2y = ps.y + ps.dist*dfy/dst;
-                    data += '<line x1="{x1}px" y1="{y1}px" x2="{x2}px" y2="{y2}px" style="stroke-width: 2px; stroke: black;"/>'.DQXformat({
+                    var drx = dfx / dst;
+                    var dry = dfy / dst;
+                    var ps2x = ps.x + ps.dist * drx;
+                    var ps2y = ps.y + ps.dist * dry;
+                    var wd = diskSize / 10.0;
+                    data += '<polygon points="{x1},{y1},{x2},{y2},{x3},{y3}" style="stroke-width: 2px; stroke: rgb(80,80,80); fill:rgb(80,80,80)"/>'.DQXformat({
                         x1: ps0.x - bb.x0,
                         y1: ps0.y - bb.y0,
-                        x2: ps2x - bb.x0,
-                        y2: ps2y - bb.y0
+                        x2: ps2x + wd * dry - bb.x0,
+                        y2: ps2y - wd * drx - bb.y0,
+                        x3: ps2x - wd * dry - bb.x0,
+                        y3: ps2y + wd * drx - bb.y0
                     });
                 }
                 data += "</svg>";
