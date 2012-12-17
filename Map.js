@@ -315,6 +315,7 @@
             that.onAdd = function () {
                 this.myDiv = document.createElement('div');
                 this.myDiv.style.position = 'absolute';
+                //this.myDiv.style.background = 'green';
                 //        this.myDiv.style.backgroundColor = 'rgba(255,0,0,0.25)';
                 var panes = this.getPanes();
                 panes.overlayMouseTarget.appendChild(this.myDiv);
@@ -369,7 +370,7 @@
                 bb.y0 = Math.min(ps0.y, ps.y - ps.dist);
                 bb.x1 = Math.max(ps0.x, ps.x + ps.dist);
                 bb.y1 = Math.max(ps0.y, ps.y + ps.dist);
-                var data = "<svg width={w} height={h}>".DQXformat({ w: 2 * ps.dist, h: 2 * ps.dist });
+                var data = "<svg width={w} height={h}>".DQXformat({ w: (bb.x1-bb.x0), h: (bb.y1-bb.y0) });
                 data += this.myChart.render(ps.x - bb.x0, ps.y - bb.y0, ps.dist);
                 var dfx = ps0.x - ps.x;
                 var dfy = ps0.y - ps.y;
