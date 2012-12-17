@@ -341,7 +341,10 @@
 
                 if (this.isFinalPanel()) {
                     if (this.allowYScrollbar) theclientdiv.addStyle('overflow-y', 'auto');
-                    if (this.allowXScrollbar) theclientdiv.addStyle('overflow-x', 'auto');
+                    if (this.allowXScrollbar)
+                        theclientdiv.addStyle('overflow-x', 'auto');
+                    else
+                        theclientdiv.addStyle('overflow-x', 'hidden');
                     theclientdiv.setCssClass('DQXClient');
                 }
 
