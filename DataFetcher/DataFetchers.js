@@ -125,6 +125,8 @@
 
             //internal
             this._ajaxResponse_FetchRange = function (resp) {
+                if (this.showDownload)
+                    DQX.stopProcessing();
                 if (!this._isFetching) return;
                 this.hasFetchFailed = false;
                 this._isFetching = false;
@@ -171,6 +173,8 @@
 
             //internal
             this._ajaxFailure_FetchRange = function (resp) {
+                if (this.showDownload)
+                    DQX.stopProcessing();
                 //alert('###error');
                 this.hasFetchFailed = true;
                 this._isFetching = false;
@@ -263,6 +267,8 @@
                     if (collist.length > 0) {//launch the ajax request
                         this._isFetching = true;
                         var thethis = this;
+                        if (this.showDownload)
+                            DQX.setProcessing("Downloading...");
                         $.ajax({
                             url: myurl.toString(),
                             success: function (resp) { thethis._ajaxResponse_FetchRange(resp) },
@@ -398,6 +404,8 @@
             }
 
             that._ajaxResponse_FetchRange = function (resp, respHandler, failHandler) {
+                if (this.showDownload)
+                    DQX.stopProcessing();
                 var keylist = DQX.parseResponse(resp); //unpack the response
                 if ("Error" in keylist) {
                     failHandler(keylist.Error);
@@ -413,6 +421,8 @@
             }
 
             that._ajaxFailure_FetchRange = function (resp) {
+                if (this.showDownload)
+                    DQX.stopProcessing();
                 alert(resp);
             }
 
