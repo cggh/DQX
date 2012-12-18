@@ -13,6 +13,8 @@
         Framework.sepSizeLarge = 14;
         Framework.sepSizeSmall = 6;
 
+        Framework.__sendTabEvent = true;
+
         //Enumerates the possible types of frames
         Framework.FrameTypes = {
             'Final': 0, //contains no more subpanels, and holds a client area (= a 'panel')
@@ -756,8 +758,18 @@
                         tabSwitchList.unshift(fr);
                     fr = fr._parentFrame;
                 }
-                for (var i = 0; i < tabSwitchList.length; i++)
+                Framework.__sendTabEvent = false;
+                for (var i = 0; i < tabSwitchList.length; i++) {
+                    //                    if (i==tabSwitchList.length-1)
+                    //                        Framework.__sendTabEvent = true;
                     tabSwitchList[i]._parentFrame.switchTab(tabSwitchList[i].myFrameID);
+                }
+                Framework.__sendTabEvent = true;
+                if (tabSwitchList.length > 0) {
+                    var fr=tabSwitchList[tabSwitchList.length-1];
+                    Msg.send({ type: 'ChangeTab', id: fr._parentFrame }, fr.myFrameID);
+                }
+
                 if (this.myClientObject != null)
                     this.myClientObject.handleResize(); //this triggers immediate correct sizing of the panel;
                 return true;
