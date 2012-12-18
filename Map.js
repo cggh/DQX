@@ -370,7 +370,8 @@
                 bb.y0 = Math.min(ps0.y, ps.y - ps.dist);
                 bb.x1 = Math.max(ps0.x, ps.x + ps.dist);
                 bb.y1 = Math.max(ps0.y, ps.y + ps.dist);
-                var data = "<svg width={w} height={h}>".DQXformat({ w: (bb.x1-bb.x0), h: (bb.y1-bb.y0) });
+                var data = "<svg width={w} height={h}>".DQXformat({ w: (bb.x1 - bb.x0), h: (bb.y1 - bb.y0) });
+                //data += '<filter id="dropshadow" height="130%"><feGaussianBlur in="SourceAlpha" stdDeviation="3"/> <!-- stdDeviation is how much to blur --><feOffset dx="2" dy="2" result="offsetblur"/> <!-- how much to offset --><feMerge><feMergeNode/> <!-- this contains the offset blurred image --><feMergeNode in="SourceGraphic"/> <!-- this contains the element that the filter is applied to --></feMerge></filter>';
                 data += this.myChart.render(ps.x - bb.x0, ps.y - bb.y0, ps.dist);
                 var dfx = ps0.x - ps.x;
                 var dfy = ps0.y - ps.y;
@@ -381,7 +382,7 @@
                     var ps2x = ps.x + ps.dist * drx;
                     var ps2y = ps.y + ps.dist * dry;
                     var wd = diskSize / 10.0;
-                    data += '<polygon points="{x1},{y1},{x2},{y2},{x3},{y3}" style="stroke-width: 2px; stroke: rgb(80,80,80); fill:rgb(80,80,80)"/>'.DQXformat({
+                    data += '<polygon points="{x1},{y1},{x2},{y2},{x3},{y3}" style="stroke-width: 2px; stroke: rgb(40,40,40); fill:rgb(40,40,40)"/>'.DQXformat({
                         x1: ps0.x - bb.x0,
                         y1: ps0.y - bb.y0,
                         x2: ps2x + wd * dry - bb.x0,
@@ -439,14 +440,15 @@
                 { visibility: "off" }
               ]
             }
-            /*            ,
+            ,
             {
-            featureType: 'administrative.country',
-            elementType: "all",
-            stylers: [
-            { gamma: "0.3" }
+                featureType: 'administrative',
+                elementType: "all",
+                stylers: [
+                { lightness: 25 }/*,
+            { gamma: "0.25" }*/
             ]
-            }*/
+            }
             ];
 
 

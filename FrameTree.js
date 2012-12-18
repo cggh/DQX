@@ -19,6 +19,11 @@
             return this;
         }
 
+        //determine whether or not the branch can be selected by the user
+        TreeCtrl._objectBranch.prototype.setCssClass = function (clss) {
+            this._cssClass = clss;
+            return this;
+        }
 
         TreeCtrl._objectBranch.prototype.renderHtml = function () {
             return this.content.toString();
@@ -140,6 +145,8 @@
                     titledv.setCssClass('DQXTreeItem');
                 else
                     titledv.setCssClass('DQXTreeItemNoSelect');
+                if (item._cssClass)
+                    titledv.setCssClass(item._cssClass);
 
                 if (hasSubItems) {
                     var buttondv = DocEl.Div({ parent: titledv, id: this._getDivIDButton(item.myID) });
