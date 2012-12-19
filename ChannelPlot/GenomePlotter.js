@@ -41,6 +41,10 @@
                 return this._chromosomes[chromonr - 1].id;
             }
 
+            that.getCurrentChromoID = function () {
+                return this.getChromoID(this.currentChromoNr);
+            }
+
             //Call this function to switch to another chromosome
             that.setChromosome = function (newchromoid, updatepicker, redraw) {
                 var newchromonr = this.getChromoNr(newchromoid);
