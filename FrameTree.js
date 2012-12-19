@@ -11,11 +11,17 @@
             this._canSelect = true;
             this.myParent = null;
             this.myTree = null;
+            this._collapsed = false;
         }
 
         //determine whether or not the branch can be selected by the user
         TreeCtrl._objectBranch.prototype.setCanSelect = function (status) {
             this._canSelect = status;
+            return this;
+        }
+
+        TreeCtrl._objectBranch.prototype.setCollapsed = function (status) {
+            this._collapsed = status;
             return this;
         }
 
@@ -131,8 +137,8 @@
                 return this.myID + '_DQXIt_' + id;
             }
 
-            that._createButtonHtml = function (collapsed) {
-                return '<IMG SRC="Bitmaps/' + (collapsed ? 'morelines' : 'lesslines') + '.png" border=0 ALT="" TITLE="" class="DQXTreeButtonImage" style="float:left;padding-right:6px">';
+            that._createButtonHtml = function (_collapsed) {
+                return '<IMG SRC="Bitmaps/' + (_collapsed ? 'morelines' : 'lesslines') + '.png" border=0 ALT="" TITLE="" class="DQXTreeButtonImage" style="float:left;padding-right:6px">';
             }
 
             that._renderSub = function (parentDiv, item, level) {
@@ -151,7 +157,7 @@
                 if (hasSubItems) {
                     var buttondv = DocEl.Div({ parent: titledv, id: this._getDivIDButton(item.myID) });
                     buttondv.setCssClass("DQXTreeButton");
-                    buttondv.addElem(this._createButtonHtml(item.collapsed));
+                    buttondv.addElem(this._createButtonHtml(item._collapsed));
                 }
 
                 contentstr = item.renderHtml(this.myID)
@@ -160,7 +166,7 @@
 
                 if (hasSubItems) {
                     var descdv = DocEl.Div({ parent: parentDiv, id: this.myID + '_DQXSub_' + item.myID });
-                    if (item.collapsed)
+                    if (item._collapsed)
                         descdv.addStyle('display', 'none');
                     descdv.addStyle('padding-left', '12px');
                     descdv.addStyle('padding-bottom', '4px');
@@ -228,12 +234,12 @@
                 //        this.setActiveItem(ev.target.id);
                 id = id.split('_DQXBt_')[1];
                 var node = this.findItem(id);
-                node.collapsed = !node.collapsed;
+                node._collapsed = !node._collapsed;
 
-                $('#' + this._getDivIDButton(id)).html(this._createButtonHtml(node.collapsed));
+                $('#' + this._getDivIDButton(id)).html(this._createButtonHtml(node._collapsed));
 
                 var subdiv = $('#' + this.myID + '_DQXSub_' + id);
-                if (node.collapsed)
+                if (node._collapsed)
                     subdiv.slideUp(250);
                 else
                     subdiv.slideDown(250);
