@@ -17,6 +17,123 @@
         }
 
 
+        GMaps.MapItemLayouter = function (imapobject, iid) {
+            var that = {};
+            that.mapObject = imapobject;
+            that.id = iid;
+            that.items = [];
+
+            that.addItem = function (longit, lattit, radius) {
+                this.items.push({ longit: longit, lattit: lattit, radius: radius, longit2: longit, lattit2: lattit });
+            }
+
+            that.DX2Longit = function (dx, lattit) {
+                return dx / Math.cos(lattit / 180 * Math.PI) / 40000 * 360;
+            }
+
+            that.DY2Lattit = function (dy) {
+                return dy / 40000 * 360;
+            }
+
+            that.Longit2X = function (longit, lattit) {
+                return longit * Math.cos(lattit / 180 * Math.PI) * 40000 / 360;
+            }
+
+            that.Lattit2Y = function (lattit) {
+                return lattit / 360 * 40000;
+            }
+
+            that.calculatePositions = function () {
+                for (var i = 0; i < this.items.length; i++) {
+                    var item = this.items[i];
+                    item.x0 = this.Longit2X(item.longit, item.lattit);
+                    item.y0 = this.Lattit2Y(item.lattit);
+                    item.dx = 0;
+                    item.dy = 0;
+                }
+
+                //Calculate initial directions
+                for (var iter = 0; iter < 100; iter++) {
+                    for (var i1 = 0; i1 < this.items.length; i1++) {
+                        var item1 = this.items[i1];
+                        var shiftx = 0;
+                        var shifty = 0;
+                        for (var i2 = 0; i2 < this.items.length; i2++) if (i1 != i2) {
+                            var item2 = this.items[i2];
+                            var dfx = item2.x0 - item1.x0;
+                            var dfy = item2.y0 - item1.y0;
+                            var dst = Math.sqrt(dfx * dfx + dfy * dfy);
+                            shiftx += -dfx / (dst * dst * dst);
+                            shifty += -dfy / (dst * dst * dst);
+                        }
+                        item1.dx = 30 * shiftx / Math.sqrt(shiftx * shiftx + shifty * shifty);
+                        item1.dy = 30 * shifty / Math.sqrt(shiftx * shiftx + shifty * shifty);
+                    }
+                }
+
+                for (var iter = 0; iter < 50; iter++) {
+                    for (var i1 = 0; i1 < this.items.length; i1++) {
+                        var item1 = this.items[i1];
+                        var shiftx = 0;
+                        var shifty = 0;
+                        for (var i2 = 0; i2 < this.items.length; i2++) if (i1 != i2) {
+                            var item2 = this.items[i2];
+                            var dfx = (item2.x0 + item2.dx) - (item1.x0 + item1.dx);
+                            var dfy = (item2.y0 + item2.dy) - (item1.y0 + item1.dy);
+                            var dst = Math.sqrt(dfx * dfx + dfy * dfy);
+                            var mindst = 1.2 * (item1.radius + item2.radius);
+                            if (dst < mindst) {
+                                var shiftsize = (mindst - dst) / dst;
+                                shiftx += -dfx * shiftsize;
+                                shifty += -dfy * shiftsize;
+                            }
+                            else if (dst < 4 * mindst) {
+                                var shiftsize = 0.05 / (dst * dst * dst);
+                                shiftx += -dfx * shiftsize;
+                                shifty += -dfy * shiftsize;
+                            }
+                        }
+                        if (iter > 1) {
+                            for (var i2 = 0; i2 < this.items.length; i2++) {
+                                var item2 = this.items[i2];
+                                var dfx = (item2.x0) - (item1.x0 + item1.dx);
+                                var dfy = (item2.y0) - (item1.y0 + item1.dy);
+                                var dst = Math.sqrt(dfx * dfx + dfy * dfy);
+                                var mindst = 1.4 * (item1.radius);
+                                if (dst < mindst) {
+                                    var shiftsize = (mindst - dst) / dst;
+                                    shiftx += -dfx * shiftsize;
+                                    shifty += -dfy * shiftsize;
+                                }
+                            }
+                        }
+                        item1.dx += 0.1 * shiftx;
+                        item1.dy += 0.1 * shifty;
+                    }
+                }
+
+                for (var i = 0; i < this.items.length; i++) {
+                    var item = this.items[i];
+                    var longit2 = item.longit + this.DX2Longit(item.dx, item.lattit);
+                    var lattit2 = item.lattit + this.DY2Lattit(item.dy);
+                    item.longit2 = longit2;
+                    item.lattit2 = lattit2;
+                    if (false) {
+                        var polygondata = [{ longit: item.longit, lattit: item.lattit }, { longit: longit2, lattit: lattit2}];
+                        Map.Polygon(this.id + '_offset' + i, this.mapObject, polygondata);
+                        var polygondata = [];
+                        for (var ang = 0; ang < 2 * Math.PI; ang += 0.025) {
+                            var ddx = item.radius * Math.cos(ang);
+                            var ddy = item.radius * Math.sin(ang);
+                            polygondata.push({ longit: longit2 + this.DX2Longit(ddx, item.lattit), lattit: lattit2 + this.DY2Lattit(ddy) });
+                        }
+                        Map.Polygon(this.id + '_disc' + i, this.mapObject, polygondata);
+                    }
+                }
+            }
+            return that;
+        };
+
 
         //////////////////////////////////////////////////////////////////////////////////////////
         // Class displaying a KML
@@ -445,7 +562,7 @@
                 featureType: 'administrative',
                 elementType: "all",
                 stylers: [
-                { lightness: 25 }/*,
+                { lightness: 25}/*,
             { gamma: "0.25" }*/
             ]
             }
