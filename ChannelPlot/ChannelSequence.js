@@ -104,14 +104,14 @@
                     drawInfo.centerContext.font = '25px sans-serif';
                     drawInfo.centerContext.textBaseline = 'bottom';
                     drawInfo.centerContext.textAlign = 'center';
-                    drawInfo.centerContext.fillText("Fetching data...", drawInfo.sizeX / 2, drawInfo.PosY - drawInfo.sizeY + 30);
+                    drawInfo.centerContext.fillText("Fetching data...", drawInfo.sizeCenterX / 2,5);
                 }
                 if (fetcherror) {
                     drawInfo.centerContext.fillStyle = "rgb(255,0,0)";
                     drawInfo.centerContext.font = '25px sans-serif';
                     drawInfo.centerContext.textBaseline = 'bottom';
                     drawInfo.centerContext.textAlign = 'center';
-                    drawInfo.centerContext.fillText("Fetch failed!", drawInfo.sizeX / 2, drawInfo.PosY - drawInfo.sizeY + 60);
+                    drawInfo.centerContext.fillText("Fetch failed!", drawInfo.sizeCenterX / 2, 5);
                 }
 
 
