@@ -56,6 +56,10 @@
                 this._subTitle = isubtitle;
             }
 
+            that.getTitle = function () {
+                return this._title;
+            }
+
             that.setPlotter = function (thePlotter) { } //can override
 
             that.hideToolTip = function () { } //can override en remove any tooltip if this function was called
@@ -329,11 +333,19 @@
             }
 
             that.drawTitle = function (drawInfo) {
+                var drawVert = (drawInfo.sizeY >= 5000);
                 drawInfo.leftContext.save();
-                drawInfo.leftContext.translate(0, drawInfo.sizeY / 2);
-                drawInfo.leftContext.rotate(-Math.PI / 2);
-                drawInfo.leftContext.textBaseline = 'top';
-                drawInfo.leftContext.textAlign = "center";
+                if (drawVert) {
+                    drawInfo.leftContext.translate(0, drawInfo.sizeY / 2);
+                    drawInfo.leftContext.rotate(-Math.PI / 2);
+                    drawInfo.leftContext.textAlign = "center";
+                    drawInfo.leftContext.textBaseline = 'top';
+                }
+                else {
+                    drawInfo.leftContext.translate(2, drawInfo.sizeY / 2-3);
+                    drawInfo.leftContext.textAlign = "left";
+                    drawInfo.leftContext.textBaseline = 'baseline';
+                }
                 drawInfo.leftContext.font = '11px sans-serif';
                 drawInfo.leftContext.fillStyle = "black";
                 drawInfo.leftContext.fillText(this._title, 0, 5);

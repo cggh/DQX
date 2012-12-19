@@ -14,7 +14,7 @@
             that.myFolder = iFolder;
             that.myConfig = iConfig;
             //that.canHide = false;
-            that.myTitle = 'Sequence';
+            that.setTitle('Sequence');
 
 
             that.myfetcher = new DataFetcherSummary.Fetcher(serverurl, 1, 1200);
@@ -114,6 +114,9 @@
                     drawInfo.centerContext.fillText("Fetch failed!", drawInfo.sizeCenterX / 2, 5);
                 }
 
+                this.drawMark(drawInfo);
+                this.drawXScale(drawInfo);
+                this.drawTitle(drawInfo);
 
             }
             return that;

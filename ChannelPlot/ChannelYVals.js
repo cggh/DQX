@@ -356,7 +356,7 @@
                     if (!hasdata)
                         this.drawMessage(drawInfo, "");
                     else
-                        this.drawMessage(drawInfo, "Zoom in to see " + this.myTitle);
+                        this.drawMessage(drawInfo, "Zoom in to see " + this.getTitle());
                     return;
                 }
                 if (!hasdata) return;
