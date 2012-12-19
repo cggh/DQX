@@ -412,6 +412,7 @@
                             bestMatch = tryMatch;
                             bestMatch.compID = compid;
                             bestMatch.ID = compid + '_' + bestMatch.closestPointIndex;
+                            bestMatch.showPointer = true;
                         }
                     }
                 }

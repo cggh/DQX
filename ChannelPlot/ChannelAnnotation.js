@@ -123,6 +123,7 @@
                     thetip.py = clickpt.Y1 - 5;
                     thetip.content = clickpt.name + "<br>" + clickpt.ID;
                     thetip.ID = clickpt.ID;
+                    thetip.showPointer = true;
                 }
                 return thetip;
             }

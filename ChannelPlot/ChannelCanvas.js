@@ -180,7 +180,10 @@
                 var px = this.getEventPosX(ev);
                 var py = this.getEventPosY(ev);
                 var newToolTipInfo = this.getToolTipInfo(px, py);
+                var showPointer = false;
                 if (newToolTipInfo) {
+                    if (newToolTipInfo.showPointer)
+                        showPointer = true;
                     if (this._toolTipInfo.ID != newToolTipInfo.ID) {
                         this.hideToolTip();
                         this._toolTipInfo = newToolTipInfo;
@@ -203,6 +206,10 @@
                 }
                 else
                     this.hideToolTip();
+                if (showPointer)
+                    $('#' + this.getCanvasID('center')).css('cursor', 'pointer');
+                else
+                    $('#' + this.getCanvasID('center')).css('cursor', 'auto');
             }
 
             that.hideToolTip = function () {
