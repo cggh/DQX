@@ -65,6 +65,50 @@ body
 {
 }
 
+
+
+
+.DQXStyledTable  
+{
+    border-width: 0px;
+    border-style: solid;
+    border-collapse:collapse;
+    border-color: rgb(60,60,60);
+}
+
+.DQXStyledTable th
+{
+    border-width: 1px;
+    border-style: solid;
+    border-color: #000000;
+    background-color:rgb(100,100,100);
+    color:rgb(220,220,220);
+    text-align: left; 
+    font-size:9pt;
+    font-weight:bold;
+    white-space:nowrap;
+    padding: 4px;
+    height:23px;
+}
+
+.DQXStyledTable td    
+{ 
+    border-width: 1px; 
+    border-style: dotted;
+    border-color: rgb(190,190,190);
+    padding-left: 3px;
+    padding-right: 3px;
+    padding-top: 1px;
+    padding-bottom: 0px;
+    color:rgb(0,0,0);
+    font-size:9pt;
+    white-space:nowrap;
+    text-align:left;
+    height:19px;
+}
+
+
+
 /******************************************************************************************
 ** DQX Query tables
 ******************************************************************************************/
