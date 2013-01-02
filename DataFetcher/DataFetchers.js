@@ -423,7 +423,7 @@
             that._ajaxFailure_FetchRange = function (resp) {
                 if (this.showDownload)
                     DQX.stopProcessing();
-                alert(resp);
+                alert('Fetch failure: '+resp);
             }
 
             that._createActiveColumnListString = function () {

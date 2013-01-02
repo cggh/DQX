@@ -766,7 +766,7 @@
                 }
                 Framework.__sendTabEvent = true;
                 if (tabSwitchList.length > 0) {
-                    var fr=tabSwitchList[tabSwitchList.length-1];
+                    var fr = tabSwitchList[tabSwitchList.length - 1];
                     Msg.broadcast({ type: 'ChangeTab', id: fr._parentFrame }, fr.myFrameID);
                 }
 
@@ -842,6 +842,24 @@
 
 
 
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+
+        Framework.ViewSet = function (iFrame, iStateID) {
+            var that = {};
+            that.myFrame = iFrame;
+            that.myStateID = iStateID;
+
+            that.getStateID = function () { return this.myStateID; }
+
+
+            that.getStateKeys = function () {//default implementation, can be overwritten
+                var mp = {};
+                mp[this.myStateID] = null;
+                return mp;
+            }
+
+            return that;
+        }
 
 
 
