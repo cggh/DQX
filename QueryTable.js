@@ -411,7 +411,7 @@
                         $('#' + that.myBaseID).find('.DQXTableRow').removeClass("DQXTableRowSelected");
                         for (var tbnr = 0; tbnr <= 1; tbnr++)
                             $('#' + that.myBaseID).find('#' + newRowNr + '_row_' + that.myBaseID + '_' + tbnr).addClass("DQXTableRowSelected");
-                        Msg.send({ type: "HighlightRowModified", id: this.myBaseID }, this);
+                        Msg.broadcast({ type: "HighlightRowModified", id: this.myBaseID }, this);
                     }
                 }
             }
@@ -458,19 +458,18 @@
             that._onClickLinkCell = function (ev) {
                 var tokens = ev.target.id.split('~');
                 var column = this.findColumn(tokens[0]);
-                Msg.send(column._hyperlinkCellMessageScope, parseInt(tokens[1]));
+                Msg.broadcast(column._hyperlinkCellMessageScope, parseInt(tokens[1]));
             }
 
             that._onClickLinkHeader = function (ev) {
                 var tokens = ev.target.id.split('~');
                 var column = this.findColumn(tokens[0]);
-                Msg.send(column._hyperlinkHeaderMessageScope, tokens[0]);
+                Msg.broadcast(column._hyperlinkHeaderMessageScope, tokens[0]);
             }
 
             that._onClickSortHeader = function (ev) {
                 var tokens = ev.target.id.split('~');
                 var column = this.findColumn(tokens[0]);
-                //Msg.send(column._hyperlinkHeaderMessageScope, tokens[0]);
 
                 var newPositionField = column.sortOption.toString();
                 if (this.myDataFetcher.positionField != newPositionField)

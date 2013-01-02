@@ -321,7 +321,7 @@
             that._notifyChanged = function () {
                 if (this.onChanged)
                     this.onChanged(this.myID);
-                Msg.send({ type: 'CtrlValueChanged', id: this.myID, contextid: this.myContextID }, this);
+                Msg.broadcast({ type: 'CtrlValueChanged', id: this.myID, contextid: this.myContextID }, this);
             }
 
             that.findControl = function (id) {
@@ -706,7 +706,7 @@
             }
 
             that._onClick = function () {
-                Msg.send({ type: 'CtrlClicked', id: this.myID, contextid: this.myContextID }, this);
+                Msg.broadcast({ type: 'CtrlClicked', id: this.myID, contextid: this.myContextID }, this);
                 return false;
             }
 

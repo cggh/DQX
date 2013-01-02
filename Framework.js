@@ -443,7 +443,7 @@
                         $(tabset).children('.DQXTabBody').children('.DQXTabContent').css('display', 'none');
                         var content_show = 'C' + $(this).attr("id");
                         $(tabset).find("#" + content_show).css('display', 'inline');
-                        Msg.send({ type: 'ClickTab', id: that.getClientDivID() }, this.id);
+                        Msg.broadcast({ type: 'ClickTab', id: that.getClientDivID() }, this.id);
                     });
                 }
 
@@ -767,7 +767,7 @@
                 Framework.__sendTabEvent = true;
                 if (tabSwitchList.length > 0) {
                     var fr=tabSwitchList[tabSwitchList.length-1];
-                    Msg.send({ type: 'ChangeTab', id: fr._parentFrame }, fr.myFrameID);
+                    Msg.broadcast({ type: 'ChangeTab', id: fr._parentFrame }, fr.myFrameID);
                 }
 
                 if (this.myClientObject != null)
@@ -786,7 +786,7 @@
             /////////////// NOTIFICATION FUNCTIONS
 
             that._onChangeTab = function (newtab) {
-                Msg.send({ type: 'ChangeTab', id: this.myFrameID }, this.getActiveTabFrameID());
+                Msg.broadcast({ type: 'ChangeTab', id: this.myFrameID }, this.getActiveTabFrameID());
             }
 
 

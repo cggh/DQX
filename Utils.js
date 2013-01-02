@@ -380,35 +380,6 @@
 
         DQX.initPostCreate = function () {
 
-            // Initialise functionality for tabbed environments NOTE: this is likely to be depreciated, since this is handled in the framework
-            /*    
-            $('.DQXTabSet').each(function (idx, tabset) {
-    
-            var id = tabset.id;
-    
-            $(tabset).find('.DQXTabContent').css('display', 'none');
-    
-    
-            var activeid = 'C' + $(tabset).find('.DQXTabActive').attr('id');
-            $(tabset).find('#' + activeid).css('display', 'inline');
-    
-    
-            $(tabset).children('.DQXTabs').children('.DQXTab').click(function () {
-            $(tabset).children('.DQXTabs').children('.DQXTab').removeClass('DQXTabActive');
-            $(tabset).children('.DQXTabs').children('.DQXTab').addClass('DQXTabInactive');
-            $(this).addClass("DQXTabActive");
-            $(this).removeClass("DQXTabInactive");
-    
-            $(tabset).children('.DQXTabBody').children('.DQXTabContent').css('display', 'none');
-            var content_show = 'C' + $(this).attr("id");
-            $(tabset).find("#" + content_show).css('display', 'inline');
-    
-            Msg.send({ type: 'ClickTab', id: id }, this.id);
-    
-            });
-    
-            });
-            */
 
             // Initialise functionality for help buttons
             $('.DQXInfoButton').each(function (idx, tabset) {

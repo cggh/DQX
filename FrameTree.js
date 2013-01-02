@@ -210,7 +210,7 @@
                 $('#' + this.myDivID).find('#' + this._getDivIDItem(id)).addClass('DQXTreeItemSelected');
                 this._activeItem = id;
                 if (!noEvent)
-                    Msg.send({ type: 'SelectItem', id: this.myID }, this._activeItem);
+                    Msg.broadcast({ type: 'SelectItem', id: this.myID }, this._activeItem);
             }
 
             that.scrollActiveInView = function () {

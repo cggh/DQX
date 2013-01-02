@@ -20,7 +20,7 @@
             this._compid = 0;
 
             this.notifyModified = function () {
-                Msg.send({ type: "QueryModified", id: this.myDivID });
+                Msg.broadcast({ type: "QueryModified", id: this.myDivID });
             }
 
 
@@ -210,7 +210,7 @@
             }
 
             this._ReactUpdateQuery = function (id) {
-                Msg.send({ type: "RequestUpdateQuery", id: this.myDivID });
+                Msg.broadcast({ type: "RequestUpdateQuery", id: this.myDivID });
             }
 
 

@@ -106,7 +106,7 @@
                 $('#' + this.myListDivID).children('#' + id).removeClass('DQXLargeListItem').addClass('DQXLargeListItemSelected');
                 this._activeItem = id;
                 if (!noEvent)
-                    Msg.send({ type: 'SelectItem', id: this.myID }, this._activeItem);
+                    Msg.broadcast({ type: 'SelectItem', id: this.myID }, this._activeItem);
             }
 
             that.scrollActiveInView = function () {
