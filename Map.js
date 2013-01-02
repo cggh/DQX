@@ -176,7 +176,7 @@
                 that.myObjects.push(google_objs[i]);
                 google_objs[i].setMap(that.myMapObject.myMap);
                 google.maps.event.addListener(google_objs[i], 'click',
-                function () { Msg.send({ type: 'ClickMapPoint', id: that.myID }, that.myID); }
+                function () { Msg.broadcast({ type: 'ClickMapPoint', id: that.myID }, that.myID); }
             );
             }
             that.remove = function () {
@@ -254,7 +254,7 @@
 
             that._handleOnPointClicked = function (pointnr) {
                 //alert('clicked point ' + pointnr);
-                Msg.send({ type: 'ClickMapPoint', id: this.myID }, this.myPointSet[pointnr].id);
+                Msg.broadcast({ type: 'ClickMapPoint', id: this.myID }, this.myPointSet[pointnr].id);
             }
 
             that._updateVisible = function () {
