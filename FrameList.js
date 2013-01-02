@@ -1,11 +1,9 @@
-﻿define(["jquery", "DQX/DocEl", "DQX/Msg", "jquery_scrollTo"],
-    function ($, DocEl, Msg) {
-        return function (iid, idivid) {
-            var that = {};
-            that.myID = iid;
-            that.myDivID = idivid;
-            that.myFilterDivID = idivid + '_filter';
-            that.myListDivID = idivid + '_lst';
+﻿define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "jquery_scrollTo"],
+    function ($, DocEl, Msg, FramePanel) {
+        return function (iid, iParentRef) {
+            var that = FramePanel(iid, iParentRef);
+            that.myFilterDivID = that.getDivID() + '_filter';
+            that.myListDivID = that.getDivID() + '_lst';
             that.items = [];
             that._activeItem = '';
             that._filterText = null;
