@@ -9,6 +9,8 @@
                 throw "Invalid dimension identifier";
         }
 
+        Framework.frameCounter = 0;
+
         Framework.frameTitleBarH = 33;
         Framework.sepSizeLarge = 14;
         Framework.sepSizeSmall = 6;
@@ -257,10 +259,45 @@
             //Adds a new subframe to an existing container-style frame (= splitter or tab)
             that.addMemberFrame = function (iframe) {
                 if (this.isFinalPanel()) throw "Can't add frames to a final panel";
-                iframe.myID = this.myID + '_' + this.memberFrames.length.toString();
+                //iframe.myID = this.myID + '_' + this.memberFrames.length.toString();
+                iframe.myID = "Frame" + Framework.frameCounter;
+                Framework.frameCounter++;
                 this.memberFrames.push(iframe);
                 iframe._setParentFrame(this);
                 return iframe;
+            }
+
+            //Inserts a new frame at the top of an existing frame
+            that.InsertFrameTop = function (iframe) {
+                var parent = this._parentFrame;
+                if (!parent)
+                    throw "Unable to insert at root frame";
+                var intermediate = Framework.FrameGroupVert('', 0.5);
+                intermediate._setParentFrame(parent);
+                intermediate.myID = this.myID;
+                this.myID = "Frame" + Framework.frameCounter;
+                Framework.frameCounter++;
+                for (var i = 0; i < parent.memberFrames.length; i++)
+                    if (parent.memberFrames[i] == this)
+                        parent.memberFrames[i] = intermediate;
+                iframe._setParentFrame(intermediate);
+                intermediate.addMemberFrame(iframe);
+                intermediate.addMemberFrame(this);
+                return iframe;
+            }
+
+            that.InsertStaticHeader = function (content) {
+                var frame = this.InsertFrameTop(Framework.FrameFinal('', 0.01));
+                frame.setFrameClassClient('DQXClientInfo').setFrameClass('DQXClientInfo').setMargins(3).setAllowScrollBars(false, false).setAutoSize();
+                frame._parentFrame.setSeparatorSize(3);
+                frame._parentFrame.setDisplayTitle(this.myDisplayTitle); this.myDisplayTitle = '';
+                frame.setInitialiseFunction(function () {
+                    var info = Framework.Form(frame);
+                    info.addHtml(content);
+                    info.render();
+
+                });
+
             }
 
             //Sets the client panel for a final frame
@@ -280,6 +317,8 @@
                 var szy = 0;
                 if (this.myClientObject)
                     szy = this.myClientObject.getAutoSizeY();
+                if (this._parentFrame)
+                    szy += this._parentFrame._separatorSize / 2;
                 return szy + this.marginTop + this.marginBottom;
             }
 
@@ -623,9 +662,28 @@
             }
 
             that._setSubFramesPosition = function () {
+                this._executeInitialisers();
                 var frameel = $('#' + this.myID);
                 this._setPosition(frameel.position().left, frameel.position().top, frameel.width(), frameel.height(), true, false);
             }
+
+
+            that._executeInitialisers = function () {
+                for (var fnr = 0; fnr < this.memberFrames.length; fnr++) {
+                    var hidden = false;
+                    if (this.isTabber())
+                        if (fnr != this.activeTabNr)
+                            hidden = true;
+                    if (!hidden)
+                        this.memberFrames[fnr]._executeInitialisers();
+                }
+                if (!this._initialised) {
+                    this._initialised = true;
+                    if (this._handleInitialise)
+                        this._handleInitialise();
+                }
+            }
+
 
             that._setPosition = function (x0, y0, sx, sy, subFramesOnly, isHidden) {
                 var frameel = $('#' + this.myID);
@@ -655,6 +713,13 @@
                     clientel.css('width', clientWidth + 'px');
                     clientel.css('height', clientHeight + 'px');
                 }
+
+                if (!this._initialised && (!isHidden)) {
+                    this._initialised = true;
+                    if (this._handleInitialise)
+                        this._handleInitialise();
+                }
+
 
                 //normalise size weights
                 var totsubsizeweight = 0.0;
@@ -707,12 +772,6 @@
 
                 if (!subFramesOnly)
                     if (this.isTabber()) this._createTabItems();
-
-                if (!this._initialised && (!isHidden)) {
-                    this._initialised = true;
-                    if (this._handleInitialise)
-                        this._handleInitialise();
-                }
 
                 if (this.isFinalPanel()) {
                     if (this.myClientObject != null)
@@ -840,6 +899,7 @@
             var v2 = myparent.get(0).tagName;
             var sx = myparent.innerWidth();
             var sy = myparent.innerHeight();
+            Framework.frameRoot._executeInitialisers();
             Framework.frameRoot._setPosition(0, 0, sx, sy, false, false);
         }
 
