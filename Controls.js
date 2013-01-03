@@ -18,6 +18,7 @@
 
             that.addControl = function (item) {
                 that._controls.push(item);
+                return item;
             }
 
             that.getID = function () {
@@ -86,6 +87,7 @@
 
             that.addControl = function (item) {
                 that._controls.push(item);
+                return item;
             }
 
             that.getID = function () {
@@ -316,6 +318,15 @@
                     else
                         this.getJQElement(this._controlExtensionList[i]).attr("disabled", "disabled");
                 }
+            }
+
+            that.addValueChangedListener = function (handler) {
+                Msg.listen('',{ type: 'CtrlValueChanged', id: this.getID()},handler);
+            }
+
+            that.setOnChanged = function (handler) {//provide a handler function that will be called when the control changes
+                this.onChanged = handler;
+                return this;
             }
 
             that._notifyChanged = function () {
