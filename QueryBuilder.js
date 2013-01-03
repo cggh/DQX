@@ -8,9 +8,9 @@
         ///////////////////////////////////////////////////////////////////////////////////////////////////
         // iDivID = the id of the div that serves as a container for the htnl elements
 
-        QueryBuilder.Builder = function (iid, iParentRef) {
+        QueryBuilder.Builder = function (iParentRef) {
             //            if (!(this instanceof arguments.callee)) throw "Should be called as constructor!";
-            var that = FramePanel(iid, iParentRef);
+            var that = FramePanel(iParentRef);
 
             DQX.ObjectMapper.Add(that);
             that.myColumns = []; //list of SQL.TableColInfo objects
@@ -701,8 +701,8 @@
         // Interactive query builder GUI component
         //////////////////////////////////////////////////////////////////////////////////////////
 
-        QueryBuilder.Panel = function (iid, iParentRef, args) {
-            var that = QueryBuilder.Builder(iid, iParentRef);
+        QueryBuilder.Panel = function (iParentRef, args) {
+            var that = QueryBuilder.Builder(iParentRef);
 
             that.handleResize = function () {
                 if ((that.getRootElem().width() > 5) && (that.getRootElem().height() > 5))

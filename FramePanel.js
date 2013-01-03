@@ -1,8 +1,7 @@
 ﻿define(["jquery", "DQX/DocEl", "DQX/Msg", "jquery_scrollTo"],
     function ($, DocEl, Msg) {
-        return function (iid, iParentRef) {
+        return function (iParentRef) {
             var that = {};
-            that.myID = iid;
             if (DQX.hasMember(iParentRef, 'getClientDivID')) {
                 that.myParentFrame = iParentRef;
                 that.myDivID = iParentRef.getClientDivID();
@@ -12,8 +11,16 @@
                 that.myDivID = iParentRef;
             if (that.myDivID.length == 0)
                 throw "Invalid parent reference";
-            if ($('#' + that.myDivID).length == 0) 
-                throw "Invalid Gui component " + iid;
+            if ($('#' + that.myDivID).length == 0)
+                throw "Invalid Gui component " + that.myDivID;
+            that.myID = that.myDivID;
+
+            that.setID = function (iid) {
+                this.myID = iid;
+                return this;
+            }
+
+            that.getID = function () { return this.myID; }
 
             that.getDivID = function () { return this.myDivID; }
 

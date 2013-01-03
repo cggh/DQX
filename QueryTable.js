@@ -551,8 +551,8 @@
         //////////////////////////////////////////////////////////////////////////////////////////
 
 
-        QueryTable.Panel = function (iid, iParentRef, idatafetcher, args) {
-            var that = FramePanel(iid, iParentRef);
+        QueryTable.Panel = function (iParentRef, idatafetcher, args) {
+            var that = FramePanel(iParentRef);
 
             var html = '';
 
@@ -618,7 +618,7 @@
             that.myTable = QueryTable.Table(that.getDivID(), idatafetcher);
             that.myTable.autoSizeHeight = true;
 
-            DQX.setKeyDownReceiver(iid, $.proxy(that.myTable.onKeyDown, that.myTable));
+            DQX.setKeyDownReceiver(that.getID(), $.proxy(that.myTable.onKeyDown, that.myTable));
 
             that.getVerticalUserSize = function () {
                 return $('#' + that.getSubId("BodyHolder")).outerHeight() + $('#' + that.getSubId("Pager")).outerHeight() + $('#' + that.getSubId("Footer")).outerHeight(); ;

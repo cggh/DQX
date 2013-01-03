@@ -5,8 +5,8 @@
 
 
 
-        ChannelPlotter.Panel = function (iid, iParentRef, args) {
-            var that = FramePanel(iid, iParentRef);
+        ChannelPlotter.Panel = function (iParentRef, args) {
+            var that = FramePanel(iParentRef);
             that._leftWidth = 120;
             that._rightWidth = 10;
             that._headerHeight = 30;

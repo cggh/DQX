@@ -528,8 +528,8 @@
         // Class Encapsulating Google Maps view with overlays
         //////////////////////////////////////////////////////////////////////////////////////////
 
-        GMaps.GMap = function (iid, iParentRef, istartcoord, istartzoomlevel) {
-            var that = FramePanel(iid, iParentRef);
+        GMaps.GMap = function (iParentRef, istartcoord, istartzoomlevel) {
+            var that = FramePanel(iParentRef);
 
             that.getRootElem().css('background-color', 'rgb(210,230,255)');
 
