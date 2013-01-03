@@ -72,7 +72,7 @@
 
         //Creates an instance of a frame contains a single client panel holding actual content
         Framework.FrameFinal = function (iid, isizeweight) {
-            return Framework.Frame(iid, 'Final', isizeweight);
+            return Framework.Frame(iid, 'Final', isizeweight).setFrameClassClient('DQXClient');
         }
 
         //A class that implements a frame
@@ -148,6 +148,7 @@
             }
             that.getTitle = function () {//return the display title
                 if (this.myDisplayTitle.length > 0) return this.myDisplayTitle;
+                throw "Frame does not have a title";
                 return this.myFrameID;
             }
             that.hasTitleBar = function () {//returns true of the frame has a visible title bar
@@ -286,9 +287,12 @@
                 return iframe;
             }
 
-            that.InsertStaticHeader = function (content) {
+            that.InsertStaticHeader = function (content, iclss) {
+                var clss = iclss;
+                if (!clss)
+                    clss = 'DQXClientInfo';
                 var frame = this.InsertFrameTop(Framework.FrameFinal('', 0.01));
-                frame.setFrameClassClient('DQXClientInfo').setFrameClass('DQXClientInfo').setMargins(3).setAllowScrollBars(false, false).setAutoSize();
+                frame.setFrameClassClient(clss).setFrameClass(clss).setMargins(3).setAllowScrollBars(false, false).setAutoSize();
                 frame._parentFrame.setSeparatorSize(3);
                 frame._parentFrame.setDisplayTitle(this.myDisplayTitle); this.myDisplayTitle = '';
                 frame.setInitialiseFunction(function () {

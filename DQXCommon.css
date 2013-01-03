@@ -284,6 +284,13 @@ body
     color:rgb(210,210,210);
 }
 
+.DQXDarkInfo
+{
+    background-color:rgb(60,60,60);
+    color:rgb(200,220,200);
+}
+
+
 .DQXDarkFrameHighlight
 {
     color:rgb(240,240,190);
@@ -509,6 +516,12 @@ body
     stroke-width:1;
     fill-opacity: 0.7;
 }
+
+.DQXPage
+{
+    background-color: white;
+}
+
 
 .DQXLight
 {
