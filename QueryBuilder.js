@@ -1,35 +1,35 @@
 ﻿define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
     function ($, SQL, DQX, DocEl, Msg, FramePanel) {
 
+        QueryBuilder = {};
+
         ///////////////////////////////////////////////////////////////////////////////////////////////////
         // The query builder class
         ///////////////////////////////////////////////////////////////////////////////////////////////////
         // iDivID = the id of the div that serves as a container for the htnl elements
 
-        QueryBuilder = function (iDivID) {
-            if (!(this instanceof arguments.callee)) throw "Should be called as constructor!";
+        QueryBuilder.Builder = function (iDivID) {
+            //            if (!(this instanceof arguments.callee)) throw "Should be called as constructor!";
+            var that = {};
 
-            DQX.ObjectMapper.Add(this);
-            this.myDivID = iDivID;
-            this.myColumns = []; //list of SQL.TableColInfo objects
-            this.bSepX = 20;
-            this.spacerH1 = 20; // 30;
-            this.spacerH2 = 15; // 20;
-            this.borderSize = 0;
-            this._globalcontentnr = 10;
-            this._compid = 0;
+            DQX.ObjectMapper.Add(that);
+            that.myDivID = iDivID;
+            that.myColumns = []; //list of SQL.TableColInfo objects
+            that.bSepX = 20;
+            that.spacerH1 = 20; // 30;
+            that.spacerH2 = 15; // 20;
+            that.borderSize = 0;
+            that._globalcontentnr = 10;
+            that._compid = 0;
 
-            this.notifyModified = function () {
+            that.notifyModified = function () {
                 Msg.broadcast({ type: "QueryModified", id: this.myDivID });
             }
 
 
-            if ($('#' + this.myDivID).length == 0)
-                throw "Unable to find query builder div element " + this.myDivID;
-
             //create an individual statement
             //this is a wrapper object that contains a SQL.WhereClause - type thing
-            this._createNewStatement = function (parent) {
+            that._createNewStatement = function (parent) {
                 this._globalcontentnr++;
                 var newcomp = {};
                 newcomp.isCompound = false;
@@ -38,7 +38,7 @@
             }
 
             //create an OR branch
-            this._createCompOR = function () {
+            that._createCompOR = function () {
                 var comp = {};
                 comp.isCompound = true;
                 comp.Tpe = "OR";
@@ -47,7 +47,7 @@
             }
 
             //create an AND branch
-            this._createCompAND = function () {
+            that._createCompAND = function () {
                 var comp = {};
                 comp.isCompound = true;
                 comp.Tpe = "AND";
@@ -57,15 +57,15 @@
 
             //the one and only root element
             //The query is maintained as a tree from this root
-            this.root = this._createCompAND();
+            that.root = that._createCompAND();
 
             //adds a new column definition to the query tool. this should be of type SQL.TableColInfo
-            this.addTableColumn = function (icolinfo) {
+            that.addTableColumn = function (icolinfo) {
                 this.myColumns.push(icolinfo);
             }
 
             //determines if a column with a specific id is present
-            this.hasColumn = function (icolid) {
+            that.hasColumn = function (icolid) {
                 for (var i in this.myColumns)
                     if (this.myColumns[i].ID == icolid)
                         return true;
@@ -73,7 +73,7 @@
             }
 
             //returns a column by id
-            this.getColumn = function (icolid) {
+            that.getColumn = function (icolid) {
                 for (var i in this.myColumns)
                     if (this.myColumns[i].ID == icolid)
                         return this.myColumns[i];
@@ -82,7 +82,7 @@
 
 
             //Internal function: this removes all unnecessary items from the tree
-            this._cleanUp = function (comp) {
+            that._cleanUp = function (comp) {
                 var modified = false;
                 if (comp.isCompound) {
                     for (var compnr in comp.myComponents) {
@@ -119,24 +119,24 @@
             }
 
             //Called when, for a a field comparison statement, the field control was modified
-            this._ReactChangeField = function (id) {
+            that._ReactChangeField = function (id) {
                 this._reRender(); //todo: optimise this by only building single statement?
                 this.notifyModified();
             }
 
             //Called when, for a a field comparison statement, the comparison type control was modified
-            this._ReactChangeCompType = function (id) {
+            that._ReactChangeCompType = function (id) {
                 this._reRender(); //todo: optimise this by only building single statement?
                 this.notifyModified();
             }
 
             //Called when, for a a field comparison statement, a content control was modified
-            this._ReactStatementModified = function (id) {
+            that._ReactStatementModified = function (id) {
                 this.notifyModified();
             }
 
             //Called when a statement should be deleted
-            this._ReactDel = function (id) {
+            that._ReactDel = function (id) {
                 if (compmap[id].myParent == null)
                     throw "no parent";
                 var parentcomp = compmap[id].myParent;
@@ -151,21 +151,21 @@
             }
 
             //Add a new components in an existing and chain
-            this._ReactAddAnd = function (id) {
+            that._ReactAddAnd = function (id) {
                 this._createNewStatement(compmap[id]);
                 this._reRender();
                 this.notifyModified();
             }
 
             //Add a nw component in an existing or chain
-            this._ReactAddOr = function (id) {
+            that._ReactAddOr = function (id) {
                 this._createNewStatement(compmap[id]);
                 this._reRender();
                 this.notifyModified();
             }
 
             //Create a new or chain at the point of an individual statement
-            this._ReactCreateOr = function (id) {
+            that._ReactCreateOr = function (id) {
                 var parentcomp = compmap[id].myParent;
                 var childid = -1;
                 for (var i in parentcomp.myComponents)
@@ -181,7 +181,7 @@
             }
 
             //Create new or chain at the root of the query
-            this._ReactCreateRootOr = function () {
+            that._ReactCreateRootOr = function () {
                 var oldroot = this.root;
                 this.root = this._createCompAND();
                 var orcomp = this._createCompOR();
@@ -194,7 +194,7 @@
 
 
             //Create a new and chain at the point of an individual statement
-            this._ReactCreateAnd = function (id) {
+            that._ReactCreateAnd = function (id) {
                 var parentcomp = compmap[id].myParent;
                 var childid = -1;
                 for (var i in parentcomp.myComponents)
@@ -209,13 +209,13 @@
                 this.notifyModified();
             }
 
-            this._ReactUpdateQuery = function (id) {
+            that._ReactUpdateQuery = function (id) {
                 Msg.broadcast({ type: "RequestUpdateQuery", id: this.myDivID });
             }
 
 
             //Calculates the minimum required horizontal space for a component
-            this._calcMinSizeX = function (comp) {
+            that._calcMinSizeX = function (comp) {
                 if (comp.isCompound) {
                     if (comp.Tpe == 'AND') {
                         var minsizex = 0;
@@ -240,7 +240,7 @@
             }
 
             //determines the actual horizontal size of a component, adapting to the given available siwe
-            this._calcSizeX = function (comp, availsizex) {
+            that._calcSizeX = function (comp, availsizex) {
                 if (comp.isCompound) {
                     if (comp.Tpe == 'AND') {
                         for (var compnr in comp.myComponents)
@@ -264,22 +264,22 @@
             }
 
             //creates a string literal that calls a react calback function
-            this._createReactFunctionString = function (itype, iid) {
+            that._createReactFunctionString = function (itype, iid) {
                 return DQX.ObjectMapper.CreateCallBackFunctionString(this, itype, iid);
             }
 
             //or blocks get a color variation to stand them out more. this calculates the color based on the level of nested or's
-            this._createBlockColor = function (level) {
+            that._createBlockColor = function (level) {
                 return DQX.parseColorString($('#' + this.myDivID).css("background-color"), DQX.Color(0.9, 0.9, 0.9)).lighten(0.1 * level);
             }
 
             //returns the identifier for a control in an individual statement
-            this.getControlID = function (statementID, aspect) {
+            that.getControlID = function (statementID, aspect) {
                 return "DQXQbldStmnt" + this.myDivID + statementID + aspect;
             }
 
             //adds some extra required stuff around every control that appears in an query statement
-            this.decorateQueryStatementControl = function (ctrl, ID) {
+            that.decorateQueryStatementControl = function (ctrl, ID) {
                 ctrl.setOnChange(this._createReactFunctionString('_ReactStatementModified', ID));
                 ctrl.setOnKeyUp(this._createReactFunctionString('_ReactStatementModified', ID));
             }
@@ -291,7 +291,7 @@
             //render an individual comparison statement
             //theComponentStatement= query statement, containing a  SQL.WhereClause - thing
             //theComponentElement= html element to render it in
-            this._buildStatement = function (theComponentStatement, theComponentElement) {
+            that._buildStatement = function (theComponentStatement, theComponentElement) {
                 var myOperator = theComponentStatement.myOperator; //the SQL.WhereClause - thing
                 var sizex = theComponentStatement.sizeX;
                 var addor = (theComponentStatement.myParent.Tpe != 'OR');
@@ -366,7 +366,7 @@
                 }
             }
 
-            this._buildElement = function (theQueryComponent, theQueryParentComponent, orlevel) {
+            that._buildElement = function (theQueryComponent, theQueryParentComponent, orlevel) {
                 var sizex = theQueryComponent.sizeX;
                 theQueryComponent.myParent = theQueryParentComponent;
                 this._compid++;
@@ -484,7 +484,7 @@
             }
 
 
-            this.render = function () {
+            that.render = function () {
                 this._compid = 0;
                 compmap = {};
                 while (this._cleanUp(this.root));
@@ -613,7 +613,7 @@
             }
 
             //fetches the content of all comparison statements in a query component
-            this._fetchStatementContent = function (theQueryComponent) {
+            that._fetchStatementContent = function (theQueryComponent) {
                 if (theQueryComponent.isCompound) {
                     for (var compnr in theQueryComponent.myComponents) {
                         this._fetchStatementContent(theQueryComponent.myComponents[compnr]);
@@ -630,7 +630,7 @@
             }
 
             //Forces a recreation of the UI
-            this._reRender = function () {
+            that._reRender = function () {
                 this._needRebuild = false;
                 //we first fetch the current status of the content
                 this._fetchStatementContent(this.root);
@@ -642,7 +642,7 @@
             }
 
             //returns a SQL.WhereClause - thing for a query component
-            this._extractQueryContent = function (theQueryComponent) {
+            that._extractQueryContent = function (theQueryComponent) {
                 if (theQueryComponent.isCompound) {
                     var rs = SQL.WhereClause.Compound(theQueryComponent.Tpe);
                     for (var compnr in theQueryComponent.myComponents)
@@ -655,14 +655,14 @@
             }
 
             //returns the query defined by this builder, returning a class tree defined with SQL.WhereClause stuff
-            this.getQuery = function () {
+            that.getQuery = function () {
                 this._fetchStatementContent(this.root);
                 if (this.root.myComponents.length == 0)
                     return SQL.WhereClause.Trivial();
                 return this._extractQueryContent(this.root);
             }
 
-            this._importQuery = function (statement) {
+            that._importQuery = function (statement) {
                 if (statement.isCompound) {
                     if (statement.Tpe == 'OR')
                         var newcomp = this._createCompOR();
@@ -683,7 +683,7 @@
             }
 
             //sets thequery for this builder, providing a class tree defined with SQL.WhereClause stuff
-            this.setQuery = function (queryTree) {
+            that.setQuery = function (queryTree) {
                 this.root = this._createCompAND();
                 if (queryTree.Tpe != '')
                     this.root.myComponents.push(this._importQuery(queryTree));
@@ -695,6 +695,7 @@
             }
 
 
+            return that;
         }
 
         //////////////////////////////////////////////////////////////////////////////////////////
@@ -702,7 +703,7 @@
         //////////////////////////////////////////////////////////////////////////////////////////
 
         QueryBuilder.Panel = function (iid, args) {
-            var that = new QueryBuilder(iid);
+            var that = QueryBuilder.Builder(iid);
             that.myID = iid;
             if ($('#' + that.myID).length == 0) throw "Invalid Gui component " + iid;
             that.rootelem = $('#' + that.myID);
