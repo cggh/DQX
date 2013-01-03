@@ -1,5 +1,5 @@
-﻿define(["jquery", "DQX/DocEl", "DQX/Msg"],
-    function ($, DocEl, Msg) {
+﻿define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel" ],
+    function ($, DocEl, Msg, FramePanel) {
         var TreeCtrl = {};
 
         ////////////////////////// A class representing a branch in the tree ///////////////////////////////////////
@@ -95,10 +95,8 @@
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        TreeCtrl.Tree = function (iid, idivid) {
-            var that = {};
-            that.myID = iid;
-            that.myDivID = idivid;
+        TreeCtrl.Tree = function (iid, iParentRef) {
+            var that = FramePanel(iid, iParentRef);
             that.root = TreeCtrl.Branch(); //tree structured container of the items
             that.root.myTree = that;
             that._itemList = [];
@@ -195,26 +193,26 @@
                 var subItems = this.root.getItems();
                 for (var i = 0; i < subItems.length; i++)
                     this._renderSub(dv, subItems[i], 0);
-                $('#' + this.myDivID).html(dv.toString());
+                $('#' + this.getDivID()).html(dv.toString());
 
                 for (var i = 0; i < this._itemList.length; i++)
                     this._itemList[i].postCreateHtml();
 
-                $('#' + this.myDivID).find('.DQXTreeButton').click($.proxy(that._clickTreeButton, that));
-                $('#' + this.myDivID).find('.DQXTreeItem').mousedown($.proxy(that._clickTreeItem, that));
+                $('#' + this.getDivID()).find('.DQXTreeButton').click($.proxy(that._clickTreeButton, that));
+                $('#' + this.getDivID()).find('.DQXTreeItem').mousedown($.proxy(that._clickTreeItem, that));
             }
 
             that.setActiveItem = function (id, noEvent) {
                 if (this._activeItem)
-                    $('#' + this.myDivID).find('#' + this._getDivIDItem(this._activeItem)).removeClass('DQXTreeItemSelected');
-                $('#' + this.myDivID).find('#' + this._getDivIDItem(id)).addClass('DQXTreeItemSelected');
+                    $('#' + this.getDivID()).find('#' + this._getDivIDItem(this._activeItem)).removeClass('DQXTreeItemSelected');
+                $('#' + this.getDivID()).find('#' + this._getDivIDItem(id)).addClass('DQXTreeItemSelected');
                 this._activeItem = id;
                 if (!noEvent)
                     Msg.broadcast({ type: 'SelectItem', id: this.myID }, this._activeItem);
             }
 
             that.scrollActiveInView = function () {
-                //        $('#' + this.myDivID).scrollTo($('#' + this.myDivID).children('#' + this._activeItem));
+                //        $('#' + this.getDivID()).scrollTo($('#' + this.getDivID()).children('#' + this._activeItem));
             }
 
             that._clickTreeItem = function (ev) {

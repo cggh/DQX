@@ -1,5 +1,5 @@
-﻿define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DocEl", "DQX/Msg"],
-    function ($, SQL, DQX, DocEl, Msg) {
+﻿define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
+    function ($, SQL, DQX, DocEl, Msg, FramePanel) {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////////
         // The query builder class

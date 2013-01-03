@@ -1,5 +1,5 @@
-﻿define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls"],
-    function ($, DocEl, Msg, Controls) {
+﻿define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/FramePanel"],
+    function ($, DocEl, Msg, Controls, FramePanel) {
         var Framework = {};
         //two constants defining the X and Y direction
         Framework.dimX = 0;
@@ -867,10 +867,8 @@
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
 
-        Framework.Form = function (iid, idivid) {
-            var that = {};
-            that.myID = iid;
-            that.myDivID = idivid;
+        Framework.Form = function (iid, iParentRef) {
+            var that = FramePanel(iid, iParentRef);
             that._content = Controls.CompoundHor([]);
 
             that.clear = function () {
@@ -889,7 +887,7 @@
 
             that.render = function () {
                 var st = that._content.renderHtml();
-                $('#' + this.myDivID).html(st);
+                $('#' + this.getDivID()).html(st);
                 that._content.postCreateHtml();
             }
 

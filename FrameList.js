@@ -57,7 +57,7 @@
                     divList.addStyle('left', '0px');
                     divList.addStyle('right', '0px');
                     htmlContent += divList.toString();
-                    $('#' + this.myDivID).html(htmlContent);
+                    $('#' + this.getDivID()).html(htmlContent);
                     if (this._hasFilter)
                         $('#' + this.myFilterDivID).bind("propertychange keyup input paste", $.proxy(that._onChangeFilter, that));
                     this._isCreated = true;

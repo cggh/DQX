@@ -1,5 +1,5 @@
-﻿define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg"],
-    function ($, DQX, DocEl, Msg) {
+﻿define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
+    function ($, DQX, DocEl, Msg, FramePanel) {
 
         //Namespace for query tables
         var QueryTable = {}
@@ -551,8 +551,8 @@
         //////////////////////////////////////////////////////////////////////////////////////////
 
 
-        QueryTable.Panel = function (iid, idatafetcher, args) {
-            var that = DQX.Gui.GuiComponent(iid, args);
+        QueryTable.Panel = function (iid, iParentRef, idatafetcher, args) {
+            var that = FramePanel(iid, iParentRef);
 
             var html = '';
 
@@ -612,10 +612,10 @@
                 html += footer;
             }
 
-            that.rootelem.html(html);
+            that.getRootElem().html(html);
 
 
-            that.myTable = QueryTable.Table(iid, idatafetcher);
+            that.myTable = QueryTable.Table(that.getDivID(), idatafetcher);
             that.myTable.autoSizeHeight = true;
 
             DQX.setKeyDownReceiver(iid, $.proxy(that.myTable.onKeyDown, that.myTable));
@@ -625,7 +625,7 @@
             }
 
             that.onResize = function () {
-                var availabeH = this.rootelem.innerHeight() - DQX.scrollBarWidth - 15;
+                var availabeH = this.getRootElem().innerHeight() - DQX.scrollBarWidth - 15;
                 if (availabeH != this.lastAvailabeH) {
                     //this.myTable.myPageSize = Math.max(1, (availabeH - 50) / 17);
                     //this.myTable.render();

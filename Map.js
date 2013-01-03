@@ -1,5 +1,5 @@
-﻿define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/Msg", "DQX/Utils", "async!https://maps.googleapis.com/maps/api/js?libraries=visualization&sensor=false"],
-    function ($, Countries, GeoJSON, Msg, DQX) {
+﻿define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/Msg", "DQX/Utils", "DQX/FramePanel", "async!https://maps.googleapis.com/maps/api/js?libraries=visualization&sensor=false"],
+    function ($, Countries, GeoJSON, Msg, DQX, FramePanel) {
 
         var GMaps = {}
 
@@ -528,11 +528,10 @@
         // Class Encapsulating Google Maps view with overlays
         //////////////////////////////////////////////////////////////////////////////////////////
 
-        GMaps.GMap = function (idivid, istartcoord, istartzoomlevel) {
-            var that = {};
-            that.myDivID = idivid;
+        GMaps.GMap = function (iid, iParentRef, istartcoord, istartzoomlevel) {
+            var that = FramePanel(iid, iParentRef);
 
-            $('#' + idivid).css('background-color', 'rgb(210,230,255)');
+            that.getRootElem().css('background-color', 'rgb(210,230,255)');
 
             var styles = [
             {
@@ -579,7 +578,7 @@
                 }
             };
 
-            that.myMap = new google.maps.Map(document.getElementById(idivid), mapoptions);
+            that.myMap = new google.maps.Map(document.getElementById(that.getDivID()), mapoptions);
             that.myMap.mapTypes.set('map_style_simple', styledMap);
             that.myMap.setMapTypeId('map_style_simple');
 

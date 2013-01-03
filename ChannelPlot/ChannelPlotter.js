@@ -1,21 +1,19 @@
-﻿define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller", "DQX/ChannelPlot/ChannelCanvas", "DQX/ChannelPlot/ChannelYVals"],
-    function ($, DocEl, Msg, Scroller, ChannelCanvas, ChannelYVals) {
+﻿define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Scroller", "DQX/ChannelPlot/ChannelCanvas", "DQX/ChannelPlot/ChannelYVals"],
+    function ($, DocEl, Msg, FramePanel, Scroller, ChannelCanvas, ChannelYVals) {
         var ChannelPlotter = {};
 
 
 
 
-        ChannelPlotter.Panel = function (iDivID, args) {
-            var that = {};
+        ChannelPlotter.Panel = function (iid, iParentRef, args) {
+            var that = FramePanel(iid, iParentRef);
             that._leftWidth = 120;
             that._rightWidth = 10;
             that._headerHeight = 30;
             that._footerHeight = 30;
             that._navigatorHeight = 30;
-            that._myDivID = iDivID;
             that._channels = [];
             that._idChannelMap = {};
-            if ($('#' + that._myDivID).length == 0) throw "Invalid Gui component " + iid;
             //some internal stuff
             that._offsetX = 0
             that._BaseZoomFactX = 1.0 / 50000.0;
@@ -26,7 +24,7 @@
             that._myDataFetchers = [];
             that._sizeCenterX = null; //indicates that panel is not yet initialised
 
-            that.getSubID = function (ext) { return that._myDivID + ext; }
+            that.getSubID = function (ext) { return that.getDivID() + ext; }
             that.getElemJQ = function (ext) { return $('#' + this.getSubID(ext)); }
 
             that.getLeftWidth = function () { return that._leftWidth; }
