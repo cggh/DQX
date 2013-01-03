@@ -40,8 +40,6 @@
                 return this.maxSize == this.minSize;
             }
             that._getMinSize = function () {
-                if (this.minSize == 510)
-                    var q = 0;
                 return this.minSize;
             }
             that._getMaxSize = function () {
@@ -87,6 +85,7 @@
             that.myDisplayTitle = '';
             that.myType = itype;
             that.mySizeWeight = isizeweight;
+            that.autoSizeY = false;
             that.sizeRange = [Framework.SizeRange(), Framework.SizeRange()]; //allowed frame size range in X and Y dir
             that.marginLeft = 0;
             that.marginRight = 0;
@@ -193,6 +192,11 @@
                 return this;
             }
 
+            that.setAutoSize = function () {
+                this.autoSizeY = true;
+                return this;
+            }
+
             //Set the margin size (i.e. the space between the outer border of this frame and the outer border of its client frame, containing subframes or the final panel)
             that.setMargins = function (sz) {
                 DQX.checkIsNumber(sz);
@@ -272,8 +276,19 @@
                 this._parentFrame = pframe;
             }
 
+            that._calcAutoSizeY = function () {
+                var szy = 0;
+                if (this.myClientObject)
+                    szy = this.myClientObject.getAutoSizeY();
+                return szy + this.marginTop + this.marginBottom;
+            }
+
             that._getMinSize = function (dim) {
                 Framework.isValidDim(dim);
+
+                if ((dim == Framework.dimY) && (this.autoSizeY))
+                    return this._calcAutoSizeY();
+
                 var subminsize = 0;
                 if ((this.isSplitter()) && (this.splitterDim() == dim)) {
                     for (var i = 0; i < this.memberFrames.length; i++)
@@ -291,6 +306,10 @@
 
             that._getMaxSize = function (dim) {
                 Framework.isValidDim(dim);
+
+                if ((dim == Framework.dimY) && (this.autoSizeY))
+                    return this._calcAutoSizeY();
+
                 var submaxsize = 0;
                 if ((this.isSplitter()) && (this.splitterDim() == dim)) {
                     for (var i = 0; i < this.memberFrames.length; i++)
@@ -314,6 +333,8 @@
             //Returns true if the frame has a fixed size in a specified dimension
             that._isFixedSize = function (dim) {
                 Framework.isValidDim(dim);
+                if ((dim == Framework.dimY) && (this.autoSizeY))
+                    return true;
                 return this.sizeRange[dim]._isFixedSize();
             }
 
@@ -333,7 +354,8 @@
 
                 var theclientcontainerdiv = DocEl.Div({ parent: thediv, id: this.getClientContainerDivID() });
 
-                var theclientdiv = DocEl.Div({ parent: theclientcontainerdiv, id: this.getClientDivID() });
+                var thescrollerdiv = DocEl.Div({ parent: theclientcontainerdiv, id: this.getClientDivID() + 'Scroller' });
+                var theclientdiv = DocEl.Div({ parent: thescrollerdiv, id: this.getClientDivID() });
                 thediv.setWidthPx(100);
                 thediv.setHeightPx(100);
                 var fr = 1 - 0.1 * level;
@@ -342,7 +364,10 @@
                     thediv.setCssClass(this.frameClass);
 
                 if (this.isFinalPanel()) {
-                    if (this.allowYScrollbar) theclientdiv.addStyle('overflow-y', 'auto');
+                    if (this.allowYScrollbar)
+                        theclientdiv.addStyle('overflow-y', 'auto');
+                    else
+                        theclientdiv.addStyle('overflow-y', 'hidden');
                     if (this.allowXScrollbar)
                         theclientdiv.addStyle('overflow-x', 'auto');
                     else
@@ -561,25 +586,28 @@
             that._adjustFrameSizeFractions = function (totsize) {
 
                 var widths = [];
+                var widths_min = [];
+                var widths_max = [];
                 for (var i = 0; i < this.memberFrames.length; i++) {
                     widths.push(this.memberFrames[i].mySizeWeight * totsize);
+                    widths_min.push(this.memberFrames[i]._getMinSize(this.splitterDim()));
+                    widths_max.push(this.memberFrames[i]._getMaxSize(this.splitterDim()));
                 }
 
                 var modif = true;
                 for (var iter = 0; (iter < 5) && modif; iter++) {
                     modif = false;
                     for (var fnr = 0; fnr < this.memberFrames.length; fnr++) {
-                        var theminsize = this.memberFrames[fnr]._getMinSize(this.splitterDim());
-                        if (widths[fnr] < theminsize) {
-                            var extra = theminsize - widths[fnr];
+                        if (widths[fnr] < widths_min[fnr] - 1) {
+                            var extra = widths_min[fnr] - widths[fnr];
                             widths[fnr] += extra;
                             for (var i = 0; i < this.memberFrames.length; i++)
                                 if (i != fnr)
                                     widths[i] -= extra / (this.memberFrames.length - 1);
                             modif = true;
                         }
-                        if (widths[fnr] > this.memberFrames[fnr]._getMaxSize(this.splitterDim())) {
-                            var extra = this.memberFrames[fnr]._getMaxSize(this.splitterDim()) - widths[fnr];
+                        if (widths[fnr] > widths_max[fnr] + 1) {
+                            var extra = widths_max[fnr] - widths[fnr];
                             widths[fnr] += extra;
                             for (var i = 0; i < this.memberFrames.length; i++)
                                 if (i != fnr)
@@ -636,7 +664,7 @@
                     this.memberFrames[fnr].mySizeWeight /= totsubsizeweight;
 
                 if (this.isHorSplitter()) {
-                    this._adjustFrameSizeFractions(sx);
+                    this._adjustFrameSizeFractions(clientWidth);
                     this.sepPosits = [];
                     var framePosits = that._calculateFramePositions(clientWidth);
                     for (var fnr = 0; fnr < this.memberFrames.length; fnr++) {
@@ -653,7 +681,7 @@
                 }
 
                 if (this.isVertSplitter()) {
-                    this._adjustFrameSizeFractions(sy);
+                    this._adjustFrameSizeFractions(clientHeight);
                     this.sepPosits = [];
                     var framePosits = that._calculateFramePositions(clientHeight);
                     for (var fnr = 0; fnr < this.memberFrames.length; fnr++) {
@@ -681,9 +709,9 @@
                     if (this.isTabber()) this._createTabItems();
 
                 if (!this._initialised && (!isHidden)) {
+                    this._initialised = true;
                     if (this._handleInitialise)
                         this._handleInitialise();
-                    this._initialised = true;
                 }
 
                 if (this.isFinalPanel()) {
@@ -884,13 +912,32 @@
                 that._content.addControl(Controls.Label(content));
             }
 
+            that._getInnerDivID = function () {
+                return this.getDivID() + 'Inner';
+            }
 
             that.render = function () {
                 var st = that._content.renderHtml();
+                st = '<div id="' + this._getInnerDivID() + '">' + st + '</div>';
                 $('#' + this.getDivID()).html(st);
+                this.content = st;
                 that._content.postCreateHtml();
+
+                if (this.myParentFrame.autoSizeY)
+                    Framework._handleResize(); //force resizing of the frames if the content was changed
             }
 
+            that.getAutoSizeY = function () {
+                var obj = document.getElementById(this._getInnerDivID());
+                if (obj) {
+                    var h = obj.offsetHeight;
+                    //                    if (this.content)
+                    //                        $('#' + this.getDivID()).html(this.content+h);
+                    return h;
+                }
+                else
+                    return 0;
+            }
 
             that.handleResize = function () {
             }
