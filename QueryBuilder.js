@@ -8,12 +8,11 @@
         ///////////////////////////////////////////////////////////////////////////////////////////////////
         // iDivID = the id of the div that serves as a container for the htnl elements
 
-        QueryBuilder.Builder = function (iDivID) {
+        QueryBuilder.Builder = function (iid, iParentRef) {
             //            if (!(this instanceof arguments.callee)) throw "Should be called as constructor!";
-            var that = {};
+            var that = FramePanel(iid, iParentRef);
 
             DQX.ObjectMapper.Add(that);
-            that.myDivID = iDivID;
             that.myColumns = []; //list of SQL.TableColInfo objects
             that.bSepX = 20;
             that.spacerH1 = 20; // 30;
@@ -23,7 +22,7 @@
             that._compid = 0;
 
             that.notifyModified = function () {
-                Msg.broadcast({ type: "QueryModified", id: this.myDivID });
+                Msg.broadcast({ type: "QueryModified", id: this.getDivID() });
             }
 
 
@@ -210,7 +209,7 @@
             }
 
             that._ReactUpdateQuery = function (id) {
-                Msg.broadcast({ type: "RequestUpdateQuery", id: this.myDivID });
+                Msg.broadcast({ type: "RequestUpdateQuery", id: this.getDivID() });
             }
 
 
@@ -270,12 +269,12 @@
 
             //or blocks get a color variation to stand them out more. this calculates the color based on the level of nested or's
             that._createBlockColor = function (level) {
-                return DQX.parseColorString($('#' + this.myDivID).css("background-color"), DQX.Color(0.9, 0.9, 0.9)).lighten(0.1 * level);
+                return DQX.parseColorString($('#' + this.getDivID()).css("background-color"), DQX.Color(0.9, 0.9, 0.9)).lighten(0.1 * level);
             }
 
             //returns the identifier for a control in an individual statement
             that.getControlID = function (statementID, aspect) {
-                return "DQXQbldStmnt" + this.myDivID + statementID + aspect;
+                return "DQXQbldStmnt" + this.getDivID() + statementID + aspect;
             }
 
             //adds some extra required stuff around every control that appears in an query statement
@@ -489,7 +488,7 @@
                 compmap = {};
                 while (this._cleanUp(this.root));
 
-                var sizex = $('#' + this.myDivID).width() - 30;
+                var sizex = $('#' + this.getDivID()).width() - 30;
 
                 if (sizex <= 1) sizex = 600; //an elementary safety measure to avoid silly things if this is rendered to an invisible component
 
@@ -591,7 +590,7 @@
 
 
 
-                $('#' + this.myDivID).html(rs);
+                $('#' + this.getDivID()).html(rs);
 
                 //Post pass: make sure that the columns in each OR block have the same height (so hat the down arrow is shown over the entire stretch)
                 $('.DQXOrContainer').each(
@@ -702,14 +701,11 @@
         // Interactive query builder GUI component
         //////////////////////////////////////////////////////////////////////////////////////////
 
-        QueryBuilder.Panel = function (iid, args) {
-            var that = QueryBuilder.Builder(iid);
-            that.myID = iid;
-            if ($('#' + that.myID).length == 0) throw "Invalid Gui component " + iid;
-            that.rootelem = $('#' + that.myID);
+        QueryBuilder.Panel = function (iid, iParentRef, args) {
+            var that = QueryBuilder.Builder(iid, iParentRef);
 
             that.handleResize = function () {
-                if ((that.rootelem.width() > 5) && (that.rootelem.height() > 5))
+                if ((that.getRootElem().width() > 5) && (that.getRootElem().height() > 5))
                     this._reRender();
             }
 
