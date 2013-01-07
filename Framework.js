@@ -953,6 +953,12 @@
                 return mp;
             }
 
+            that._initialisePanels = function () {
+                that.createPanels();
+            }
+
+            that.myFrame.setInitialiseFunction(that._initialisePanels);
+
             return that;
         }
 
