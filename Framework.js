@@ -1,5 +1,5 @@
-﻿define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/FramePanel"],
-    function ($, DocEl, Msg, Controls, FramePanel) {
+﻿define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/FramePanel", "DQX/HistoryManager"],
+    function ($, DocEl, Msg, Controls, FramePanel, HistoryManager) {
         var Framework = {};
         //two constants defining the X and Y direction
         Framework.dimX = 0;
@@ -14,8 +14,6 @@
         Framework.frameTitleBarH = 33;
         Framework.sepSizeLarge = 14;
         Framework.sepSizeSmall = 6;
-
-        Framework.__sendTabEvent = true;
 
         //Enumerates the possible types of frames
         Framework.FrameTypes = {
@@ -105,6 +103,8 @@
             that.allowXScrollbar = false;
 
             ////////////////// GENERAL GETTERS
+
+            that.getFramework = function () { return Framework; }
 
             that.getVisibleTitleDivID = function () {
                 return this.myID + '_DisplayTitle';
@@ -296,7 +296,7 @@
                 frame._parentFrame.setSeparatorSize(3);
                 frame._parentFrame.setDisplayTitle(this.myDisplayTitle); this.myDisplayTitle = '';
                 frame.setInitialiseFunction(function () {
-                    var bmp='<img src="Bitmaps/info2.png" alt="info" style="float:left;margin-right:5px"/>'
+                    var bmp = '<img src="Bitmaps/info2.png" alt="info" style="float:left;margin-right:5px"/>'
                     var info = Framework.Form(frame);
                     info.addHtml(bmp + content);
                     info.render();
@@ -850,13 +850,11 @@
                         tabSwitchList.unshift(fr);
                     fr = fr._parentFrame;
                 }
-                Framework.__sendTabEvent = false;
+                HistoryManager.__ignoreSwitchTab = true;
                 for (var i = 0; i < tabSwitchList.length; i++) {
-                    //                    if (i==tabSwitchList.length-1)
-                    //                        Framework.__sendTabEvent = true;
                     tabSwitchList[i]._parentFrame.switchTab(tabSwitchList[i].myFrameID);
                 }
-                Framework.__sendTabEvent = true;
+                HistoryManager.__ignoreSwitchTab = false;
                 if (tabSwitchList.length > 0) {
                     var fr = tabSwitchList[tabSwitchList.length - 1];
                     Msg.broadcast({ type: 'ChangeTab', id: fr._parentFrame }, fr.myFrameID);
@@ -941,6 +939,10 @@
             var that = {};
             that.myFrame = iFrame;
             that.myStateID = iStateID;
+
+            that.registerView = function () {
+                HistoryManager.addView(this);
+            }
 
             that.getStateID = function () { return this.myStateID; }
 
