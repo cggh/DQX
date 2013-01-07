@@ -93,7 +93,7 @@
             that.marginBottom = 0;
             that.memberFrames = [];
             that.myClientObject = null;
-            that.myID = '';
+            that.myID = '_';
             that._separatorSize = 10;
             that.frameClass = ''; //css class of the div that makes the border of this panel
             that.frameClassClient = ''; //css class of the div that makes the client area this panel
@@ -166,7 +166,8 @@
 
             //Sets an initialisation handler function. This function will be called the first time the frame becomes visible
             that.setInitialiseFunction = function (handler) {
-                DQX.checkIsFunction(handler);
+                if (handler)
+                    DQX.checkIsFunction(handler);
                 this._handleInitialise = handler;
                 return this;
             }
@@ -956,6 +957,11 @@
             that._initialisePanels = function () {
                 that.createPanels();
             }
+
+            that.disableAutoCreatePanels = function () {
+                that.myFrame.setInitialiseFunction(null);
+            }
+
 
             that.myFrame.setInitialiseFunction(that._initialisePanels);
 

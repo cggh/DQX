@@ -4,6 +4,10 @@ define(["jquery", "DQX/Msg"],
 
             stateKeys: null,
 
+            init : function() {
+                HistoryManager.onChanged();
+            },
+
             updateState: function () {
                 if (this.globalLoadState == null)
                     throw 'globalLoadState is not defined';
