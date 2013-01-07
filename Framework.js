@@ -292,12 +292,13 @@
                 if (!clss)
                     clss = 'DQXClientInfo';
                 var frame = this.InsertFrameTop(Framework.FrameFinal('', 0.01));
-                frame.setFrameClassClient(clss).setFrameClass(clss).setMargins(3).setAllowScrollBars(false, false).setAutoSize();
+                frame.setFrameClassClient(clss).setFrameClass(clss).setMargins(5).setAllowScrollBars(false, false).setAutoSize();
                 frame._parentFrame.setSeparatorSize(3);
                 frame._parentFrame.setDisplayTitle(this.myDisplayTitle); this.myDisplayTitle = '';
                 frame.setInitialiseFunction(function () {
+                    var bmp='<img src="Bitmaps/info2.png" alt="info" style="float:left;margin-right:5px"/>'
                     var info = Framework.Form(frame);
-                    info.addHtml(content);
+                    info.addHtml(bmp + content);
                     info.render();
 
                 });
@@ -993,12 +994,8 @@
 
             that.getAutoSizeY = function () {
                 var obj = document.getElementById(this._getInnerDivID());
-                if (obj) {
-                    var h = obj.offsetHeight;
-                    //                    if (this.content)
-                    //                        $('#' + this.getDivID()).html(this.content+h);
-                    return h;
-                }
+                if (obj)
+                    return obj.offsetHeight;
                 else
                     return 0;
             }
