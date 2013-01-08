@@ -307,7 +307,8 @@
                 if (!clss)
                     clss = 'DQXClientInfo';
                 var frame = this.InsertFrameTop(Framework.FrameFinal('', 0.01));
-                frame.setFrameClassClient(clss).setFrameClass(clss).setMargins(5).setAllowScrollBars(false, false).setAutoSize();
+                frame.setFrameClassClient(clss).setFrameClass(clss).setMargins(5).setAllowScrollBars(false, false);
+                frame.setAutoSize();
                 frame._parentFrame.setSeparatorSize(3);
                 frame._parentFrame.setDisplayTitle(this.myDisplayTitle); this.myDisplayTitle = '';
                 frame.setInitialiseFunction(function () {
