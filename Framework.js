@@ -20,7 +20,8 @@
             'Final': 0, //contains no more subpanels, and holds a client area (= a 'panel')
             'GroupHor': 1, //Contains a horizontally spread set of subframes
             'GroupVert': 2, //Contains a vertically spread set of subframes
-            'Tab': 3//Contains a set of subframes organised as tabs
+            'Tab': 3, //Contains a set of subframes organised as tabs
+            'Stack': 4//Contains a set of subframes organised as a stack without tabs
         };
 
         //A class that encapsulates a Range of possible sizes for a frame (used for both X and Y sizes)
@@ -66,6 +67,11 @@
         //Creates an instance of a frame that groups a set of subframes as a set of tabs
         Framework.FrameGroupTab = function (iid, isizeweight) {
             return Framework.Frame(iid, 'Tab', isizeweight);
+        }
+
+        //Creates an instance of a frame that groups a set of subframes as a stack without tabs
+        Framework.FrameGroupStack = function (iid, isizeweight) {
+            return Framework.Frame(iid, 'Stack', isizeweight);
         }
 
         //Creates an instance of a frame contains a single client panel holding actual content
@@ -121,7 +127,10 @@
             that.isFinalPanel = function () {
                 return (this.myType == 'Final');
             }
-            that.isTabber = function () {
+            that.isStacker = function () {
+                return (this.myType == 'Tab') || (this.myType == 'Stack');
+            }
+            that.hasTabs = function () {
                 return (this.myType == 'Tab');
             }
             that.isHorSplitter = function () {
@@ -152,7 +161,7 @@
                 return this.myFrameID;
             }
             that.hasTitleBar = function () {//returns true of the frame has a visible title bar
-                return (this.myDisplayTitle) && ((!this._parentFrame) || (!this._parentFrame.isTabber()));
+                return (this.myDisplayTitle) && ((!this._parentFrame) || (!this._parentFrame.hasTabs()));
             }
             that.getTitleBarHeight = function () {//returns the height of the title bar (0 if none)
                 if (this.hasTitleBar())
@@ -445,13 +454,15 @@
                         theclientdiv.addElem(this.memberFrames[fnr]._createElements(level + 1));
                 }
 
-                if (this.isTabber()) {
+                if (this.isStacker()) {
+                    this.activeTabNr = 0;
                     theclientdiv.setCssClass("DQXTabSet");
                     var tabheader = DocEl.Div({ parent: theclientdiv, id: this.getClientDivID() + '_tabheader' });
                     tabheader.setCssClass("DQXTabs");
+                    if (!this.hasTabs())
+                        tabheader.addStyle('display', 'none');
                     var tabbody = DocEl.Div({ parent: theclientdiv, id: this.getClientDivID() + '_tabbody' });
                     tabbody.setCssClass("DQXTabBody");
-                    this.activeTabNr = 0;
                     for (var fnr = 0; fnr < this.memberFrames.length; fnr++) {
                         var tabid = this.getClientDivID() + '_tab_' + fnr;
                         var tabcontent = DocEl.Div({ parent: tabbody, id: 'C' + tabid });
@@ -469,11 +480,20 @@
                 return thediv;
             }
 
+            that._performSwitchTab = function (newid) {
+                var tabset = $('#' + that.getClientDivID());
+                $(tabset).children('.DQXTabs').children('.DQXTab').removeClass('DQXTabActive');
+                $(tabset).children('.DQXTabs').children('.DQXTab').addClass('DQXTabInactive');
+                $('#' + newid).addClass("DQXTabActive");
+                $('#' + newid).removeClass("DQXTabInactive");
+                $(tabset).children('.DQXTabBody').children('.DQXTabContent').css('display', 'none');
+                var content_show = 'C' + newid;
+                $(tabset).find("#" + content_show).css('display', 'inline');
+                Msg.broadcast({ type: 'ClickTab', id: that.getClientDivID() }, newid);
+            };
 
             that._createTabItems = function () {
-                var availabeWidth = $('#' + this.getClientDivID() + '_tabheader').width() - 20;
-                if (availabeWidth < 0)
-                    var q = 0;
+                var availabeWidth = $('#' + this.getClientDivID() + '_tabbody').width() - 20;
                 if (availabeWidth > 0) {
                     var longestTitleLength = 0;
                     for (var fnr = 0; fnr < this.memberFrames.length; fnr++)
@@ -506,14 +526,7 @@
                     var activeid = 'C' + $(tabset).find('.DQXTabActive').attr('id');
                     $(tabset).find('#' + activeid).css('display', 'inline');
                     $(tabset).children('.DQXTabs').children('.DQXTab').click(function () {
-                        $(tabset).children('.DQXTabs').children('.DQXTab').removeClass('DQXTabActive');
-                        $(tabset).children('.DQXTabs').children('.DQXTab').addClass('DQXTabInactive');
-                        $(this).addClass("DQXTabActive");
-                        $(this).removeClass("DQXTabInactive");
-                        $(tabset).children('.DQXTabBody').children('.DQXTabContent').css('display', 'none');
-                        var content_show = 'C' + $(this).attr("id");
-                        $(tabset).find("#" + content_show).css('display', 'inline');
-                        Msg.broadcast({ type: 'ClickTab', id: that.getClientDivID() }, this.id);
+                        that._performSwitchTab($(this).attr("id"));
                     });
                 }
 
@@ -677,7 +690,7 @@
             that._executeInitialisers = function () {
                 for (var fnr = 0; fnr < this.memberFrames.length; fnr++) {
                     var hidden = false;
-                    if (this.isTabber())
+                    if (this.isStacker())
                         if (fnr != this.activeTabNr)
                             hidden = true;
                     if (!hidden)
@@ -768,16 +781,18 @@
                     }
                 }
 
-                if (this.isTabber()) {
-                    $('#' + this.getClientDivID() + '_tabbody').css('height', clientHeight - 47);
-                    //tabbody.setCssClass("DQXTabBody");
+                if (this.isStacker()) {
+                    var tabOffset = 0;
+                    if (this.hasTabs())
+                        tabOffset=30;
+                    $('#' + this.getClientDivID() + '_tabbody').css('height', clientHeight /*- 47*/ - tabOffset-17);
                     for (var fnr = 0; fnr < this.memberFrames.length; fnr++) {
-                        this.memberFrames[fnr]._setPosition(0, 30, clientWidth, clientHeight - 30, false, isHidden || (fnr != this.activeTabNr));
+                        this.memberFrames[fnr]._setPosition(0, tabOffset, clientWidth, clientHeight - tabOffset, false, isHidden || (fnr != this.activeTabNr));
                     }
                 }
 
                 if (!subFramesOnly)
-                    if (this.isTabber()) this._createTabItems();
+                    if (this.isStacker()) this._createTabItems();
 
                 if (this.isFinalPanel()) {
                     if (this.myClientObject != null)
@@ -805,13 +820,13 @@
             //Activates another subframe in a tabbed frame, specified by its ID
             //The function returns true if this invoked an actual change
             that.switchTab = function (newtab) {
-                if (!this.isTabber()) throw "Container is not a tab";
+                if (!this.isStacker()) throw "Container is not a tab";
                 if (this.getActiveTabFrameID() == newtab)
                     return false;
                 for (var fnr = 0; fnr < this.memberFrames.length; fnr++) {
                     if (newtab == this.memberFrames[fnr].myFrameID) {
                         var tabid = this.getClientDivID() + '_tab_' + fnr;
-                        $('#' + tabid).trigger('click');
+                        that._performSwitchTab(tabid);
                     }
                 }
                 return true;
@@ -819,7 +834,7 @@
 
             //Returns the ID of the active subframe in a tabbed frame
             that.getActiveTabFrameID = function () {
-                if (!this.isTabber()) throw "Container is not a tab";
+                if (!this.isStacker()) throw "Container is not a tab";
                 return this.memberFrames[this.activeTabNr].myFrameID;
             }
 
@@ -832,7 +847,7 @@
             that.isVisible = function () {
                 var fr = this;
                 while (fr._parentFrame != null) {
-                    if (fr._parentFrame.isTabber())
+                    if (fr._parentFrame.isStacker())
                         if (fr._parentFrame.getActiveTabFrameID() != fr.myFrameID)
                             return false;
                     fr = fr._parentFrame;
@@ -847,7 +862,7 @@
                 var fr = this;
                 var tabSwitchList = [];
                 while (fr._parentFrame != null) {
-                    if (fr._parentFrame.isTabber())
+                    if (fr._parentFrame.isStacker())
                         tabSwitchList.unshift(fr);
                     fr = fr._parentFrame;
                 }
