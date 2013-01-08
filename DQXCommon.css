@@ -667,22 +667,22 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7f7f7', end
 
 
 
-.DQXTitleBar
+.DQXTitleBar, .DQXTitleBarRounded
 {
     padding-left:7px;
     padding-right:7px;
     font-weight:bold;
     color:rgb(255,230,180);
     line-height:28px;
-    
-    background: rgb(80,80,80); /* Old browsers */
+    background: rgb(80,80,80);
 	background-image:url(Bitmaps/barback1a.png);
 	background-repeat:repeat-x;
+}
+
+.DQXTitleBarRounded
+{
 	border-top-left-radius:12px;
 	border-top-right-radius:12px;
-
-	/*height:33px;*/
-    
 }
 
 .DQXFormControl

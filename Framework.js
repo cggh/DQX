@@ -170,6 +170,11 @@
                     return 0;
             }
 
+            that.isStackMember = function () {
+                if (!this._parentFrame) return false;
+                return this._parentFrame.isStacker();
+            }
+
 
             ///////////////// TO BE CALLED CREATION TIME
 
@@ -432,7 +437,10 @@
                 if (this.hasTitleBar()) {
                     var titlediv = DocEl.Div({ parent: thediv, id: this.getVisibleTitleDivID() });
                     titlediv.setHeightPx(Framework.frameTitleBarH);
-                    titlediv.setCssClass('DQXTitleBar');
+                    if (!this.isStackMember())
+                        titlediv.setCssClass('DQXTitleBarRounded');
+                    else
+                        titlediv.setCssClass('DQXTitleBar');
                     titlediv.addElem(this.myDisplayTitle);
                 }
 
@@ -784,8 +792,8 @@
                 if (this.isStacker()) {
                     var tabOffset = 0;
                     if (this.hasTabs())
-                        tabOffset=30;
-                    $('#' + this.getClientDivID() + '_tabbody').css('height', clientHeight /*- 47*/ - tabOffset-17);
+                        tabOffset = 30;
+                    $('#' + this.getClientDivID() + '_tabbody').css('height', clientHeight /*- 47*/ - tabOffset - 17);
                     for (var fnr = 0; fnr < this.memberFrames.length; fnr++) {
                         this.memberFrames[fnr]._setPosition(0, tabOffset, clientWidth, clientHeight - tabOffset, false, isHidden || (fnr != this.activeTabNr));
                     }
