@@ -1,4 +1,4 @@
-﻿define(["DQX/Msg", "DQX/DocEl"],
+﻿define([DQXSC("Msg"), DQXSC("DocEl")],
     function (Msg, DocEl) {
         var Controls = {};
 

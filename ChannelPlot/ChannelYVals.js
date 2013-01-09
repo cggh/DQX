@@ -1,4 +1,4 @@
-﻿define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/ChannelPlot/ChannelCanvas"],
+﻿define(["jquery", DQXSC("DocEl"), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelCanvas")],
     function ($, DocEl, Msg, ChannelCanvas) {
         var ChannelYVals = {};
 

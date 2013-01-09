@@ -1,4 +1,4 @@
-﻿define(["jquery", "DQX/Msg", "DQX/ChannelPlot/ChannelPlotter", "DQX/DataFetcher/DataFetcherAnnotation", "DQX/ChannelPlot/ChannelAnnotation", "DQX/SQL", "DQX/DocEl", "DQX/DataDecoders"],
+﻿define(["jquery", DQXSC("Msg"), DQXSC("ChannelPlot/ChannelPlotter"), DQXSC("DataFetcher/DataFetcherAnnotation"), DQXSC("ChannelPlot/ChannelAnnotation"), DQXSC("SQL"), DQXSC("DocEl"), DQXSC("DataDecoders")],
     function ($, Msg, ChannelPlotter, DataFetcherAnnotation, ChannelAnnotation, SQL, DocEl, DataDecoders) {
         var GenomePlotter = {};
 

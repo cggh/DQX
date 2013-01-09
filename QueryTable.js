@@ -1,4 +1,4 @@
-﻿define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
+﻿define(["jquery", DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel")],
     function ($, DQX, DocEl, Msg, FramePanel) {
 
         //Namespace for query tables

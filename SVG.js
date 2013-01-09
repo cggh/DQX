@@ -1,4 +1,4 @@
-define(["DQX/Utils"],
+define([DQXSC("Utils")],
     function (DQX) {
         var SVG = {};
 

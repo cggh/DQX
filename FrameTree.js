@@ -1,4 +1,4 @@
-﻿define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel" ],
+﻿define(["jquery", DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel") ],
     function ($, DocEl, Msg, FramePanel) {
         var TreeCtrl = {};
 

@@ -1,4 +1,4 @@
-﻿define(["jquery", "DQX/DocEl", "DQX/Msg"],
+﻿define(["jquery", DQXSC("DocEl"), DQXSC("Msg")],
     function ($, DocEl, Msg, Scroller) {
         var ChannelCanvas = {};
 

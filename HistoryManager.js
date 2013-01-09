@@ -1,10 +1,10 @@
-define(["jquery", "DQX/Msg"],
+define(["jquery", DQXSC("Msg")],
     function ($, Msg) {
         var HistoryManager = {
 
             stateKeys: null,
 
-            init : function() {
+            init: function () {
                 HistoryManager.onChanged();
             },
 
@@ -110,8 +110,10 @@ define(["jquery", "DQX/Msg"],
                     return;
                 }
                 if ((!stateKeys) || ($.isEmptyObject(stateKeys))) {//do something sensible when no state is provided
-                    if (!HistoryManager.viewsMap['start'])
+                    if (!HistoryManager.viewsMap['start']) {
+                        return;
                         throw 'No start view provided';
+                    }
                     HistoryManager.viewsMap['start'].activateState(stateKeys);
                     return;
                 }

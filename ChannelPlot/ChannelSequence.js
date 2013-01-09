@@ -1,4 +1,4 @@
-﻿define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/ChannelPlot/ChannelCanvas", "DQX/DataFetcher/DataFetcherSummary"],
+﻿define(["jquery", DQXSC("DocEl"), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelCanvas"), DQXSC("DataFetcher/DataFetcherSummary")],
     function ($, DocEl, Msg, ChannelCanvas, DataFetcherSummary) {
         var ChannelSequence = {};
 

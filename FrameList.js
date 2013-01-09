@@ -1,4 +1,4 @@
-﻿define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "jquery_scrollTo"],
+﻿define(["jquery", DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel"), "jquery_scrollTo"],
     function ($, DocEl, Msg, FramePanel) {
         return function (iid, iParentRef) {
             var that = FramePanel(iid, iParentRef);

@@ -1,4 +1,4 @@
-﻿define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/FramePanel", "DQX/HistoryManager"],
+﻿define(["jquery", DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("FramePanel"), DQXSC("HistoryManager")],
     function ($, DocEl, Msg, Controls, FramePanel, HistoryManager) {
         var Framework = {};
         //two constants defining the X and Y direction

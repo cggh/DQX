@@ -1,4 +1,4 @@
-﻿define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
+﻿define(["jquery", DQXSC("SQL"), DQXSC("Utils"), DQXSC("DataDecoders")],
     function ($, SQL, DQX, DataDecoders) {
         var DataFetcherAnnotation = {}
 

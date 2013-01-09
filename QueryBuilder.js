@@ -1,4 +1,4 @@
-﻿define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
+﻿define(["jquery", DQXSC("SQL"), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel")],
     function ($, SQL, DQX, DocEl, Msg, FramePanel) {
 
         QueryBuilder = {};

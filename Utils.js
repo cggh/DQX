@@ -1,4 +1,4 @@
-﻿define(["jquery", "DQX/Msg"],
+﻿define(["jquery", DQXSC("Msg")],
     function ($, Msg) {
         //Inject DQX into the global namespace so that click handlers can find it
         DQX = {};
@@ -114,7 +114,7 @@
         //Draws a message on the screen indicating that some processing is being done
         DQX.setProcessing = function (msg) {
             if (DQX._processingRequestCount == 0) {
-                var DocEl = require("DQX/DocEl");
+                var DocEl = require(DQXSC("DocEl"));
                 var background = DocEl.Div({ id: 'InfoBoxProcessing' });
                 background.addStyle("position", "absolute");
                 background.addStyle("left", '0px');

@@ -1,4 +1,4 @@
-﻿define(["jquery", "DQX/Utils"],
+﻿define(["jquery", DQXSC("Utils")],
     function ($, DQX) {
 
         var DataDecoders = {}

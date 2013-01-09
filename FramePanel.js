@@ -1,4 +1,4 @@
-﻿define(["jquery", "DQX/DocEl", "DQX/Msg", "jquery_scrollTo"],
+﻿define(["jquery", DQXSC("DocEl"), DQXSC("Msg"), "jquery_scrollTo"],
     function ($, DocEl, Msg) {
         return function (iParentRef) {
             var that = {};

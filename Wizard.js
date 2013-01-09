@@ -1,4 +1,4 @@
-﻿define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Utils", "DQX/Framework", "DQX/Controls"],
+﻿define(["jquery", DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Utils"), DQXSC("Framework"), DQXSC("Controls")],
     function ($, DocEl, Msg, DQX, Framework, Controls) {
         var Wizard = {};
 
