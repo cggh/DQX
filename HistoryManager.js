@@ -1,4 +1,4 @@
-define([DQXSCExt("jquery"), DQXSC("Msg")],
+define([DQXJQ(), DQXSC("Msg")],
     function ($, Msg) {
         var HistoryManager = {
 
