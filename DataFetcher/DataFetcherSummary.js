@@ -1,4 +1,4 @@
-﻿define(["jquery", DQXSC("SQL"), DQXSC("Utils"), DQXSC("DataDecoders")],
+﻿define([DQXSCExt("jquery"), DQXSC("SQL"), DQXSC("Utils"), DQXSC("DataDecoders")],
     function ($, SQL, DQX, DataDecoders) {
         var DataFetcherSummary = {}
 

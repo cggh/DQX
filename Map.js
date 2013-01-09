@@ -1,4 +1,4 @@
-﻿define(["jquery", DQXSC("/data/countries"), DQXSC("lib/geo_json"), DQXSC("Msg"), DQXSC("Utils"), DQXSC("FramePanel"), "async!https://maps.googleapis.com/maps/api/js?libraries=visualization&sensor=false"],
+﻿define([DQXSCExt("jquery"), DQXSC("/data/countries"), DQXSC("lib/geo_json"), DQXSC("Msg"), DQXSC("Utils"), DQXSC("FramePanel"), "async!https://maps.googleapis.com/maps/api/js?libraries=visualization&sensor=false"],
     function ($, Countries, GeoJSON, Msg, DQX, FramePanel) {
 
         var GMaps = {}

@@ -1,4 +1,4 @@
-﻿define(["jquery", DQXSC("DocEl"), DQXSC("Msg")],
+﻿define([DQXSCExt("jquery"), DQXSC("DocEl"), DQXSC("Msg")],
     function ($, DocEl, Msg) {
         var Scroller = {};
 

@@ -1,4 +1,4 @@
-﻿define(["jquery", DQXSC("Msg")],
+﻿define([DQXSCExt("jquery"), DQXSC("Msg")],
     function ($, Msg) {
         //Inject DQX into the global namespace so that click handlers can find it
         DQX = {};
