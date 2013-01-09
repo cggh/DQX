@@ -343,21 +343,21 @@
 
                 myOperator._buildStatement(theComponentStatement.ID, elem, this);
 
-                var subel = DocEl.JavaScriptBitmaplinkTransparent("Bitmaps/close.png", "Delete this condition", this._createReactFunctionString('_ReactDel', theComponentStatement.ID));
+                var subel = DocEl.JavaScriptBitmaplinkTransparent(DQXBMP("close.png"), "Delete this condition", this._createReactFunctionString('_ReactDel', theComponentStatement.ID));
                 subel.addStyle('position', 'absolute');
                 subel.addStyle('left', '-8px');
                 subel.addStyle('top', '-12px');
                 elem0.addElem(subel);
 
                 if (addor) {
-                    var subel = DocEl.JavaScriptBitmaplinkTransparent("Bitmaps/addright.png", "Create an alternative condition (OR)", this._createReactFunctionString('_ReactCreateOr', theComponentStatement.ID));
+                    var subel = DocEl.JavaScriptBitmaplinkTransparent(DQXBMP("addright.png"), "Create an alternative condition (OR)", this._createReactFunctionString('_ReactCreateOr', theComponentStatement.ID));
                     subel.addStyle('position', 'absolute');
                     subel.addStyle('right', '-10px');
                     subel.addStyle('top', '-14px');
                     elem0.addElem(subel);
                 }
                 if (addand) {
-                    var subel = DocEl.JavaScriptBitmaplinkTransparent("Bitmaps/adddown.png", "Create an extra condition (AND)", this._createReactFunctionString('_ReactCreateAnd', theComponentStatement.ID))
+                    var subel = DocEl.JavaScriptBitmaplinkTransparent(DQXBMP("adddown.png"), "Create an extra condition (AND)", this._createReactFunctionString('_ReactCreateAnd', theComponentStatement.ID))
                     subel.addStyle('position', 'absolute');
                     subel.addStyle('left', (sizex / 2 + 8) + 'px');
                     subel.addStyle('bottom', '-16px');
@@ -381,7 +381,7 @@
                 if (theQueryComponent.isCompound) {
 
                     if (theQueryComponent.Tpe == 'AND') {
-                        theComponentElement.addStyle('background-image', 'url(Bitmaps/arrowdown.png)');
+                        theComponentElement.addStyle('background-image', 'url('+DQXBMP('arrowdown.png')+')');
                         theComponentElement.addStyle('background-position', 'center');
                         theComponentElement.addStyle('background-repeat', 'repeat-y');
                         theComponentElement.addStyle('position', 'relative');
@@ -399,7 +399,7 @@
                         }
 
                         //create the "add" button
-                        var subel = DocEl.JavaScriptBitmaplinkTransparent("Bitmaps/adddown.png", "Create an extra condition (AND)", this._createReactFunctionString('_ReactAddAnd', mycompid));
+                        var subel = DocEl.JavaScriptBitmaplinkTransparent(DQXBMP("adddown.png"), "Create an extra condition (AND)", this._createReactFunctionString('_ReactAddAnd', mycompid));
                         subel.addStyle('position', 'absolute');
                         subel.addStyle('left', (sizex / 2 + 10) + 'px');
                         subel.addStyle('bottom', '-16px');
@@ -427,7 +427,7 @@
                         spacer.addStyle('border-top-left-radius', '15px');
                         spacer.addStyle('border-top-right-radius', '15px');
                         spacer.addElem("Alternative paths (OR)")
-                        var subel = DocEl.JavaScriptBitmaplinkTransparent("Bitmaps/addright.png", "Add another alternative condition (OR)", this._createReactFunctionString('_ReactAddOr', mycompid));
+                        var subel = DocEl.JavaScriptBitmaplinkTransparent(DQXBMP("addright.png"), "Add another alternative condition (OR)", this._createReactFunctionString('_ReactAddOr', mycompid));
                         subel.addStyle('position', 'absolute');
                         subel.addStyle('right', '15px');
                         subel.addStyle('top', '-8px');
@@ -452,7 +452,7 @@
 
                             subcompholder.addStyle('float', 'left');
                             subcompholder.addStyle('height', '100%');
-                            subcompholder.addStyle('background-image', 'url(Bitmaps/arrowdown.png)');
+                            subcompholder.addStyle('background-image', 'url(' + DQXBMP('arrowdown.png') + ')');
                             subcompholder.addStyle('background-position', 'center');
                             subcompholder.addStyle('background-repeat', 'repeat-y');
                             subcompholder.addStyle('padding-top', this.spacerH2 + 'px');
@@ -536,7 +536,7 @@
                     var spacer = createstartendpoint('Full data set');
                     var addor = this.root.myComponents.length > 1;
                     if (addor) {
-                        var subel = DocEl.JavaScriptBitmaplinkTransparent("Bitmaps/addright.png", "Create an alternative condition (OR)", this._createReactFunctionString('_ReactCreateRootOr', -1));
+                        var subel = DocEl.JavaScriptBitmaplinkTransparent(DQXBMP("addright.png"), "Create an alternative condition (OR)", this._createReactFunctionString('_ReactCreateRootOr', -1));
                         subel.addStyle('position', 'absolute');
                         subel.addStyle('right', '-12px');
                         subel.addStyle('top', '5px');
@@ -548,7 +548,7 @@
                 }
                 {//spacer with arrow
                     var spacer = DocEl.Div();
-                    spacer.addStyle('background-image', 'url(Bitmaps/arrowdown.png)');
+                    spacer.addStyle('background-image', 'url(' + DQXBMP('arrowdown.png') + ')');
                     spacer.addStyle('background-position', 'center');
                     spacer.addStyle('background-repeat', 'repeat-y');
                     spacer.addStyle('float', 'left');
@@ -562,7 +562,7 @@
 
                 {//spacer with arrow
                     var spacer = DocEl.Div();
-                    spacer.addStyle('background-image', 'url(Bitmaps/arrowdown.png)');
+                    spacer.addStyle('background-image', 'url(' + DQXBMP('arrowdown.png') + ')');
                     spacer.addStyle('background-position', 'center');
                     spacer.addStyle('background-repeat', 'repeat-y');
                     spacer.addStyle('float', 'left');

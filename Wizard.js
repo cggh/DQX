@@ -80,17 +80,17 @@
                 //boxButtons.addElem("jdffkjfkj");
 
                 var buttons = [
-                    { id: 'WizBoxButtonCancel', name: 'Cancel', bitmap: 'cancel.png', floatPos: 'left', handler: that._onCancel },
-                    { id: 'WizBoxButtonPrevious', name: 'Previous', bitmap: 'arrow5left.png', floatPos: 'left', handler: that._onPrevious },
-                    { id: 'WizBoxButtonNext', name: 'Next', bitmap: 'arrow5right.png', floatPos: 'right', handler: that._onNext },
-                    { id: 'WizBoxButtonFinish', name: 'Finish', bitmap: 'ok.png', floatPos: 'left', handler: that._onFinish }
+                    { id: 'WizBoxButtonCancel', name: 'Cancel', bitmap: DQXBMP('cancel.png'), floatPos: 'left', handler: that._onCancel },
+                    { id: 'WizBoxButtonPrevious', name: 'Previous', bitmap: DQXBMP('arrow5left.png'), floatPos: 'left', handler: that._onPrevious },
+                    { id: 'WizBoxButtonNext', name: 'Next', bitmap: DQXBMP('arrow5right.png'), floatPos: 'right', handler: that._onNext },
+                    { id: 'WizBoxButtonFinish', name: 'Finish', bitmap: DQXBMP('ok.png'), floatPos: 'left', handler: that._onFinish }
                 ];
 
                 for (var buttonNr = 0; buttonNr < buttons.length; buttonNr++) {
                     var button = buttons[buttonNr];
                     var boxButtonCancel = DocEl.Div({ id: button.id, parent: boxButtons });
                     boxButtonCancel.setCssClass("DQXWizardButton");
-                    boxButtonCancel.addElem('<IMG SRC="Bitmaps/' + button.bitmap + '" border=0 ALT="" style="float:' + button.floatPos + ';margin-right:3px;margin-left:3px"></IMG>');
+                    boxButtonCancel.addElem('<IMG SRC="' + button.bitmap + '" border=0 ALT="" style="float:' + button.floatPos + ';margin-right:3px;margin-left:3px"></IMG>');
                     boxButtonCancel.addElem(button.name);
                 }
 

@@ -251,11 +251,11 @@
                 var rs_pager = "";
                 var rs_footer = '';
                 rs_pager += '<span style="position:relative;bottom:-8px;">';
-                rs_pager += addBitmapButton("_onFirst", "Bitmaps/first.png", "First page");
-                rs_pager += addBitmapButton("_onBack", "Bitmaps/previous.png", "Previous page");
-                rs_pager += addBitmapButton("_onForward", 'Bitmaps/next.png', "Next page");
+                rs_pager += addBitmapButton("_onFirst", DQXBMP("first.png"), "First page");
+                rs_pager += addBitmapButton("_onBack", DQXBMP("previous.png"), "Previous page");
+                rs_pager += addBitmapButton("_onForward", DQXBMP('next.png'), "Next page");
                 if (datacomplete) {
-                    rs_pager += addBitmapButton("_onLast", 'Bitmaps/lastpage.png', "Last page");
+                    rs_pager += addBitmapButton("_onLast", DQXBMP('lastpage.png'), "Last page");
                 }
                 rs_pager += "</span>";
                 if (datacomplete && this._dataValid) {
@@ -267,15 +267,15 @@
                     rightgroup.addStyle('position', 'relative');
                     rightgroup.addStyle('top', '5px');
                     rightgroup.addStyle('right', '5px');
-                    rightgroup.addElem('<a href=' + downloadlink + '><IMG class="DQXBitmapLink" SRC=Bitmaps/download.png border=0 title="Download this data as TAB-delimited file" ALT="Download"></a>')
+                    rightgroup.addElem('<a href=' + downloadlink + '><IMG class="DQXBitmapLink" SRC='+DQXBMP('download.png')+' border=0 title="Download this data as TAB-delimited file" ALT="Download"></a>')
                     rs_pager += rightgroup.toString();
                 }
 
                 if (!this.autoSizeHeight) {
                     rs_pager += "&nbsp;&nbsp;";
-                    rs_pager += addBitmapButton("_onMoreLines", 'Bitmaps/morelines.png', "More lines on page");
+                    rs_pager += addBitmapButton("_onMoreLines", DQXBMP('morelines.png'), "More lines on page");
                     rs_pager += "&nbsp;";
-                    rs_pager += addBitmapButton("_onLessLines", 'Bitmaps/lesslines.png', "Less lines on page");
+                    rs_pager += addBitmapButton("_onLessLines", DQXBMP('lesslines.png'), "Less lines on page");
                 }
 
                 rs_pager += "&nbsp;&nbsp;&nbsp;Current: ";
@@ -302,19 +302,19 @@
                             // rs_table[tbnr] += '&nbsp;<a onclick=\"QueryTable._reflectOwnMessage(\'' + this.myBaseID + '\',\'Collapse\',\'' + thecol.myCompID + '\')\" href=\"javascript:void(0)\">></a>'
                         }
                         if (thecol._hyperlinkHeaderMessageScope) {
-                            var st = '<IMG class="DQXQueryTableLinkHeader" id="{id}" SRC=Bitmaps/link2.png border=0 class="DQXBitmapLink" ALT="Link" title="{hint}" style="position:absolute;right:-3px;top:-6px">'.
+                            var st = '<IMG class="DQXQueryTableLinkHeader" id="{id}" SRC='+DQXBMP('link2.png')+' border=0 class="DQXBitmapLink" ALT="Link" title="{hint}" style="position:absolute;right:-3px;top:-6px">'.
                                 DQXformat({ hint: thecol._hyperlinkHeaderHint, id: thecol.myCompID + '~headerlink~' + this.myBaseID });
                             rs_table[tbnr] += ' ' + st;
                         }
                         if (thecol.sortOption) {
-                            var bitmapname = "arrow5down.png";
+                            var bitmapname = DQXBMP("arrow5down.png");
                             if (this.myDataFetcher.positionField == thecol.sortOption.toString()) {
                                 if (!this.myDataFetcher.sortReverse)
-                                    bitmapname = "arrow4down.png";
+                                    bitmapname = DQXBMP("arrow4down.png");
                                 else
-                                    bitmapname = "arrow4up.png";
+                                    bitmapname = DQXBMP("arrow4up.png");
                             }
-                            var st = '<IMG class="DQXQueryTableSortHeader" id="{id}" SRC=Bitmaps/{bmp} border=0 class="DQXBitmapLink" title="Sort by this column" ALT="Link" style="position:absolute;right:-4px;bottom:-4px">'.
+                            var st = '<IMG class="DQXQueryTableSortHeader" id="{id}" SRC={bmp} border=0 class="DQXBitmapLink" title="Sort by this column" ALT="Link" style="position:absolute;right:-4px;bottom:-4px">'.
                                 DQXformat({ id: thecol.myCompID + '~sort~' + this.myBaseID, bmp: bitmapname });
                             rs_table[tbnr] += ' ' + st;
                         }
@@ -359,7 +359,7 @@
                                     isLink = true;
                                     var linkID = thecol.myCompID + '~' + rownr + '~link~' + this.myBaseID;
                                     rs_table[tbnr] += '<span class="DQXQueryTableLinkCell" id="{id}">'.DQXformat({ id: linkID });
-                                    rs_table[tbnr] += '<IMG SRC="Bitmaps/link3.png" border=0  id={id} title="{hint}" ALT="Link"> '.
+                                    rs_table[tbnr] += '<IMG SRC="'+DQXBMP('link3.png')+'" border=0  id={id} title="{hint}" ALT="Link"> '.
                                         DQXformat({ hint: thecol._hyperlinkCellHint, id: linkID });
                                 }
                                 rs_table[tbnr] += cell_content;

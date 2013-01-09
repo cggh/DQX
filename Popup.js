@@ -21,7 +21,7 @@
         }
 
         Popup.createPinBox = function (ID, isPinned) {
-            var bmp = isPinned ? 'Bitmaps/pin2.png' : 'Bitmaps/pin0.png';
+            var bmp = isPinned ? DQXBMP('pin2.png') : DQXBMP('pin0.png');
             var thepinner = DocEl.JavaScriptBitmaplink(bmp, "Keep this info box visible", "DQX.SwitchPinned('" + ID + "')");
             thepinner.setCssClass(isPinned ? "DQXPinBoxPinned" : "DQXPinBoxUnpinned");
             thepinner.addStyle('position', 'absolute');
@@ -66,7 +66,7 @@
                 thebody.setCssClass("DQXFloatBoxContent");
                 thebody.addElem(content);
 
-                var thecloser = DocEl.JavaScriptBitmaplink("Bitmaps/close.png", "Close", "DQX.ClosePopup('" + ID + "')");
+                var thecloser = DocEl.JavaScriptBitmaplink(DQXBMP("close.png"), "Close", "DQX.ClosePopup('" + ID + "')");
                 thebox.addElem(thecloser);
                 thecloser.addStyle('position', 'absolute');
                 thecloser.addStyle('left', '-10px');

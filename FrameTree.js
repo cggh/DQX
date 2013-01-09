@@ -136,7 +136,7 @@
             }
 
             that._createButtonHtml = function (_collapsed) {
-                return '<IMG SRC="Bitmaps/' + (_collapsed ? 'morelines' : 'lesslines') + '.png" border=0 ALT="" TITLE="" class="DQXTreeButtonImage" style="float:left;padding-right:6px">';
+                return '<IMG SRC="' + DQXBMP(_collapsed ? 'morelines.png' : 'lesslines.png') + '" border=0 ALT="" TITLE="" class="DQXTreeButtonImage" style="float:left;padding-right:6px">';
             }
 
             that._renderSub = function (parentDiv, item, level) {

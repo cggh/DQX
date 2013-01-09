@@ -658,7 +658,7 @@
             thebody.setCssClass("DQXFloatBoxContent" + (iClassExtension.length > 0 ? (" DQXFloatBoxContent" + iClassExtension) : ""));
             thebody.addElem(iBody);
 
-            var thecloser = DQX.DocEl.JavaScriptBitmaplink("Bitmaps/close.png", "Close", "DQX.CloseFloatBox('" + ID + "')");
+            var thecloser = DQX.DocEl.JavaScriptBitmaplink(DQXBMP("close.png"), "Close", "DQX.CloseFloatBox('" + ID + "')");
             thebox.addElem(thecloser);
             thecloser.addStyle('position', 'absolute');
             thecloser.addStyle('left', '-10px');
