@@ -545,6 +545,16 @@ body
     border-width:0px;
 }
 
+.DQXIntroInfo
+{
+    color:rgb(160,250,160);
+    background-color: rgb(120,120,120);
+    border-width:0px;
+    border-radius: 7px;
+
+}
+
+
 
 .DQXLargeListItem
 {
@@ -681,7 +691,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7f7f7', end
 
 .DQXTitleBar
 {
-   font-size:18px;
+   font-size:20px;
    font-variant:small-caps;
     color:rgb(255,250,170);
  }

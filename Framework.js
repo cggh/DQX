@@ -211,6 +211,7 @@
             }
 
             that.setAutoSize = function () {
+                this.setMinSize(Framework.dimY, 1);
                 this.autoSizeY = true;
                 return this;
             }
@@ -291,6 +292,7 @@
                 var intermediate = Framework.FrameGroupVert('', 0.5);
                 intermediate._setParentFrame(parent);
                 intermediate.myID = this.myID;
+                intermediate.mySizeWeight = this.mySizeWeight;
                 this.myID = "Frame" + Framework.frameCounter;
                 Framework.frameCounter++;
                 for (var i = 0; i < parent.memberFrames.length; i++)
@@ -302,7 +304,7 @@
                 return iframe;
             }
 
-            that.InsertStaticHeader = function (content, iclss) {
+            that.InsertStaticHeader = function (content, iclss, tpe) {
                 var clss = iclss;
                 if (!clss)
                     clss = 'DQXClientInfo';
@@ -310,16 +312,38 @@
                 frame.setFrameClassClient(clss).setFrameClass(clss).setMargins(5).setAllowScrollBars(false, false);
                 frame.setAutoSize();
                 frame._parentFrame.setSeparatorSize(3);
-                frame._parentFrame.setDisplayTitle(this.myDisplayTitle); this.myDisplayTitle = '';
+                if (!tpe) {
+                    frame._parentFrame.setDisplayTitle(this.myDisplayTitle); this.myDisplayTitle = '';
+                }
+                else
+                    frame._parentFrame.setSeparatorSize(6);
                 frame.setInitialiseFunction(function () {
                     var bmp = '<img src="Bitmaps/info2.png" alt="info" style="float:left;margin-right:5px"/>'
                     var info = Framework.Form(frame);
                     info.addHtml(bmp + content);
                     info.render();
+                });
+            }
+
+            that.InsertIntroBox = function (bitmap, content) {
+                var frame = this.InsertFrameTop(Framework.FrameFinal('', 0.01));
+                frame.setFrameClassClient('DQXIntroInfo').setFrameClass('DQXIntroInfo').setMargins(10).setAllowScrollBars(false, false);
+                frame.setAutoSize();
+                frame._parentFrame.setSeparatorSize(6);
+                frame.setMinSize(Framework.dimY, 80);
+                frame.setInitialiseFunction(function () {
+                    var str = '';
+                    if (bitmap)
+                        str += '<img src="Bitmaps/' + bitmap + '" alt="info" style="float:left;margin-left:0px;margin-top:5px;margin-right:5px;margin-bottom:5px"/>'
+                    str += content;
+                    var info = Framework.Form(frame);
+                    info.addHtml(str);
+                    info.render();
 
                 });
 
             }
+
 
             //Sets the client panel for a final frame
             that.setClientObject = function (iobj) {
@@ -346,8 +370,10 @@
             that._getMinSize = function (dim) {
                 Framework.isValidDim(dim);
 
-                if ((dim == Framework.dimY) && (this.autoSizeY))
-                    return this._calcAutoSizeY();
+                if ((dim == Framework.dimY) && (this.autoSizeY)) {
+                    var minsize = Math.max(this._calcAutoSizeY(), this.sizeRange[dim]._getMinSize());
+                    return minsize;
+                }
 
                 var subminsize = 0;
                 if ((this.isSplitter()) && (this.splitterDim() == dim)) {
@@ -368,7 +394,7 @@
                 Framework.isValidDim(dim);
 
                 if ((dim == Framework.dimY) && (this.autoSizeY))
-                    return this._calcAutoSizeY();
+                    return that._getMinSize(dim);
 
                 var submaxsize = 0;
                 if ((this.isSplitter()) && (this.splitterDim() == dim)) {
