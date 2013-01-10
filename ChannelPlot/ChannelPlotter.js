@@ -143,6 +143,10 @@
                 return (ScreenPosX + this._offsetX) / this._zoomFactX;
             }
 
+            that.getNavigator = function () {
+                return this._myNavigator;
+            }
+
             //Updates the navigator
             that.updateNavigator = function () {
                 if (!this._sizeCenterX) return; //not yet initialised

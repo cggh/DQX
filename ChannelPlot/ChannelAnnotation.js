@@ -12,6 +12,10 @@
             that._clickInfo = []; //will hold info about clickable areas
             that.darkenFactor = 1.0;
 
+            that.setMinDrawZoomFactX = function (vl) {
+                this._minDrawZoomFactX = vl;
+            }
+
             that.draw = function (drawInfo) {
                 this.drawStandardGradientCenter(drawInfo, this.darkenFactor);
                 this.drawStandardGradientLeft(drawInfo, this.darkenFactor);

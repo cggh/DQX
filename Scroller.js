@@ -22,6 +22,10 @@
 
             that.registerHandlers(that.getMyCanvasElement());
 
+            that.setMinScrollSize = function(fr) {
+                this.minScrollSize = fr;
+            }
+
             //Sets the scroll position & size
             that.setValue = function (iPos, iSize) {
                 this.scrollPos = iPos;

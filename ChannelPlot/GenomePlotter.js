@@ -20,12 +20,20 @@
             that.addDataFetcher(that._annotationFetcher);
 
             that._MaxZoomFactX = 1.0 / 0.2;
-            //that._myNavigator.minScrollSize = 0.0001;
+            that.getNavigator.minScrollSize = 0.0001;
 
             that.annotationChannel = ChannelAnnotation.Channel("_Annotation", that._annotationFetcher);
             that.annotationChannel.setTitle('Genes');
             that.annotationChannel.darkenFactor = 0.85;
             that.addChannel(that.annotationChannel, true);
+
+            that.getAnnotationFetcher = function () {
+                return this._annotationFetcher;
+            }
+
+            that.getAnnotationChannel = function () {
+                return this.annotationChannel;
+            }
 
             //converts a chromosome id to a chromosome number
             that.getChromoNr = function (chromoid) {

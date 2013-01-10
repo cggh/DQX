@@ -32,6 +32,11 @@
 
             this.translateChromoId = function (id) { return id; }
 
+            this.setFeatureType = function (fTypeName, fSubTypeName) {
+                this.ftype = fTypeName;
+                this.fsubtype = fSubTypeName;
+            }
+
             this.clearData = function () {
                 this._currentRangeMin = 1000.0;
                 this._currentRangeMax = -1000.0;
@@ -75,7 +80,7 @@
 
             this._fetchRange = function (rangemin, rangemax) {
                 if (!this._isFetching) {
-                    range = Math.max(0,rangemax - rangemin)+1;
+                    range = Math.max(0, rangemax - rangemin) + 1;
                     rangemin -= range;
                     rangemax += range;
                     var myurl = DQX.Url(this.config.serverURL);
