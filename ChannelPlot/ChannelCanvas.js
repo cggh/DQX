@@ -56,6 +56,8 @@
             }
             that.getHeight = function () { return this._height; }
             that.setHeight = function (vl) { this._height = vl; }
+            that.setAutoFillHeight = function () { this._autoFillHeight = true; }
+            that.getAutoFillHeight = function () { return this._autoFillHeight; }
 
             that.setTitle = function (ititle) {
                 this._title = ititle;
@@ -148,6 +150,18 @@
                 }
 
                 this._updateVisibility();
+            }
+
+            that.resizeY = function (newH) {
+                this._height = newH;
+                $('#' + this.getCanvasID('left')).height(newH);
+                this.getCanvasElement('left').height = newH;
+                $('#' + this.getCanvasID('center')).height(newH);
+                this.getCanvasElement('center').height = newH;
+                $('#' + this.getCanvasID('right')).height(newH);
+                this.getCanvasElement('right').height = newH;
+                if (this.vScroller)
+                    this.vScroller.resize(newH);
             }
 
             that.handleResizeX = function (width) {

@@ -303,26 +303,47 @@
 
             that.handleResize = function () {
 
-                //measure total height of fixed channels
-                var fixedChannelHeight = 0
+                var H = this.getElemJQ('').innerHeight();
+                var bodyH = H - this._headerHeight - this._footerHeight - this._navigatorHeight;
+
+                //determine height of auto-fill channels
+                var autoHeightChannelCount = 0;
+                for (var i = 0; i < this._channels.length; i++)
+                    if (this._channels[i].getAutoFillHeight())
+                        autoHeightChannelCount++;
+                if (autoHeightChannelCount > 0) {
+                    //measure total height of fixed channels
+                    var fixedChannelHeight = 0
+                    for (var i = 0; i < this._channels.length; i++)
+                        if (!this._channels[i].getAutoFillHeight())
+                            fixedChannelHeight += this._channels[i].getHeight();
+                    var autoChannelH = (bodyH - fixedChannelHeight) / autoHeightChannelCount;
+                }
+
+                //measure total height of nonscrolling channels
+                var nonScrollChannelHeight = 0
                 var hasScrollChannels = false;
                 for (var i = 0; i < this._channels.length; i++) {
                     if (this._channels[i]._isOnTopPart) {
-                        fixedChannelHeight += this._channels[i].getHeight();
+                        if (!this._channels[i].getAutoFillHeight())
+                            nonScrollChannelHeight += this._channels[i].getHeight();
+                        else
+                            nonScrollChannelHeight += autoChannelH;
                     }
                     else {
                         hasScrollChannels = true;
                     }
                 }
 
+                if ((autoHeightChannelCount > 0) && (hasScrollChannels))
+                    throw "Scrolling channels and auto height channels are not compatible";
+
                 var scrollbaroffset = 0;
                 if (hasScrollChannels)
-                    scrollbaroffset=DQX.scrollBarWidth;
+                    scrollbaroffset = DQX.scrollBarWidth;
 
                 var W = this.getElemJQ('').innerWidth() - scrollbaroffset;
                 if (W < 5) return;
-                var H = this.getElemJQ('').innerHeight();
-                var bodyH = H - this._headerHeight - this._footerHeight - this._navigatorHeight;
                 this._sizeX = W - this._leftWidth - this.getRightWidth() - this.getRightOffset();
                 if (this._sizeX < 1) this._sizeX = 1;
                 this._sizeCenterX = W - this._leftWidth - this.getRightWidth() - this.getRightOffset();
@@ -332,8 +353,8 @@
                 this.getElemJQ('Footer').height(this._footerHeight);
                 that._myNavigator.resize(W + scrollbaroffset);
 
-                this.getElemJQ('BodyFixed').height(fixedChannelHeight);
-                this.getElemJQ('BodyScroll').height(bodyH - fixedChannelHeight);
+                this.getElemJQ('BodyFixed').height(nonScrollChannelHeight);
+                this.getElemJQ('BodyScroll').height(bodyH - nonScrollChannelHeight);
                 if (hasScrollChannels)
                     this.getElemJQ('BodyScroll').show();
                 else
@@ -341,6 +362,10 @@
 
                 for (var i = 0; i < this._channels.length; i++)
                     this._channels[i].handleResizeX(W);
+
+                for (var i = 0; i < this._channels.length; i++)
+                    if (this._channels[i].getAutoFillHeight())
+                        this._channels[i].resizeY(autoChannelH);
 
                 this.zoomScrollTo(this._myNavigator.scrollPos, this._myNavigator.ScrollSize);
 
