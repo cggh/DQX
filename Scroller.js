@@ -250,6 +250,7 @@
 
 
 
+        Scroller.vScrollWidth = 20;
 
 
         Scroller.VScrollBar = function (iCanvasID) {

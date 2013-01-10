@@ -8,8 +8,8 @@
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        ChannelSnps.Channel = function (isamples, imyDataFetcher) {
-            var that = ChannelCanvas.Base("Snps");
+        ChannelSnps.Channel = function (iid,isamples, imyDataFetcher) {
+            var that = ChannelCanvas.Base(iid);
             that._height = 170;
             that.setTitle('Snps');
 
@@ -33,6 +33,11 @@
             that.setPlotter = function (thePlotter) {
                 //thePlotter.addDataFetcher(this.myfetcher);
             }
+
+            that.getRequiredRightWidth = function () { return 60; }
+
+            that.needVScrollbar = function () { return true; }
+
 
             that.draw = function (drawInfo, args) {
                 this.drawStandardGradientCenter(drawInfo, 1.1);
@@ -66,8 +71,8 @@
                 this.seqcount = this.mySeqIDs.length;
 
                 var visiblecount = Math.round((this.getHeight() - topSize - bottomSize) / this.rowHeight);
-                //this.vScroller.ScrollSize = Math.min(1, (visiblecount - 1) / this.seqcount);!!!
-                //this.vScroller.draw();
+                this.getVScroller().ScrollSize = Math.min(1, (visiblecount - 1) / this.seqcount);!!!
+                this.getVScroller().draw();
 
                 var offsetY = 0;
 
@@ -570,6 +575,12 @@
                 }
 
             }
+
+            that.scrollTo = function (newscrollpos) {
+                this.seqOffset = Math.round(newscrollpos * this.seqcount);
+                this.getMyPlotter().render();
+            }
+
 
             return that;
         }

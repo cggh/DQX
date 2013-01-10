@@ -8,7 +8,8 @@
         ChannelPlotter.Panel = function (iParentRef, args) {
             var that = FramePanel(iParentRef);
             that._leftWidth = 120;
-            that._rightWidth = 10;
+            that._rightWidth = 0; //size of the right side panel
+            that._rightOffset = 0; //size of the right offset, including e.g. area for vertical scroll bars
             that._headerHeight = 30;
             that._footerHeight = 30;
             that._navigatorHeight = 30;
@@ -30,6 +31,8 @@
             that.getLeftWidth = function () { return that._leftWidth; }
             that.getRightWidth = function () { return that._rightWidth; }
 
+            that.getRightOffset = function () { return that._rightOffset; }
+
             that.addChannel = function (channel, onTop) {
                 if (onTop)
                     channel._isOnTopPart = true;
@@ -41,6 +44,9 @@
                 channel.postCreateHtml();
                 $('#' + channel.getCenterElementID()).bind('DOMMouseScroll mousewheel', $.proxy(that.handleMouseWheel, that));
                 channel.setPlotter(this);
+                this._rightWidth = Math.max(this._rightWidth, channel.getRequiredRightWidth());
+                if (channel.needVScrollbar())
+                    this._rightOffset = Scroller.vScrollWidth;
             }
 
             that.findChannel = function (id) {
@@ -282,7 +288,7 @@
                     zoomFactX: this._zoomFactX,
                     sizeLeftX: that._leftWidth,
                     sizeCenterX: this._sizeCenterX,
-                    sizeRightX: that._rightWidth,
+                    sizeRightX: that.getRightWidth(),
                     mark: { present: this._markPresent, pos1: this._markPos1, pos2: this._markPos2 },
                     HorAxisScaleJumps: DQX.DrawUtil.getScaleJump(20 / this._zoomFactX)
                 };
@@ -300,9 +306,9 @@
                 if (W < 5) return;
                 var H = this.getElemJQ('').innerHeight();
                 var bodyH = H - this._headerHeight - this._footerHeight - this._navigatorHeight;
-                this._sizeX = W - this._leftWidth - this._rightWidth;
+                this._sizeX = W - this._leftWidth - this.getRightWidth() - this.getRightOffset();
                 if (this._sizeX < 1) this._sizeX = 1;
-                this._sizeCenterX = W - this._leftWidth - this._rightWidth;
+                this._sizeCenterX = W - this._leftWidth - this.getRightWidth() - this.getRightOffset();
                 if (this._sizeCenterX < 1) this._sizeCenterX = 1;
                 this.getElemJQ('Header').height(this._headerHeight);
                 this.getElemJQ('Body').height(bodyH);

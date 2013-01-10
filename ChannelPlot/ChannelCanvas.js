@@ -1,4 +1,4 @@
-﻿define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg")],
+﻿define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Scroller")],
     function ($, DocEl, Msg, Scroller) {
         var ChannelCanvas = {};
 
@@ -22,6 +22,14 @@
             that.canHide = true;
 
             that.getID = function () { return that._myID; }
+
+            that.getRequiredRightWidth = function () {//can be overwritten
+                return 0;
+            }
+
+            that.needVScrollbar = function () {//can be overwritten
+                return false;
+            }
 
             that.getVisible = function () { return this._isVisible; }
 
@@ -60,12 +68,18 @@
                 return this._title;
             }
 
+            that.getVScroller = function () {
+                if (!this.vScroller)
+                    throw "No VScroller present";
+                return this.vScroller;
+            }
+
             that.setPlotter = function (thePlotter) { } //can override
 
             that.hideToolTip = function () { } //can override en remove any tooltip if this function was called
 
             that.getCanvasID = function (ext) {
-                return this.getMyPlotter().getSubID() + '_channel_' + this._myID + '_' + ext;
+                return this.getMyPlotter().getSubID('') + '_channel_' + this._myID + '_' + ext;
             }
 
             that.getCenterElementID = function (ext) {
@@ -103,6 +117,15 @@
                 elemRight.addAttribute("height", this._height);
                 elemRight.addStyle('display', 'inline-block');
                 elemRight.setWidthPx(this.getMyPlotter().getRightWidth()).setHeightPx(that._height);
+
+                if (this.needVScrollbar()) {
+                    var scrollerid = this.getCanvasID("VSC");
+                    var cnvscroller = DocEl.Create('canvas', { id: scrollerid, parent: wrapper });
+                    cnvscroller.addAttribute("width", Scroller.vScrollWidth).addAttribute("height", this.getHeight());
+                    cnvscroller.addStyle('display', 'inline-block');
+                    //cnvscroller.addStyle('position', 'relative');
+                }
+
                 return wrapper.toString();
             }
 
@@ -112,13 +135,22 @@
                 $('#' + this.getCanvasID('center')).mousemove($.proxy(that._onMouseMove, that));
                 $('#' + this.getCanvasID('center')).mouseenter($.proxy(that._onMouseEnter, that));
                 $('#' + this.getCanvasID('center')).mouseleave($.proxy(that._onMouseLeave, that));
+
+                if (this.needVScrollbar()) {
+                    this.vScroller = Scroller.VScrollBar(this.getCanvasID("VSC"));
+                    this.vScroller.myConsumer = this;
+                    this.vScroller.draw();
+                }
+
                 this._updateVisibility();
             }
 
             that.handleResizeX = function (width) {
-                var w2 = width - this.getMyPlotter().getLeftWidth() - this.getMyPlotter().getRightWidth();
+                var w2 = width - this.getMyPlotter().getLeftWidth() - this.getMyPlotter().getRightWidth() - this.getMyPlotter().getRightOffset();
                 $('#' + this.getCanvasID('center')).width(w2);
                 this.getCanvasElement('center').width = w2;
+                $('#' + this.getCanvasID('right')).width(this.getMyPlotter().getRightWidth());
+                this.getCanvasElement('right').width = this.getMyPlotter().getRightWidth();
             }
 
 
@@ -266,7 +298,7 @@
                 drawInfo.leftContext.fillRect(0, drawInfo.PosY - drawInfo.sizeY, drawInfo.sizeLeftX, drawInfo.sizeY);
                 drawInfo.leftContext.globalAlpha = 1.0;
                 drawInfo.centerContext.fillStyle = "black";
-                drawInfo.centerContext.font = '25px sans-serif';
+                drawInfo.centerContext.font = '15 sans-serif';
                 drawInfo.centerContext.textBaseline = 'bottom';
                 drawInfo.centerContext.textAlign = 'center';
                 drawInfo.centerContext.globalAlpha = 0.6;
@@ -342,7 +374,7 @@
                     drawInfo.leftContext.textBaseline = 'top';
                 }
                 else {
-                    drawInfo.leftContext.translate(2, drawInfo.sizeY / 2-3);
+                    drawInfo.leftContext.translate(2, drawInfo.sizeY / 2 - 3);
                     drawInfo.leftContext.textAlign = "left";
                     drawInfo.leftContext.textBaseline = 'baseline';
                 }
