@@ -1,4 +1,4 @@
-﻿define([DQXJQ(), DQXSC("Msg")],
+﻿define([DQXSCJQ(), DQXSC("Msg")],
     function ($, Msg) {
         //Inject DQX into the global namespace so that click handlers can find it
         DQX = {};

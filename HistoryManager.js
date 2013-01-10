@@ -1,4 +1,4 @@
-define([DQXJQ(), DQXSC("Msg")],
+define([DQXSCJQ(), DQXSC("Msg")],
     function ($, Msg) {
         var HistoryManager = {
 

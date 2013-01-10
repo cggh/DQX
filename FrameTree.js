@@ -1,4 +1,4 @@
-﻿define([DQXJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel") ],
+﻿define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel") ],
     function ($, DocEl, Msg, FramePanel) {
         var TreeCtrl = {};
 

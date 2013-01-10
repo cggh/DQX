@@ -1,4 +1,4 @@
-﻿define([DQXJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelCanvas"), DQXSC("DataFetcher/DataFetcherSummary")],
+﻿define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelCanvas"), DQXSC("DataFetcher/DataFetcherSummary")],
     function ($, DocEl, Msg, ChannelCanvas, DataFetcherSummary) {
         var ChannelSequence = {};
 

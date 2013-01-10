@@ -1,4 +1,4 @@
-﻿define([DQXJQ(), DQXSC("SQL"), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel")],
+﻿define([DQXSCJQ(), DQXSC("SQL"), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel")],
     function ($, SQL, DQX, DocEl, Msg, FramePanel) {
 
         QueryBuilder = {};

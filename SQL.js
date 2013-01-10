@@ -1,4 +1,4 @@
-﻿define([DQXJQ(), DQXSC("DocEl"), DQXSC("base64")],
+﻿define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("base64")],
     function ($, DocEl, Base64) {
 
         var SQL = {};

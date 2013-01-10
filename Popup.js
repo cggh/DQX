@@ -1,4 +1,4 @@
-﻿define([DQXJQ(), DQXSCExt("jquery.dragndrop"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls")],
+﻿define([DQXSCJQ(), DQXSCExt("jquery.dragndrop"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls")],
     function ($, dragndrop, DocEl, Msg, Controls) {
         var Popup = {};
 

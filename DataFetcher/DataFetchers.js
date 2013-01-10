@@ -1,4 +1,4 @@
-﻿define([DQXJQ(), DQXSC("SQL"), DQXSC("Utils"), DQXSC("DataDecoders")],
+﻿define([DQXSCJQ(), DQXSC("SQL"), DQXSC("Utils"), DQXSC("DataDecoders")],
     function ($, SQL, DQX, DataDecoders) {
         var DataFetchers = {}
 
