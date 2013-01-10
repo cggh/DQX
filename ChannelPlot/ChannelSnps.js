@@ -49,9 +49,10 @@
                 var sizeX = drawInfo.sizeCenterX;
                 var sizeY = drawInfo.sizeY;
 
-                var topSize = 40;
-                var bottomSize = 30;
-                this.topSize = topSize;
+                var topSizeY = 50;
+                var graphSizeY = 50;
+                var bottomSize = 50;
+                this.graphSizeY = graphSizeY;
                 this.bottomSize = bottomSize;
 
                 this.PosMin = Math.round((-60 + drawInfo.offsetX) / drawInfo.zoomFactX);
@@ -71,7 +72,7 @@
 
                 this.seqcount = this.mySeqIDs.length;
 
-                var visiblecount = Math.round((this.getHeight() - topSize - bottomSize) / this.rowHeight);
+                var visiblecount = Math.round((this.getHeight() - topSizeY - bottomSize) / this.rowHeight);
                 this.getVScroller().ScrollSize = Math.min(1, (visiblecount - 1) / this.seqcount); !!!
                 this.getVScroller().draw();
 
@@ -85,7 +86,7 @@
                     this.seqLy.push(-1);
                 }
                 for (var seqnr = this.seqOffset; seqnr < this.seqcount; seqnr++) {
-                    var py = topSize + (seqnr - this.seqOffset) * this.rowHeight;
+                    var py = topSizeY + (seqnr - this.seqOffset) * this.rowHeight;
                     ly = this.rowHeight;
                     if (py + ly < this.getHeight() - bottomSize) {
                         this.seqPy[seqnr] = offsetY + py;
@@ -213,12 +214,12 @@
 
                 //draw connecting lines for visible snps
                 drawInfo.centerContext.strokeStyle = "rgb(0,0,0)";
-                drawInfo.centerContext.globalAlpha = 0.25;
+                drawInfo.centerContext.globalAlpha = 0.35;
                 drawInfo.centerContext.beginPath();
                 for (var i = 0; i < posits.length; i++) {
                     if ((psxcorr[i] >= -3) && (psxcorr[i] <= sizeX + 3)) {
-                        drawInfo.centerContext.moveTo(psxcorr[i] + 0.5, offsetY + sizeY - bottomSize);
-                        drawInfo.centerContext.lineTo(psx[i], offsetY + sizeY);
+                        drawInfo.centerContext.moveTo(psxcorr[i] + 0.5, topSizeY);
+                        drawInfo.centerContext.lineTo(psx[i], 0);
                     }
                 }
                 drawInfo.centerContext.stroke();
@@ -229,8 +230,8 @@
                 drawInfo.centerContext.beginPath();
                 for (var i = 0; i < posits.length; i++) {
                     if ((psxcorr[i] < -3) || (psxcorr[i] > sizeX + 3)) {
-                        drawInfo.centerContext.moveTo(psxcorr[i] + 0.5, sizeY - bottomSize);
-                        drawInfo.centerContext.lineTo(psx[i], sizeY);
+                        drawInfo.centerContext.moveTo(psxcorr[i] + 0.5, topSizeY);
+                        drawInfo.centerContext.lineTo(psx[i], 0);
                     }
                 }
                 drawInfo.centerContext.stroke();
@@ -427,7 +428,7 @@
                     for (var i = 0; i < posits.length; i++) {
                         if ((psxcorr[i] >= -40) && (psxcorr[i] <= sizeX + 40)) {
                             if (isFiltered[i]) {
-                                drawInfo.centerContext.fillRect(psxcorr1[i], offsetY + topSize, psxcorrlen[i], offsetY + sizeY - topSize - bottomSize);
+                                drawInfo.centerContext.fillRect(psxcorr1[i], topSizeY, psxcorrlen[i], sizeY - topSizeY - bottomSize);
                             }
                         }
                     }
@@ -438,8 +439,8 @@
                         if ((psxcorr[i] >= -40) && (psxcorr[i] <= sizeX + 40)) {
                             if (isFiltered[i]) {
                                 var px = Math.round(psxcorr[i]) + 0.5;
-                                drawInfo.centerContext.moveTo(px, offsetY + topSize);
-                                drawInfo.centerContext.lineTo(px, offsetY + sizeY - bottomSize);
+                                drawInfo.centerContext.moveTo(px, topSizeY);
+                                drawInfo.centerContext.lineTo(px, 0);
                             }
                         }
                     }
@@ -465,8 +466,8 @@
 
                 //show snp ref+alt allele states
                 if (this.hoverSnp >= 0) {
-                    drawInfo.rightContext.fillText(data.SnpRefBase[this.hoverSnp], 35, offsetY + topSize - 5);
-                    drawInfo.rightContext.fillText(data.SnpAltBase[this.hoverSnp], 75, offsetY + topSize - 5);
+                    drawInfo.rightContext.fillText(data.SnpRefBase[this.hoverSnp], 35, topSizeY - 5);
+                    drawInfo.rightContext.fillText(data.SnpAltBase[this.hoverSnp], 75, topSizeY - 5);
                     drawInfo.rightContext.globalAlpha = 0.28;
                     drawInfo.rightContext.fillStyle = "rgb(0,70,255)";
                     drawInfo.rightContext.fillRect(0, offsetY + 0, 40, sizeY);
@@ -490,12 +491,13 @@
                     }
                 }
 
-                //show top graphics
-                var backgrad = drawInfo.centerContext.createLinearGradient(0, 0, 0, topSize);
+                //show graphics
+                var graphOffsetY = maxpos;
+                var backgrad = drawInfo.centerContext.createLinearGradient(0, 0, 0, sizeY - graphOffsetY);
                 backgrad.addColorStop(0.0, "rgb(235,235,235)");
                 backgrad.addColorStop(1.0, "rgb(190,190,190)");
-                drawInfo.centerContext.fillStyle = backgrad;
-                drawInfo.centerContext.fillRect(0, offsetY, sizeX, topSize);
+                drawInfo.centerContext.fillStyle = DQX.Color(0.75,0.75,0.75);
+                drawInfo.centerContext.fillRect(0, graphOffsetY, sizeX, sizeY - graphOffsetY-1);
                 var grinfo = [
                     { val: 'SnpAQ', col: 'rgb(120,120,120)', max: 100 },
                     { val: 'SnpMQ', col: 'rgb(120,120,120)', max: 100 },
@@ -510,8 +512,8 @@
                         if ((psxcorr[i] >= -40) && (psxcorr[i] <= sizeX + 40)) {
                             var vly = vals[i] / maxval;
                             if (vly > 1) vly = 1;
-                            vly *= 0.8 * topSize / grcount;
-                            drawInfo.centerContext.fillRect(psxcorr1[i] + 0.5, offsetY + (grnr + 1) * 1.0 * topSize / grcount - vly, psxcorrlen[i] - 0.25, vly);
+                            vly *= 0.8 * graphSizeY / grcount;
+                            drawInfo.centerContext.fillRect(psxcorr1[i] + 0.5, graphOffsetY + (grnr + 1) * 1.0 * graphSizeY / grcount - vly, psxcorrlen[i] - 0.25, vly);
                         }
                     }
                 }
@@ -526,7 +528,7 @@
                         if ((refBase == '+') && (altBase == '.')) { showIndication = true; drawInfo.centerContext.fillStyle = DQX.Color(0, 0.7, 0).toString(); }
                         if ((refBase == '+') && (altBase == '+')) { showIndication = true; drawInfo.centerContext.fillStyle = DQX.Color(0, 0, 1).toString(); }
                         if (showIndication)
-                            drawInfo.centerContext.fillRect(psxcorr1[i] + 0.5, offsetY, psxcorrlen[i] - 0.25, 5);
+                            drawInfo.centerContext.fillRect(psxcorr1[i] + 0.5, graphOffsetY + 2, psxcorrlen[i] - 0.25, 5);
                     }
                 }
 
