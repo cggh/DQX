@@ -129,7 +129,7 @@
             that._ajaxResponse_FindGene = function (resp) {
                 var keylist = DQX.parseResponse(resp); //unpack the response
                 if ("Error" in keylist) {
-                    this.getElemJQ("FeatureHits").html("Failed to fetch data");
+                    this.getElemJQ("FeatureHits").html("Failed to fetch data: "+keylist["Error"]);
                     return;
                 }
                 var vallistdecoder = DataDecoders.ValueListDecoder();
