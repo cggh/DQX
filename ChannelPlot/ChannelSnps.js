@@ -8,7 +8,7 @@
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        ChannelSnps.Channel = function (iid,isamples, imyDataFetcher) {
+        ChannelSnps.Channel = function (iid, isamples, imyDataFetcher) {
             var that = ChannelCanvas.Base(iid);
             that._height = 170;
             that.setTitle('Snps');
@@ -34,7 +34,7 @@
                 //thePlotter.addDataFetcher(this.myfetcher);
             }
 
-            that.getRequiredRightWidth = function () { return 60; }
+            that.getRequiredRightWidth = function () { return 80; }
 
             that.needVScrollbar = function () { return true; }
 
@@ -42,6 +42,7 @@
             that.draw = function (drawInfo, args) {
                 this.drawStandardGradientCenter(drawInfo, 1.1);
                 this.drawStandardGradientLeft(drawInfo, 1.0);
+                this.drawStandardGradientRight(drawInfo, 1.0);
 
 
 
@@ -71,7 +72,7 @@
                 this.seqcount = this.mySeqIDs.length;
 
                 var visiblecount = Math.round((this.getHeight() - topSize - bottomSize) / this.rowHeight);
-                this.getVScroller().ScrollSize = Math.min(1, (visiblecount - 1) / this.seqcount);!!!
+                this.getVScroller().ScrollSize = Math.min(1, (visiblecount - 1) / this.seqcount); !!!
                 this.getVScroller().draw();
 
                 var offsetY = 0;
@@ -579,6 +580,61 @@
             that.scrollTo = function (newscrollpos) {
                 this.seqOffset = Math.round(newscrollpos * this.seqcount);
                 this.getMyPlotter().render();
+            }
+
+            that.onHoverOverChannel = function (xp, yp) {
+                this.hoverCenter = xp;
+                var newhoversnp = -1;
+                var needredraw = false;
+                for (var i = 0; i < this._psxcorr1.length; i++) {
+                    if ((xp >= this._psxcorr1[i]) && (xp <= this._psxcorr2[i]))
+                        newhoversnp = i;
+                }
+                if (newhoversnp != this.hoverSnp) {
+                    this.hoverSnp = newhoversnp;
+                    needredraw = true;
+                }
+                var newhoverseqnr = -1;
+                for (var i = 0; i < this.mySeqIDs.length; i++)
+                    if ((yp >= this.seqPy[i]) && (yp <= this.seqPy[i] + this.seqLy[i]))
+                        newhoverseqnr = i;
+                if (newhoverseqnr != this.hoverSeqNr) {
+                    this.hoverSeqNr = newhoverseqnr;
+                    needredraw = true;
+                }
+                if (needredraw) this.createSnpInfo();
+                if (this.useMagnifyingGlass) needredraw = true;
+                if (needredraw)
+                    this.getMyPlotter().render();
+            }
+
+            that.onStopHoverOverChannel = function () {
+                this.hoverCenter = -1;
+                var needredraw = false;
+                if (this.hoverSnp >= 0) {
+                    this.hoverSnp = -1;
+                    needredraw = true;
+                }
+                if (this.hoverSeqNr >= 0) {
+                    this.hoverSeqNr = -1;
+                    needredraw = true;
+                }
+                if (needredraw) this.createSnpInfo();
+                if (this.useMagnifyingGlass) needredraw = true;
+                if (needredraw)
+                    this.getMyPlotter().render();
+            }
+
+            that.createSnpInfo = function () {
+                var infostr = '';
+                if (this.hoverSnp >= 0) {
+                    infostr = 'SNP info<br/>';
+                    infostr += 'Position: ' + this.data.posits[this.hoverSnp] + '<br/>';
+                    infostr += 'AQ: ' + this.data.SnpAQ[this.hoverSnp].toFixed(2) + '<br/>';
+                    infostr += 'MQ: ' + this.data.SnpMQ[this.hoverSnp].toFixed(2) + '<br/>';
+                    infostr += this.data.SnpFilter[this.hoverSnp] ? 'Passed' : 'Not passed' + '<br/>';
+                }
+                $('#SnpInfo').html(infostr);
             }
 
 

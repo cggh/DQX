@@ -302,7 +302,24 @@
             }
 
             that.handleResize = function () {
-                var W = this.getElemJQ('').innerWidth() - DQX.scrollBarWidth;
+
+                //measure total height of fixed channels
+                var fixedChannelHeight = 0
+                var hasScrollChannels = false;
+                for (var i = 0; i < this._channels.length; i++) {
+                    if (this._channels[i]._isOnTopPart) {
+                        fixedChannelHeight += this._channels[i].getHeight();
+                    }
+                    else {
+                        hasScrollChannels = true;
+                    }
+                }
+
+                var scrollbaroffset = 0;
+                if (hasScrollChannels)
+                    scrollbaroffset=DQX.scrollBarWidth;
+
+                var W = this.getElemJQ('').innerWidth() - scrollbaroffset;
                 if (W < 5) return;
                 var H = this.getElemJQ('').innerHeight();
                 var bodyH = H - this._headerHeight - this._footerHeight - this._navigatorHeight;
@@ -313,15 +330,14 @@
                 this.getElemJQ('Header').height(this._headerHeight);
                 this.getElemJQ('Body').height(bodyH);
                 this.getElemJQ('Footer').height(this._footerHeight);
-                that._myNavigator.resize(W + DQX.scrollBarWidth);
+                that._myNavigator.resize(W + scrollbaroffset);
 
-                //measure total height of fixed channels
-                var fixedChannelHeight = 0
-                for (var i = 0; i < this._channels.length; i++)
-                    if (this._channels[i]._isOnTopPart)
-                        fixedChannelHeight += this._channels[i].getHeight();
                 this.getElemJQ('BodyFixed').height(fixedChannelHeight);
                 this.getElemJQ('BodyScroll').height(bodyH - fixedChannelHeight);
+                if (hasScrollChannels)
+                    this.getElemJQ('BodyScroll').show();
+                else
+                    this.getElemJQ('BodyScroll').hide();
 
                 for (var i = 0; i < this._channels.length; i++)
                     this._channels[i].handleResizeX(W);

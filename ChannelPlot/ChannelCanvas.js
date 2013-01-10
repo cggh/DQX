@@ -78,6 +78,11 @@
 
             that.hideToolTip = function () { } //can override en remove any tooltip if this function was called
 
+            that.onHoverOverChannel = function (xp, yp) { return false; } //can override
+
+            that.onStopHoverOverChannel = function () { return false; } //can override
+
+
             that.getCanvasID = function (ext) {
                 return this.getMyPlotter().getSubID('') + '_channel_' + this._myID + '_' + ext;
             }
@@ -201,6 +206,7 @@
             }
 
             that._onMouseLeave = function (ev) {
+                this.onStopHoverOverChannel();
                 this.hideToolTip();
             }
 
@@ -215,6 +221,7 @@
             that._onMouseMove = function (ev) {
                 var px = this.getEventPosX(ev);
                 var py = this.getEventPosY(ev);
+                this.onHoverOverChannel(px, py);
                 var newToolTipInfo = this.getToolTipInfo(px, py);
                 var showPointer = false;
                 if (newToolTipInfo) {
