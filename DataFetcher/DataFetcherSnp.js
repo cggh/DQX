@@ -42,10 +42,22 @@
             this._currentRangeMin = 1000.0;
             this._currentRangeMax = -1000.0;
 
-            this.mySeqs = {};
-            for (var i = 0; i < isamples.length; i++) {
-                this.mySeqs[isamples[i]] = DataFetcherSnp.SnpSequence(isamples[i]);
+
+            this.setSampleList = function (iSampleList) {
+                this.mySeqs = {};
+                for (var i = 0; i < iSampleList.length; i++) {
+                    this.mySeqs[iSampleList[i]] = DataFetcherSnp.SnpSequence(iSampleList[i]);
+                }
             }
+
+            this.setDataID = function (iid) {
+                this._currentRangeMin = 1000.0;
+                this._currentRangeMax = -1000.0;
+                this.dataid = iid;
+            }
+
+            this.setSampleList(isamples);
+
 
             this.buffPosits = [];
 
@@ -190,6 +202,9 @@
 
             //Call this to determine if all data in a specific range is ready, and start fetching extra data if necessary
             this.IsDataReady = function (rangemin, rangemax) {
+
+                if (!this.dataid) return true; //don't fetch anything if the data source is not provided
+
                 if ((rangemin >= this._currentRangeMin) && (rangemax <= this._currentRangeMax)) {
                     var buffer = (rangemax - rangemin) / 2;
                     if ((rangemin - buffer < this._currentRangeMin) || (rangemax + buffer > this._currentRangeMax)) {

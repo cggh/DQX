@@ -37,6 +37,14 @@
             that.rowHeight = 11;
             that.seqOffset = 0; //start nr of the top sequence in the view
 
+            that.setSampleList = function (iDataID, iSampleList, iParentList) {
+                this.mySeqIDs = iSampleList;
+                this.myDataFetcher.setDataID(iDataID);
+                this.myDataFetcher.setSampleList(iSampleList);
+                this.myDataFetcher.parentIDs = iParentList;
+
+                this.getMyPlotter().render();
+            }
 
 
             that.setPlotter = function (thePlotter) {
@@ -94,6 +102,7 @@
                     this.seqPy.push(-1);
                     this.seqLy.push(-1);
                 }
+                var maxpos = 0;
                 for (var seqnr = this.seqOffset; seqnr < this.seqcount; seqnr++) {
                     var py = topSizeY + (seqnr - this.seqOffset) * this.rowHeight;
                     ly = this.rowHeight;
@@ -505,8 +514,8 @@
                 var backgrad = drawInfo.centerContext.createLinearGradient(0, 0, 0, sizeY - graphOffsetY);
                 backgrad.addColorStop(0.0, "rgb(235,235,235)");
                 backgrad.addColorStop(1.0, "rgb(190,190,190)");
-                drawInfo.centerContext.fillStyle = DQX.Color(0.75,0.75,0.75);
-                drawInfo.centerContext.fillRect(0, graphOffsetY, sizeX, sizeY - graphOffsetY-1);
+                drawInfo.centerContext.fillStyle = DQX.Color(0.75, 0.75, 0.75);
+                drawInfo.centerContext.fillRect(0, graphOffsetY, sizeX, sizeY - graphOffsetY - 1);
                 var grinfo = [
                     { val: 'SnpAQ', col: 'rgb(120,120,120)', max: 100 },
                     { val: 'SnpMQ', col: 'rgb(120,120,120)', max: 100 },
