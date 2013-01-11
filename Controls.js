@@ -1,5 +1,5 @@
-﻿define([DQXSC("Msg"), DQXSC("DocEl")],
-    function (Msg, DocEl) {
+﻿define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller")],
+    function (Msg, DocEl, Scroller) {
         var Controls = {};
 
         Controls.CompoundHor = function (icontrols) {
@@ -321,7 +321,7 @@
             }
 
             that.addValueChangedListener = function (handler) {
-                Msg.listen('',{ type: 'CtrlValueChanged', id: this.getID()},handler);
+                Msg.listen('', { type: 'CtrlValueChanged', id: this.getID() }, handler);
             }
 
             that.setOnChanged = function (handler) {//provide a handler function that will be called when the control changes
@@ -331,7 +331,7 @@
 
             that._notifyChanged = function () {
                 if (this.onChanged)
-                    this.onChanged(this.myID,this);
+                    this.onChanged(this.myID, this);
                 Msg.broadcast({ type: 'CtrlValueChanged', id: this.myID, contextid: this.myContextID }, this);
             }
 
@@ -425,6 +425,7 @@
 
         Controls.Check = function (iid, args) {
             var that = Controls.Control(iid);
+            DQX.requireMember(args, 'label');
             that.myLabel = args.label;
             that.isChecked = false;
             if (args.value)
@@ -524,6 +525,7 @@
 
         Controls.Hyperlink = function (iid, args) {
             var that = Controls.Control(iid);
+            DQX.requireMember(args, 'content');
             that.content = args.content;
             that._controlExtensionList.push('');
             if (args.hint)
@@ -618,6 +620,8 @@
 
         Controls.Combo = function (iid, args) {
             var that = Controls.Control(iid);
+            DQX.requireMember(args, 'label');
+            DQX.requireMember(args, 'states');
             that.myLabel = args.label;
             that.myStates = args.states;
             that._selectedState = '';
@@ -737,6 +741,7 @@
 
         Controls.RadioGroup = function (iid, args) {
             var that = Controls.Control(iid);
+            DQX.requireMember(args, 'states');
             that.myLabel = args.label;
             that.myStates = args.states;
             that._selectedState = '';
@@ -897,6 +902,67 @@
 
             return that;
         }
+
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        Controls.ValueSlider = function (iid, args) {
+            var that = Controls.Control(iid);
+            that._width = 300; if ('width' in args) that._width = args.width;
+            that._height = 25; if ('height' in args) that._height = args.height;
+            DQX.requireMember(args, 'label');
+            that._label = args.label;
+            DQX.requireMember(args, 'minval');
+            DQX.requireMember(args, 'maxval');
+            that._minval = args.minval;
+            that._maxval = args.maxval;
+            that._value = that._minval; if (args.value) that._value = args.value;
+            that.digits = 0; if (args.digits) that.digits = args.digits;
+
+            that._controlExtensionList.push('Canvas');
+
+            that.renderHtml = function () {
+                st = '<div style="width:{width}px">'.DQXformat({ width: this._width });
+                st += '<span >{content}</span>'.DQXformat({ content: that._label });
+                st += '<span id="{id}" style="float:right">1</span>'.DQXformat({ id: this.getFullID('Value') });
+                st += "</div>";
+
+                st += '<div><canvas id="{id}" width="{width}"  height="{height}"></canvas></div>'.DQXformat({ id: this.getFullID('Canvas'), width: this._width, height: this._height });
+                return st;
+            }
+
+            that.postCreateHtml = function () {
+                this._scroller = Scroller.HScrollBar(this.getFullID('Canvas'));
+                this._scroller.myConsumer = this;
+                this._scroller.zoomareafraction = 0.001;
+                this._scroller.setRange(this._minval, this._maxval);
+                this._scroller.setValue((this._value - this._minval) / (this._maxval - this._minval), 0.02);
+                this._scroller.draw();
+            };
+
+            that.scrollTo = function () {
+                this._value = (this._scroller.rangeMin + this._scroller.scrollPos * (this._scroller.rangeMax - this._scroller.rangeMin));
+                $('#' + this.getFullID('Value')).text(this._value.toFixed(this.digits));
+                this._notifyChanged();
+            };
+
+
+            that.getValue = function () {
+                return this._value;
+            };
+
+            that.modifyValue = function (newvalue) {
+                if (newvalue == this.getValue()) return;
+                this._value = newvalue;
+                $('#' + this.getFullID('Value')).text(this._value.toFixed(this.digits));
+                this._scroller.setValue((this._value - this._minval) / (this._maxval - this._minval), 0.02);
+                this._scroller.draw();
+                this._notifyChanged();
+            };
+
+            return that;
+        }
+
 
 
         return Controls;

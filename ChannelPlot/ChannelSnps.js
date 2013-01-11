@@ -690,6 +690,37 @@
                 this.getMyPlotter().render();
             }
 
+            that.setCoverageRange = function (newrange) {
+                this.covRange = Math.max(1, newrange);
+                this.getMyPlotter().render();
+            }
+
+            that.setMinPresence = function (newval) {
+                this.filter.minPresence = newval;
+                this.getMyPlotter().render();
+            }
+
+            that.setMinSnpCoverage = function (newval) {
+                this.filter.minSnpCoverage = newval;
+                this.getMyPlotter().render();
+            }
+
+            that.setMinAvgCoverage = function (newval) {
+                this.filter.minAvgCoverage = newval;
+                this.getMyPlotter().render();
+            }
+
+            that.setMinAvgPurity = function (newval) {
+                this.filter.minAvgPurity = newval;
+                this.getMyPlotter().render();
+            }
+
+            that.setMinSnpPurity = function (newval) {
+                this.filter.minSnpPurity = newval;
+                this.getMyPlotter().render();
+            }
+
+
             return that;
         }
 
