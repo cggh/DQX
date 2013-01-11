@@ -2,6 +2,15 @@
     function ($, DocEl, Msg, ChannelCanvas, DataFetcherSnp) {
         var ChannelSnps = {};
 
+        function warp(ps, center) {
+            var range = 30;
+            var dff = (ps - center) / range;
+            if (dff < -2) dff = -2;
+            if (dff > +2) dff = +2;
+            var offs = Math.sin(dff * Math.PI / 2);
+            return ps + 30 * offs;
+        }
+
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////
         // ChannelPlotChannelSnps: derives from ChannelPlotChannel
@@ -639,6 +648,47 @@
                 $('#SnpInfo').html(infostr);
             }
 
+            that.sortByParents = function () {
+                var seqdata = [];
+                data = this.data;
+                for (var seqnr = 0; seqnr < this.mySeqIDs.length; seqnr++) {
+                    var snplst = [];
+                    var cov1 = data.seqdata[this.mySeqIDs[seqnr]].cov1;
+                    var cov2 = data.seqdata[this.mySeqIDs[seqnr]].cov2;
+                    for (var i = 0; i < data.posits.length; i++) {
+                        var covtot = cov1[i] + cov2[i];
+                        var frac = 0.5;
+                        if (covtot > 0)
+                            frac = cov2[i] * 1.0 / covtot;
+                        snplst.push(frac);
+                    }
+                    seqdata.push(snplst);
+                    if (this.mySeqIDs[seqnr] == this.parentIDs[0])
+                        var parent1data = snplst;
+                    if (this.mySeqIDs[seqnr] == this.parentIDs[1])
+                        var parent2data = snplst;
+                }
+
+                //calculate distances
+                var seqdists = [];
+                for (var seqnr = 0; seqnr < this.mySeqIDs.length; seqnr++) {
+                    var dst1 = 0;
+                    var dst2 = 0;
+                    for (var i = 0; i < data.posits.length; i++) {
+                        dst1 += Math.abs(seqdata[seqnr][i] - parent1data[i]);
+                        dst2 += Math.abs(seqdata[seqnr][i] - parent2data[i]);
+                    }
+                    seqdists.push(1 / (0.1 + dst2) - 1 / (0.1 + dst1));
+                }
+                var sortarray = [];
+                for (var seqnr = 0; seqnr < this.mySeqIDs.length; seqnr++)
+                    sortarray.push({ vl: seqdists[seqnr], obj: this.mySeqIDs[seqnr] });
+                sortarray.sort(function (x, y) { return x.vl - y.vl; });
+                this.mySeqIDs = [];
+                for (var seqnr = 0; seqnr < sortarray.length; seqnr++)
+                    this.mySeqIDs.push(sortarray[seqnr].obj);
+                this.getMyPlotter().render();
+            }
 
             return that;
         }

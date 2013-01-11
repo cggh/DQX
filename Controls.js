@@ -331,7 +331,7 @@
 
             that._notifyChanged = function () {
                 if (this.onChanged)
-                    this.onChanged(this.myID);
+                    this.onChanged(this.myID,this);
                 Msg.broadcast({ type: 'CtrlValueChanged', id: this.myID, contextid: this.myContextID }, this);
             }
 
