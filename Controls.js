@@ -73,6 +73,7 @@
             var that = {};
             that._legend = '';
             that._controls = [];
+            that._margin = 3;
             if (icontrols)
                 that._controls = icontrols;
 
@@ -114,10 +115,11 @@
                     st += '<legend>' + this._legend + '</legend>';
                 }
                 for (var i = 0; i < this._controls.length; i++) {
-                    if (i > 0) {
-                        st += '<p/>';
-                    }
-                    st += this._controls[i].renderHtml();
+                    var el = DocEl.Div({});
+                    el.addStyle('margin-top', this._margin + 'px');
+                    el.addStyle('margin-bottom', this._margin + 'px');
+                    el.addElem(this._controls[i].renderHtml());
+                    st += el.toString();
                 }
                 if (this._legend.length > 0) {
                     st += '</fieldset>';
