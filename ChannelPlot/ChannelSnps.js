@@ -30,7 +30,7 @@
             that.useMagnifyingGlass = false;
             that.allowSmallBlocks = false;
             that.fillBlocks = false;
-            that.hideFiltered = false;
+            that.hideFiltered = true;
             that.hoverSnp = -1;
             that.hoverSeqNr = -1;
             that.filter = DataFetcherSnp.SnpFilterData();
@@ -654,7 +654,7 @@
                     infostr += 'MQ: ' + this.data.SnpMQ[this.hoverSnp].toFixed(2) + '<br/>';
                     infostr += this.data.SnpFilter[this.hoverSnp] ? 'Passed' : 'Not passed' + '<br/>';
                 }
-                $('#SnpInfo').html(infostr);
+                Msg.broadcast({ type: 'SnpInfoChanged', id: this.getID() }, infostr);
             }
 
             that.sortByParents = function () {
