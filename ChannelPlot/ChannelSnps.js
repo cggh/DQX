@@ -34,7 +34,7 @@
             that.hoverSnp = -1;
             that.hoverSeqNr = -1;
             that.filter = DataFetcherSnp.SnpFilterData();
-            that.rowHeight = 11;
+            that.rowHeight = 14;//height of a row containing a single sequence
             that.seqOffset = 0; //start nr of the top sequence in the view
 
             that.setSampleList = function (iDataID, iSampleList, iParentList) {
@@ -67,8 +67,8 @@
                 var sizeY = drawInfo.sizeY;
 
                 var topSizeY = 50;
-                var graphSizeY = 50;
-                var bottomSize = 50;
+                var graphSizeY = 90;
+                var bottomSize = graphSizeY;
                 this.graphSizeY = graphSizeY;
                 this.bottomSize = bottomSize;
 
@@ -495,26 +495,10 @@
                 }
 
 
-                if (this.useMagnifyingGlass) {//Magnifying glass visual effect
-                    if (this.hoverCenter >= 0) {
-                        var backgrad = drawInfo.centerContext.createLinearGradient(this.hoverCenter - 70, 0, this.hoverCenter + 70, 0);
-                        backgrad.addColorStop(0.0, "rgb(50,50,50)");
-                        backgrad.addColorStop(0.45, "rgb(255,255,255)");
-                        backgrad.addColorStop(0.7, "rgb(255,255,255)");
-                        backgrad.addColorStop(1.0, "rgb(50,50,50)");
-                        drawInfo.centerContext.fillStyle = backgrad; // "rgb(255,255,100)";
-                        drawInfo.centerContext.globalAlpha = 0.28;
-                        drawInfo.centerContext.fillRect(this.hoverCenter - 70, offsetY + 0, 140, sizeY - bottomSize);
-                        drawInfo.centerContext.globalAlpha = 1;
-                    }
-                }
 
-                //show graphics
+                //show per-position graphics
                 var graphOffsetY = maxpos;
-                var backgrad = drawInfo.centerContext.createLinearGradient(0, 0, 0, sizeY - graphOffsetY);
-                backgrad.addColorStop(0.0, "rgb(235,235,235)");
-                backgrad.addColorStop(1.0, "rgb(190,190,190)");
-                drawInfo.centerContext.fillStyle = DQX.Color(0.75, 0.75, 0.75);
+                drawInfo.centerContext.fillStyle = DQX.Color(0.85, 0.85, 0.85).toString();
                 drawInfo.centerContext.fillRect(0, graphOffsetY, sizeX, sizeY - graphOffsetY - 1);
                 var grinfo = [
                     { val: 'SnpAQ', col: 'rgb(120,120,120)', max: 100 },
@@ -550,13 +534,28 @@
                     }
                 }
 
+                if (this.useMagnifyingGlass) {//Magnifying glass visual effect
+                    if (this.hoverCenter >= 0) {
+                        var backgrad = drawInfo.centerContext.createLinearGradient(this.hoverCenter - 70, 0, this.hoverCenter + 70, 0);
+                        backgrad.addColorStop(0.0, "rgb(50,50,50)");
+                        backgrad.addColorStop(0.45, "rgb(255,255,255)");
+                        backgrad.addColorStop(0.7, "rgb(255,255,255)");
+                        backgrad.addColorStop(1.0, "rgb(50,50,50)");
+                        drawInfo.centerContext.fillStyle = backgrad; // "rgb(255,255,100)";
+                        drawInfo.centerContext.globalAlpha = 0.28;
+                        drawInfo.centerContext.fillRect(this.hoverCenter - 70, topSizeY, 140, sizeY - topSizeY);
+                        drawInfo.centerContext.globalAlpha = 1;
+                    }
+                }
+
+
                 if (this.hoverSnp >= 0) {//draw the outline for the hover snp in a higher contrast
                     drawInfo.centerContext.strokeStyle = "rgb(0,0,0)";
                     drawInfo.centerContext.beginPath();
-                    drawInfo.centerContext.moveTo(psxcorr1[this.hoverSnp] + 0.5, offsetY);
-                    drawInfo.centerContext.lineTo(psxcorr1[this.hoverSnp] + 0.5, offsetY + sizeY - bottomSize);
-                    drawInfo.centerContext.moveTo(psxcorr2[this.hoverSnp] + 0.5, offsetY);
-                    drawInfo.centerContext.lineTo(psxcorr2[this.hoverSnp] + 0.5, offsetY + sizeY - bottomSize);
+                    drawInfo.centerContext.moveTo(psxcorr1[this.hoverSnp] + 0.5, topSizeY);
+                    drawInfo.centerContext.lineTo(psxcorr1[this.hoverSnp] + 0.5, sizeY);
+                    drawInfo.centerContext.moveTo(psxcorr2[this.hoverSnp] + 0.5, topSizeY);
+                    drawInfo.centerContext.lineTo(psxcorr2[this.hoverSnp] + 0.5, sizeY);
                     drawInfo.centerContext.stroke();
                 }
 

@@ -94,7 +94,7 @@
                 var px1 = this.ZoomAreaStartX;
                 var px2 = this.ZoomAreaStartX + Math.round(this.getZoomFrac() * this.ZoomAreaSizeX);
                 px2 = Math.min(px2, this.ZoomAreaStartX + this.ZoomAreaSizeX);
-                centercontext.globalAlpha = 0.4;
+                centercontext.globalAlpha = 0.55;
                 var backgrad = centercontext.createLinearGradient(0, 5, 0, this.sizeY - 5);
                 backgrad.addColorStop(0, "rgb(0,192,0)");
                 backgrad.addColorStop(0.3, "rgb(192,255,128)");
@@ -156,7 +156,7 @@
                 centercontext.shadowColor = "transparent";
 
                 //scroll bar bar
-                centercontext.globalAlpha = 0.35;
+                centercontext.globalAlpha = 0.55;
                 var backgrad = centercontext.createLinearGradient(px1, 0, px2, 0);
                 backgrad.addColorStop(0, "rgb(160,255,160)");
                 backgrad.addColorStop(0.25, "rgb(0,192,0)");
@@ -165,7 +165,8 @@
                 centercontext.fillStyle = backgrad;
                 centercontext.fillRect(px1, 2, px2 - px1, this.sizeY - 4);
                 //scroll bar arrows
-                centercontext.fillStyle = "rgb(128,255,128)";
+                centercontext.globalAlpha = 0.75;
+                centercontext.fillStyle = "rgb(80,255,80)";
                 this._drawTriangle(centercontext, px2 + 3, 1);
                 this._drawTriangle(centercontext, px1 - 3, -1);
 
@@ -344,7 +345,7 @@
 
 
                 //scroll bar bar
-                centercontext.globalAlpha = 0.35;
+                centercontext.globalAlpha = 0.55;
                 var backgrad = centercontext.createLinearGradient(0, py1, 0, py2);
                 backgrad.addColorStop(0, "rgb(160,255,160)");
                 backgrad.addColorStop(0.25, "rgb(0,192,0)");
