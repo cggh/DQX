@@ -1,10 +1,9 @@
-﻿define([DQXSCJQ(), DQXSC("SQL"), DQXSC("Utils"), DQXSC("DataDecoders")],
-    function ($, SQL, DQX, DataDecoders) {
+﻿define([DQXSCJQ(), DQXSC("SQL"), DQXSC("Utils"), DQXSC("DataDecoders"), DQXSC("DataFetcher/DataFetcherFile")],
+    function ($, SQL, DQX, DataDecoders, DataFetcherFile) {
         var DataFetcherSnp = {}
 
         DataFetcherSnp.SnpFilterData = function () {
             var that = {};
-
             that.applyVCFFilter = true;
             that.minAvgCoverage = 0;
             that.minAvgPurity = 0;
@@ -12,55 +11,70 @@
             that.minSnpCoverage = 1;
             that.minSnpPurity = 0;
             this.requireParentsPresent = false;
-
             return that;
         }
 
         DataFetcherSnp.SnpSequence = function (iID) {
             var that = {};
-
             that.myID = iID;
             that.buffCov1 = [];
             that.buffCov2 = [];
-
             return that;
         }
 
 
-        DataFetcherSnp.Fetcher = function (iserverurl, idataid, isamples) {
+        DataFetcherSnp.Fetcher = function (iserverurl) {
             if (!(this instanceof arguments.callee)) throw "Should be called as constructor!";
 
             this.serverurl = iserverurl; //The server url to contact for this
-            this.dataid = idataid;
+            this.dataid = null; //not yet assigned
+            this._sequenceIDList = [];
+            this.parentIDs = [];
             this.myChromoID = '';
             this.decoder = DataDecoders.ValueListDecoder();
             this.b64codec = DataDecoders.B64();
-
-            this.parentIDs = [];
 
             //The currently fetched range of data
             this._currentRangeMin = 1000.0;
             this._currentRangeMax = -1000.0;
 
+            this.setDataSource = function (idataid, callOnCompleted) {
+                this.clearData();
+                this.dataid = idataid;
+                DQX.setProcessing("Downloading...");
+                this._callOnCompleted = callOnCompleted;
+                DataFetcherFile.getFile(serverUrl, this.dataid + "/_MetaData", $.proxy(this._onFetchMetaInfo, this));
+            }
 
-            this.setSampleList = function (iSampleList) {
-                this.mySeqs = {};
-                for (var i = 0; i < iSampleList.length; i++) {
-                    this.mySeqs[iSampleList[i]] = DataFetcherSnp.SnpSequence(iSampleList[i]);
+            this._onFetchMetaInfo = function (content) {
+                var lines = content.split('\n');
+                this._sequenceIDList = [];
+                this.parentIDs = [];
+                for (var linenr = 0; linenr < lines.length; linenr++) {
+                    var line = lines[linenr];
+                    var splitPos = line.indexOf('=');
+                    if (splitPos > 0) {
+                        var token = line.slice(0, splitPos);
+                        var content = line.slice(splitPos + 1);
+                        if (token == 'Samples')
+                            this._sequenceIDList = content.split('\t');
+                        if (token == 'Parents')
+                            this.parentIDs = content.split('\t');
+                    }
                 }
+                this.mySeqs = {};
+                for (var i = 0; i < this._sequenceIDList.length; i++) {
+                    this.mySeqs[this._sequenceIDList[i]] = DataFetcherSnp.SnpSequence(this._sequenceIDList[i]);
+                }
+                DQX.stopProcessing();
+                this._callOnCompleted();
             }
 
-            this.setDataID = function (iid) {
-                this._currentRangeMin = 1000.0;
-                this._currentRangeMax = -1000.0;
-                this.dataid = iid;
+            this.getSequenceIDList = function () {
+                return this._sequenceIDList;
             }
-
-            this.setSampleList(isamples);
-
 
             this.buffPosits = [];
-
             this._isFetching = false; //If true, an ajax request was sent out and wasn't finished yet
             this.hasFetchFailed = false; //True if an error occurred while fetching the data
 

@@ -17,13 +17,12 @@
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        ChannelSnps.Channel = function (iid, isamples, imyDataFetcher) {
+        ChannelSnps.Channel = function (iid, imyDataFetcher) {
             var that = ChannelCanvas.Base(iid);
             that._height = 170;
             that.setTitle('Snps');
 
-            that.myDataFetcher = imyDataFetcher;
-            that.mySeqIDs = isamples;
+            that.myDataFetcher = new DataFetcherSnp.Fetcher(serverUrl);
             that.allowScaleOverlay = false;
             that.colorByParent = false;
             that.covRange = 10;
@@ -34,21 +33,17 @@
             that.hoverSnp = -1;
             that.hoverSeqNr = -1;
             that.filter = DataFetcherSnp.SnpFilterData();
-            that.rowHeight = 14;//height of a row containing a single sequence
+            that.rowHeight = 14; //height of a row containing a single sequence
             that.seqOffset = 0; //start nr of the top sequence in the view
 
-            that.setSampleList = function (iDataID, iSampleList, iParentList) {
-                this.mySeqIDs = iSampleList;
-                this.myDataFetcher.setDataID(iDataID);
-                this.myDataFetcher.setSampleList(iSampleList);
-                this.myDataFetcher.parentIDs = iParentList;
 
-                this.getMyPlotter().render();
+            that.setDataSource = function (dataid) {//call this to attach to a data source on the server
+                this.myDataFetcher.setDataSource(dataid, function () { that.getMyPlotter().render(); });
             }
 
 
             that.setPlotter = function (thePlotter) {
-                //thePlotter.addDataFetcher(this.myfetcher);
+                thePlotter.addDataFetcher(this.myDataFetcher);
             }
 
             that.getRequiredRightWidth = function () { return 80; }
@@ -86,7 +81,7 @@
                 var posits = data.posits;
 
                 this.parentIDs = this.myDataFetcher.parentIDs;
-
+                this.mySeqIDs = this.myDataFetcher.getSequenceIDList();
                 this.seqcount = this.mySeqIDs.length;
 
                 var visiblecount = Math.round((this.getHeight() - topSizeY - bottomSize) / this.rowHeight);
