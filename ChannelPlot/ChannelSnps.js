@@ -64,8 +64,6 @@
                 var topSizeY = 50;
                 var graphSizeY = 90;
                 var bottomSize = graphSizeY;
-                this.graphSizeY = graphSizeY;
-                this.bottomSize = bottomSize;
 
                 this.PosMin = Math.round((-60 + drawInfo.offsetX) / drawInfo.zoomFactX);
                 this.PosMax = Math.round((drawInfo.sizeCenterX + 60 + drawInfo.offsetX) / drawInfo.zoomFactX);
@@ -80,15 +78,13 @@
                 this.data = data;
                 var posits = data.posits;
 
-                this.parentIDs = this.myDataFetcher.parentIDs;
+                this.parentIDs = this.myDataFetcher.getParentIDs();
                 this.mySeqIDs = this.myDataFetcher.getSequenceIDList();
                 this.seqcount = this.mySeqIDs.length;
 
                 var visiblecount = Math.round((this.getHeight() - topSizeY - bottomSize) / this.rowHeight);
                 this.getVScroller().ScrollSize = Math.min(1, (visiblecount - 1) / this.seqcount); !!!
                 this.getVScroller().draw();
-
-                var offsetY = 0;
 
                 //calculate positions of sequences in the view
                 this.seqPy = [];
@@ -102,7 +98,7 @@
                     var py = topSizeY + (seqnr - this.seqOffset) * this.rowHeight;
                     ly = this.rowHeight;
                     if (py + ly < this.getHeight() - bottomSize) {
-                        this.seqPy[seqnr] = offsetY + py;
+                        this.seqPy[seqnr] = py;
                         this.seqLy[seqnr] = ly;
                         var maxpos = py + ly;
                     }
@@ -466,10 +462,10 @@
                             if (isFiltered[i]) {
                                 var len = Math.min(3, psxcorrlen[i]) + 0.5;
                                 var centx = Math.round((psxcorr1[i] + psxcorr2[i]) / 2.0) - len + 2;
-                                drawInfo.centerContext.moveTo(centx, offsetY + sizeY - bottomSize);
-                                drawInfo.centerContext.lineTo(centx + len, offsetY + sizeY - bottomSize + len);
-                                drawInfo.centerContext.moveTo(centx + len, offsetY + sizeY - bottomSize);
-                                drawInfo.centerContext.lineTo(centx, offsetY + sizeY - bottomSize + len);
+                                drawInfo.centerContext.moveTo(centx, sizeY - bottomSize);
+                                drawInfo.centerContext.lineTo(centx + len, sizeY - bottomSize + len);
+                                drawInfo.centerContext.moveTo(centx + len, sizeY - bottomSize);
+                                drawInfo.centerContext.lineTo(centx, sizeY - bottomSize + len);
                             }
                         }
                     }
@@ -483,51 +479,16 @@
                     drawInfo.rightContext.fillText(data.SnpAltBase[this.hoverSnp], 75, topSizeY - 5);
                     drawInfo.rightContext.globalAlpha = 0.28;
                     drawInfo.rightContext.fillStyle = "rgb(0,70,255)";
-                    drawInfo.rightContext.fillRect(0, offsetY + 0, 40, sizeY);
+                    drawInfo.rightContext.fillRect(0, 0, 40, sizeY);
                     drawInfo.rightContext.fillStyle = "rgb(255,0,0)";
-                    drawInfo.rightContext.fillRect(40, offsetY + 0, 40, sizeY);
+                    drawInfo.rightContext.fillRect(40, 0, 40, sizeY);
                     drawInfo.rightContext.globalAlpha = 1;
                 }
 
-
-
                 //show per-position graphics
-                var graphOffsetY = maxpos;
                 drawInfo.centerContext.fillStyle = DQX.Color(0.85, 0.85, 0.85).toString();
-                drawInfo.centerContext.fillRect(0, graphOffsetY, sizeX, sizeY - graphOffsetY - 1);
-                var grinfo = [
-                    { val: 'SnpAQ', col: 'rgb(120,120,120)', max: 100 },
-                    { val: 'SnpMQ', col: 'rgb(120,120,120)', max: 100 },
-                    { val: 'AvgCoverage', col: 'rgb(120,120,120)', max: 200 }
-                ];
-                var grcount = grinfo.length;
-                for (var grnr = 0; grnr < grcount; grnr++) {
-                    var vals = data[grinfo[grnr].val];
-                    var maxval = grinfo[grnr].max;
-                    drawInfo.centerContext.fillStyle = grinfo[grnr].col;
-                    for (var i = 0; i < posits.length; i++) {
-                        if ((psxcorr[i] >= -40) && (psxcorr[i] <= sizeX + 40)) {
-                            var vly = vals[i] / maxval;
-                            if (vly > 1) vly = 1;
-                            vly *= 0.8 * graphSizeY / grcount;
-                            drawInfo.centerContext.fillRect(psxcorr1[i] + 0.5, graphOffsetY + (grnr + 1) * 1.0 * graphSizeY / grcount - vly, psxcorrlen[i] - 0.25, vly);
-                        }
-                    }
-                }
-
-                //indicate structural variations
-                for (var i = 0; i < posits.length; i++) {
-                    if ((psxcorr[i] >= -40) && (psxcorr[i] <= sizeX + 40)) {
-                        var refBase = data.SnpRefBase[i];
-                        var altBase = data.SnpAltBase[i];
-                        var showIndication = false;
-                        if ((refBase == '.') && (altBase == '+')) { showIndication = true; drawInfo.centerContext.fillStyle = DQX.Color(1, 0, 0).toString(); }
-                        if ((refBase == '+') && (altBase == '.')) { showIndication = true; drawInfo.centerContext.fillStyle = DQX.Color(0, 0.7, 0).toString(); }
-                        if ((refBase == '+') && (altBase == '+')) { showIndication = true; drawInfo.centerContext.fillStyle = DQX.Color(0, 0, 1).toString(); }
-                        if (showIndication)
-                            drawInfo.centerContext.fillRect(psxcorr1[i] + 0.5, graphOffsetY + 2, psxcorrlen[i] - 0.25, 5);
-                    }
-                }
+                drawInfo.centerContext.fillRect(0, maxpos, sizeX, sizeY - maxpos - 1);
+                this.drawSnpPosInfo(drawInfo, maxpos, graphSizeY);
 
                 if (this.useMagnifyingGlass) {//Magnifying glass visual effect
                     if (this.hoverCenter >= 0) {
@@ -594,6 +555,48 @@
             that.scrollTo = function (newscrollpos) {
                 this.seqOffset = Math.round(newscrollpos * this.seqcount);
                 this.getMyPlotter().render();
+            }
+
+
+            that.drawSnpPosInfo = function (drawInfo, graphOffsetY, graphSizeY) {
+                var sizeX = drawInfo.sizeCenterX;
+                var data = this.data;
+                var posits = data.posits;
+                var psxcorr1 = this._psxcorr1;
+                var psxcorr2 = this._psxcorr2;
+                var grinfo = [
+                        { val: 'SnpAQ', col: 'rgb(120,120,120)', max: 100 },
+                        { val: 'SnpMQ', col: 'rgb(120,120,120)', max: 100 },
+                        { val: 'AvgCoverage', col: 'rgb(120,120,120)', max: 200 }
+                    ];
+                var grcount = grinfo.length;
+                for (var grnr = 0; grnr < grcount; grnr++) {
+                    var vals = data[grinfo[grnr].val];
+                    var maxval = grinfo[grnr].max;
+                    drawInfo.centerContext.fillStyle = grinfo[grnr].col;
+                    for (var i = 0; i < posits.length; i++) {
+                        if ((psxcorr2[i] >= -40) && (psxcorr1[i] <= sizeX + 40)) {
+                            var vly = vals[i] / maxval;
+                            if (vly > 1) vly = 1;
+                            vly *= 0.8 * graphSizeY / grcount;
+                            drawInfo.centerContext.fillRect(psxcorr1[i] + 0.5, graphOffsetY + (grnr + 1) * 1.0 * graphSizeY / grcount - vly, psxcorr2[i] - psxcorr1[i] - 0.25, vly);
+                        }
+                    }
+                }
+
+                //indicate structural variations
+                for (var i = 0; i < posits.length; i++) {
+                    if ((psxcorr2[i] >= -40) && (psxcorr1[i] <= sizeX + 40)) {
+                        var refBase = data.SnpRefBase[i];
+                        var altBase = data.SnpAltBase[i];
+                        var showIndication = false;
+                        if ((refBase == '.') && (altBase == '+')) { showIndication = true; drawInfo.centerContext.fillStyle = DQX.Color(1, 0, 0).toString(); }
+                        if ((refBase == '+') && (altBase == '.')) { showIndication = true; drawInfo.centerContext.fillStyle = DQX.Color(0, 0.7, 0).toString(); }
+                        if ((refBase == '+') && (altBase == '+')) { showIndication = true; drawInfo.centerContext.fillStyle = DQX.Color(0, 0, 1).toString(); }
+                        if (showIndication)
+                            drawInfo.centerContext.fillRect(psxcorr1[i] + 0.5, graphOffsetY + 2, psxcorr2[i] - psxcorr1[i] - 0.25, 5);
+                    }
+                }
             }
 
             that.onHoverOverChannel = function (xp, yp) {

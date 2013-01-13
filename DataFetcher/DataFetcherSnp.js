@@ -29,7 +29,7 @@
             this.serverurl = iserverurl; //The server url to contact for this
             this.dataid = null; //not yet assigned
             this._sequenceIDList = [];
-            this.parentIDs = [];
+            this._parentIDs = [];
             this.myChromoID = '';
             this.decoder = DataDecoders.ValueListDecoder();
             this.b64codec = DataDecoders.B64();
@@ -49,7 +49,7 @@
             this._onFetchMetaInfo = function (content) {
                 var lines = content.split('\n');
                 this._sequenceIDList = [];
-                this.parentIDs = [];
+                this._parentIDs = [];
                 for (var linenr = 0; linenr < lines.length; linenr++) {
                     var line = lines[linenr];
                     var splitPos = line.indexOf('=');
@@ -59,7 +59,7 @@
                         if (token == 'Samples')
                             this._sequenceIDList = content.split('\t');
                         if (token == 'Parents')
-                            this.parentIDs = content.split('\t');
+                            this._parentIDs = content.split('\t');
                     }
                 }
                 this.mySeqs = {};
@@ -72,6 +72,10 @@
 
             this.getSequenceIDList = function () {
                 return this._sequenceIDList;
+            }
+
+            this.getParentIDs = function () {
+                return this._parentIDs;
             }
 
             this.buffPosits = [];
@@ -369,8 +373,8 @@
                     extrafilterstep = true;
                     for (var i = 0; i < posits.length; i++) {
                         var parentspresent = true;
-                        for (var pnr in this.parentIDs)
-                            if (!seqdata[this.parentIDs[pnr]].pres[i])
+                        for (var pnr in this._parentIDs)
+                            if (!seqdata[this._parentIDs[pnr]].pres[i])
                                 parentspresent = false;
                         if (!parentspresent)
                             isFiltered[i] = true;
