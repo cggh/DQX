@@ -86,149 +86,37 @@
                 this.getVScroller().ScrollSize = Math.min(1, (visiblecount - 1) / this.seqcount); !!!
                 this.getVScroller().draw();
 
-                //calculate positions of sequences in the view
+                //calculate Y positions of sequences in the view
                 this.seqPy = [];
                 this.seqLy = [];
                 for (var seqnr = 0; seqnr < this.mySeqIDs.length; seqnr++) {
                     this.seqPy.push(-1);
                     this.seqLy.push(-1);
                 }
-                var maxpos = 0;
+                var maxPosY = 0;
                 for (var seqnr = this.seqOffset; seqnr < this.seqcount; seqnr++) {
                     var py = topSizeY + (seqnr - this.seqOffset) * this.rowHeight;
                     ly = this.rowHeight;
                     if (py + ly < this.getHeight() - bottomSize) {
                         this.seqPy[seqnr] = py;
                         this.seqLy[seqnr] = ly;
-                        var maxpos = py + ly;
+                        maxPosY = Math.max(maxPosY, py + ly);
                     }
                 }
-                bottomSize = this.getHeight() - maxpos;
+                bottomSize = this.getHeight() - maxPosY;
 
-
-                hminsize = 1;
-                if (this.allowSmallBlocks)
-                    hminsize = 0;
-                var minsize = 2 * hminsize + 1;
-
-                var psx = [];
-                var psxcorr = [];
-                for (var i = 0; i < posits.length; i++) {
-                    if ((i > 0) && (posits[i] < posits[i - 1]))
-                        throw 'Invalid position'
-                    psx.push(posits[i] * drawInfo.zoomFactX - drawInfo.offsetX);
-                    psxcorr.push(Math.round(psx[i]));
-                }
-
-                if (!this.fillBlocks) {
-                    //Calculating positions & corrected positions
-                    for (cf = 0.1; cf <= 1; cf += 0.1) {
-
-                        var psxlast = -1000;
-                        for (var i = 0; i < posits.length; i++) {
-                            if (psxcorr[i] < psxlast + cf * minsize)
-                                psxcorr[i] = psxlast + cf * minsize;
-                            psxlast = psxcorr[i];
-                        }
-                        cf += 0.1;
-                        var psxlast = 100000000;
-                        for (var i = posits.length - 1; i >= 0; i--) {
-                            if (psxcorr[i] > psxlast - cf * minsize)
-                                psxcorr[i] = psxlast - cf * minsize;
-                            psxlast = psxcorr[i];
-                        }
-                    }
-                    var psxlast = -1000;
-                    for (var i = 0; i < posits.length; i++) {
-                        psxcorr[i] = Math.round(psxcorr[i]);
-                        if (psxcorr[i] < psxlast + minsize)
-                            psxcorr[i] = psxlast + minsize;
-                        psxlast = psxcorr[i];
-                    }
-                    var hdesiredsize = 4;
-                    var psxcorr1 = [];
-                    var psxcorr2 = [];
-                    for (var i = 0; i < posits.length; i++) {
-                        psxcorr1.push(psxcorr[i] - hdesiredsize);
-                        if (i > 0) {
-                            if (psxcorr1[i] < psxcorr2[i - 1]) {
-                                var halfway = Math.round((psxcorr1[i] + psxcorr2[i - 1]) / 2.0);
-                                psxcorr2[i - 1] = halfway;
-                                psxcorr1[i] = halfway;
-                            }
-                        }
-                        psxcorr2.push(psxcorr[i] + hdesiredsize);
-                    }
-                }
-                else {//calculating fixed block size & position
-                    var psxcorr1 = [];
-                    var psxcorr2 = [];
-                    var size = Math.round((psx[posits.length - 1] - psx[0]) / (posits.length + 1));
-                    if (size < minsize) size = minsize;
-                    //first pass: use all snps to determine shift
-                    var shift = 0;
-                    for (var i = 0; i < posits.length; i++)
-                        shift += psx[i] - i * size;
-                    shift = Math.round(shift / posits.length);
-                    for (var i = 0; i < posits.length; i++)
-                        psxcorr[i] = i * size + shift;
-                    //second pass: use what's in view to determine shift
-                    var shift = 0;
-                    for (var i = 0; i < posits.length; i++)
-                        if ((psxcorr[i] >= 0) && (psxcorr[i] <= sizeX))
-                            shift += psx[i] - i * size;
-                    shift = Math.round(shift / posits.length);
-                    for (var i = 0; i < posits.length; i++) {
-                        psxcorr[i] = i * size + shift;
-                        psxcorr1.push(psxcorr[i] - size / 2);
-                        psxcorr2.push(psxcorr[i] + size / 2);
-                    }
-                }
-
-                //determine if this can be displayed in the current zoom level
-                if (posits.length > 100) {
-                    var inviewcount = 0;
-                    for (var i = 0; i < posits.length; i++)
-                        if ((psxcorr[i] >= 0) && (psxcorr[i] <= sizeX))
-                            inviewcount++;
-                    if (inviewcount < 0.5 * posits.length) {
-                        this.drawMessage(drawInfo, "SNP display channel: too much information to display.", "Please zoom in to see this channel");
-                        return;
-                    }
-                }
-
-                this._psxcorr1 = psxcorr1;
-                this._psxcorr2 = psxcorr2;
-
-                if (this.useMagnifyingGlass) {//Apply Magnifying glass distortion
-                    if (this.hoverCenter >= 0) {
-                        var centerpos = this.hoverCenter;
-                        for (var i = 0; i < posits.length; i++) {
-                            psxcorr1[i] = warp(psxcorr1[i], centerpos);
-                            psxcorr2[i] = warp(psxcorr2[i], centerpos);
-                            if (psxcorr2[i] < psxcorr1[i]) {
-                                psxcorr1[i] = (psxcorr1[i] + psxcorr2[i]) / 2.0;
-                                psxcorr2[i] = psxcorr1[i];
-                            }
-                        }
-                    }
-                }
-
-                //final: calculate dimensions & center position
-                var psxcorrlen = [];
-                for (var i = 0; i < posits.length; i++) {
-                    psxcorrlen.push(psxcorr2[i] - psxcorr1[i]);
-                    psxcorr[i] = Math.round((psxcorr1[i] + psxcorr2[i]) / 2);
-                }
+                //Calculate X positions of sequences in the view
+                var positXCorrLeft =[], positXCorrRight = [], positXCorrCent = [], positXCorrLength = [], positXUnCorr = [];
+                this.calcXPositions(drawInfo, positXCorrLeft, positXCorrRight, positXCorrCent, positXCorrLength, positXUnCorr);
 
                 //draw connecting lines for visible snps
                 drawInfo.centerContext.strokeStyle = "rgb(0,0,0)";
-                drawInfo.centerContext.globalAlpha = 0.35;
+                drawInfo.centerContext.globalAlpha = 0.45;
                 drawInfo.centerContext.beginPath();
                 for (var i = 0; i < posits.length; i++) {
-                    if ((psxcorr[i] >= -3) && (psxcorr[i] <= sizeX + 3)) {
-                        drawInfo.centerContext.moveTo(psxcorr[i] + 0.5, topSizeY);
-                        drawInfo.centerContext.lineTo(psx[i], 0);
+                    if ((positXCorrRight[i] >= -3) && (positXCorrLeft[i] <= sizeX + 3)) {
+                        drawInfo.centerContext.moveTo(positXCorrLeft[i] + 0.5, topSizeY);
+                        drawInfo.centerContext.lineTo(positXUnCorr[i], 0);
                     }
                 }
                 drawInfo.centerContext.stroke();
@@ -238,9 +126,9 @@
                 drawInfo.centerContext.globalAlpha = 0.35;
                 drawInfo.centerContext.beginPath();
                 for (var i = 0; i < posits.length; i++) {
-                    if ((psxcorr[i] < -3) || (psxcorr[i] > sizeX + 3)) {
-                        drawInfo.centerContext.moveTo(psxcorr[i] + 0.5, topSizeY);
-                        drawInfo.centerContext.lineTo(psx[i], 0);
+                    if ((positXCorrCent[i] < -3) || (positXCorrCent[i] > sizeX + 3)) {
+                        drawInfo.centerContext.moveTo(positXCorrCent[i] + 0.5, topSizeY);
+                        drawInfo.centerContext.lineTo(positXUnCorr[i], 0);
                     }
                 }
                 drawInfo.centerContext.stroke();
@@ -352,7 +240,7 @@
                         var cov2 = data.seqdata[that.mySeqIDs[seqnr]].cov2;
                         var pres = data.seqdata[that.mySeqIDs[seqnr]].pres;
                         for (var i = 0; i < posits.length; i++) {
-                            if ((psxcorr[i] >= -40) && (psxcorr[i] <= sizeX + 40)) {
+                            if ((positXCorrCent[i] >= -40) && (positXCorrCent[i] <= sizeX + 40)) {
                                 if (pres[i]) {
                                     var covtot = cov1[i] + cov2[i];
                                     var frac = cov2[i] * 1.0 / covtot;
@@ -395,7 +283,7 @@
                                         lastcolornr = colornr;
                                     }
                                     var h = 2 + Math.round((ly - 3) * Math.min(1.0, covtot / this.covRange));
-                                    drawInfo.centerContext.fillRect(psxcorr1[i] + 0.5, py + ly - h, psxcorrlen[i] - 0.25, h);
+                                    drawInfo.centerContext.fillRect(positXCorrLeft[i] + 0.5, py + ly - h, positXCorrLength[i] - 0.25, h);
                                 }
                                 else {
                                     colornr = 99;
@@ -403,7 +291,7 @@
                                         drawInfo.centerContext.fillStyle = absentcolor;
                                         lastcolornr = colornr;
                                     }
-                                    drawInfo.centerContext.fillRect(psxcorr1[i] + 0.5, py + 5, psxcorrlen[i] - 0.25, ly - 9);
+                                    drawInfo.centerContext.fillRect(positXCorrLeft[i] + 0.5, py + 5, positXCorrLength[i] - 0.25, ly - 9);
                                 }
                             }
                         }
@@ -435,9 +323,9 @@
                     drawInfo.centerContext.fillStyle = "rgb(220,220,220)";
                     drawInfo.centerContext.globalAlpha = 0.65;
                     for (var i = 0; i < posits.length; i++) {
-                        if ((psxcorr[i] >= -40) && (psxcorr[i] <= sizeX + 40)) {
+                        if ((positXCorrCent[i] >= -40) && (positXCorrCent[i] <= sizeX + 40)) {
                             if (isFiltered[i]) {
-                                drawInfo.centerContext.fillRect(psxcorr1[i], topSizeY, psxcorrlen[i], sizeY - topSizeY - bottomSize);
+                                drawInfo.centerContext.fillRect(positXCorrLeft[i], topSizeY, positXCorrLength[i], sizeY - topSizeY - bottomSize);
                             }
                         }
                     }
@@ -445,9 +333,9 @@
                     drawInfo.centerContext.globalAlpha = 0.15;
                     drawInfo.centerContext.beginPath();
                     for (var i = 0; i < posits.length; i++) {
-                        if ((psxcorr[i] >= -40) && (psxcorr[i] <= sizeX + 40)) {
+                        if ((positXCorrCent[i] >= -40) && (positXCorrCent[i] <= sizeX + 40)) {
                             if (isFiltered[i]) {
-                                var px = Math.round(psxcorr[i]) + 0.5;
+                                var px = Math.round(positXCorrCent[i]) + 0.5;
                                 drawInfo.centerContext.moveTo(px, topSizeY);
                                 drawInfo.centerContext.lineTo(px, 0);
                             }
@@ -458,10 +346,10 @@
                     drawInfo.centerContext.strokeStyle = "rgb(150,0,0)";
                     drawInfo.centerContext.beginPath();
                     for (var i = 0; i < posits.length; i++) {
-                        if ((psxcorr[i] >= -40) && (psxcorr[i] <= sizeX + 40)) {
+                        if ((positXCorrCent[i] >= -40) && (positXCorrCent[i] <= sizeX + 40)) {
                             if (isFiltered[i]) {
-                                var len = Math.min(3, psxcorrlen[i]) + 0.5;
-                                var centx = Math.round((psxcorr1[i] + psxcorr2[i]) / 2.0) - len + 2;
+                                var len = Math.min(3, positXCorrLength[i]) + 0.5;
+                                var centx = Math.round((positXCorrLeft[i] + positXCorrRight[i]) / 2.0) - len + 2;
                                 drawInfo.centerContext.moveTo(centx, sizeY - bottomSize);
                                 drawInfo.centerContext.lineTo(centx + len, sizeY - bottomSize + len);
                                 drawInfo.centerContext.moveTo(centx + len, sizeY - bottomSize);
@@ -487,8 +375,8 @@
 
                 //show per-position graphics
                 drawInfo.centerContext.fillStyle = DQX.Color(0.85, 0.85, 0.85).toString();
-                drawInfo.centerContext.fillRect(0, maxpos, sizeX, sizeY - maxpos - 1);
-                this.drawSnpPosInfo(drawInfo, maxpos, graphSizeY);
+                drawInfo.centerContext.fillRect(0, maxPosY, sizeX, sizeY - maxPosY - 1);
+                this.drawSnpPosInfo(drawInfo, maxPosY, graphSizeY);
 
                 if (this.useMagnifyingGlass) {//Magnifying glass visual effect
                     if (this.hoverCenter >= 0) {
@@ -508,10 +396,10 @@
                 if (this.hoverSnp >= 0) {//draw the outline for the hover snp in a higher contrast
                     drawInfo.centerContext.strokeStyle = "rgb(0,0,0)";
                     drawInfo.centerContext.beginPath();
-                    drawInfo.centerContext.moveTo(psxcorr1[this.hoverSnp] + 0.5, topSizeY);
-                    drawInfo.centerContext.lineTo(psxcorr1[this.hoverSnp] + 0.5, sizeY);
-                    drawInfo.centerContext.moveTo(psxcorr2[this.hoverSnp] + 0.5, topSizeY);
-                    drawInfo.centerContext.lineTo(psxcorr2[this.hoverSnp] + 0.5, sizeY);
+                    drawInfo.centerContext.moveTo(positXCorrLeft[this.hoverSnp] + 0.5, topSizeY);
+                    drawInfo.centerContext.lineTo(positXCorrLeft[this.hoverSnp] + 0.5, sizeY);
+                    drawInfo.centerContext.moveTo(positXCorrRight[this.hoverSnp] + 0.5, topSizeY);
+                    drawInfo.centerContext.lineTo(positXCorrRight[this.hoverSnp] + 0.5, sizeY);
                     drawInfo.centerContext.stroke();
                 }
 
@@ -557,13 +445,125 @@
                 this.getMyPlotter().render();
             }
 
+            that.calcXPositions = function (drawInfo, positXCorrLeft, positXCorrRight, positXCorrCent, positXCorrLength, positXUnCorr) {
+                var data = this.data;
+                var posits = data.posits;
+                var sizeX = drawInfo.sizeCenterX;
+
+                var minsize = 3;
+                if (this.allowSmallBlocks)
+                    minsize = 1
+
+                for (var i = 0; i < posits.length; i++) {
+                    if ((i > 0) && (posits[i] < posits[i - 1]))
+                        throw 'Invalid position'
+                    positXUnCorr.push(posits[i] * drawInfo.zoomFactX - drawInfo.offsetX);
+                    positXCorrCent.push(Math.round(positXUnCorr[i]));
+                }
+
+                if (!this.fillBlocks) {
+                    //Calculating positions & corrected positions
+                    for (cf = 0.1; cf <= 1; cf += 0.1) {
+
+                        var psxlast = -1000;
+                        for (var i = 0; i < posits.length; i++) {
+                            if (positXCorrCent[i] < psxlast + cf * minsize)
+                                positXCorrCent[i] = psxlast + cf * minsize;
+                            psxlast = positXCorrCent[i];
+                        }
+                        cf += 0.1;
+                        var psxlast = 100000000;
+                        for (var i = posits.length - 1; i >= 0; i--) {
+                            if (positXCorrCent[i] > psxlast - cf * minsize)
+                                positXCorrCent[i] = psxlast - cf * minsize;
+                            psxlast = positXCorrCent[i];
+                        }
+                    }
+                    var psxlast = -1000;
+                    for (var i = 0; i < posits.length; i++) {
+                        positXCorrCent[i] = Math.round(positXCorrCent[i]);
+                        if (positXCorrCent[i] < psxlast + minsize)
+                            positXCorrCent[i] = psxlast + minsize;
+                        psxlast = positXCorrCent[i];
+                    }
+                    var hdesiredsize = 4;
+                    for (var i = 0; i < posits.length; i++) {
+                        positXCorrLeft.push(positXCorrCent[i] - hdesiredsize);
+                        if (i > 0) {
+                            if (positXCorrLeft[i] < positXCorrRight[i - 1]) {
+                                var halfway = Math.round((positXCorrLeft[i] + positXCorrRight[i - 1]) / 2.0);
+                                positXCorrRight[i - 1] = halfway;
+                                positXCorrLeft[i] = halfway;
+                            }
+                        }
+                        positXCorrRight.push(positXCorrCent[i] + hdesiredsize);
+                    }
+                }
+                else {//calculating fixed block size & position
+                    var size = Math.round((positXUnCorr[posits.length - 1] - positXUnCorr[0]) / (posits.length + 1));
+                    if (size < minsize) size = minsize;
+                    //first pass: use all snps to determine shift
+                    var shift = 0;
+                    for (var i = 0; i < posits.length; i++)
+                        shift += positXUnCorr[i] - i * size;
+                    shift = Math.round(shift / posits.length);
+                    for (var i = 0; i < posits.length; i++)
+                        positXCorrCent[i] = i * size + shift;
+                    //second pass: use what's in view to determine shift
+                    var shift = 0;
+                    for (var i = 0; i < posits.length; i++)
+                        if ((positXCorrCent[i] >= 0) && (positXCorrCent[i] <= sizeX))
+                            shift += positXUnCorr[i] - i * size;
+                    shift = Math.round(shift / posits.length);
+                    for (var i = 0; i < posits.length; i++) {
+                        positXCorrCent[i] = i * size + shift;
+                        positXCorrLeft.push(positXCorrCent[i] - size / 2);
+                        positXCorrRight.push(positXCorrCent[i] + size / 2);
+                    }
+                }
+
+                //determine if this can be displayed in the current zoom level
+                if (posits.length > 100) {
+                    var inviewcount = 0;
+                    for (var i = 0; i < posits.length; i++)
+                        if ((positXCorrCent[i] >= 0) && (positXCorrCent[i] <= sizeX))
+                            inviewcount++;
+                    if (inviewcount < 0.5 * posits.length) {
+                        this.drawMessage(drawInfo, "SNP display channel: too much information to display.", "Please zoom in to see this channel");
+                        return;
+                    }
+                }
+
+                this._psxcorr1 = positXCorrLeft;
+                this._psxcorr2 = positXCorrRight;
+
+                if (this.useMagnifyingGlass) {//Apply Magnifying glass distortion
+                    if (this.hoverCenter >= 0) {
+                        var centerpos = this.hoverCenter;
+                        for (var i = 0; i < posits.length; i++) {
+                            positXCorrLeft[i] = warp(positXCorrLeft[i], centerpos);
+                            positXCorrRight[i] = warp(positXCorrRight[i], centerpos);
+                            if (positXCorrRight[i] < positXCorrLeft[i]) {
+                                positXCorrLeft[i] = (positXCorrLeft[i] + positXCorrRight[i]) / 2.0;
+                                positXCorrRight[i] = positXCorrLeft[i];
+                            }
+                        }
+                    }
+                }
+
+                //final: calculate dimensions & center position
+                for (var i = 0; i < posits.length; i++) {
+                    positXCorrLength.push(positXCorrRight[i] - positXCorrLeft[i]);
+                    positXCorrCent[i] = Math.round((positXCorrLeft[i] + positXCorrRight[i]) / 2);
+                }
+            }
 
             that.drawSnpPosInfo = function (drawInfo, graphOffsetY, graphSizeY) {
                 var sizeX = drawInfo.sizeCenterX;
                 var data = this.data;
                 var posits = data.posits;
-                var psxcorr1 = this._psxcorr1;
-                var psxcorr2 = this._psxcorr2;
+                var positXCorrLeft = this._psxcorr1;
+                var positXCorrRight = this._psxcorr2;
                 var grinfo = [
                         { val: 'SnpAQ', col: 'rgb(120,120,120)', max: 100 },
                         { val: 'SnpMQ', col: 'rgb(120,120,120)', max: 100 },
@@ -575,18 +575,18 @@
                     var maxval = grinfo[grnr].max;
                     drawInfo.centerContext.fillStyle = grinfo[grnr].col;
                     for (var i = 0; i < posits.length; i++) {
-                        if ((psxcorr2[i] >= -40) && (psxcorr1[i] <= sizeX + 40)) {
+                        if ((positXCorrRight[i] >= -40) && (positXCorrLeft[i] <= sizeX + 40)) {
                             var vly = vals[i] / maxval;
                             if (vly > 1) vly = 1;
                             vly *= 0.8 * graphSizeY / grcount;
-                            drawInfo.centerContext.fillRect(psxcorr1[i] + 0.5, graphOffsetY + (grnr + 1) * 1.0 * graphSizeY / grcount - vly, psxcorr2[i] - psxcorr1[i] - 0.25, vly);
+                            drawInfo.centerContext.fillRect(positXCorrLeft[i] + 0.5, graphOffsetY + (grnr + 1) * 1.0 * graphSizeY / grcount - vly, positXCorrRight[i] - positXCorrLeft[i] - 0.25, vly);
                         }
                     }
                 }
 
                 //indicate structural variations
                 for (var i = 0; i < posits.length; i++) {
-                    if ((psxcorr2[i] >= -40) && (psxcorr1[i] <= sizeX + 40)) {
+                    if ((positXCorrRight[i] >= -40) && (positXCorrLeft[i] <= sizeX + 40)) {
                         var refBase = data.SnpRefBase[i];
                         var altBase = data.SnpAltBase[i];
                         var showIndication = false;
@@ -594,7 +594,7 @@
                         if ((refBase == '+') && (altBase == '.')) { showIndication = true; drawInfo.centerContext.fillStyle = DQX.Color(0, 0.7, 0).toString(); }
                         if ((refBase == '+') && (altBase == '+')) { showIndication = true; drawInfo.centerContext.fillStyle = DQX.Color(0, 0, 1).toString(); }
                         if (showIndication)
-                            drawInfo.centerContext.fillRect(psxcorr1[i] + 0.5, graphOffsetY + 2, psxcorr2[i] - psxcorr1[i] - 0.25, 5);
+                            drawInfo.centerContext.fillRect(positXCorrLeft[i] + 0.5, graphOffsetY + 2, positXCorrRight[i] - positXCorrLeft[i] - 0.25, 5);
                     }
                 }
             }
