@@ -2,79 +2,6 @@
     function ($, SQL, DQX, DataDecoders) {
         var DataFetcherSummary = {}
 
-        DQX.Encoder = {};
-
-        DQX.b64codec = DataDecoders.B64();
-
-
-        DQX.Encoder.FixedString = function (info) {
-            var that = {};
-            that.length = parseFloat(info.Len);
-
-            that.decodeArray = function (datastr) {
-                var rs = [];
-                var ct = datastr.length / this.length;
-                for (var i = 0; i < ct; i++)
-                    rs.push(datastr[i * this.length, (i + 1) * this.length])
-                return rs;
-            }
-
-            return that;
-        }
-
-
-        DQX.Encoder.Float2B64 = function (info) {
-            var that = {};
-            that.offset = parseFloat(info.Offset);
-            that.slope = parseFloat(info.Slope);
-            that.length = parseFloat(info.Len);
-
-            that.decodeArray = function (datastr) {
-                return DQX.b64codec.arrayB642Float(datastr, this.length, this.slope, this.offset);
-            }
-
-            return that;
-        }
-
-
-
-
-        DQX.Encoder.FloatList2B64 = function (info) {
-            var that = {};
-            that.rangeOffset = parseFloat(info.RangeOffset);
-            that.rangeSlope = parseFloat(info.RangeSlope);
-            that.count = parseInt(info.Count);
-
-            that.decodeArray = function (datastr) {
-                var strlen = datastr.length;
-                var reclen = that.count + 4;
-                var rs = [];
-                for (var offset = 0; offset < strlen; offset += reclen) {
-                    var minval = DQX.b64codec.B642IntFixed(datastr, offset + 0, 2) * that.rangeSlope + that.rangeOffset;
-                    var maxval = DQX.b64codec.B642IntFixed(datastr, offset + 2, 2) * that.rangeSlope + that.rangeOffset;
-                    var subrs = [];
-                    for (var i = 0; i < this.count; i++)
-                        subrs.push(minval + DQX.b64codec.B642IntFixed(datastr, offset + 4 + i, 1) / 63.0 * (maxval - minval));
-                    rs.push(subrs);
-                }
-                return rs;
-            }
-
-            return that;
-        }
-
-
-
-        DQX.Encoder.Create = function (info) {
-            if (info['ID'] == 'Float2B64')
-                return DQX.Encoder.Float2B64(info);
-            if (info['ID'] == 'FloatList2B64')
-                return DQX.Encoder.FloatList2B64(info);
-            if (info['ID'] == 'FixedString')
-                return DQX.Encoder.FixedString(info);
-            throw "Invalid encoder id " + info['ID'];
-        }
-
         // A class that contains the downloaded summary data for a single level. blocksize is the number of positions in this level
         DataFetcherSummary.SummaryBlockLevel = function (iblocksize) {
             var that = {};
@@ -101,7 +28,7 @@
                 this._propertyBuffers = [];
                 for (prop in propresults) {
                     var dt = propresults[prop];
-                    this._buffer[prop] = DQX.Encoder.Create(dt.encoder).decodeArray(dt.data);
+                    this._buffer[prop] = DataDecoders.Encoder.Create(dt.encoder).decodeArray(dt.data);
                 }
             }
 
@@ -141,8 +68,6 @@
                 return lst[currentloadindex];
             }
 
-
-
             return that;
         }
 
@@ -158,15 +83,10 @@
             that.myFolder = ifolder;
             that.myConfig = iconfig;
             that.myPropID = ipropid;
-
-
             that.myActiveCount = 0;
-
-
             that.isActive = function () {
                 return this.myActiveCount > 0;
             }
-
             return that;
         }
 
@@ -185,9 +105,7 @@
             this.maxBlockSize = 1.0e9;
             this.myColumns = {};
             this.myChromoID = '';
-
             this._isFetching = false;
-
             this._levelBuffers = []; //holds DQX.DataFetcher.SummaryBlockLevel
 
             this.translateChromoId = function (id) { return id; }

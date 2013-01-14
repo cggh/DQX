@@ -116,5 +116,71 @@
             return that;
         }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Decoder/encoder factory
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        DataDecoders.Encoder = {};
+
+        DataDecoders.Encoder.FixedString = function (info) {
+            var that = {};
+            that.length = parseFloat(info.Len);
+            that.decodeArray = function (datastr) {
+                var rs = [];
+                var ct = datastr.length / this.length;
+                for (var i = 0; i < ct; i++)
+                    rs.push(datastr[i * this.length, (i + 1) * this.length])
+                return rs;
+            }
+            return that;
+        }
+
+        DataDecoders.Encoder.Float2B64 = function (info) {
+            var that = {};
+            that.offset = parseFloat(info.Offset);
+            that.slope = parseFloat(info.Slope);
+            that.length = parseFloat(info.Len);
+            var _b64codec = DataDecoders.B64();
+            that.decodeArray = function (datastr) {
+                return _b64codec.arrayB642Float(datastr, this.length, this.slope, this.offset);
+            }
+            return that;
+        }
+
+        DataDecoders.Encoder.FloatList2B64 = function (info) {
+            var that = {};
+            that.rangeOffset = parseFloat(info.RangeOffset);
+            that.rangeSlope = parseFloat(info.RangeSlope);
+            that.count = parseInt(info.Count);
+            var _b64codec = DataDecoders.B64();
+            that.decodeArray = function (datastr) {
+                var strlen = datastr.length;
+                var reclen = that.count + 4;
+                var rs = [];
+                for (var offset = 0; offset < strlen; offset += reclen) {
+                    var minval = _b64codec.B642IntFixed(datastr, offset + 0, 2) * that.rangeSlope + that.rangeOffset;
+                    var maxval = _b64codec.B642IntFixed(datastr, offset + 2, 2) * that.rangeSlope + that.rangeOffset;
+                    var subrs = [];
+                    for (var i = 0; i < this.count; i++)
+                        subrs.push(minval + _b64codec.B642IntFixed(datastr, offset + 4 + i, 1) / 63.0 * (maxval - minval));
+                    rs.push(subrs);
+                }
+                return rs;
+            }
+
+            return that;
+        }
+
+        DataDecoders.Encoder.Create = function (info) {
+            if (info['ID'] == 'Float2B64')
+                return DataDecoders.Encoder.Float2B64(info);
+            if (info['ID'] == 'FloatList2B64')
+                return DataDecoders.Encoder.FloatList2B64(info);
+            if (info['ID'] == 'FixedString')
+                return DataDecoders.Encoder.FixedString(info);
+            throw "Invalid encoder id " + info['ID'];
+        }
+
+
         return DataDecoders;
     });
