@@ -78,7 +78,7 @@
                 var posits = data.posits;
 
                 //Determine vertical size of bottom part with per SNP position graphs
-                var graphSizeY = 15;
+                var graphSizeY = 20;
                 DQX.foreach(this.myDataFetcher.getSnPositInfoList(), this, function (info, self) {
                     if (info.Display)
                         graphSizeY += info.displaySizeY;
@@ -574,9 +574,13 @@
                 var positXCorrLeft = this._psxcorr1;
                 var positXCorrRight = this._psxcorr2;
 
+                drawInfo.leftContext.font = '11 sans-serif';
+                drawInfo.leftContext.textBaseline = 'bottom';
+                drawInfo.leftContext.textAlign = 'left';
+
                 //indicate structural variations
-                drawInfo.centerContext.fillStyle = "rgb(100,100,100)";
-                drawInfo.centerContext.fillRect(0, graphOffsetY+3, drawInfo.sizeCenterX, 9);
+                var posY = graphOffsetY+1;
+                var channelSizeY = 18;
                 for (var i = 0; i < posits.length; i++) {
                     if ((positXCorrRight[i] >= -40) && (positXCorrLeft[i] <= sizeX + 40)) {
                         var refBase = data.SnpRefBase[i];
@@ -586,17 +590,23 @@
                         if ((refBase == '+') && (altBase == '.')) { showIndication = true; drawInfo.centerContext.fillStyle = DQX.Color(0, 0.7, 0).toString(); }
                         if ((refBase == '+') && (altBase == '+')) { showIndication = true; drawInfo.centerContext.fillStyle = DQX.Color(0, 0, 1).toString(); }
                         if (showIndication)
-                            drawInfo.centerContext.fillRect(positXCorrLeft[i] + 0.5, graphOffsetY + 3, positXCorrRight[i] - positXCorrLeft[i] - 0.25, 9);
+                            drawInfo.centerContext.fillRect(positXCorrLeft[i] + 0.5, posY + 5, positXCorrRight[i] - positXCorrLeft[i] - 0.25, 10);
                     }
                 }
+                drawInfo.centerContext.fillStyle = "rgb(80,80,80)";
+                drawInfo.centerContext.fillRect(0, graphOffsetY, drawInfo.sizeCenterX, 2);
+                drawInfo.leftContext.fillStyle = "rgb(80,80,80)";
+                drawInfo.leftContext.fillRect(0, graphOffsetY, drawInfo.sizeLeftX, 2);
+                drawInfo.leftContext.fillStyle = "black";
+                drawInfo.leftContext.fillText("Variant type", 2, posY + channelSizeY / 2 + 7);
+                posY += channelSizeY;
 
 
-                var posY = graphOffsetY + 15;
                 DQX.foreach(this.myDataFetcher.getSnPositInfoList(), this, function (info, self) {
                     if (info.Display) {
                         var channelSizeY = info.displaySizeY;
                         var backgrad = drawInfo.centerContext.createLinearGradient(0, posY, 0, posY + channelSizeY);
-                        backgrad.addColorStop(0.0, "rgb(250,250,250)");backgrad.addColorStop(1.0, "rgb(190,190,190)");
+                        backgrad.addColorStop(0.0, "rgb(250,250,250)"); backgrad.addColorStop(1.0, "rgb(190,190,190)");
                         drawInfo.centerContext.fillStyle = backgrad;
                         drawInfo.centerContext.fillRect(0, posY, drawInfo.sizeCenterX, channelSizeY);
                         var backgrad = drawInfo.leftContext.createLinearGradient(0, posY, 0, posY + channelSizeY);
@@ -622,10 +632,7 @@
                         drawInfo.leftContext.fillRect(0, posY + channelSizeY, drawInfo.sizeLeftX, 1);
                         drawInfo.leftContext.globalAlpha = 1.0;
                         drawInfo.leftContext.fillStyle = "black";
-                        drawInfo.leftContext.font = '11 sans-serif';
-                        drawInfo.leftContext.textBaseline = 'bottom';
-                        drawInfo.leftContext.textAlign = 'left';
-                        drawInfo.leftContext.fillText(info.Name, 2, posY+channelSizeY/2+5);
+                        drawInfo.leftContext.fillText(info.Name, 2, posY + channelSizeY / 2 + 5);
                         posY += channelSizeY;
                     }
                 });
