@@ -312,11 +312,11 @@
             that.drawMessage = function (drawInfo, txt1, txt2) {
                 drawInfo.centerContext.fillStyle = "black";
                 drawInfo.centerContext.globalAlpha = 0.2;
-                drawInfo.centerContext.fillRect(0, drawInfo.PosY - drawInfo.sizeY, drawInfo.sizeCenterX, drawInfo.sizeY);
+                drawInfo.centerContext.fillRect(0, 0, drawInfo.sizeCenterX, drawInfo.sizeY);
                 drawInfo.centerContext.globalAlpha = 1.0;
                 drawInfo.leftContext.fillStyle = "black";
                 drawInfo.leftContext.globalAlpha = 0.2;
-                drawInfo.leftContext.fillRect(0, drawInfo.PosY - drawInfo.sizeY, drawInfo.sizeLeftX, drawInfo.sizeY);
+                drawInfo.leftContext.fillRect(0, 0, drawInfo.sizeLeftX, drawInfo.sizeY);
                 drawInfo.leftContext.globalAlpha = 1.0;
                 drawInfo.centerContext.fillStyle = "black";
                 drawInfo.centerContext.font = '15 sans-serif';

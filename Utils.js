@@ -3,6 +3,11 @@
         //Inject DQX into the global namespace so that click handlers can find it
         DQX = {};
 
+        DQX.foreach = function (arr, arg, fnc) {
+            for (var i = 0; i < arr.length; i++)
+                fnc(arr[i],arg);
+        }
+
         //Sort helpers
         DQX.ByProperty = function (prop) {
             return function (a, b) {

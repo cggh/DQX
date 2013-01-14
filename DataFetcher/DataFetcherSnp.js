@@ -85,15 +85,21 @@
                 }
 
                 //add 2 information fields that are calculated locally
-                this._listSnpPositionInfo.push({ ID: "AvCov", Name: "Average coverage", DataType: "Value", Max: 300, getFromServer: false });
-                this._listSnpPositionInfo.push({ ID: "AvPurity", Name: "Average purity", DataType: "Value", Max: 1, getFromServer: false });
+                this._listSnpPositionInfo.push({ ID: "AvCov", Name: "Average coverage", DataType: "Value", Max: 300, Display:true, getFromServer: false });
+                this._listSnpPositionInfo.push({ ID: "AvPurity", Name: "Average purity", DataType: "Value", Max: 1, Display: true, getFromServer: false });
 
                 //create mapping
                 this.mapSnpPositionInfoNr = [];
-                for (var fnr = 0; fnr < this._listSnpPositionInfo.length; fnr++)
+                for (var fnr = 0; fnr < this._listSnpPositionInfo.length; fnr++) {
                     this.mapSnpPositionInfoNr[this._listSnpPositionInfo[fnr].ID] = fnr;
+                    this._listSnpPositionInfo[fnr].displaySizeY = 30;
+                }
             }
 
+            this.getSnPositInfoList = function () {
+                if (!this._listSnpPositionInfo) DQX.reportError("Information not available");
+                return this._listSnpPositionInfo;
+            }
 
             this.getSequenceIDList = function () {
                 return this._sequenceIDList;
@@ -308,7 +314,7 @@
             }
 
             this.getSnpInfoRange = function (posMin, posMax, filter, hideFiltered) {
-                var rs = { Present: true}
+                var rs = { Present: true }
 
                 var posits = [];
                 var isFiltered = [];
@@ -316,7 +322,7 @@
                 var idx2 = this.pos2BuffIndexRight(posMax);
 
                 if (!this.buffSnpPosInfo)
-                    return { Present: false};
+                    return { Present: false };
 
                 //calculate presence fraction for each snp
                 var buffPresence = [];
@@ -344,8 +350,6 @@
                 var buffAvgCoverage = this.buffSnpPosInfo[this.mapSnpPositionInfoNr['AvCov']]
                 var buffAvgPurity = this.buffSnpPosInfo[this.mapSnpPositionInfoNr['AvPurity']]
                 var buffSnpFilter = this.buffSnpPosInfo[this.mapSnpPositionInfoNr['Filtered']]
-                var buffSnpAQ = this.buffSnpPosInfo[this.mapSnpPositionInfoNr['AQ']]
-                var buffSnpMQ = this.buffSnpPosInfo[this.mapSnpPositionInfoNr['MQ']]
                 var idxlist = [];
                 for (var i = idx1; i <= idx2; i++) {
                     var passed = true;
@@ -366,20 +370,19 @@
                 rs.posits = posits;
                 rs.isFiltered = isFiltered;
 
+                rs.SnpPosInfo = [];
+                for (var infonr = 0; infonr < this._listSnpPositionInfo.length; infonr++) {
+                    var src = this.buffSnpPosInfo[infonr];
+                    var lst = [];
+                    for (var i = 0; i < idxlist.length; i++) lst.push(src[idxlist[i]]);
+                    rs.SnpPosInfo.push(lst);
+                }
                 rs.SnpRefBase = [];
                 rs.SnpAltBase = [];
-                rs.AvgCoverage = [];
-                rs.SnpAQ = [];
-                rs.SnpMQ = [];
-                rs.SnpFilter = [];
                 for (var i = 0; i < idxlist.length; i++) {
                     var ii = idxlist[i];
                     rs.SnpRefBase.push(buffSnpRefBase[ii]);
                     rs.SnpAltBase.push(buffSnpAltBase[ii]);
-                    rs.AvgCoverage.push(buffAvgCoverage[ii]);
-                    rs.SnpAQ.push(buffSnpAQ[ii]);
-                    rs.SnpMQ.push(buffSnpMQ[ii]);
-                    rs.SnpFilter.push(buffSnpFilter[ii]);
                 }
 
                 var seqdata = {};
@@ -443,7 +446,14 @@
                             seqdata[seqid][seqchannelnames[chnr]].length = i2;
                         }
                     }
+                }
 
+                //add some utilities
+                rs._fetcher = this;
+                rs.getSnpInfo = function (id) {
+                    var channel = this.SnpPosInfo[this._fetcher.mapSnpPositionInfoNr[id]];
+                    if (!channel) DQX.reportError('Invalid SNP position property ' + id);
+                    return channel;
                 }
 
                 return rs;

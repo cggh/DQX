@@ -60,10 +60,8 @@
 
                 var sizeX = drawInfo.sizeCenterX;
                 var sizeY = drawInfo.sizeY;
-
                 var topSizeY = 50;
-                var graphSizeY = 90;
-                var bottomSize = graphSizeY;
+
 
                 this.PosMin = Math.round((-60 + drawInfo.offsetX) / drawInfo.zoomFactX);
                 this.PosMax = Math.round((drawInfo.sizeCenterX + 60 + drawInfo.offsetX) / drawInfo.zoomFactX);
@@ -78,6 +76,15 @@
                 if (!data.Present) return;
                 this.data = data;
                 var posits = data.posits;
+
+                //Determine vertical size of bottom part with per SNP position graphs
+                var graphSizeY = 15;
+                DQX.foreach(this.myDataFetcher.getSnPositInfoList(), this, function (info, self) {
+                    if (info.Display)
+                        graphSizeY += info.displaySizeY;
+                });
+                var bottomSize = graphSizeY;
+
 
                 this.parentIDs = this.myDataFetcher.getParentIDs();
                 this.mySeqIDs = this.myDataFetcher.getSequenceIDList();
@@ -109,6 +116,19 @@
                 //Calculate X positions of sequences in the view
                 var positXCorrLeft = [], positXCorrRight = [], positXCorrCent = [], positXCorrLength = [], positXUnCorr = [];
                 this.calcXPositions(drawInfo, positXCorrLeft, positXCorrRight, positXCorrCent, positXCorrLength, positXUnCorr);
+
+                //determine if this can be displayed in the current zoom level
+                if (posits.length > 100) {
+                    var inviewcount = 0;
+                    for (var i = 0; i < posits.length; i++)
+                        if ((positXCorrCent[i] >= 0) && (positXCorrCent[i] <= sizeX))
+                            inviewcount++;
+                    if (inviewcount < 0.5 * posits.length) {
+                        this.drawMessage(drawInfo, "SNP display channel: too much information to display.", "Please zoom in to see this channel");
+                        return;
+                    }
+                }
+
 
                 //draw connecting lines for visible snps
                 drawInfo.centerContext.strokeStyle = "rgb(0,0,0)";
@@ -523,18 +543,6 @@
                     }
                 }
 
-                //determine if this can be displayed in the current zoom level
-                if (posits.length > 100) {
-                    var inviewcount = 0;
-                    for (var i = 0; i < posits.length; i++)
-                        if ((positXCorrCent[i] >= 0) && (positXCorrCent[i] <= sizeX))
-                            inviewcount++;
-                    if (inviewcount < 0.5 * posits.length) {
-                        this.drawMessage(drawInfo, "SNP display channel: too much information to display.", "Please zoom in to see this channel");
-                        return;
-                    }
-                }
-
                 this._psxcorr1 = positXCorrLeft;
                 this._psxcorr2 = positXCorrRight;
 
@@ -565,27 +573,10 @@
                 var posits = data.posits;
                 var positXCorrLeft = this._psxcorr1;
                 var positXCorrRight = this._psxcorr2;
-                var grinfo = [
-                        { val: 'SnpAQ', col: 'rgb(120,120,120)', max: 100 },
-                        { val: 'SnpMQ', col: 'rgb(120,120,120)', max: 100 },
-                        { val: 'AvgCoverage', col: 'rgb(120,120,120)', max: 200 }
-                    ];
-                var grcount = grinfo.length;
-                for (var grnr = 0; grnr < grcount; grnr++) {
-                    var vals = data[grinfo[grnr].val];
-                    var maxval = grinfo[grnr].max;
-                    drawInfo.centerContext.fillStyle = grinfo[grnr].col;
-                    for (var i = 0; i < posits.length; i++) {
-                        if ((positXCorrRight[i] >= -40) && (positXCorrLeft[i] <= sizeX + 40)) {
-                            var vly = vals[i] / maxval;
-                            if (vly > 1) vly = 1;
-                            vly *= 0.8 * graphSizeY / grcount;
-                            drawInfo.centerContext.fillRect(positXCorrLeft[i] + 0.5, graphOffsetY + (grnr + 1) * 1.0 * graphSizeY / grcount - vly, positXCorrRight[i] - positXCorrLeft[i] - 0.25, vly);
-                        }
-                    }
-                }
 
                 //indicate structural variations
+                drawInfo.centerContext.fillStyle = "rgb(100,100,100)";
+                drawInfo.centerContext.fillRect(0, graphOffsetY+3, drawInfo.sizeCenterX, 9);
                 for (var i = 0; i < posits.length; i++) {
                     if ((positXCorrRight[i] >= -40) && (positXCorrLeft[i] <= sizeX + 40)) {
                         var refBase = data.SnpRefBase[i];
@@ -595,9 +586,50 @@
                         if ((refBase == '+') && (altBase == '.')) { showIndication = true; drawInfo.centerContext.fillStyle = DQX.Color(0, 0.7, 0).toString(); }
                         if ((refBase == '+') && (altBase == '+')) { showIndication = true; drawInfo.centerContext.fillStyle = DQX.Color(0, 0, 1).toString(); }
                         if (showIndication)
-                            drawInfo.centerContext.fillRect(positXCorrLeft[i] + 0.5, graphOffsetY + 2, positXCorrRight[i] - positXCorrLeft[i] - 0.25, 5);
+                            drawInfo.centerContext.fillRect(positXCorrLeft[i] + 0.5, graphOffsetY + 3, positXCorrRight[i] - positXCorrLeft[i] - 0.25, 9);
                     }
                 }
+
+
+                var posY = graphOffsetY + 15;
+                DQX.foreach(this.myDataFetcher.getSnPositInfoList(), this, function (info, self) {
+                    if (info.Display) {
+                        var channelSizeY = info.displaySizeY;
+                        var backgrad = drawInfo.centerContext.createLinearGradient(0, posY, 0, posY + channelSizeY);
+                        backgrad.addColorStop(0.0, "rgb(250,250,250)");backgrad.addColorStop(1.0, "rgb(190,190,190)");
+                        drawInfo.centerContext.fillStyle = backgrad;
+                        drawInfo.centerContext.fillRect(0, posY, drawInfo.sizeCenterX, channelSizeY);
+                        var backgrad = drawInfo.leftContext.createLinearGradient(0, posY, 0, posY + channelSizeY);
+                        backgrad.addColorStop(0.0, "rgb(220,220,220)"); backgrad.addColorStop(1.0, "rgb(170,170,170)");
+                        drawInfo.leftContext.fillStyle = backgrad;
+                        drawInfo.leftContext.fillRect(0, posY, drawInfo.sizeLeftX, channelSizeY);
+                        var vals = self.data.getSnpInfo(info.ID); //!!!todo: make this a generic factory based handler that can handle other data types than vaules
+                        var maxval = info.Max;
+                        drawInfo.centerContext.fillStyle = DQX.Color(0.4, 0.4, 0.4).toString();
+                        for (var i = 0; i < posits.length; i++) {
+                            if ((positXCorrRight[i] >= -40) && (positXCorrLeft[i] <= sizeX + 40)) {
+                                var vly = vals[i] / maxval;
+                                if (vly > 1) vly = 1;
+                                vly *= 0.8 * channelSizeY;
+                                drawInfo.centerContext.fillRect(positXCorrLeft[i] + 0.5, posY + channelSizeY - vly, positXCorrRight[i] - positXCorrLeft[i] - 0.25, vly);
+                            }
+                        }
+                        drawInfo.centerContext.fillStyle = "rgb(120,120,120)";
+                        drawInfo.centerContext.fillRect(0, posY, drawInfo.sizeCenterX, 1);
+                        drawInfo.centerContext.fillRect(0, posY + channelSizeY, drawInfo.sizeCenterX, 1);
+                        drawInfo.leftContext.fillStyle = "rgb(120,120,120)";
+                        drawInfo.leftContext.fillRect(0, posY, drawInfo.sizeLeftX, 1);
+                        drawInfo.leftContext.fillRect(0, posY + channelSizeY, drawInfo.sizeLeftX, 1);
+                        drawInfo.leftContext.globalAlpha = 1.0;
+                        drawInfo.leftContext.fillStyle = "black";
+                        drawInfo.leftContext.font = '11 sans-serif';
+                        drawInfo.leftContext.textBaseline = 'bottom';
+                        drawInfo.leftContext.textAlign = 'left';
+                        drawInfo.leftContext.fillText(info.Name, 2, posY+channelSizeY/2+5);
+                        posY += channelSizeY;
+                    }
+                });
+
             }
 
             that.onHoverOverChannel = function (xp, yp) {
@@ -649,9 +681,13 @@
                 if (this.hoverSnp >= 0) {
                     infostr = 'SNP info<br/>';
                     infostr += 'Position: ' + this.data.posits[this.hoverSnp] + '<br/>';
-                    infostr += 'AQ: ' + this.data.SnpAQ[this.hoverSnp].toFixed(2) + '<br/>';
-                    infostr += 'MQ: ' + this.data.SnpMQ[this.hoverSnp].toFixed(2) + '<br/>';
-                    infostr += this.data.SnpFilter[this.hoverSnp] ? 'Passed' : 'Not passed' + '<br/>';
+                    DQX.foreach(this.myDataFetcher.getSnPositInfoList(), this, function (info, self) {
+                        var vl = self.data.getSnpInfo(info.ID)[self.hoverSnp];
+                        if (info.DataType == 'Value') vl = vl.toFixed(3); //!!!a hack that needs to be resolved
+                        infostr += info.Name + '= ';
+                        infostr += vl;
+                        infostr += '<br/>';
+                    });
                 }
                 Msg.broadcast({ type: 'SnpInfoChanged', id: this.getID() }, infostr);
             }
