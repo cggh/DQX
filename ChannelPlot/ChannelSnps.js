@@ -738,6 +738,7 @@
                 this.mySeqIDs = [];
                 for (var seqnr = 0; seqnr < sortarray.length; seqnr++)
                     this.mySeqIDs.push(sortarray[seqnr].obj);
+                this.myDataFetcher._sequenceIDList = this.mySeqIDs;
                 this.getMyPlotter().render();
             }
 
