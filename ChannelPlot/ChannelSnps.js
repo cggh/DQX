@@ -75,6 +75,7 @@
                 if (that.myDataFetcher.hasFetchFailed)
                     fetcherror = true;
                 var data = this.myDataFetcher.getSnpInfoRange(this.PosMin, this.PosMax, this.filter, this.hideFiltered);
+                if (!data.Present) return;
                 this.data = data;
                 var posits = data.posits;
 
@@ -106,7 +107,7 @@
                 bottomSize = this.getHeight() - maxPosY;
 
                 //Calculate X positions of sequences in the view
-                var positXCorrLeft =[], positXCorrRight = [], positXCorrCent = [], positXCorrLength = [], positXUnCorr = [];
+                var positXCorrLeft = [], positXCorrRight = [], positXCorrCent = [], positXCorrLength = [], positXUnCorr = [];
                 this.calcXPositions(drawInfo, positXCorrLeft, positXCorrRight, positXCorrCent, positXCorrLength, positXUnCorr);
 
                 //draw connecting lines for visible snps
@@ -600,6 +601,7 @@
             }
 
             that.onHoverOverChannel = function (xp, yp) {
+                if (!this._psxcorr1) return;
                 this.hoverCenter = xp;
                 var newhoversnp = -1;
                 var needredraw = false;

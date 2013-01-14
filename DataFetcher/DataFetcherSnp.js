@@ -60,6 +60,9 @@
                             this._sequenceIDList = content.split('\t');
                         if (token == 'Parents')
                             this._parentIDs = content.split('\t');
+                        if (token == 'SnpPositionFields') {
+                            this._parseSnpPositionFields(content);
+                        }
                     }
                 }
                 this.mySeqs = {};
@@ -69,6 +72,28 @@
                 DQX.stopProcessing();
                 this._callOnCompleted();
             }
+
+            this._parseSnpPositionFields = function (content) {
+                this._listSnpPositionInfo = JSON.parse(content);
+                this._recordLength = 0;
+                for (var fnr = 0; fnr < this._listSnpPositionInfo.length; fnr++) {
+                    var fieldInfo = this._listSnpPositionInfo[fnr];
+                    fieldInfo.getFromServer = true;
+                    fieldInfo.decoder = DataDecoders.Encoder.Create(fieldInfo.Encoder);
+                    fieldInfo.recordLength = fieldInfo.decoder.getRecordLength();
+                    this._recordLength += fieldInfo.recordLength;
+                }
+
+                //add 2 information fields that are calculated locally
+                this._listSnpPositionInfo.push({ ID: "AvCov", Name: "Average coverage", DataType: "Value", Max: 300, getFromServer: false });
+                this._listSnpPositionInfo.push({ ID: "AvPurity", Name: "Average purity", DataType: "Value", Max: 1, getFromServer: false });
+
+                //create mapping
+                this.mapSnpPositionInfoNr = [];
+                for (var fnr = 0; fnr < this._listSnpPositionInfo.length; fnr++)
+                    this.mapSnpPositionInfoNr[this._listSnpPositionInfo[fnr].ID] = fnr;
+            }
+
 
             this.getSequenceIDList = function () {
                 return this._sequenceIDList;
@@ -114,25 +139,28 @@
                 this.buffPosits = this.decoder.doDecode(keylist['posits']);
                 var datalen = this.buffPosits.length;
 
-                this.buffAvgCoverage = [];
-                this.buffAvgPurity = [];
-                this.buffSnpRefBase = [];
-                this.buffSnpAltBase = [];
-                this.buffSnpAQ = [];
-                this.buffSnpMQ = [];
-                this.buffSnpFilter = [];
+                //Parse per-position SNP info
+                this.buffSnpPosInfo = [];
+                for (var infonr = 0; infonr < this._listSnpPositionInfo.length; infonr++)
+                    this.buffSnpPosInfo.push([]);
+                var snpdata = keylist['snpdata'];
+                var posOffset = 0;
                 for (var i = 0; i < datalen; i++) {
-                    this.buffAvgCoverage.push(0);
-                    this.buffAvgPurity.push(0);
+                    for (var infonr = 0; infonr < this._listSnpPositionInfo.length; infonr++) {
+                        var info = this._listSnpPositionInfo[infonr];
+                        if (info.getFromServer) {
+                            this.buffSnpPosInfo[infonr].push(info.decoder.decodeSingle(snpdata, posOffset));
+                            posOffset += info.recordLength;
+                        }
+                    }
                 }
 
-                var snpdata = keylist['snpdata']
+                //Parse SNP info
+                var buffAvgCoverage = [];
+                var buffAvgPurity = [];
                 for (var i = 0; i < datalen; i++) {
-                    this.buffSnpRefBase.push(snpdata[7 * i + 0]);
-                    this.buffSnpAltBase.push(snpdata[7 * i + 1]);
-                    this.buffSnpAQ.push(this.b64codec.B642IntFixed(snpdata, 7 * i + 2, 2) / 4086.0 * 100.0);
-                    this.buffSnpMQ.push(this.b64codec.B642IntFixed(snpdata, 7 * i + 4, 2) / 4086.0 * 100.0);
-                    this.buffSnpFilter.push(snpdata[7 * i + 6] == '1');
+                    buffAvgCoverage.push(0);
+                    buffAvgPurity.push(0);
                 }
 
                 var cov1, cov2, covtot, frq;
@@ -146,20 +174,22 @@
                         cov2 = this.b64codec.B642IntFixed(dta, 4 * i + 2, 2);
                         buffCov1.push(cov1);
                         buffCov2.push(cov2);
-                        this.buffAvgCoverage[i] += cov1 + cov2;
+                        buffAvgCoverage[i] += cov1 + cov2;
                         if (cov1 + cov2 > 0)
-                            this.buffAvgPurity[i] += Math.max(cov1, cov2) * 2.0 / (cov1 + cov2) - 1.0;
+                            buffAvgPurity[i] += Math.max(cov1, cov2) * 2.0 / (cov1 + cov2) - 1.0;
                         else
-                            this.buffAvgPurity[i] += 1.0;
+                            buffAvgPurity[i] += 1.0;
                     }
                     this.mySeqs[smp].buffCov1 = buffCov1;
                     this.mySeqs[smp].buffCov2 = buffCov2;
                     seqcount++;
                 }
 
+                var fieldNr_AvgCoverage = this.mapSnpPositionInfoNr['AvCov'];
+                var fieldNr_AvgPurity = this.mapSnpPositionInfoNr['AvPurity'];
                 for (var i = 0; i < this.buffPosits.length; i++) {
-                    this.buffAvgCoverage[i] /= seqcount;
-                    this.buffAvgPurity[i] /= seqcount;
+                    this.buffSnpPosInfo[fieldNr_AvgCoverage].push(buffAvgCoverage[i] / seqcount)
+                    this.buffSnpPosInfo[fieldNr_AvgPurity].push(buffAvgPurity[i] / seqcount)
                 }
 
 
@@ -278,12 +308,15 @@
             }
 
             this.getSnpInfoRange = function (posMin, posMax, filter, hideFiltered) {
-                var rs = {}
+                var rs = { Present: true}
 
                 var posits = [];
                 var isFiltered = [];
                 var idx1 = this.pos2BuffIndexLeft(posMin);
                 var idx2 = this.pos2BuffIndexRight(posMax);
+
+                if (!this.buffSnpPosInfo)
+                    return { Present: false};
 
                 //calculate presence fraction for each snp
                 var buffPresence = [];
@@ -306,17 +339,23 @@
                     buffPresence.push(ct * 1.0 / totct);
                 }
 
-
+                var buffSnpRefBase = this.buffSnpPosInfo[this.mapSnpPositionInfoNr['RefBase']]
+                var buffSnpAltBase = this.buffSnpPosInfo[this.mapSnpPositionInfoNr['AltBase']]
+                var buffAvgCoverage = this.buffSnpPosInfo[this.mapSnpPositionInfoNr['AvCov']]
+                var buffAvgPurity = this.buffSnpPosInfo[this.mapSnpPositionInfoNr['AvPurity']]
+                var buffSnpFilter = this.buffSnpPosInfo[this.mapSnpPositionInfoNr['Filtered']]
+                var buffSnpAQ = this.buffSnpPosInfo[this.mapSnpPositionInfoNr['AQ']]
+                var buffSnpMQ = this.buffSnpPosInfo[this.mapSnpPositionInfoNr['MQ']]
                 var idxlist = [];
                 for (var i = idx1; i <= idx2; i++) {
                     var passed = true;
-                    if (this.buffAvgCoverage[i] < filter.minAvgCoverage)
+                    if (buffAvgCoverage[i] < filter.minAvgCoverage)
                         passed = false;
                     if (buffPresence[i] < filter.minPresence / 100.0)
                         passed = false;
-                    if (this.buffAvgPurity[i] < filter.minAvgPurity)
+                    if (buffAvgPurity[i] < filter.minAvgPurity)
                         passed = false;
-                    if ((!this.buffSnpFilter[i]) && (filter.applyVCFFilter))
+                    if ((filter.applyVCFFilter) && (!buffSnpFilter[i]))
                         passed = false;
                     if (passed || (!hideFiltered)) {
                         idxlist.push(i);
@@ -335,12 +374,12 @@
                 rs.SnpFilter = [];
                 for (var i = 0; i < idxlist.length; i++) {
                     var ii = idxlist[i];
-                    rs.SnpRefBase.push(this.buffSnpRefBase[ii]);
-                    rs.SnpAltBase.push(this.buffSnpAltBase[ii]);
-                    rs.AvgCoverage.push(this.buffAvgCoverage[ii]);
-                    rs.SnpAQ.push(this.buffSnpAQ[ii]);
-                    rs.SnpMQ.push(this.buffSnpMQ[ii]);
-                    rs.SnpFilter.push(this.buffSnpFilter[ii]);
+                    rs.SnpRefBase.push(buffSnpRefBase[ii]);
+                    rs.SnpAltBase.push(buffSnpAltBase[ii]);
+                    rs.AvgCoverage.push(buffAvgCoverage[ii]);
+                    rs.SnpAQ.push(buffSnpAQ[ii]);
+                    rs.SnpMQ.push(buffSnpMQ[ii]);
+                    rs.SnpFilter.push(buffSnpFilter[ii]);
                 }
 
                 var seqdata = {};

@@ -133,8 +133,29 @@
                     rs.push(datastr[i * this.length, (i + 1) * this.length])
                 return rs;
             }
+            that.decodeSingle = function (datastr, offset) {
+                return datastr.substring(offset, offset + this.length);
+            }
+            that.getRecordLength = function () { return this.length; };
             return that;
         }
+
+        DataDecoders.Encoder.Boolean = function (info) {
+            var that = {};
+            that.decodeArray = function (datastr) {
+                var rs = [];
+                var ct = datastr.length;
+                for (var i = 0; i < ct; i++)
+                    rs.push(datastr[i] == '1')
+                return rs;
+            }
+            that.decodeSingle = function (datastr, offset) {
+                return datastr[offset] == '1';
+            }
+            that.getRecordLength = function () { return 1; };
+            return that;
+        }
+
 
         DataDecoders.Encoder.Float2B64 = function (info) {
             var that = {};
@@ -146,6 +167,10 @@
             that.decodeArray = function (datastr) {
                 return _b64codec.arrayB642Float(datastr, this.length, this.slope, this.offset);
             }
+            that.decodeSingle = function (datastr, offset) {
+                return _b64codec.B642IntFixed(datastr,offset,this.length)*this.slope+this.offset;
+            }
+            that.getRecordLength = function () { return this.length; };
             return that;
         }
 
@@ -170,6 +195,7 @@
                 }
                 return rs;
             }
+            that.getRecordLength = function () { DQX.reportError("Undefined record length") };
 
             return that;
         }
@@ -181,6 +207,8 @@
                 return DataDecoders.Encoder.FloatList2B64(info);
             if (info['ID'] == 'FixedString')
                 return DataDecoders.Encoder.FixedString(info);
+            if (info['ID'] == 'Boolean')
+                return DataDecoders.Encoder.Boolean(info);
             throw "Invalid encoder id " + info['ID'];
         }
 
