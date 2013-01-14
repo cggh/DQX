@@ -23,7 +23,6 @@
             that.setTitle('Snps');
 
             that.myDataFetcher = new DataFetcherSnp.Fetcher(serverUrl);
-            that.allowScaleOverlay = false;
             that.colorByParent = false;
             that.covRange = 10;
             that.useMagnifyingGlass = false;
@@ -443,6 +442,8 @@
                     drawInfo.rightContext.moveTo(0, py2); drawInfo.rightContext.lineTo(sizeX, py2);
                     drawInfo.rightContext.stroke();
                 }
+
+                this.drawMark(drawInfo);
 
                 if (!alldataready) {
                     drawInfo.centerContext.fillStyle = "rgb(0,192,0)";
