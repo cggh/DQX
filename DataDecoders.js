@@ -116,14 +116,15 @@
             return that;
         }
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Decoder/encoder factory
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Decoder/encoder factory
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         DataDecoders.Encoder = {};
 
         DataDecoders.Encoder.FixedString = function (info) {
             var that = {};
+            DQX.checkIsNumber(info.Len);
             that.length = parseFloat(info.Len);
             that.decodeArray = function (datastr) {
                 var rs = [];
@@ -137,6 +138,7 @@
 
         DataDecoders.Encoder.Float2B64 = function (info) {
             var that = {};
+            DQX.checkIsNumber(info.Len); DQX.checkIsNumber(info.Offset); DQX.checkIsNumber(info.Slope);
             that.offset = parseFloat(info.Offset);
             that.slope = parseFloat(info.Slope);
             that.length = parseFloat(info.Len);
@@ -149,6 +151,7 @@
 
         DataDecoders.Encoder.FloatList2B64 = function (info) {
             var that = {};
+            DQX.checkIsNumber(info.Count); DQX.checkIsNumber(info.RangeOffset); DQX.checkIsNumber(info.RangeSlope);
             that.rangeOffset = parseFloat(info.RangeOffset);
             that.rangeSlope = parseFloat(info.RangeSlope);
             that.count = parseInt(info.Count);
