@@ -135,7 +135,7 @@
                 drawInfo.centerContext.beginPath();
                 for (var i = 0; i < posits.length; i++) {
                     if ((positXCorrRight[i] >= -3) && (positXCorrLeft[i] <= sizeX + 3)) {
-                        drawInfo.centerContext.moveTo(positXCorrLeft[i] + 0.5, topSizeY);
+                        drawInfo.centerContext.moveTo(positXCorrCent[i] + 0.5, topSizeY);
                         drawInfo.centerContext.lineTo(positXUnCorr[i], 0);
                     }
                 }

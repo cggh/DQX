@@ -43,6 +43,7 @@
                 this.dataid = idataid;
                 DQX.setProcessing("Downloading...");
                 this._callOnCompleted = callOnCompleted;
+                this._listSnpPositionInfo = null;
                 DataFetcherFile.getFile(serverUrl, this.dataid + "/_MetaData", $.proxy(this._onFetchMetaInfo, this));
             }
 
@@ -65,6 +66,8 @@
                         }
                     }
                 }
+                if (!this._listSnpPositionInfo)
+                    DQX.reportError("SNP position info is missing");
                 this.mySeqs = {};
                 for (var i = 0; i < this._sequenceIDList.length; i++) {
                     this.mySeqs[this._sequenceIDList[i]] = DataFetcherSnp.SnpSequence(this._sequenceIDList[i]);
@@ -85,7 +88,7 @@
                 }
 
                 //add 2 information fields that are calculated locally
-                this._listSnpPositionInfo.push({ ID: "AvCov", Name: "Average coverage", DataType: "Value", Max: 300, Display:true, getFromServer: false });
+                this._listSnpPositionInfo.push({ ID: "AvCov", Name: "Average coverage", DataType: "Value", Max: 300, Display: true, getFromServer: false });
                 this._listSnpPositionInfo.push({ ID: "AvPurity", Name: "Average purity", DataType: "Value", Max: 1, Display: true, getFromServer: false });
 
                 //create mapping
@@ -141,6 +144,9 @@
                     return;
                 }
 
+                if (!this._listSnpPositionInfo)
+                    return;
+
 
                 this.buffPosits = this.decoder.doDecode(keylist['posits']);
                 var datalen = this.buffPosits.length;
@@ -150,6 +156,8 @@
                 for (var infonr = 0; infonr < this._listSnpPositionInfo.length; infonr++)
                     this.buffSnpPosInfo.push([]);
                 var snpdata = keylist['snpdata'];
+//                if (snpdata[0]!='A')
+//                    var q=0;
                 var posOffset = 0;
                 for (var i = 0; i < datalen; i++) {
                     for (var infonr = 0; infonr < this._listSnpPositionInfo.length; infonr++) {
@@ -242,6 +250,8 @@
                     myurl.addUrlQueryItem("stop", rangemax);
                     myurl.addUrlQueryItem("chromoid", this.myChromoID);
                     myurl.addUrlQueryItem("folder", this.dataid);
+                    myurl.addUrlQueryItem("snpinforeclen", this._recordLength);
+                    
 
                     this._isFetching = true;
                     var thethis = this;

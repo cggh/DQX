@@ -156,6 +156,18 @@
             return that;
         }
 
+        DataDecoders.Encoder.Int2B64 = function (info) {
+            var that = {};
+            DQX.checkIsNumber(info.Len);
+            that.length = parseFloat(info.Len);
+            var _b64codec = DataDecoders.B64();
+            that.decodeSingle = function (datastr, offset) {
+                return _b64codec.B642IntFixed(datastr, offset, this.length);
+            }
+            that.getRecordLength = function () { return this.length; };
+            return that;
+        }
+
 
         DataDecoders.Encoder.Float2B64 = function (info) {
             var that = {};
@@ -201,6 +213,8 @@
         }
 
         DataDecoders.Encoder.Create = function (info) {
+            if (info['ID'] == 'Int2B64')
+                return DataDecoders.Encoder.Int2B64(info);
             if (info['ID'] == 'Float2B64')
                 return DataDecoders.Encoder.Float2B64(info);
             if (info['ID'] == 'FloatList2B64')

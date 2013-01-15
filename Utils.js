@@ -3,9 +3,14 @@
         //Inject DQX into the global namespace so that click handlers can find it
         DQX = {};
 
+        DQX.reportError = function (txt) {
+            alert("ERROR: " + txt);
+            throw txt;
+        }
+
         DQX.foreach = function (arr, arg, fnc) {
             for (var i = 0; i < arr.length; i++)
-                fnc(arr[i],arg);
+                fnc(arr[i], arg);
         }
 
         //Sort helpers
