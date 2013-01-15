@@ -154,7 +154,7 @@
                 drawInfo.centerContext.stroke();
                 drawInfo.centerContext.globalAlpha = 1;
 
-                if (this.colorByParent) {//determine parent states
+                if (this.colorByParent && (this.parentIDs.length == 2)) {//determine parent states
                     var parentstates = [];
                     for (var pnr = 0; pnr < 2; pnr++) {
                         var cov1 = data.seqdata[this.parentIDs[pnr]].cov1;
@@ -264,7 +264,7 @@
                                 if (pres[i]) {
                                     var covtot = cov1[i] + cov2[i];
                                     var frac = cov2[i] * 1.0 / covtot;
-                                    if (this.colorByParent) {
+                                    if (this.colorByParent && (this.parentIDs.length == 2)) {
                                         if (!parentpresents[i]) {
                                             colornr = 99;
                                             if (colornr != lastcolornr) {
@@ -580,7 +580,7 @@
                 drawInfo.leftContext.textAlign = 'left';
 
                 //indicate structural variations
-                var posY = graphOffsetY+1;
+                var posY = graphOffsetY + 1;
                 var channelSizeY = 18;
                 for (var i = 0; i < posits.length; i++) {
                     if ((positXCorrRight[i] >= -40) && (positXCorrLeft[i] <= sizeX + 40)) {
@@ -701,6 +701,7 @@
             }
 
             that.sortByParents = function () {
+                if (this.parentIDs.length != 2) return;
                 var seqdata = [];
                 data = this.data;
                 for (var seqnr = 0; seqnr < this.mySeqIDs.length; seqnr++) {

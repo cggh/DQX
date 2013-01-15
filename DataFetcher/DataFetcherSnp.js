@@ -156,8 +156,8 @@
                 for (var infonr = 0; infonr < this._listSnpPositionInfo.length; infonr++)
                     this.buffSnpPosInfo.push([]);
                 var snpdata = keylist['snpdata'];
-//                if (snpdata[0]!='A')
-//                    var q=0;
+                //                if (snpdata[0]!='A')
+                //                    var q=0;
                 var posOffset = 0;
                 for (var i = 0; i < datalen; i++) {
                     for (var infonr = 0; infonr < this._listSnpPositionInfo.length; infonr++) {
@@ -251,7 +251,7 @@
                     myurl.addUrlQueryItem("chromoid", this.myChromoID);
                     myurl.addUrlQueryItem("folder", this.dataid);
                     myurl.addUrlQueryItem("snpinforeclen", this._recordLength);
-                    
+
 
                     this._isFetching = true;
                     var thethis = this;
@@ -421,7 +421,7 @@
                 rs.seqdata = seqdata;
 
                 var extrafilterstep = false;
-                if (filter.requireParentsPresent) {
+                if (filter.requireParentsPresent && (this._parentIDs.length == 2)) {
                     extrafilterstep = true;
                     for (var i = 0; i < posits.length; i++) {
                         var parentspresent = true;
@@ -434,13 +434,15 @@
                 }
 
                 if ((extrafilterstep) && hideFiltered) {
-                    globchannels = [rs.posits, rs.isFiltered, rs.SnpRefBase, rs.SnpAltBase, rs.AvgCoverage, rs.SnpAQ, rs.SnpMQ];
+                    globchannels = [rs.posits, rs.isFiltered, rs.SnpRefBase, rs.SnpAltBase];
                     seqchannelnames = ['cov1', 'cov2', 'pres'];
                     var i2 = 0;
                     for (var i = 0; i < posits.length; i++) {
                         if (!isFiltered[i]) {
-                            for (var chnr in globchannels)
+                            for (var chnr = 0; chnr < globchannels.length; chnr++)
                                 globchannels[chnr][i2] = globchannels[chnr][i];
+                            for (var chnr = 0; chnr < rs.SnpPosInfo.length; chnr++)
+                                rs.SnpPosInfo[chnr][i2] = rs.SnpPosInfo[chnr][i];
                             for (seqid in this.mySeqs) {
                                 for (chnr in seqchannelnames) {
                                     seqdata[seqid][seqchannelnames[chnr]][i2] = seqdata[seqid][seqchannelnames[chnr]][i];
@@ -451,6 +453,9 @@
                     }
                     for (var chnr in globchannels)
                         globchannels[chnr].length = i2;
+                    for (var chnr = 0; chnr < rs.SnpPosInfo.length; chnr++)
+                        rs.SnpPosInfo[chnr].length = i2;
+
                     for (seqid in this.mySeqs) {
                         for (chnr in seqchannelnames) {
                             seqdata[seqid][seqchannelnames[chnr]].length = i2;
