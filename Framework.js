@@ -194,6 +194,14 @@
                 return this;
             }
 
+            //Converts a generic frame into a horizontal splitter
+            that.makeGroupHor = function () {
+                if (this.myType != '-')
+                    throw 'Frame is not generic';
+                this.myType = 'GroupHor';
+                return this;
+            }
+
             //Specifies the minimum size of the frame in a given dimension
             that.setMinSize = function (dim, sze) {
                 Framework.isValidDim(dim);
