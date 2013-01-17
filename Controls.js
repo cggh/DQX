@@ -833,24 +833,40 @@
                 that._width = args.width;
             if ('height' in args)
                 that._height = args.height;
+            that._checkList = false;
+            if ('checkList' in args)
+                that._checkList = args.checkList;
             that._items = [];
             that._activeItem = null;
 
             that._controlExtensionList.push('');
 
+            that._getLineID = function (itemID) {
+                return this.getFullID('_item_' + itemID);
+            }
+            that._getCheckID = function (itemID) {
+                return this.getFullID('_check_' + itemID);
+            }
+
             that._renderItems = function () {
                 var lst = '';
                 for (var i = 0; i < this._items.length; i++) {
-                    var line = DocEl.Div();
-                    line.setID(this._items[i].id);
-                    if (this._activeItem == this._items[i].id)
+                    var item = this._items[i];
+                    var line = DocEl.Div({ id: this._getLineID(item.id) });
+                    //line.setID(item.id);
+                    if (this._activeItem == item.id)
                         line.setCssClass('DQXLargeListItemSelected');
                     else
                         line.setCssClass('DQXLargeListItem');
-                    //                    if (this.items[i].icon) {
-                    //                        line.addElem('<IMG SRC="' + this.items[i].icon + '" border=0 ALT="" TITLE="" style="float:left;padding-right:6px">');
-                    //                    }
-                    line.addElem(this._items[i].content);
+                    if (this._checkList) {
+                        var checkArea = DocEl.Div({ parent: line });
+                        checkArea.addStyle('float', 'left');
+                        checkArea.addStyle('margin-right', '7px');
+                        var chk = DocEl.Check({ id: this._getCheckID(item.id), parent: checkArea });
+                        if (item.checked)
+                            chk.addAttribute('checked', "checked");
+                    }
+                    line.addElem(item.content);
                     lst += line.toString();
                 }
                 return lst;
@@ -858,10 +874,21 @@
 
             that.setItems = function (lst, activeItem) {
                 this._items = lst;
+                this._itemsMap = {};
+                for (var nr = 0; nr < this._items.length; nr++)
+                    this._itemsMap[this._items[nr].id] = this._items[nr];
                 if (typeof activeItem != 'undefined')
                     this._activeItem = activeItem;
                 this.getJQElement('').html(this._renderItems());
-                //this.postCreateHtml();
+            }
+
+            that.findItem = function (itemID) {
+                if (!this._itemsMap)
+                    DQX.reportError('List items not initialised');
+                var rs = this._itemsMap[itemID];
+                if (!rs)
+                    DQX.reportError('Item not present in the list: ' + itemID);
+                return rs;
             }
 
             that.renderHtml = function () {
@@ -875,19 +902,39 @@
             }
 
             that.postCreateHtml = function () {
-                this.getJQElement('').mousedown($.proxy(that._onChange, that));
+                var target = 'mousedown.itemevent';
+                this.getJQElement('').unbind(target).bind(target, $.proxy(that._onChange, that));
+
+                var target = 'change.itemevent';
+                this.getJQElement('').unbind(target).bind(target, $.proxy(that._onChangeCheck, that));
+
+            }
+
+            that._event2ListItem = function (ev) {
+                var ctrlID = ev.target.id;
+                if (ctrlID == '')
+                    ctrlID = $(ev.target).parent().attr('id');
+                var itemID = null;
+                for (var i = 0; i < this._items.length; i++) {
+                    var item = this._items[i];
+                    if ((ctrlID == this._getLineID(item.id)) || (ctrlID == this._getCheckID(item.id)))
+                        itemID = item.id;
+                }
+                return itemID;
+            }
+
+            that._onChangeCheck = function (ev) {
+                var itemID = this._event2ListItem(ev);
+                if (itemID) {
+                    this.findItem(itemID).checked = $('#' + this._getCheckID(itemID)).is(':checked');
+                    this._notifyChanged();
+                }
             }
 
             that._onChange = function (ev) {
-                var id = ev.target.id;
-                if (id == '')
-                    id = $(ev.target).parent().attr('id');
-                var inList = false;
-                for (var i = 0; i < this._items.length; i++)
-                    if (id == this._items[i].id)
-                        inList = true;
-                if (inList)
-                    this.modifyValue(id);
+                var itemID = this._event2ListItem(ev);
+                if (itemID)
+                    this.modifyValue(itemID);
             }
 
             that.getValue = function () {
@@ -896,10 +943,20 @@
 
             that.modifyValue = function (newvalue) {
                 if (this._activeItem)
-                    this.getJQElement('').children('#' + this._activeItem).addClass('DQXLargeListItem').removeClass('DQXLargeListItemSelected');
-                this.getJQElement('').children('#' + newvalue).removeClass('DQXLargeListItem').addClass('DQXLargeListItemSelected');
+                    this.getJQElement('').children('#' + this._getLineID(this._activeItem)).addClass('DQXLargeListItem').removeClass('DQXLargeListItemSelected');
+                this.getJQElement('').children('#' + this._getLineID(newvalue)).removeClass('DQXLargeListItem').addClass('DQXLargeListItemSelected');
                 this._activeItem = newvalue;
                 this._notifyChanged();
+            }
+
+            that.getCheckedItems = function () {
+                var items = [];
+                for (var i = 0; i < this._items.length; i++) {
+                    var item = this._items[i];
+                    if ($('#' + this._getCheckID(item.id)).is(':checked'))
+                        items.push(item.id);
+                }
+                return items;
             }
 
             return that;
