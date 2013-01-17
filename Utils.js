@@ -408,7 +408,8 @@
         DQX.getMouseWheelDelta = function (ev) {
             var delta = 0;
             if (ev.wheelDelta) { delta = ev.wheelDelta / 120; }
-            if (ev.detail) { delta = -ev.detail / 3; }
+            else
+                if (ev.detail) { delta = -ev.detail / 3; }
             return delta;
         }
 

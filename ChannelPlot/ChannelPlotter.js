@@ -244,7 +244,7 @@
                 var PosX = this._channels[0].getEventPosX(ev); //a dirty solution to find the offset inside a center panel of a channel
                 var delta = DQX.getMouseWheelDelta(ev);
 
-                var dff = 1.3 * Math.abs(delta); //unit zoom factor
+                var dff = 1+0.3 * Math.abs(delta); //unit zoom factor
 
                 if (delta < 0) {//zoom out
                     this._offsetX = this._offsetX / dff - PosX * (dff - 1) / dff;

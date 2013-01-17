@@ -764,7 +764,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7f7f7', end
     cursor:pointer;
     border:2px solid black;
     box-shadow: 2px 2px 6px rgba(0,0,0,0.45); 
-    padding:8px;
+    padding:6px;
     border-radius: 5px;
 	/*border-style: outset;*/
 }  
