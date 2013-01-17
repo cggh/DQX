@@ -836,6 +836,9 @@
             that._checkList = false;
             if ('checkList' in args)
                 that._checkList = args.checkList;
+            that._allowSelectItem = true;
+            if ('allowSelectItem' in args)
+                that._allowSelectItem = args.allowSelectItem;
             that._items = [];
             that._activeItem = null;
 
@@ -911,20 +914,23 @@
             }
 
             that._event2ListItem = function (ev) {
+                rs = { itemID: null, inCheckBox: false };
                 var ctrlID = ev.target.id;
                 if (ctrlID == '')
                     ctrlID = $(ev.target).parent().attr('id');
-                var itemID = null;
                 for (var i = 0; i < this._items.length; i++) {
                     var item = this._items[i];
-                    if ((ctrlID == this._getLineID(item.id)) || (ctrlID == this._getCheckID(item.id)))
-                        itemID = item.id;
+                    if ((ctrlID == this._getLineID(item.id)) || (ctrlID == this._getCheckID(item.id))) {
+                        rs.itemID = item.id;
+                        if (ctrlID == this._getCheckID(item.id))
+                            rs.inCheckBox = true;
+                    }
                 }
-                return itemID;
+                return rs;
             }
 
             that._onChangeCheck = function (ev) {
-                var itemID = this._event2ListItem(ev);
+                var itemID = this._event2ListItem(ev).itemID;
                 if (itemID) {
                     this.findItem(itemID).checked = $('#' + this._getCheckID(itemID)).is(':checked');
                     this._notifyChanged();
@@ -932,9 +938,24 @@
             }
 
             that._onChange = function (ev) {
-                var itemID = this._event2ListItem(ev);
-                if (itemID)
-                    this.modifyValue(itemID);
+                var info = this._event2ListItem(ev)
+                var itemID = info.itemID;
+                if (itemID) {
+                    if (this._allowSelectItem) {
+                        this.modifyValue(itemID);
+                    }
+                    else {
+                        if (!info.inCheckBox) {
+                            var elem = $('#' + this._getCheckID(itemID));
+                            var isChecked = checked = elem.is(':checked');
+                            if (!isChecked)
+                                elem.attr('checked', 'checked');
+                            else
+                                elem.removeAttr('checked');
+                            this._notifyChanged();
+                        }
+                    }
+                }
             }
 
             that.getValue = function () {
