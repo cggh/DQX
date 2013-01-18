@@ -244,23 +244,22 @@
                 var PosX = this._channels[0].getEventPosX(ev); //a dirty solution to find the offset inside a center panel of a channel
                 var delta = DQX.getMouseWheelDelta(ev);
 
-                var dff = 1+0.3 * Math.abs(delta); //unit zoom factor
-
-                if (delta < 0) {//zoom out
-                    this._offsetX = this._offsetX / dff - PosX * (dff - 1) / dff;
-                    this._zoomFactX /= dff;
-                }
-                else {//zoom in
-                    dff = Math.min(dff, this._MaxZoomFactX / this._zoomFactX);
-                    this._offsetX = this._offsetX * dff + PosX * (dff - 1);
-                    this._zoomFactX *= dff;
-                }
-                this.clipViewRange();
-                //this.delToolTip();
-                this.updateNavigator();
-                this.render();
+                if (delta < 0)//zoom out
+                    var scaleFactor = 1.0 / (1.0 + 0.4 * Math.abs(delta));
+                else//zoom in
+                    var scaleFactor = 1.0 + 0.4 * Math.abs(delta);
+                this.reScale(scaleFactor,PosX);
                 ev.returnValue = false;
                 return false;
+            }
+
+            that.reScale = function (scaleFactor, centerPosX) {
+                dff = Math.min(scaleFactor, this._MaxZoomFactX / this._zoomFactX);
+                this._offsetX = this._offsetX * dff + centerPosX * (dff - 1);
+                this._zoomFactX *= dff;
+                this.clipViewRange();
+                this.updateNavigator();
+                this.render();
             }
 
             //Internal: this function is called by e.g. DQX.DataFetcher.Curve class to notify that data is ready and the plot should be redrawn

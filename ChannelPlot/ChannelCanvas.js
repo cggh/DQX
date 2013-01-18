@@ -147,6 +147,9 @@
                 canvasElement.addEventListener("touchstart", $.proxy(that._onTouchStart, that), false);
                 canvasElement.addEventListener("touchmove", $.proxy(that._onTouchMove, that), false);
                 canvasElement.addEventListener("touchend", $.proxy(that._onTouchEnd, that), false);
+                canvasElement.addEventListener("gesturestart", $.proxy(that._onGestureStart, that), false);
+                canvasElement.addEventListener("gesturechange", $.proxy(that._onGestureChange, that), false);
+                canvasElement.addEventListener("gestureend", $.proxy(that._onGestureEnd, that), false);
 
 
                 if (this.needVScrollbar()) {
@@ -216,6 +219,22 @@
                 this.getMyPlotter().handleMouseUp(that, ev, null);
             }
 
+            that._onGestureStart = function (ev) {
+                this.previousScale = 1.0;
+                this.scaleCenterPosxX = 200;
+                if (ev.pageX)
+                    this.scaleCenterPosxX = ev.pageX - $(this.getCanvasElement('center')).offset().left;
+            }
+
+            that._onGestureChange = function (ev) {
+                if (ev.scale) {
+                    this.getMyPlotter().reScale(ev.scale / this.previousScale, this.scaleCenterPosxX);
+                    this.previousScale = ev.scale;
+                }
+            }
+
+            that._onGestureEnd = function (ev) {
+            }
 
             that._onMouseDown = function (ev) {
                 $(document).bind("mouseup.ChannelCanvas", $.proxy(that._onMouseDragUp, that));
