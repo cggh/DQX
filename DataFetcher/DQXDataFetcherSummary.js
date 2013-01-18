@@ -183,7 +183,7 @@ DQX.DataFetcher.Summary = function (iserverurl, iminBlockSize, idesiredPointCoun
     this.minBlockSize = iminBlockSize;
     this.maxBlockSize = 1.0e9;
     this.myColumns = {};
-    this.myChromoID = '';
+    this._myChromoID = '';
 
     this._isFetching = false;
 
@@ -218,7 +218,7 @@ DQX.DataFetcher.Summary = function (iserverurl, iminBlockSize, idesiredPointCoun
 
     //sets the active chromosome identifier for this data fetcher
     this.setChromoID = function (iID) {
-        this.myChromoID = iID;
+        this._myChromoID = iID;
         this.clearData();
     }
 
@@ -360,7 +360,7 @@ DQX.DataFetcher.Summary = function (iserverurl, iminBlockSize, idesiredPointCoun
             //prepare the url
             var myurl = DQX.Url(this.serverurl);
             myurl.addUrlQueryItem("datatype", 'summinfo');
-            myurl.addUrlQueryItem("dataid", this.myChromoID);
+            myurl.addUrlQueryItem("dataid", this._myChromoID);
             myurl.addUrlQueryItem("ids", collist);
             myurl.addUrlQueryItem("blocksize", blockSize);
             myurl.addUrlQueryItem("blockstart", blockStart);

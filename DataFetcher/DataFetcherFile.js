@@ -14,12 +14,13 @@
                 success: function (resp) {
                     var keylist = DQX.parseResponse(resp);
                     if ("Error" in keylist) {//!!!todo: some error handling
+                        DQX.stopProcessing();
                         return;
                     }
                     handler(Base64.decode(keylist.content));
                 },
                 error: function (resp) {//!!!todo: some error handling
-                    var q = 0;
+                    DQX.stopProcessing();
                 }
             });
         }

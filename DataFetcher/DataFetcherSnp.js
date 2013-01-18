@@ -30,13 +30,19 @@
             this.dataid = null; //not yet assigned
             this._sequenceIDList = [];
             this._parentIDs = [];
-            this.myChromoID = '';
+            this._myChromoID = '';
             this.decoder = DataDecoders.ValueListDecoder();
             this.b64codec = DataDecoders.B64();
 
             //The currently fetched range of data
             this._currentRangeMin = 1000.0;
             this._currentRangeMax = -1000.0;
+            this._autoExtendRange = true;
+
+            //Enables or disables automatic extension of fetch range
+            this.setAutoExtendRange = function (status) {
+                this._autoExtendRange = status;
+            }
 
             this.setDataSource = function (idataid, callOnCompleted) {
                 this.clearData();
@@ -45,6 +51,19 @@
                 this._callOnCompleted = callOnCompleted;
                 this._listSnpPositionInfo = null;
                 DataFetcherFile.getFile(serverUrl, this.dataid + "/_MetaData", $.proxy(this._onFetchMetaInfo, this));
+            }
+
+            //sets the list of sequence ID's that should be fetched
+            this.setFetchSequenceIDList = function (lst) {
+                if (!this._sequenceIDListOriginal)
+                    DQX.reportError('SNP fetcher not initialised');
+                this._sequenceIDList = [];
+                var self = this;
+                $.each(lst, function (idx, ID) {
+                    if (self._sequenceIDListOriginal.indexOf(ID) < 0)
+                        DQX.reportError('Invalid sequence ID');
+                    self._sequenceIDList.push(ID);
+                });
             }
 
             this._onFetchMetaInfo = function (content) {
@@ -66,6 +85,11 @@
                         }
                     }
                 }
+                this._sequenceIDListOriginal = [];
+                var self = this;
+                $.each(this._sequenceIDList, function (idx, ID) {
+                    self._sequenceIDListOriginal.push(ID);
+                });
                 if (!this._listSnpPositionInfo)
                     DQX.reportError("SNP position info is missing");
                 this.mySeqs = {};
@@ -118,7 +142,7 @@
 
             //sets the active chromosome identifier for this data fetcher
             this.setChromoID = function (iID) {
-                this.myChromoID = iID;
+                this._myChromoID = iID;
                 this.clearData();
             }
 
@@ -232,8 +256,10 @@
                 if (!this._isFetching) {
                     //create some buffer around the requested range. This reduces the number of requests and gives the user a smoother experience when scrolling or zooming out
                     range = rangemax - rangemin;
-                    rangemin -= 1.5 * range;
-                    rangemax += 1.5 * range;
+                    if (this._autoExtendRange) {
+                        rangemin -= 1.5 * range;
+                        rangemax += 1.5 * range;
+                    }
                     var seqids = '';
                     for (seqid in this.mySeqs) {
                         if (seqids.length > 0)
@@ -248,7 +274,7 @@
                     myurl.addUrlQueryItem("seqids", seqids);
                     myurl.addUrlQueryItem("start", rangemin);
                     myurl.addUrlQueryItem("stop", rangemax);
-                    myurl.addUrlQueryItem("chromoid", this.myChromoID);
+                    myurl.addUrlQueryItem("chromoid", this._myChromoID);
                     myurl.addUrlQueryItem("folder", this.dataid);
                     myurl.addUrlQueryItem("snpinforeclen", this._recordLength);
 

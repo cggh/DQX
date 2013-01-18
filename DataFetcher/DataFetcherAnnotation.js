@@ -18,7 +18,7 @@
 
 
 
-            this.myChromoID = "";
+            this._myChromoID = "";
             this._currentRangeMin = 1000.0;
             this._currentRangeMax = -1000.0;
             this.myStartList = [];
@@ -85,7 +85,7 @@
                     rangemax += range;
                     var myurl = DQX.Url(this.config.serverURL);
                     myurl.addUrlQueryItem('datatype', 'annot');
-                    myurl.addUrlQueryItem('chrom', this.translateChromoId(this.myChromoID));
+                    myurl.addUrlQueryItem('chrom', this.translateChromoId(this._myChromoID));
                     myurl.addUrlQueryItem('start', rangemin);
                     myurl.addUrlQueryItem('stop', rangemax);
                     myurl.addUrlQueryItem('table', this.annotTableName);
@@ -105,7 +105,7 @@
             }
 
             this.setChromoID = function (chromoid) {
-                this.myChromoID = chromoid;
+                this._myChromoID = chromoid;
             }
 
 
