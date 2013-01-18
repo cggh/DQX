@@ -124,12 +124,30 @@
                 this.render();
             }
 
+            that._onScrollRight = function () {
+                this._myNavigator.setValue(Math.min(1.0 - this._myNavigator.ScrollSize, this._myNavigator.scrollPos + this._myNavigator.ScrollSize / 2));
+                this.zoomScrollTo(this._myNavigator.scrollPos, this._myNavigator.ScrollSize);
+                this.render();
+            }
+            that._onScrollLeft = function () {
+                this._myNavigator.setValue(Math.max(0, this._myNavigator.scrollPos - this._myNavigator.ScrollSize / 2));
+                this.zoomScrollTo(this._myNavigator.scrollPos, this._myNavigator.ScrollSize);
+                this.render();
+            }
+
+            that._onZoomIn = function () {
+                this.reScale(1.5);
+            }
+
+            that._onZoomOut = function () {
+                this.reScale(1.0/1.5);
+            }
 
             //internal: request gene list was succesful
             that._ajaxResponse_FindGene = function (resp) {
                 var keylist = DQX.parseResponse(resp); //unpack the response
                 if ("Error" in keylist) {
-                    this.getElemJQ("FeatureHits").html("Failed to fetch data: "+keylist["Error"]);
+                    this.getElemJQ("FeatureHits").html("Failed to fetch data: " + keylist["Error"]);
                     return;
                 }
                 var vallistdecoder = DataDecoders.ValueListDecoder();
@@ -215,12 +233,33 @@
                 }
             }
 
+            //Prepare header
             var headerDiv = DocEl.Div();
-            headerDiv.addStyle('padding', '3px');
-            headerDiv.addElem('Chromosome: ');
-            var chromopicker = DocEl.Select([], '', { id: that.getSubID("ChromoPicker"), parent: headerDiv });
+            headerDiv.addStyle('padding', '4px');
+            var chromPickerDiv = DocEl.Div({ parent: headerDiv });
+            chromPickerDiv.addStyle('float', 'left');
+            chromPickerDiv.addElem('Chromosome: ');
+            chromPickerDiv.addStyle('padding', '5px');
+            var chromopicker = DocEl.Select([], '', { id: that.getSubID("ChromoPicker"), parent: chromPickerDiv });
+
+            var navButtonDiv = DocEl.Div({ parent: headerDiv });
+            navButtonDiv.addStyle('float', 'left');
+            var bts = [];
+            bts.push(DocEl.JavaScriptBitmaplink(DQXBMP('zoomin1.png'), "Zoom in", "", { id: that.getSubID('Zoomin'), parent: navButtonDiv }));
+            bts.push(DocEl.JavaScriptBitmaplink(DQXBMP('zoomout1.png'), "Zoom out", "", { id: that.getSubID('Zoomout'), parent: navButtonDiv }));
+            bts.push(DocEl.JavaScriptBitmaplink(DQXBMP('arrow3left.png'), "Scroll left", "", { id: that.getSubID('ScrollLeft'), parent: navButtonDiv }));
+            bts.push(DocEl.JavaScriptBitmaplink(DQXBMP('arrow3right.png'), "Scroll right", "", { id: that.getSubID('ScrollRight'), parent: navButtonDiv }));
+            $.each(bts, function (idx, bt) {
+                bt.addStyle('padding-left', '7px');
+                bt.addStyle('padding-right', '7px');
+            });
             that.getElemJQ('Header').html(headerDiv.toString());
             that.getElemJQ("ChromoPicker").change($.proxy(that._onChangeChromosome, that));
+            that.getElemJQ("ScrollLeft").mousedown($.proxy(that._onScrollLeft, that));
+            that.getElemJQ("ScrollRight").mousedown($.proxy(that._onScrollRight, that));
+            that.getElemJQ("Zoomin").mousedown($.proxy(that._onZoomIn, that));
+            that.getElemJQ("Zoomout").mousedown($.proxy(that._onZoomOut, that));
+
 
             var footerDiv = DocEl.Div();
             footerDiv.addStyle('padding', '3px');

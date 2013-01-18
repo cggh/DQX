@@ -29,7 +29,8 @@
             //Sets the scroll position & size
             that.setValue = function (iPos, iSize) {
                 this.scrollPos = iPos;
-                this.ScrollSize = iSize;
+                if (iSize)
+                    this.ScrollSize = iSize;
                 this.draw();
             }
 
@@ -109,7 +110,7 @@
 
                 //text
                 var txt = "Zoom: " + (1.0 / that.ScrollSize).toFixed(that.ScrollSize > 0.1 ? 1 : 0) + "x";
-                centercontext.globalAlpha = 0.75;
+                centercontext.globalAlpha = 1;
                 centercontext.fillStyle = "rgb(255,255,200)";
                 centercontext.font = '13px sans-serif';
                 centercontext.textBaseline = 'middle';
@@ -135,7 +136,7 @@
                 if (px2 > this.ScrollAreaStartX + this.ScrollAreaSizeX) px2 = this.ScrollAreaStartX + this.ScrollAreaSizeX;
 
                 //scroll bar position indicators
-                centercontext.globalAlpha = 0.7;
+                centercontext.globalAlpha = 1;
                 centercontext.fillStyle = "rgb(255,255,200)";
                 centercontext.font = '11px sans-serif';
                 centercontext.textBaseline = 'top';

@@ -547,14 +547,14 @@
 
         ChannelCanvas.XScale = function (id) {
             var that = ChannelCanvas.Base(id);
-            that._height = 23;
+            that._height = 25;
 
             that.draw = function (drawInfo) {
-                this.drawStandardGradientCenter(drawInfo, 0.4);
-                this.drawStandardGradientLeft(drawInfo, 0.4);
-                this.drawStandardGradientRight(drawInfo, 0.4);
+                this.drawStandardGradientCenter(drawInfo, 0.74);
+                this.drawStandardGradientLeft(drawInfo, 0.74);
+                this.drawStandardGradientRight(drawInfo, 0.74);
 
-                drawInfo.centerContext.fillStyle = DQX.Color(0.85, 0.85, 0.85).toString();
+                drawInfo.centerContext.fillStyle = DQX.Color(0.3, 0.3, 0.3).toString();
                 drawInfo.centerContext.font = '11px sans-serif';
                 drawInfo.centerContext.textBaseline = 'top';
                 drawInfo.centerContext.textAlign = 'center';
@@ -569,16 +569,16 @@
                     var psx = Math.round((value) * drawInfo.zoomFactX - drawInfo.offsetX) + 0.5;
                     if ((psx >= -50) && (psx <= drawInfo.sizeCenterX + 50)) {
                         if (i % drawInfo.HorAxisScaleJumps.JumpReduc == 0) {
-                            drawInfo.centerContext.strokeStyle = DQX.Color(0.6, 0.6, 0.6).toString();
-                            drawInfo.centerContext.moveTo(psx, 15);
-                            drawInfo.centerContext.lineTo(psx, 30);
+                            drawInfo.centerContext.strokeStyle = DQX.Color(0.1, 0.1, 0.1).toString();
+                            drawInfo.centerContext.moveTo(psx, 19);
+                            drawInfo.centerContext.lineTo(psx, 25);
                             drawInfo.centerContext.stroke();
-                            drawInfo.centerContext.fillText((value / 1.0e6), psx, 2);
+                            drawInfo.centerContext.fillText((value / 1.0e6), psx, 7);
                         }
                         else {
-                            drawInfo.centerContext.strokeStyle = DQX.Color(0.5, 0.5, 0.5).toString();
-                            drawInfo.centerContext.moveTo(psx, 18);
-                            drawInfo.centerContext.lineTo(psx, 23);
+                            drawInfo.centerContext.strokeStyle = DQX.Color(0.3, 0.3, 0.3).toString();
+                            drawInfo.centerContext.moveTo(psx, 22);
+                            drawInfo.centerContext.lineTo(psx, 25);
                             drawInfo.centerContext.stroke();
                         }
                     }

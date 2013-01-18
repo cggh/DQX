@@ -10,7 +10,7 @@
             that._leftWidth = 120;
             that._rightWidth = 0; //size of the right side panel
             that._rightOffset = 0; //size of the right offset, including e.g. area for vertical scroll bars
-            that._headerHeight = 30;
+            that._headerHeight = 35;
             that._footerHeight = 30;
             that._navigatorHeight = 30;
             that._channels = [];
@@ -72,6 +72,15 @@
                 header.addStyle('overflow', 'hidden');
                 html += header;
             }
+            {//Create navigator (scrollbar & zoomslider)
+                var el = DocEl.Div({ id: that.getSubID("Navigator") });
+                el.setWidthFull();
+                el.addStyle("white-space", "nowrap").addStyle("overflow", "hidden");
+                var scroll = DocEl.Create('canvas', { parent: el, id: that.getSubID("HScroller") });
+                scroll.setWidthPx(10).addAttribute("height", that._navigatorHeight);
+                scroll.setWidthPx(10).setHeightPx(that._navigatorHeight);
+                html += el;
+            }
             {//Create body
                 var body = DocEl.Div({ id: that.getSubID("Body") });
                 body.setWidthFull();
@@ -88,15 +97,6 @@
                     body2.addStyle('overflow-y', 'scroll');
                 }
                 html += body;
-            }
-            {//Create navigator (scrollbar & zoomslider)
-                var el = DocEl.Div({ id: that.getSubID("Navigator") });
-                el.setWidthFull();
-                el.addStyle("white-space", "nowrap").addStyle("overflow", "hidden");
-                var scroll = DocEl.Create('canvas', { parent: el, id: that.getSubID("HScroller") });
-                scroll.setWidthPx(10).addAttribute("height", that._navigatorHeight);
-                scroll.setWidthPx(10).setHeightPx(that._navigatorHeight);
-                html += el;
             }
             {//Create footer
                 var footer = DocEl.Div({ id: that.getSubID("Footer") });
@@ -248,12 +248,15 @@
                     var scaleFactor = 1.0 / (1.0 + 0.4 * Math.abs(delta));
                 else//zoom in
                     var scaleFactor = 1.0 + 0.4 * Math.abs(delta);
-                this.reScale(scaleFactor,PosX);
+                this.reScale(scaleFactor, PosX);
                 ev.returnValue = false;
                 return false;
             }
 
             that.reScale = function (scaleFactor, centerPosX) {
+                if (!centerPosX) {
+                    centerPosX = this.getElemJQ('').innerHeight()/2.0;
+                }
                 dff = Math.min(scaleFactor, this._MaxZoomFactX / this._zoomFactX);
                 this._offsetX = this._offsetX * dff + centerPosX * (dff - 1);
                 this._zoomFactX *= dff;
