@@ -71,7 +71,7 @@ DQX.Encoder.Create = function (info) {
         return DQX.Encoder.FloatList2B64(info);
     if (info['ID'] == 'FixedString')
         return DQX.Encoder.FixedString(info);
-    throw "Invalid encoder id " + info['ID'];
+    DQX.reportError("Invalid encoder id " + info['ID']);
 }
 
 // A class that contains the downloaded summary data for a single level. blocksize is the number of positions in this level
@@ -175,7 +175,7 @@ DQX.DataFetcher.SummaryColumn = function (iid, ifolder, iconfig, ipropid, iColor
 //////////////////////////////////////////////////////////////////////////////////////
 
 DQX.DataFetcher.Summary = function (iserverurl, iminBlockSize, idesiredPointCount) {
-    if (!(this instanceof arguments.callee)) throw "Should be called as constructor!";
+    if (!(this instanceof arguments.callee)) DQX.reportError("Should be called as constructor!");
 
     this.desiredPointCount = idesiredPointCount;
 
@@ -193,7 +193,7 @@ DQX.DataFetcher.Summary = function (iserverurl, iminBlockSize, idesiredPointCoun
     this.addFetchColumn = function (ifolder, iconfig, ipropid, color) {
         var cid = ifolder + '_' + iconfig + '_' + ipropid;
         if (cid in this.myColumns)
-            throw "Column id already present: " + cid;
+            DQX.reportError("Column id already present: " + cid);
         this.myColumns[cid] = DQX.DataFetcher.SummaryColumn(cid, ifolder, iconfig, ipropid, color);
         this.clearData();
         return this.myColumns[cid];

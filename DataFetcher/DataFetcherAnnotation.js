@@ -3,7 +3,7 @@
         var DataFetcherAnnotation = {}
 
         DataFetcherAnnotation.Fetcher = function (iconfig) {
-            if (!(this instanceof arguments.callee)) throw "Should be called as constructor!";
+            if (!(this instanceof arguments.callee)) DQX.reportError("Should be called as constructor!");
 
             this.config = iconfig;
             DQX.assertPresence(this.config, 'serverURL');

@@ -10,7 +10,7 @@ define([DQXSCJQ(), DQXSC("Msg")],
 
             updateState: function () {
                 if (this.globalLoadState == null)
-                    throw 'globalLoadState is not defined';
+                    DQX.reportError('globalLoadState is not defined');
                 this.globalLoadState(this.stateKeys);
             },
 
@@ -63,7 +63,7 @@ define([DQXSCJQ(), DQXSC("Msg")],
                 HistoryManager.views.push(view);
                 if (view.myStateID) {
                     if (view.myStateD in HistoryManager.viewsMap)
-                        throw "Duplicate view state id";
+                        DQX.reportError("Duplicate view state id");
                     HistoryManager.viewsMap[view.myStateID] = view;
                 }
             },
@@ -79,7 +79,7 @@ define([DQXSCJQ(), DQXSC("Msg")],
                     if (view.myFrame != null) {
                         if (newid == view.myFrame.myFrameID) {
                             if (activeView)
-                                throw "Duplicate matching view";
+                                DQX.reportError("Duplicate matching view");
                             activeView = view;
                         }
                     }
@@ -91,7 +91,7 @@ define([DQXSCJQ(), DQXSC("Msg")],
                         if (view.myFrame != null) {
                             if (view.myFrame.isVisible()) {
                                 if (activeView)
-                                    throw "Duplicate matching view";
+                                    DQX.reportError("Duplicate matching view");
                                 activeView = view;
                             }
                         }
@@ -112,7 +112,7 @@ define([DQXSCJQ(), DQXSC("Msg")],
                 if ((!stateKeys) || ($.isEmptyObject(stateKeys))) {//do something sensible when no state is provided
                     if (!HistoryManager.viewsMap['start']) {
                         return;
-                        throw 'No start view provided';
+                        DQX.reportError('No start view provided');
                     }
                     HistoryManager.viewsMap['start'].activateState(stateKeys);
                     return;
@@ -121,7 +121,7 @@ define([DQXSCJQ(), DQXSC("Msg")],
                 for (var viewNr = 0; viewNr < HistoryManager.views.length; viewNr++) {
                     if (HistoryManager.views[viewNr].getStateID() in stateKeys) {
                         if (view != null)
-                            throw "Duplicate applicable view";
+                            DQX.reportError("Duplicate applicable view");
                         view = HistoryManager.views[viewNr];
                     }
                 }

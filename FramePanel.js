@@ -10,9 +10,9 @@
             if (!that.myDivID)//assume that the parent reference is simply the ID of a div
                 that.myDivID = iParentRef;
             if (that.myDivID.length == 0)
-                throw "Invalid parent reference";
+                DQX.reportError("Invalid parent reference");
             if ($('#' + that.myDivID).length == 0)
-                throw "Invalid Gui component " + that.myDivID;
+                DQX.reportError("Invalid Gui component " + that.myDivID);
             that.myID = that.myDivID;
 
             that.setID = function (iid) {

@@ -9,7 +9,6 @@
         // iDivID = the id of the div that serves as a container for the htnl elements
 
         QueryBuilder.Builder = function (iParentRef) {
-            //            if (!(this instanceof arguments.callee)) throw "Should be called as constructor!";
             var that = FramePanel(iParentRef);
 
             DQX.ObjectMapper.Add(that);
@@ -76,7 +75,7 @@
                 for (var i in this.myColumns)
                     if (this.myColumns[i].ID == icolid)
                         return this.myColumns[i];
-                throw "Invalid column id " + icolid;
+                DQX.reportError("Invalid column id " + icolid);
             }
 
 
@@ -137,13 +136,13 @@
             //Called when a statement should be deleted
             that._ReactDel = function (id) {
                 if (compmap[id].myParent == null)
-                    throw "no parent";
+                    DQX.reportError("no parent");
                 var parentcomp = compmap[id].myParent;
                 var childid = -1;
                 for (var i in parentcomp.myComponents)
                     if (parentcomp.myComponents[i].ID == id)
                         childid = i;
-                if (childid < 0) throw "???";
+                if (childid < 0) DQX.reportError("???");
                 parentcomp.myComponents.splice(childid, 1);
                 this._reRender();
                 this.notifyModified();
@@ -170,7 +169,7 @@
                 for (var i in parentcomp.myComponents)
                     if (parentcomp.myComponents[i].ID == id)
                         childid = i;
-                if (childid < 0) throw "???";
+                if (childid < 0) DQX.reportError("???");
                 var orcomp = this._createCompOR();
                 parentcomp.myComponents[childid] = orcomp;
                 orcomp.myComponents.push(compmap[id]);
@@ -199,7 +198,7 @@
                 for (var i in parentcomp.myComponents)
                     if (parentcomp.myComponents[i].ID == id)
                         childid = i;
-                if (childid < 0) throw "???";
+                if (childid < 0) DQX.reportError("???");
                 var orcomp = this._createCompAND();
                 parentcomp.myComponents[childid] = orcomp;
                 orcomp.myComponents.push(compmap[id]);

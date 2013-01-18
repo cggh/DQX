@@ -110,7 +110,7 @@
                     var vals = data['Data'].split('~');
                     return vals;
                 }
-                throw "Unknown value list encoding: " + data['Encoding'];
+                DQX.reportError("Unknown value list encoding: " + data['Encoding']);
             }
 
             return that;
@@ -223,7 +223,7 @@
                 return DataDecoders.Encoder.FixedString(info);
             if (info['ID'] == 'Boolean')
                 return DataDecoders.Encoder.Boolean(info);
-            throw "Invalid encoder id " + info['ID'];
+            DQX.reportError("Invalid encoder id " + info['ID']);
         }
 
 

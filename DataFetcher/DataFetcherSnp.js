@@ -24,7 +24,7 @@
 
 
         DataFetcherSnp.Fetcher = function (iserverurl) {
-            if (!(this instanceof arguments.callee)) throw "Should be called as constructor!";
+            if (!(this instanceof arguments.callee)) DQX.reportError("Should be called as constructor!");
 
             this.serverurl = iserverurl; //The server url to contact for this
             this.dataid = null; //not yet assigned

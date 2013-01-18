@@ -6,7 +6,7 @@
         Framework.dimY = 1;
         Framework.isValidDim = function (dim) {
             if ((dim !== 0) && (dim !== 1))
-                throw "Invalid dimension identifier";
+                DQX.reportError("Invalid dimension identifier");
         }
 
         Framework.frameCounter = 0;
@@ -83,7 +83,7 @@
         Framework.Frame = function (iid, itype, isizeweight) {
             DQX.checkIsString(iid);
             if (itype != '-')
-                if (!(itype in Framework.FrameTypes)) throw 'Invalid frame type';
+                if (!(itype in Framework.FrameTypes)) DQX.reportError('Invalid frame type');
             var that = {};
 
             that._parentFrame = null;
@@ -144,20 +144,20 @@
             }
             that.checkSplitter = function () {//This function throws an error of the frame is not of the splitter type
                 if (!this.isSplitter())
-                    throw "Frame is not a splitter";
+                    DQX.reportError("Frame is not a splitter");
             }
             that.checkFinalPanel = function () {//This function throws an error of the frame is not of the final type
                 if (!this.isFinalPanel())
-                    throw "Frame is not a final frame (i.e. containing a client panel)";
+                    DQX.reportError("Frame is not a final frame (i.e. containing a client panel)");
             }
             that.splitterDim = function () {//returns the orientation of the splitter
                 if (this.isHorSplitter()) return 0;
                 if (this.isVertSplitter()) return 1;
-                throw "Frame is not a splitter";
+                DQX.reportError("Frame is not a splitter");
             }
             that.getTitle = function () {//return the display title
                 if (this.myDisplayTitle.length > 0) return this.myDisplayTitle;
-                throw "Frame does not have a title";
+                DQX.reportError("Frame does not have a title");
                 return this.myFrameID;
             }
             that.hasTitleBar = function () {//returns true of the frame has a visible title bar
@@ -189,7 +189,7 @@
             //Converts a generic frame into a vertical splitter
             that.makeGroupVert = function () {
                 if (this.myType != '-')
-                    throw 'Frame is not generic';
+                    DQX.reportError('Frame is not generic');
                 this.myType = 'GroupVert';
                 return this;
             }
@@ -197,7 +197,7 @@
             //Converts a generic frame into a horizontal splitter
             that.makeGroupHor = function () {
                 if (this.myType != '-')
-                    throw 'Frame is not generic';
+                    DQX.reportError('Frame is not generic');
                 this.myType = 'GroupHor';
                 return this;
             }
@@ -283,7 +283,7 @@
 
             //Adds a new subframe to an existing container-style frame (= splitter or tab)
             that.addMemberFrame = function (iframe) {
-                if (this.isFinalPanel()) throw "Can't add frames to a final panel";
+                if (this.isFinalPanel()) DQX.reportError("Can't add frames to a final panel");
                 //iframe.myID = this.myID + '_' + this.memberFrames.length.toString();
                 iframe.myID = "Frame" + Framework.frameCounter;
                 Framework.frameCounter++;
@@ -296,7 +296,7 @@
             that.InsertFrameTop = function (iframe) {
                 var parent = this._parentFrame;
                 if (!parent)
-                    throw "Unable to insert at root frame";
+                    DQX.reportError("Unable to insert at root frame");
                 var intermediate = Framework.FrameGroupVert('', 0.5);
                 intermediate._setParentFrame(parent);
                 intermediate.myID = this.myID;
@@ -443,7 +443,7 @@
             }
 
             that._createElements = function (level) {
-                if (this.myID.length == 0) throw "Frame without ID";
+                if (this.myID.length == 0) DQX.reportError("Frame without ID");
                 var thediv = DocEl.Div({ id: this.myID });
 
                 var theclientcontainerdiv = DocEl.Div({ parent: thediv, id: this.getClientContainerDivID() });
@@ -654,7 +654,7 @@
                 var framePosits = [];
                 for (var fnr = 0; fnr < this.memberFrames.length; fnr++) {
                     if (!this.memberFrames[fnr].mySizeWeight)
-                        throw 'Frame "' + this.memberFrames[fnr].myFrameID + '" does not have size weight information';
+                        DQX.reportError('Frame "' + this.memberFrames[fnr].myFrameID + '" does not have size weight information');
                     if (fnr > 0) this.sepPosits.push(pos);
                     var pos2 = pos + totsize * this.memberFrames[fnr].mySizeWeight;
                     var mar1 = Math.round(pos + ((fnr > 0) ? (this._separatorSize / 2) : 0));
@@ -863,7 +863,7 @@
             //Activates another subframe in a tabbed frame, specified by its ID
             //The function returns true if this invoked an actual change
             that.switchTab = function (newtab) {
-                if (!this.isStacker()) throw "Container is not a tab";
+                if (!this.isStacker()) DQX.reportError("Container is not a tab");
                 if (this.getActiveTabFrameID() == newtab)
                     return false;
                 for (var fnr = 0; fnr < this.memberFrames.length; fnr++) {
@@ -877,7 +877,7 @@
 
             //Returns the ID of the active subframe in a tabbed frame
             that.getActiveTabFrameID = function () {
-                if (!this.isStacker()) throw "Container is not a tab";
+                if (!this.isStacker()) DQX.reportError("Container is not a tab");
                 return this.memberFrames[this.activeTabNr].myFrameID;
             }
 

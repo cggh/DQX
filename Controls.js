@@ -22,7 +22,7 @@
             }
 
             that.getID = function () {
-                if (this._controls.length == 0) throw 'Compound control has no components';
+                if (this._controls.length == 0) DQX.reportError('Compound control has no components');
                 return this._controls[0].getID(id);
             }
 
@@ -92,7 +92,7 @@
             }
 
             that.getID = function () {
-                if (this._controls.length == 0) throw 'Compound control has no components';
+                if (this._controls.length == 0) DQX.reportError('Compound control has no components');
                 return this._controls[0].getID(id);
             }
 
@@ -185,7 +185,7 @@
 
 
             that.getID = function () {
-                if (!this.getItem(0, 0)) throw 'Compound control has no components';
+                if (!this.getItem(0, 0)) DQX.reportError('Compound control has no components');
                 return this.getItem(0, 0).getID(id);
             }
 
@@ -302,7 +302,7 @@
 
             that.setContextID = function (id) {
                 if ((this.myContextID != '') && (this.myContextID !== id))
-                    throw 'Control context id is already set';
+                    DQX.reportError('Control context id is already set');
                 this.myContextID = id;
             }
 
@@ -488,7 +488,7 @@
 
         Controls.Button = function (iid, args) {
             var that = Controls.Control(iid);
-            if (!args.content) throw "No button content provided";
+            if (!args.content) DQX.reportError("No button content provided");
             that.content = args.content;
             that._controlExtensionList.push('');
             if (args.hint)
@@ -686,7 +686,7 @@
             that.modifyValue = function (newstate) {
                 if (newstate == this.getValue()) return;
                 if (!this.isState(newstate))
-                    throw 'Invalid combo box state';
+                    DQX.reportError('Invalid combo box state');
                 this._selectedState = newstate;
                 this.getJQElement('').val(this._selectedState);
                 this._notifyChanged();
@@ -812,7 +812,7 @@
             that.modifyValue = function (newstate) {
                 if (newstate == this.getValue()) return;
                 if (!this.isState(newstate))
-                    throw 'Invalid combo box state';
+                    DQX.reportError('Invalid combo box state');
                 this._selectedState = newstate;
                 this.getJQElement('').val(this._selectedState);
                 this._notifyChanged();

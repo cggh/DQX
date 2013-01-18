@@ -18,7 +18,7 @@
             }
 
             if (!(iEncoding in that.myEncodingList))
-                throw "Invalid column encoding " + iEncoding;
+                DQX.reportError("Invalid column encoding " + iEncoding);
             that.myEncodingID = that.myEncodingList[iEncoding];
 
             that.myActiveCount = 0;
@@ -43,7 +43,7 @@
         //////////////////////////////////////////////////////////////////////////////////////
 
         DataFetchers.Curve = function (iserverurl, itablename, ipositionfield) {
-            if (!(this instanceof arguments.callee)) throw "Should be called as constructor!";
+            if (!(this instanceof arguments.callee)) DQX.reportError("Should be called as constructor!");
 
             this.serverurl = iserverurl; //The server url to contact for this
             this.tablename = itablename; //The name of the table to fetch from
@@ -102,7 +102,7 @@
 
             this.getFetchColumn = function (cid) {
                 var rs = this.myColumns[cid];
-                if (rs == null) throw "Invalid fetcher column id " + cid;
+                if (rs == null) DQX.reportError("Invalid fetcher column id " + cid);
                 return rs;
             }
 
@@ -353,7 +353,7 @@
             this.getColumnPoint = function (currentloadindex, cid) {
                 if ((currentloadindex < 0) || (currentloadindex >= this.myDownloadPointsX.length)) return null;
                 var mycol = this.myColumns[cid];
-                if (!mycol) throw 'Invalid column ID "{id}"'.DQXformat({ id: cid });
+                if (!mycol) DQX.reportError('Invalid column ID "{id}"'.DQXformat({ id: cid }));
                 return mycol.myDownloadValues[currentloadindex];
             }
 

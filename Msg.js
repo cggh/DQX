@@ -28,9 +28,9 @@ define(
         Msg.send = function (scope, content) {
             var receiverCount = Msg.broadcast(scope, content);
             if (receiverCount > 1)
-                throw "Message was processed by more than one recipient";
+                DQX.reportError("Message was processed by more than one recipient");
             if (receiverCount == 0)
-                throw "Message was not processed by any recipient";
+                DQX.reportError("Message was not processed by any recipient");
         }
 
 

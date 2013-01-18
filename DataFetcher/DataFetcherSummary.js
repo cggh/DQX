@@ -96,7 +96,7 @@
         //////////////////////////////////////////////////////////////////////////////////////
 
         DataFetcherSummary.Fetcher = function (iserverurl, iminBlockSize, idesiredPointCount) {
-            if (!(this instanceof arguments.callee)) throw "Should be called as constructor!";
+            if (!(this instanceof arguments.callee)) DQX.reportError("Should be called as constructor!");
 
             this.desiredPointCount = idesiredPointCount;
 
@@ -114,7 +114,7 @@
             this.addFetchColumn = function (ifolder, iconfig, ipropid, color) {
                 var cid = ifolder + '_' + iconfig + '_' + ipropid;
                 if (cid in this.myColumns)
-                    throw "Column id already present: " + cid;
+                    DQX.reportError("Column id already present: " + cid);
                 this.myColumns[cid] = DataFetcherSummary.SummaryColumn(cid, ifolder, iconfig, ipropid, color);
                 this.clearData();
                 return this.myColumns[cid];

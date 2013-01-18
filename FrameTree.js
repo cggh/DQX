@@ -53,7 +53,7 @@
 
         TreeCtrl._objectBranch.prototype.setTree = function (tree) {
             if ((this.myTree != null) && (this.myTree !== tree))
-                throw 'Item is already attached to a tree';
+                DQX.reportError('Item is already attached to a tree');
             this.myTree = tree;
             this._setTreeSub(tree);
         }
@@ -115,7 +115,7 @@
                 item.setTree(this);
                 if (item.myID in this._itemMap) {
                     if (this._itemMap[item.myID] !== item)
-                        throw 'Tree item ID "{id}" is already used'.DQXformat({ id: item.myID });
+                        DQX.reportError('Tree item ID "{id}" is already used'.DQXformat({ id: item.myID }));
                 }
                 else {
                     this._itemList.push(item);

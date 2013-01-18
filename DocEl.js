@@ -165,8 +165,8 @@
     
         var content = "";
         for (var optnr in optionlist) {
-            if (!('id' in optionlist[optnr])) throw "Select option list should have id properties";
-            if (!('name' in optionlist[optnr])) throw "Select option list should have name properties";
+            if (!('id' in optionlist[optnr])) DQX.reportError("Select option list should have id properties");
+            if (!('name' in optionlist[optnr])) DQX.reportError("Select option list should have name properties");
             content += '<option value="' + optionlist[optnr].id + '"';
             if (selectedvalue == optionlist[optnr].id)
                 content += 'selected="selected"';

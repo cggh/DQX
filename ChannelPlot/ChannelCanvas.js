@@ -10,7 +10,7 @@
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         ChannelCanvas.Base = function (id) {
-            if (!id) throw "No channel ID provided";
+            if (!id) DQX.reportError("No channel ID provided");
             var that = {};
             that._myID = id;
             that._height = 120;
@@ -35,8 +35,8 @@
 
             that._setVisible = function (newStatus) {
                 if (!newStatus) {
-                    if (this._isOnTopPart) throw "Invalid action";
-                    if (!this.canHide) throw "Channel cannot be hidden";
+                    if (this._isOnTopPart) DQX.reportError("Invalid action");
+                    if (!this.canHide) DQX.reportError("Channel cannot be hidden");
                 }
                 this._isVisible = newStatus;
                 this._updateVisibility();
@@ -51,7 +51,7 @@
 
 
             that.getMyPlotter = function () {
-                if (!this._myPlotter) throw "Channel is not yet associated to a plotter";
+                if (!this._myPlotter) DQX.reportError("Channel is not yet associated to a plotter");
                 return this._myPlotter;
             }
             that.getHeight = function () { return this._height; }
@@ -72,7 +72,7 @@
 
             that.getVScroller = function () {
                 if (!this.vScroller)
-                    throw "No VScroller present";
+                    DQX.reportError("No VScroller present");
                 return this.vScroller;
             }
 

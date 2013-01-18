@@ -55,24 +55,24 @@
         }
 
         DQX.requireMember = function (tryobj, membername) {
-            if (typeof (tryobj) != 'object') throw 'variable cannot have a member because it is not an object';
-            if (!(membername in tryobj)) throw 'Object should have member "{memb}"'.DQXformat({ memb: membername });
+            if (typeof (tryobj) != 'object') DQX.reportError('variable cannot have a member because it is not an object');
+            if (!(membername in tryobj)) DQX.reportError('Object should have member "{memb}"'.DQXformat({ memb: membername }));
         }
 
         DQX.checkIsString = function (value) {
-            if (typeof value != 'string') throw 'Expected string value';
+            if (typeof value != 'string') DQX.reportError('Expected string value');
         }
 
         DQX.checkIsBoolean = function (value) {
-            if (typeof value != 'boolean') throw 'Expected boolean value';
+            if (typeof value != 'boolean') DQX.reportError('Expected boolean value');
         }
 
         DQX.checkIsNumber = function (value) {
-            if (typeof value != 'number') throw 'Expected number value';
+            if (typeof value != 'number') DQX.reportError('Expected number value');
         }
 
         DQX.checkIsFunction = function (value) {
-            if (typeof value != 'function') throw 'Expected function';
+            if (typeof value != 'function') DQX.reportError('Expected function');
         }
 
         //A formatter extension for strings
@@ -86,10 +86,10 @@
         }
 
 
-        //A helper function that can be called to throw an error if an object does not have a specific member
+        //A helper function that can be called to report an error if an object does not have a specific member
         DQX.assertPresence = function (obj, memb) {
             if (!(memb in obj))
-                throw "Expected member '" + memb + "'";
+                DQX.reportError("Expected member '" + memb + "'");
         }
 
 
@@ -285,7 +285,7 @@
         //Use this function to generate a html-compatible function call string that calls a function in an object instance
         DQX.ObjectMapper.CreateCallBackFunctionString = function (obj, functionname, arg) {
             if (!('_MapIdx' in obj))
-                throw "Object was not added to DQX.ObjectMapper";
+                DQX.reportError("Object was not added to DQX.ObjectMapper");
             var rs = "DQX.ObjectMapper.get(" + obj._MapIdx + ")." + functionname + "(" + arg.toString() + ")";
             return rs;
         }
@@ -355,7 +355,7 @@
 
         //Show a help box corresponding to a help id item in the DOM
         DQX.showHelp = function (id) {
-            if ($('#' + id).length == 0) throw "Broken help link " + id;
+            if ($('#' + id).length == 0) DQX.reportError("Broken help link " + id);
             var helpcontent = $('#' + id).html();
             DQX.CreateFloatBox("Help", helpcontent, "Help");
         }
@@ -379,7 +379,7 @@
             // Fill in the include sections
             $('.DQXInclude').each(function (idx, tabset) {
                 var id = $(this).html();
-                if ($('#' + id).length == 0) throw "Broken include link " + id;
+                if ($('#' + id).length == 0) DQX.reportError("Broken include link " + id);
                 $(this).html($('#' + id).html());
             });
 
@@ -643,7 +643,7 @@
             if (typeof iClassExtension == 'undefined') iClassExtension = '';
 
             if ($('#DQXFloatBoxHolder').length == 0)
-                throw "Document should have a div DQXFloatBoxHolder";
+                DQX.reportError("Document should have a div DQXFloatBoxHolder");
 
             //we create the float box close to the current cursor
             var posx = DQX.mousePosX + 10;

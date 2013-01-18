@@ -96,7 +96,7 @@
                 var id = "#" + this.myBaseID + extension;
                 var rs = $(id);
                 if (rs.length == 0)
-                    throw "Missing query table element " + id;
+                    DQX.reportError("Missing query table element " + id);
                 return rs;
             }
 
@@ -119,7 +119,7 @@
             that.findColumnRequired = function (iColID) {
                 var rs = this.findColumn(iColID);
                 if (!rs)
-                    throw 'Column id "{id}" not found in query table'.DQXformat({ id: iColID });
+                    DQX.reportError('Column id "{id}" not found in query table'.DQXformat({ id: iColID }));
                 return rs;
             }
 

@@ -36,7 +36,7 @@
             that.addChannel = function (channel, onTop) {
                 if (onTop)
                     channel._isOnTopPart = true;
-                if (channel._myID in that._idChannelMap) throw "Channel id already present: " + channel._myID;
+                if (channel._myID in that._idChannelMap) DQX.reportError("Channel id already present: " + channel._myID);
                 this._channels.push(channel);
                 that._idChannelMap[channel._myID] = channel;
                 channel._myPlotter = this;
@@ -56,7 +56,7 @@
             that.findChannelRequired = function (id) {
                 rs = that._idChannelMap[id];
                 if (!rs)
-                    throw "Invalid channel " + id;
+                    DQX.reportError("Invalid channel " + id);
                 return rs;
             }
 
@@ -123,7 +123,7 @@
 
             that.channelModifyVisibility = function (channelID, newStatus) {
                 var theChannel = this._idChannelMap[channelID];
-                if (!theChannel) throw "Invalid channel id " + channelID;
+                if (!theChannel) DQX.reportError("Invalid channel id " + channelID);
                 theChannel._setVisible(newStatus);
                 this.render();
                 //this.handleResize();
@@ -336,7 +336,7 @@
                 }
 
                 if ((autoHeightChannelCount > 0) && (hasScrollChannels))
-                    throw "Scrolling channels and auto height channels are not compatible";
+                    DQX.reportError("Scrolling channels and auto height channels are not compatible");
 
                 var scrollbaroffset = 0;
                 if (hasScrollChannels)

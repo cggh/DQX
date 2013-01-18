@@ -23,12 +23,12 @@
 
             that.getCurrentPage = function () {
                 var pg = this._pages[this.pageNr];
-                if (!pg) throw "Invalid wizard page";
+                if (!pg) DQX.reportError("Invalid wizard page");
                 return pg;
             }
             that.getPageNr = function (pageID) {
                 if (!(pageID in this._pageIndex))
-                    throw "Invalid wizard page " + pageID;
+                    DQX.reportError("Invalid wizard page " + pageID);
                 return this._pageIndex[pageID];
             }
 

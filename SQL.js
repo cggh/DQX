@@ -112,7 +112,7 @@
                 if (op.ID == ID)
                     return op;
             }
-            throw "Invalid field comparison operator id " + ID;
+            DQX.reportError("Invalid field comparison operator id " + ID);
         }
 
         //Returns a list of all field operators that are compatible with an SQL column data type (as defined in SQL.DataTypes)
@@ -134,7 +134,7 @@
                 if (SQL.WhereClause._fieldComparisonOperators[opnr].ID == icomptype)
                     fnd = true;
             if (!fnd)
-                throw "Invalid comparison where clause statement: " + icompoundtype;
+                DQX.reportError("Invalid comparison where clause statement: " + icompoundtype);
             that.isCompound = false;
             that.ColName = icolname;
             that.Tpe = icomptype;
@@ -353,7 +353,7 @@
         //A class that Encapsulates a compound statement
         SQL.WhereClause.Compound = function (icompoundtype, components) {
             if ((icompoundtype != 'AND') && (icompoundtype != 'OR'))
-                throw "Invalid compound where clause statement: " + icompoundtype;
+                DQX.reportError("Invalid compound where clause statement: " + icompoundtype);
             var that = {};
             that.isCompound = true;
             that.Tpe = icompoundtype;
