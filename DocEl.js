@@ -53,12 +53,12 @@
     }
     
     DocEl._Element.prototype.setBackgroundColor = function (icol) {
-        this.addStyle('background-color', icol);
+        this.addStyle('background-color', icol.toString());
         return this;
     }
     
     DocEl._Element.prototype.setColor = function (icol) {
-        this.addStyle('color', icol);
+        this.addStyle('color', icol.toString());
         return this;
     }
     
