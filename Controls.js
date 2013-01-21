@@ -416,6 +416,7 @@
             }
 
             that.modifyValue = function (newContent) {
+                that.myContent = newContent;
                 this.getJQElement('').html(newContent);
             }
 
