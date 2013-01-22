@@ -899,7 +899,10 @@
                 var dv = DocEl.Div({ id: this.getFullID('') });
                 dv.setCssClass('DQXFormControl');
                 dv.addStyle('overflow-y', 'auto');
-                dv.setWidthPx(this._width);
+                if (this._width>0)
+                    dv.setWidthPx(this._width);
+                else
+                    dv.addStyle('width','100%');
                 dv.setHeightPx(this._height);
                 dv.addElem(this._renderItems());
                 return dv.toString();
