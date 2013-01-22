@@ -398,9 +398,14 @@
             that.serverUrl = iserverUrl; //The server url to contact for this
             that.tableName = itableName; //The name of the table to fetch from
             that.columns = [];
+            that._maxResultCount = 100000;
 
             that.addColumn = function (id, encoding) {
                 this.columns.push({ id: id, encoding: encoding });
+            }
+
+            that.setMaxResultCount = function (maxcount) {
+                this._maxResultCount = maxcount;
             }
 
             that._ajaxResponse_FetchRange = function (resp, respHandler, failHandler) {
@@ -423,7 +428,7 @@
             that._ajaxFailure_FetchRange = function (resp) {
                 if (this.showDownload)
                     DQX.stopProcessing();
-                alert('Fetch failure: '+resp);
+                alert('Fetch failure: ' + resp);
             }
 
             that._createActiveColumnListString = function () {
@@ -448,7 +453,7 @@
                 myurl.addUrlQueryItem("order", orderField);
                 myurl.addUrlQueryItem("sortreverse", 0);
                 myurl.addUrlQueryItem("needtotalcount", 0);
-                myurl.addUrlQueryItem("limit", "0~100000");
+                myurl.addUrlQueryItem("limit", "0~" + this._maxResultCount);
                 var urlstring = myurl.toString();
                 this._isFetching = true;
                 var thethis = this;
