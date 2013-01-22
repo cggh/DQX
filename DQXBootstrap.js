@@ -1,11 +1,14 @@
 ﻿
 
 function setupRequireJS() {
+    if (typeof versionString == 'undefined')
+        alert('Fatal error: versionString is missing');
     require.config({
         paths: {
             "jquery": "DQX/Externals/jquery"
         },
-        waitSeconds: 15
+        waitSeconds: 15,
+        urlArgs: "version="+versionString
     });
 }
 
