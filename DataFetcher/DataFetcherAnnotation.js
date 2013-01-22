@@ -29,6 +29,7 @@
             this.myParentIDList = [];
             this._isFetching = false;
             this.hasFetchFailed = false;
+            this._requestNr = 0;
 
             this.translateChromoId = function (id) { return id; }
 
@@ -38,6 +39,7 @@
             }
 
             this.clearData = function () {
+                this._requestNr++;
                 this._currentRangeMin = 1000.0;
                 this._currentRangeMax = -1000.0;
                 this.myStartList = [];
@@ -58,6 +60,11 @@
                     setTimeout($.proxy(this.myDataConsumer.notifyDataReady, this.myDataConsumer), DQX.timeoutRetry);
                     return;
                 }
+                if (keylist.requestnr != this._requestNr) {
+                    this.myDataConsumer.notifyDataReady();
+                    return;
+                }
+
                 this._currentRangeMin = parseFloat(keylist["start"]);
                 this._currentRangeMax = parseFloat(keylist["stop"]);
                 this.myStartList = vallistdecoder.doDecode(keylist['Starts']);
@@ -83,8 +90,10 @@
                     range = Math.max(0, rangemax - rangemin) + 1;
                     rangemin -= range;
                     rangemax += range;
+                    this._requestNr++;
                     var myurl = DQX.Url(this.config.serverURL);
                     myurl.addUrlQueryItem('datatype', 'annot');
+                    myurl.addUrlQueryItem('requestnr', this._requestNr);
                     myurl.addUrlQueryItem('chrom', this.translateChromoId(this._myChromoID));
                     myurl.addUrlQueryItem('start', rangemin);
                     myurl.addUrlQueryItem('stop', rangemax);

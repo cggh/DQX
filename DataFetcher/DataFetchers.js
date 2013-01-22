@@ -47,6 +47,7 @@
 
             this.serverurl = iserverurl; //The server url to contact for this
             this.tablename = itablename; //The name of the table to fetch from
+            this._requestNr = 0;
 
             this.positionField = ipositionfield; //The field that contains the position information (use 'LIMIT' for data fetchers that are based on record numbers)
             this.sortReverse = false;
@@ -82,6 +83,7 @@
 
             //Removes all downloaded data, forcing a reload
             this.clearData = function () {
+                this._requestNr++;
                 this._currentRangeMin = 1000.0;
                 this._currentRangeMax = -1000.0;
                 this.myDownloadPointsX = [];
@@ -135,6 +137,11 @@
                 if ("Error" in keylist) {
                     this.hasFetchFailed = true;
                     setTimeout($.proxy(this.myDataConsumer.notifyDataReady, this.myDataConsumer), DQX.timeoutRetry);
+                    return;
+                }
+
+                if (keylist.requestnr != this._requestNr) {
+                    this.myDataConsumer.notifyDataReady();
                     return;
                 }
 
@@ -250,6 +257,7 @@
                     //prepare the url
                     var myurl = DQX.Url(this.serverurl);
                     myurl.addUrlQueryItem("datatype", qrytype);
+                    myurl.addUrlQueryItem('requestnr', this._requestNr);
                     myurl.addUrlQueryItem("qry", SQL.WhereClause.encode(qry));
                     myurl.addUrlQueryItem("tbname", this.tablename);
                     myurl.addUrlQueryItem("collist", collist);

@@ -27,6 +27,7 @@
             if (!(this instanceof arguments.callee)) DQX.reportError("Should be called as constructor!");
 
             this.serverurl = iserverurl; //The server url to contact for this
+            this._requestNr = 0;
             this.dataid = null; //not yet assigned
             this._sequenceIDList = [];
             this._parentIDs = [];
@@ -148,6 +149,7 @@
 
             //Removes all downloaded data, forcing a reload
             this.clearData = function () {
+                this._requestNr++;
                 this._currentRangeMin = 1000.0;
                 this._currentRangeMax = -1000.0;
                 this.buffPosits = [];
@@ -165,6 +167,11 @@
                     this.hasFetchFailed = true;
                     //alert(keylist.error);
                     setTimeout($.proxy(this.myDataConsumer.notifyDataReady, this.myDataConsumer), DQX.timeoutRetry);
+                    return;
+                }
+
+                if (keylist.requestnr != this._requestNr) {
+                    this.myDataConsumer.notifyDataReady();
                     return;
                 }
 
@@ -270,7 +277,7 @@
                     //prepare the url
                     var myurl = DQX.Url(this.serverurl);
                     myurl.addUrlQueryItem("datatype", "snpinfo");
-                    //            myurl.addUrlQueryItem("tbname", this.tablename);
+                    myurl.addUrlQueryItem('requestnr', this._requestNr);
                     myurl.addUrlQueryItem("seqids", seqids);
                     myurl.addUrlQueryItem("start", rangemin);
                     myurl.addUrlQueryItem("stop", rangemax);

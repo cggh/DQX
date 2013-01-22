@@ -107,6 +107,7 @@
             this._myChromoID = '';
             this._isFetching = false;
             this._levelBuffers = []; //holds DQX.DataFetcher.SummaryBlockLevel
+            this._requestNr = 0;
 
             this.translateChromoId = function (id) { return id; }
 
@@ -145,6 +146,7 @@
 
             //remove all currently downloaded data
             this.clearData = function () {
+                this._requestNr++;
                 this._levelBuffers = [];
             }
 
@@ -229,6 +231,11 @@
                     return;
                 }
 
+                if (keylist.requestnr != this._requestNr) {
+                    this.myDataConsumer.notifyDataReady();
+                    return;
+                }
+
                 //check that this ajax response contains all required columns (if not, this is likely to be an outdated response)
                 for (var cid in this.myColumns)
                     if (this.myColumns[cid].isActive())
@@ -281,6 +288,7 @@
                     //prepare the url
                     var myurl = DQX.Url(this.serverurl);
                     myurl.addUrlQueryItem("datatype", 'summinfo');
+                    myurl.addUrlQueryItem('requestnr', this._requestNr);
                     myurl.addUrlQueryItem("dataid", this.translateChromoId(this._myChromoID));
                     myurl.addUrlQueryItem("ids", collist);
                     myurl.addUrlQueryItem("blocksize", blockSize);
