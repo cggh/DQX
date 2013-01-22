@@ -128,6 +128,8 @@
                 else {
                     $('#WizBoxButtonPrevious').show();
                 }
+                if (this.getCurrentPage().onStart)
+                    this.getCurrentPage().onStart();
             }
 
             that._isFinalPage = function () {
