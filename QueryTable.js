@@ -302,8 +302,8 @@
                             // rs_table[tbnr] += '&nbsp;<a onclick=\"QueryTable._reflectOwnMessage(\'' + this.myBaseID + '\',\'Collapse\',\'' + thecol.myCompID + '\')\" href=\"javascript:void(0)\">></a>'
                         }
                         if (thecol._hyperlinkHeaderMessageScope) {
-                            var st = '<IMG class="DQXQueryTableLinkHeader" id="{id}" SRC='+DQXBMP('link2.png')+' border=0 class="DQXBitmapLink" ALT="Link" title="{hint}" style="position:absolute;right:-3px;top:-6px">'.
-                                DQXformat({ hint: thecol._hyperlinkHeaderHint, id: thecol.myCompID + '~headerlink~' + this.myBaseID });
+                            var st = '<IMG class="DQXQueryTableLinkHeader" id="{theid}" SRC=' + DQXBMP('link2.png') + ' border=0 class="DQXBitmapLink" ALT="Link" title="{theid}" style="position:absolute;right:-3px;top:-6px">'
+                            st=st.DQXformat({ theid: (thecol.myCompID + '~headerlink~' + this.myBaseID), hint: thecol._hyperlinkHeaderHint });
                             rs_table[tbnr] += ' ' + st;
                         }
                         if (thecol.sortOption) {
