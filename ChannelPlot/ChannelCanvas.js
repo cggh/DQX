@@ -206,17 +206,23 @@
             that._onTouchStart = function (ev) {
                 if (ev.touches.length == 1) {
                     this.getMyPlotter().handleMouseDown(that, ev, { x: this.getTouchPosX(ev), y: this.getTouchPosY(ev) });
+                    if (ev.stopPropagation)
+                        ev.stopPropagation();
                 }
             }
 
             that._onTouchMove = function (ev) {
                 if (ev.touches.length == 1) {
                     this.getMyPlotter().handleMouseMove(that, ev, { x: this.getTouchPosX(ev), y: this.getTouchPosY(ev) });
+                    if (ev.stopPropagation)
+                        ev.stopPropagation();
                 }
             }
 
             that._onTouchEnd = function (ev) {
                 this.getMyPlotter().handleMouseUp(that, ev, null);
+                if (ev.stopPropagation)
+                    ev.stopPropagation();
             }
 
             that._onGestureStart = function (ev) {
@@ -224,6 +230,10 @@
                 this.scaleCenterPosxX = 200;
                 if (ev.pageX)
                     this.scaleCenterPosxX = ev.pageX - $(this.getCanvasElement('center')).offset().left;
+                if (ev.event.preventDefault)
+                    ev.event.preventDefault();
+                if (ev.stopPropagation)
+                    ev.stopPropagation();
             }
 
             that._onGestureChange = function (ev) {
@@ -231,9 +241,17 @@
                     this.getMyPlotter().reScale(ev.scale / this.previousScale, this.scaleCenterPosxX);
                     this.previousScale = ev.scale;
                 }
+                if (ev.event.preventDefault)
+                    ev.event.preventDefault();
+                if (ev.stopPropagation)
+                    ev.stopPropagation();
             }
 
             that._onGestureEnd = function (ev) {
+                if (ev.event.preventDefault)
+                    ev.event.preventDefault();
+                if (ev.stopPropagation)
+                    ev.stopPropagation();
             }
 
             that._onMouseDown = function (ev) {
