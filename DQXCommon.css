@@ -43,22 +43,30 @@ body
 ** DQX Help
 ******************************************************************************************/
 
-.DQXInfoButton
+.DQXHelpLink
 {
-  position:relative;
-    bottom:-3px;
     cursor:pointer;
+/*    padding:2px;
+    margin:2px;
+    border-radius: 2px;*/
 }
 
-
-.DQXInfoButton img:hover
+.DQXIntroBoxHelpLink 
 {
-    -ms-transform:scale(1.25);
-    transform:scale(1.25);
-    -moz-transform:scale(1.25);
-    -webkit-transform:scale(1.25);
-    -o-transform:scale(1.25);
+    background-color:rgb(190,190,190);
+    color:rgb(0,128,0);
+    position:absolute;
+    right:8px;
+    bottom:-10px;
+    z-index:5;
+    padding:2px;
+    padding-left:4px;
+    padding-right:4px;
+    border-radius: 4px;
+    font-weight:bold;
+    border: 1px solid rgb(70,70,70)
 }
+
 
 
 .DQXHelp
@@ -353,6 +361,7 @@ body
 
 .DQXBitmapLink
 {
+	cursor:pointer;
 }
 
 .DQXBitmapLinkTransparent

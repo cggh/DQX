@@ -326,14 +326,14 @@
                 else
                     frame._parentFrame.setSeparatorSize(6);
                 frame.setInitialiseFunction(function () {
-                    var bmp = '<img src="'+DQXBMP('info2.png')+'" alt="info" style="float:left;margin-right:5px"/>'
+                    var bmp = '<img src="' + DQXBMP('info2.png') + '" alt="info" style="float:left;margin-right:5px"/>'
                     var info = Framework.Form(frame);
                     info.addHtml(bmp + content);
                     info.render();
                 });
             }
 
-            that.InsertIntroBox = function (bitmap, content) {
+            that.InsertIntroBox = function (bitmap, content, helpDocID) {
                 var frame = this.InsertFrameTop(Framework.FrameFinal('', 0.01));
                 frame.setFrameClassClient('DQXIntroInfo').setFrameClass('DQXIntroInfo').setMargins(10).setAllowScrollBars(false, false);
                 frame.setAutoSize();
@@ -347,9 +347,15 @@
                     var info = Framework.Form(frame);
                     info.addHtml(str);
                     info.render();
+                    if (helpDocID) {
+                        var helpButton = DocEl.Div({ id: helpDocID });
+                        helpButton.setCssClass('DQXHelpLink DQXIntroBoxHelpLink');
+                        helpButton.addElem('<IMG SRC="' + DQXBMP('info4.png') + '" border=0  ALT="" style="float:left;margin-right:2px">More information...')
+                        $('#' + frame.myID).append(helpButton.toString());
+                    }
 
                 });
-
+                return frame;
             }
 
 

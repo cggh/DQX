@@ -1,5 +1,5 @@
-﻿define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller")],
-    function (Msg, DocEl, Scroller) {
+﻿define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller"), DQXSC("Popup")],
+    function (Msg, DocEl, Scroller, Popup) {
         var Controls = {};
 
         Controls.CompoundHor = function (icontrols) {
@@ -705,16 +705,18 @@
             var that = Controls.Control(iid);
             that.myBitmap = args.bitmap;
             that.description = '';
+            that._hint = '';
             if (args.hint)
                 that._hint = args.hint;
-
+            that._vertShift = 0;
+            if (args.vertShift)
+                that._vertShift = args.vertShift;
             that._controlExtensionList.push('');
 
-
             that.renderHtml = function () {
-                var st = '<IMG id="{id}" SRC="' + this.myBitmap + '" border=0 class="DQXBitmapLink" ALT="{desc1}" TITLE="{desc2}">';
+                var st = '<IMG id="{id}" SRC="' + this.myBitmap + '" border=0 class="DQXBitmapLink" ALT="{desc1}" TITLE="{desc2}" style="margin-bottom:{shift}px">';
                 st = st.DQXformat(
-                { id: this.getFullID(''), desc1: that.description, desc2: that._hint });
+                { id: this.getFullID(''), desc1: that.description, desc2: that._hint, shift: (-this._vertShift) });
                 return st;
             }
 
@@ -724,8 +726,7 @@
             }
 
             that._onClick = function () {
-                Msg.broadcast({ type: 'CtrlClicked', id: this.myID, contextid: this.myContextID }, this);
-                return false;
+                this._notifyChanged();
             }
 
             that.getValue = function () {
@@ -735,7 +736,19 @@
             that.modifyValue = function (newstate) {
             }
 
+            return that;
+        }
 
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        Controls.HelpButton = function (iid, args) {
+            args.bitmap = DQXBMP('info4.png');
+            args.vertShift = 3;
+            var that = Controls.LinkButton(iid,args);
+
+            that.setOnChanged(function () {
+                Popup.showHelp(this.myID);
+            })
             return that;
         }
 
@@ -899,10 +912,10 @@
                 var dv = DocEl.Div({ id: this.getFullID('') });
                 dv.setCssClass('DQXFormControl');
                 dv.addStyle('overflow-y', 'auto');
-                if (this._width>0)
+                if (this._width > 0)
                     dv.setWidthPx(this._width);
                 else
-                    dv.addStyle('width','100%');
+                    dv.addStyle('width', '100%');
                 dv.setHeightPx(this._height);
                 dv.addElem(this._renderItems());
                 return dv.toString();

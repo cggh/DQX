@@ -1,5 +1,5 @@
-﻿define([DQXSCJQ(), DQXSC("Msg")],
-    function ($, Msg) {
+﻿define([DQXSCJQ(), DQXSC("Msg"), DQXSC("DocEl")],
+    function ($, Msg, DocEl) {
         //Inject DQX into the global namespace so that click handlers can find it
         DQX = {};
 
@@ -344,6 +344,7 @@
                 timeout: DQX.timeoutAjax
             });
 
+            $(document).mousedown(DQX._handleMouseDown);
             $(document).mouseup(DQX._handleMouseUp);
             $(document).mousemove(DQX._handleMouseMove);
             $(document).mousemove(function (e) {
@@ -353,13 +354,13 @@
             $(document).keydown(DQX._handleKeyDown);
         }
 
-        //Show a help box corresponding to a help id item in the DOM
-        DQX.showHelp = function (id) {
-            if ($('#' + id).length == 0) DQX.reportError("Broken help link " + id);
-            var helpcontent = $('#' + id).html();
-            DQX.CreateFloatBox("Help", helpcontent, "Help");
-        }
 
+        DQX.createHelpLink = function (docID, content) {
+            var span = DocEl.Span({ id: docID });
+            span.setCssClass("DQXHelpLink");
+            span.addElem(content);
+            return span.toString();
+        }
 
 
         /////////////////////////////////////////////////////////////////////////////////////
@@ -368,14 +369,14 @@
 
         DQX.initPostCreate = function () {
 
-
+            /*
             // Initialise functionality for help buttons
             $('.DQXInfoButton').each(function (idx, tabset) {
-                var id = $(this).html();
-                $(this).html('<img src="Bitmaps/info.png" alt="info"/>');
-                $(this).click(function () { DQX.showHelp(id); return false; });
+            var id = $(this).html();
+            $(this).html('<img src="Bitmaps/info.png" alt="info"/>');
+            $(this).click(function () { DQX.showHelp(id); return false; });
             });
-
+            */
             // Fill in the include sections
             $('.DQXInclude').each(function (idx, tabset) {
                 var id = $(this).html();
@@ -383,6 +384,11 @@
                 $(this).html($('#' + id).html());
             });
 
+        }
+
+
+        DQX._handleHelpLink = function (ev) {
+            var q = 0;
         }
 
         DQX._keyReceivers = {};
@@ -429,6 +435,18 @@
         }
 
 
+        DQX._handleMouseDown = function (ev) {
+            var target = ev.target;
+            var ct = 0;
+            while ((target) && (ct <= 1)) {
+                if (target.className.slice(0, 11) == 'DQXHelpLink') {
+                    require(DQXSC('Popup')).showHelp(target.id);
+                    return;
+                }
+                target = target.parentElement;
+                ct++;
+            }
+        }
 
 
         DQX._handleMouseUp = function (ev) {
@@ -626,13 +644,14 @@
         }
 
 
+        /*
         ////////////////////////////////////////////////////////////////////////////////////
         // Some stuff that allows one to create a draggable floating box
         ////////////////////////////////////////////////////////////////////////////////////
 
 
         DQX.CloseFloatBox = function (index) {
-            $("#" + index).remove();
+        $("#" + index).remove();
         }
 
         DQX._tabIndex = 0;
@@ -640,51 +659,49 @@
 
         DQX.CreateFloatBox = function (iTitle, iBody, iClassExtension) {
 
-            if (typeof iClassExtension == 'undefined') iClassExtension = '';
+        if (typeof iClassExtension == 'undefined') iClassExtension = '';
 
-            if ($('#DQXFloatBoxHolder').length == 0)
-                DQX.reportError("Document should have a div DQXFloatBoxHolder");
+        if ($('#DQXFloatBoxHolder').length == 0)
+        DQX.reportError("Document should have a div DQXFloatBoxHolder");
 
-            //we create the float box close to the current cursor
-            var posx = DQX.mousePosX + 10;
-            var posy = DQX.mousePosY + 10;
+        //we create the float box close to the current cursor
+        var posx = DQX.mousePosX + 10;
+        var posy = DQX.mousePosY + 10;
 
-            posx = Math.min(posx, $(window).width() - 400);
-            posy = Math.min(posy, $(window).height() - 100);
-
-
-            DQX._tabIndex++;
-            var ID = "DQXFlt" + DQX._tabIndex;
-            var thebox = DQX.DocEl.Div({ id: ID });
-            thebox.setCssClass("DQXFloatBox" + (iClassExtension.length > 0 ? (" DQXFloatBox" + iClassExtension) : ""));
-            thebox.addStyle("position", "absolute");
-            thebox.addStyle("left", posx + 'px');
-            thebox.addStyle("top", posy + 'px');
-
-            var theheader = DQX.DocEl.Div({ id: ID + 'Handler', parent: thebox });
-            theheader.setCssClass("DQXFloatBoxHeader" + (iClassExtension.length > 0 ? (" DQXFloatBoxHeader" + iClassExtension) : ""));
-            theheader.addElem(iTitle);
-
-            var thebody = DQX.DocEl.Div({ parent: thebox });
-            thebody.setCssClass("DQXFloatBoxContent" + (iClassExtension.length > 0 ? (" DQXFloatBoxContent" + iClassExtension) : ""));
-            thebody.addElem(iBody);
-
-            var thecloser = DQX.DocEl.JavaScriptBitmaplink(DQXBMP("close.png"), "Close", "DQX.CloseFloatBox('" + ID + "')");
-            thebox.addElem(thecloser);
-            thecloser.addStyle('position', 'absolute');
-            thecloser.addStyle('left', '-10px');
-            thecloser.addStyle('top', '-10px');
+        posx = Math.min(posx, $(window).width() - 400);
+        posy = Math.min(posy, $(window).height() - 100);
 
 
-            //    content += '<a href="#" style="font-size:11pt" onclick=DQX.CloseFloatBox("' + ID + '")>[X]</a> '
-            /*    content += '<div class="content">';
-            content += Body;
-            content += "</div>";
-            content += "</div>";*/
-            var content = thebox.toString();
-            $('#DQXFloatBoxHolder').append(content);
-            MakeDrag(ID);
-            return ID;
+        DQX._tabIndex++;
+        var ID = "DQXFlt" + DQX._tabIndex;
+        var thebox = DQX.DocEl.Div({ id: ID });
+        thebox.setCssClass("DQXFloatBox" + (iClassExtension.length > 0 ? (" DQXFloatBox" + iClassExtension) : ""));
+        thebox.addStyle("position", "absolute");
+        thebox.addStyle("left", posx + 'px');
+        thebox.addStyle("top", posy + 'px');
+
+        var theheader = DQX.DocEl.Div({ id: ID + 'Handler', parent: thebox });
+        theheader.setCssClass("DQXFloatBoxHeader" + (iClassExtension.length > 0 ? (" DQXFloatBoxHeader" + iClassExtension) : ""));
+        theheader.addElem(iTitle);
+
+        var thebody = DQX.DocEl.Div({ parent: thebox });
+        thebody.setCssClass("DQXFloatBoxContent" + (iClassExtension.length > 0 ? (" DQXFloatBoxContent" + iClassExtension) : ""));
+        thebody.addElem(iBody);
+
+        var thecloser = DQX.DocEl.JavaScriptBitmaplink(DQXBMP("close.png"), "Close", "DQX.CloseFloatBox('" + ID + "')");
+        thebox.addElem(thecloser);
+        thecloser.addStyle('position', 'absolute');
+        thecloser.addStyle('left', '-10px');
+        thecloser.addStyle('top', '-10px');
+
+
+        //    content += '<a href="#" style="font-size:11pt" onclick=DQX.CloseFloatBox("' + ID + '")>[X]</a> '
+        var content = thebox.toString();
+        $('#DQXFloatBoxHolder').append(content);
+        MakeDrag(ID);
+        return ID;
         }
+        */
+
         return DQX;
     });

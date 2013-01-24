@@ -1,5 +1,5 @@
-﻿define([DQXSCJQ(), DQXSCExt("jquery.dragndrop"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls")],
-    function ($, dragndrop, DocEl, Msg, Controls) {
+﻿define([DQXSCJQ(), DQXSCExt("jquery.dragndrop"), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls")],
+    function ($, dragndrop, DQX, DocEl, Msg, Controls) {
         var Popup = {};
 
         DQX.ClosePopup = function (index) {
@@ -84,6 +84,22 @@
                 $('#' + ID).offset({ left: (pageSizeX - w) / 2, top: (pageSizeY - h) / 2 });
             }
             return ID;
+        }
+
+        //Show a help box corresponding to a help id item in the DOM
+        Popup.showHelp = function (id) {
+            var docElem = $('#DQXDocumentation').find('#' + id);
+            if (docElem.length == 0) DQX.reportError("Broken help link " + id);
+            var helpcontent = docElem.html();
+            var div = DocEl.Div();
+            var docH = window.innerHeight;
+            if (!docH)
+                docH = document.body.clientHeight;
+            div.addStyle('max-width', '750px');
+            div.addStyle('max-height', (docH - 100) + 'px');
+            div.addStyle("overflow", "auto");
+            div.addElem(helpcontent);
+            Popup.create('Help', div.toString());
         }
 
         return Popup;
