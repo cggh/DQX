@@ -46,7 +46,10 @@
         DQX.DrawUtil = {};
 
         DQX.Text = function (snippetID) {
-            return $('#Snippets').children('#' + snippetID).html();
+            var elem = $('#Snippets').children('#' + snippetID);
+            if (elem.length == 0)
+                DQX.reportError('Invalid snippet ID ' + snippetID);
+            return elem.html();
         }
 
         DQX.hasMember = function (tryobj, membername) {
