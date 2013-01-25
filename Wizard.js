@@ -44,10 +44,26 @@
                 background.addStyle("top", '0px');
                 background.addStyle('width', '100%');
                 background.addStyle('height', '100%');
-                //                background.addStyle('background-color', 'rgba(0,0,0,0.25)');
-                background.addStyle('background-color', 'rgba(100,100,100,0.4)');
+                var wizbackcol = 'rgba(100,100,100,0.4)';
+                background.addStyle('background-color', wizbackcol);
                 background.addStyle('z-index', '2000');
                 $('#DQXUtilContainer').append(background.toString());
+
+                $('#WizBackGround').mousedown(function (ev) {
+                    if (ev.target.id == 'WizBackGround') {
+                        $('#WizBackGround').css('background-color', 'rgba(50,50,50,0.6)');
+                        setTimeout(function () {
+                            $('#WizBackGround').css('background-color', wizbackcol);
+                            setTimeout(function () {
+                                $('#WizBackGround').css('background-color', 'rgba(50,50,50,0.6)');
+                                setTimeout(function () {
+                                    $('#WizBackGround').css('background-color', wizbackcol);
+                                }, 150);
+                            }, 150);
+                        }, 150);
+                        //alert("Please close the wizard if you want to return to the application");
+                    }
+                });
 
                 var pageSizeX = $(window).width();
                 var pageSizeY = $(window).height();
