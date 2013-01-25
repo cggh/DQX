@@ -92,7 +92,7 @@
                 boxButtonCancel.addElem('<IMG SRC="' + button.bitmap + '" border=0 ALT="" style="margin-right:3px;margin-left:3px"></IMG>');
                 boxButtonCancel.addElem(button.name);
             }
-            boxButtons.addElem("<b>This is the title</b>");
+            //boxButtons.addElem("<b>This is the title</b>");
 
             var boxContent = DocEl.Div({ id: 'DocuBoxContent', parent: box });
             boxContent.setCssClass("DQXDocuBoxBody");

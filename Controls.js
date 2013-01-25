@@ -714,7 +714,7 @@
             that._controlExtensionList.push('');
 
             that.renderHtml = function () {
-                var st = '<IMG id="{id}" SRC="' + this.myBitmap + '" border=0 class="DQXBitmapLink" ALT="{desc1}" TITLE="{desc2}" style="margin-bottom:{shift}px">';
+                var st = '<IMG id="{id}" SRC="' + this.myBitmap + '" border=0 class="DQXBitmapLink" ALT="{desc1}" TITLE="{desc2}" style="margin-bottom:{shift}px" align="middle">';
                 st = st.DQXformat(
                 { id: this.getFullID(''), desc1: that.description, desc2: that._hint, shift: (-this._vertShift) });
                 return st;
@@ -743,7 +743,7 @@
 
         Controls.HelpButton = function (iid, args) {
             args.bitmap = DQXBMP('info4.png');
-            args.vertShift = 3;
+            //args.vertShift = 3;
             var that = Controls.LinkButton(iid,args);
 
             that.setOnChanged(function () {

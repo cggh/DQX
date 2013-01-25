@@ -93,7 +93,6 @@
                 boxButtons.addStyle("position", "absolute");
                 boxButtons.addStyle("top", "0px");
                 boxButtons.addStyle("right", "0px");
-                //boxButtons.addElem("jdffkjfkj");
 
                 var buttons = [
                     { id: 'WizBoxButtonCancel', name: 'Cancel', bitmap: DQXBMP('cancel.png'), floatPos: 'left', handler: that._onCancel },
@@ -110,6 +109,13 @@
                     boxButtonCancel.addElem(button.name);
                 }
 
+                //Help button
+                var boxButtonHelp = DocEl.Div({ id: 'WizBoxButtonHelp', parent: boxFooter });
+                boxButtonHelp.setCssClass("DQXWizardButton");
+                boxButtonHelp.addStyle("margin-left", "8px");
+                boxButtonHelp.addElem('<IMG SRC="' + DQXBMP('info3.png') + '" border=0 ALT="" align="middle" style="margin-right:3px;margin-left:3px;margin-top:-3px"></IMG>');
+
+
                 $('#WizBackGround').append(box.toString());
 
                 Popup.makeDraggable(box.myID);
@@ -122,6 +128,8 @@
                     $('#' + button.id).mousedown($.proxy(button.handler, this));
                 }
 
+                $('#WizBoxButtonHelp').mousedown($.proxy(this._onHelp, this));
+
                 this._setPage(0);
             }
 
@@ -129,6 +137,10 @@
                 this.pageNr = ipageNr;
                 $('#WizBoxContent').html(this._pages[this.pageNr].form.renderHtml());
                 this._pages[this.pageNr].form.postCreateHtml();
+                if (this._pages[this.pageNr].helpid)
+                    $('#WizBoxButtonHelp').show();
+                else
+                    $('#WizBoxButtonHelp').hide();
                 if (this._isFinalPage()) {
                     $('#WizBoxButtonFinish').show();
                     $('#WizBoxButtonNext').hide();
@@ -157,6 +169,10 @@
 
             that._onCancel = function () {
                 $('#WizBackGround').remove();
+            }
+
+            that._onHelp = function () {
+                Msg.send({ type: 'ShowHelp' }, 'LNKHelpCatVariation');
             }
 
             that._onFinish = function () {
