@@ -335,7 +335,7 @@
 
             that.InsertIntroBox = function (bitmap, content, helpDocID) {
                 var frame = this.InsertFrameTop(Framework.FrameFinal('', 0.01));
-                frame.setFrameClassClient('DQXIntroInfo').setFrameClass('DQXIntroInfo').setMargins(10).setAllowScrollBars(false, false);
+                frame.setFrameClassClient('DQXIntroInfo').setFrameClass('DQXIntroInfo').setMargins(12).setAllowScrollBars(false, false);
                 frame.setAutoSize();
                 frame._parentFrame.setSeparatorSize(6);
                 frame.setMinSize(Framework.dimY, 80);

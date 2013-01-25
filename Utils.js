@@ -622,6 +622,20 @@
             context.globalAlpha = 1.0;
         }
 
+        DQX.getWindowClientW = function () {
+            var docW = window.innerWidth;
+            if (!docW)
+                docW = document.body.clientWidth;
+            return docW;
+        }
+
+        DQX.getWindowClientH = function () {
+            var docH = window.innerHeight;
+            if (!docH)
+                docH = document.body.clientHeight;
+            return docH;
+        }
+
 
 
         ////////////////////////////////////////////////////////////////////////////////////
@@ -647,64 +661,6 @@
         }
 
 
-        /*
-        ////////////////////////////////////////////////////////////////////////////////////
-        // Some stuff that allows one to create a draggable floating box
-        ////////////////////////////////////////////////////////////////////////////////////
-
-
-        DQX.CloseFloatBox = function (index) {
-        $("#" + index).remove();
-        }
-
-        DQX._tabIndex = 0;
-
-
-        DQX.CreateFloatBox = function (iTitle, iBody, iClassExtension) {
-
-        if (typeof iClassExtension == 'undefined') iClassExtension = '';
-
-        if ($('#DQXFloatBoxHolder').length == 0)
-        DQX.reportError("Document should have a div DQXFloatBoxHolder");
-
-        //we create the float box close to the current cursor
-        var posx = DQX.mousePosX + 10;
-        var posy = DQX.mousePosY + 10;
-
-        posx = Math.min(posx, $(window).width() - 400);
-        posy = Math.min(posy, $(window).height() - 100);
-
-
-        DQX._tabIndex++;
-        var ID = "DQXFlt" + DQX._tabIndex;
-        var thebox = DQX.DocEl.Div({ id: ID });
-        thebox.setCssClass("DQXFloatBox" + (iClassExtension.length > 0 ? (" DQXFloatBox" + iClassExtension) : ""));
-        thebox.addStyle("position", "absolute");
-        thebox.addStyle("left", posx + 'px');
-        thebox.addStyle("top", posy + 'px');
-
-        var theheader = DQX.DocEl.Div({ id: ID + 'Handler', parent: thebox });
-        theheader.setCssClass("DQXFloatBoxHeader" + (iClassExtension.length > 0 ? (" DQXFloatBoxHeader" + iClassExtension) : ""));
-        theheader.addElem(iTitle);
-
-        var thebody = DQX.DocEl.Div({ parent: thebox });
-        thebody.setCssClass("DQXFloatBoxContent" + (iClassExtension.length > 0 ? (" DQXFloatBoxContent" + iClassExtension) : ""));
-        thebody.addElem(iBody);
-
-        var thecloser = DQX.DocEl.JavaScriptBitmaplink(DQXBMP("close.png"), "Close", "DQX.CloseFloatBox('" + ID + "')");
-        thebox.addElem(thecloser);
-        thecloser.addStyle('position', 'absolute');
-        thecloser.addStyle('left', '-10px');
-        thecloser.addStyle('top', '-10px');
-
-
-        //    content += '<a href="#" style="font-size:11pt" onclick=DQX.CloseFloatBox("' + ID + '")>[X]</a> '
-        var content = thebox.toString();
-        $('#DQXFloatBoxHolder').append(content);
-        MakeDrag(ID);
-        return ID;
-        }
-        */
 
         return DQX;
     });

@@ -1,6 +1,7 @@
-﻿define([DQXSCJQ(), DQXSCExt("jquery.dragndrop"), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls")],
-    function ($, dragndrop, DQX, DocEl, Msg, Controls) {
+﻿define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls")],
+    function ($, DQX, DocEl, Msg, Controls) {
         var Popup = {};
+
 
         DQX.ClosePopup = function (index) {
             $("#" + index).remove();
@@ -13,6 +14,51 @@
             elem.find('.DQXPinBoxUnpinned').remove();
             elem.find('.DQXPinBoxPinned').remove();
             elem.append(Popup.createPinBox(ID, newStatus));
+        }
+
+        Popup._floatBoxMaxIndex = 99;
+
+        Popup.makeDraggable = function (id) {
+            var dragElem = $('#' + id);
+            if (dragElem.length == 0)
+                DQX.reportError('Draggable container not found');
+            var dragHeaderElem = dragElem.find('.DQXDragHeader');
+            if (dragHeaderElem.length == 0)
+                DQX.reportError('Draggable container has no header element');
+            var dragOffsetX = 0;
+            var dragOffsetY = 0;
+            var boxW = 0;
+            var boxH = 0;
+            var dragOnMouseMove = function (ev) {
+                var newPosX = Math.max(10, ev.pageX + dragOffsetX);
+                var newPosY = Math.max(10, ev.pageY + dragOffsetY);
+                newPosX = Math.min(newPosX, DQX.getWindowClientW() - boxW - 10);
+                newPosY = Math.min(newPosY, DQX.getWindowClientH() - 40);
+                dragElem.css({ left: newPosX, top: newPosY });
+                return false;
+            }
+            var dragOnMouseUp = function (ev) {
+                $(document).unbind('mousemove.drag', dragOnMouseMove)
+                $(document).unbind('mouseup.drag', dragOnMouseUp);
+                dragElem.css('opacity', 1);
+                return false;
+            }
+            dragHeaderElem.bind('mousedown.drag', function (ev) {
+                var posX = dragElem.position().left;
+                var posY = dragElem.position().top;
+                var mouseStartX = ev.pageX;
+                var mouseStartY = ev.pageY;
+                dragOffsetX = posX - mouseStartX;
+                dragOffsetY = posY - mouseStartY;
+                boxW = dragElem.outerWidth();
+                boxH = dragElem.outerHeight();
+                $(document).bind('mousemove.drag', dragOnMouseMove);
+                $(document).bind('mouseup.drag', dragOnMouseUp);
+                dragElem.css('opacity', 0.7);
+                Popup._floatBoxMaxIndex++;
+                dragElem.css('z-index', Popup._floatBoxMaxIndex);
+                return false;
+            });
         }
 
         Popup.isPinned = function (ID) {
@@ -59,7 +105,7 @@
                 thebox.addStyle("top", '0px');
 
                 var theheader = DocEl.Div({ id: ID + 'Handler', parent: thebox });
-                theheader.setCssClass("DQXFloatBoxHeader");
+                theheader.setCssClass("DQXFloatBoxHeader DQXDragHeader");
                 theheader.addElem(title);
 
                 var thebody = DocEl.Div({ parent: thebox });
@@ -76,7 +122,7 @@
 
                 var content = thebox.toString();
                 $('#DQXUtilContainer').append(content);
-                MakeDrag(ID);
+                Popup.makeDraggable(ID);
                 var w = $('#' + ID).width();
                 var h = $('#' + ID).height();
                 var pageSizeX = $(window).width();
@@ -92,9 +138,7 @@
             if (docElem.length == 0) DQX.reportError("Broken help link " + id);
             var helpcontent = docElem.html();
             var div = DocEl.Div();
-            var docH = window.innerHeight;
-            if (!docH)
-                docH = document.body.clientHeight;
+            var docH = DQX.getWindowClientH();
             div.addStyle('max-width', '750px');
             div.addStyle('max-height', (docH - 100) + 'px');
             div.addStyle("overflow", "auto");
