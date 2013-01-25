@@ -1,5 +1,5 @@
-﻿define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Utils"), DQXSC("Framework"), DQXSC("Controls")],
-    function ($, DocEl, Msg, DQX, Framework, Controls) {
+﻿define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Utils"), DQXSC("Framework"), DQXSC("Controls"), DQXSC("Popup")],
+    function ($, DocEl, Msg, DQX, Framework, Controls, Popup) {
         var Wizard = {};
 
         Wizard.Create = function (iID) {
@@ -65,7 +65,7 @@
                 box.addStyle('height', boxSizeY + 'px');
                 box.setCssClass("DQXWizardBox");
                 var boxHeader = DocEl.Div({ id: 'WizBoxHeader', parent: box });
-                boxHeader.setCssClass("DQXWizardBoxHeader");
+                boxHeader.setCssClass("DQXWizardBoxHeader DQXDragHeader");
                 boxHeader.addElem(this._title);
                 var boxContent = DocEl.Div({ id: 'WizBoxContent', parent: box });
                 boxContent.setCssClass("DQXWizardBoxBody");
@@ -95,6 +95,8 @@
                 }
 
                 $('#WizBackGround').append(box.toString());
+
+                Popup.makeDraggable(box.myID);
 
                 $('#WizBoxButtonPrevious').hide();
                 $('#WizBoxButtonFinish').hide();
