@@ -447,9 +447,11 @@
             var target = ev.target;
             var ct = 0;
             while ((target) && (ct <= 1)) {
-                if (target.className.slice(0, 11) == 'DQXHelpLink') {
-                    require(DQXSC('Popup')).showHelp(target.id);
-                    return;
+                if ((target.className) && ((typeof target.className == 'string'))) {
+                    if (target.className.slice(0, 11) == 'DQXHelpLink') {
+                        require(DQXSC('Popup')).showHelp(target.id);
+                        return;
+                    }
                 }
                 target = target.parentElement;
                 ct++;

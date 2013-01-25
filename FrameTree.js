@@ -212,7 +212,8 @@
             }
 
             that.scrollActiveInView = function () {
-                //        $('#' + this.getDivID()).scrollTo($('#' + this.getDivID()).children('#' + this._activeItem));
+                var offset = $('#' + this.getDivID()).children('#' + this._activeItem);
+                $('#' + this.getDivID()).scrollTop(offset);
             }
 
             that._clickTreeItem = function (ev) {

@@ -1,4 +1,4 @@
-﻿define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel"), DQXSCExt("jquery_scrollTo") ],
+﻿define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel")],
     function ($, DocEl, Msg, FramePanel) {
         return function (iid, iParentRef) {
             var that = FramePanel(iid, iParentRef);
@@ -40,7 +40,7 @@
                         editDiv.addStyle('padding-top', '2px');
                         editDiv.addStyle('padding-bottom', '5px');
                         editDiv.addStyle('background-color', 'rgb(180,180,180)');
-                        editDiv.addElem('<IMG SRC="'+DQXBMP('magnif2.png')+'" border=0 ALT="" TITLE="" style="position:absolute;left:3px;top:2px">');
+                        editDiv.addElem('<IMG SRC="' + DQXBMP('magnif2.png') + '" border=0 ALT="" TITLE="" style="position:absolute;left:3px;top:2px">');
                         var edit = DocEl.Edit('', { id: this.myFilterDivID, parent: editDiv });
                         edit.addStyle('width', '100%');
                         edit.addStyle('height', '18px');
@@ -83,7 +83,7 @@
                     if (matching)
                         lst1 += line.toString();
                     else {
-                        line.addStyle('color','rgb(130,130,130)');
+                        line.addStyle('color', 'rgb(130,130,130)');
                         lst2 += line.toString();
                     }
                 }
@@ -108,7 +108,8 @@
             }
 
             that.scrollActiveInView = function () {
-                $('#' + this.myListDivID).scrollTo($('#' + this.myListDivID).children('#' + this._activeItem));
+                var offset = $('#' + this.myListDivID).children('#' + this._activeItem).position().top;
+                $('#' + this.myListDivID).scrollTop(offset);
             }
 
             that._clickItem = function (ev) {
