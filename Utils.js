@@ -343,6 +343,8 @@
 
             DQX.scrollBarWidth = getScrollBarWidth();
 
+            jQuery.support.cors = true;
+
             $.ajaxSetup({
                 timeout: DQX.timeoutAjax
             });
@@ -416,9 +418,12 @@
 
         DQX.getMouseWheelDelta = function (ev) {
             var delta = 0;
-            if (ev.wheelDelta) { delta = ev.wheelDelta / 120; }
+            var ev1 = ev;
+            if (ev.originalEvent)
+                ev1 = ev.originalEvent;
+            if (ev1.wheelDelta) { delta = ev1.wheelDelta / 120; }
             else
-                if (ev.detail) { delta = -ev.detail / 3; }
+                if (ev1.detail) { delta = -ev1.detail / 3; }
             return delta;
         }
 

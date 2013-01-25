@@ -279,12 +279,18 @@
 
             //Returns the position X coordinate of an event, relative to the center canvas element
             that.getEventPosX = function (ev) {
-                return ev.pageX - $(this.getCanvasElement('center')).offset().left;
+                var ev1 = ev;
+                if (ev.originalEvent)
+                    ev1 = ev.originalEvent;
+                return ev1.pageX - $(this.getCanvasElement('center')).offset().left;
             }
 
             //Returns the position Y coordinate of an event, relative to the center canvas element
             that.getEventPosY = function (ev) {
-                return ev.pageY - $(this.getCanvasElement('center')).offset().top;
+                var ev1 = ev;
+                if (ev.originalEvent)
+                    ev1 = ev.originalEvent;
+                return ev1.pageY - $(this.getCanvasElement('center')).offset().top;
             }
 
 
