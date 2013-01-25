@@ -1,5 +1,5 @@
-﻿define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller"), DQXSC("Popup")],
-    function (Msg, DocEl, Scroller, Popup) {
+﻿define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller"), DQXSC("Documentation")],
+    function (Msg, DocEl, Scroller, Documentation) {
         var Controls = {};
 
         Controls.CompoundHor = function (icontrols) {
@@ -747,7 +747,7 @@
             var that = Controls.LinkButton(iid,args);
 
             that.setOnChanged(function () {
-                Popup.showHelp(this.myID);
+                Documentation.showHelp('LNK'+this.myID);
             })
             return that;
         }

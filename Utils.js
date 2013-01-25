@@ -449,7 +449,7 @@
             while ((target) && (ct <= 1)) {
                 if ((target.className) && ((typeof target.className == 'string'))) {
                     if (target.className.slice(0, 11) == 'DQXHelpLink') {
-                        require(DQXSC('Popup')).showHelp(target.id);
+                        Msg.send({type: 'ShowHelp'},target.id);
                         return;
                     }
                 }

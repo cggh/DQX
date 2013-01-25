@@ -65,8 +65,8 @@
                     }
                 });
 
-                var pageSizeX = $(window).width();
-                var pageSizeY = $(window).height();
+                var pageSizeX = DQX.getWindowClientW();
+                var pageSizeY = DQX.getWindowClientH();
 
                 var boxSizeX = 600;
                 var boxSizeY = 500;
