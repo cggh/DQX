@@ -143,15 +143,7 @@
                 $('#' + this.getCanvasID('center')).mouseenter($.proxy(that._onMouseEnter, that));
                 $('#' + this.getCanvasID('center')).mouseleave($.proxy(that._onMouseLeave, that));
 
-                var canvasElement = document.getElementById(this.getCanvasID('center'));
-                canvasElement.addEventListener("touchstart", $.proxy(that._onTouchStart, that), false);
-                canvasElement.addEventListener("touchmove", $.proxy(that._onTouchMove, that), false);
-                canvasElement.addEventListener("touchend", $.proxy(that._onTouchEnd, that), false);
-                canvasElement.addEventListener("touchcancel", $.proxy(that._onTouchCancel, that), false);
-                canvasElement.addEventListener("gesturestart", $.proxy(that._onGestureStart, that), false);
-                canvasElement.addEventListener("gesturechange", $.proxy(that._onGestureChange, that), false);
-                canvasElement.addEventListener("gestureend", $.proxy(that._onGestureEnd, that), false);
-
+                DQX.augmentTouchEvents(this, this.getCanvasID('center'));
 
                 if (this.needVScrollbar()) {
                     this.vScroller = Scroller.VScrollBar(this.getCanvasID("VSC"));
@@ -192,94 +184,43 @@
 
             }
 
-            that.getTouchPosElementX = function (ev) {
-                if (ev.touches.length < 1) DQX.reportError('Invalid touch event');
-                var touchInfo = ev.touches[0];
-                return touchInfo.pageX - $(this.getCanvasElement('center')).offset().left;
+            that.handleTouchStart = function (info,ev) {
+                this.getMyPlotter().handleMouseDown(that, ev, { x: info.elemX, channelY: info.elemY, pageY: info.pageY });
             }
 
-            that.getTouchPosElementY = function (ev) {
-                return this.getTouchPosPageY(ev) - $(this.getCanvasElement('center')).offset().top;
+            that.handleTouchMove = function (info,ev) {
+                this.getMyPlotter().handleMouseMove(that, ev, { x: info.elemX, channelY: info.elemY, pageY: info.pageY });
             }
 
-            that.getTouchPosPageY = function (ev) {
-                if (ev.touches.length < 1) DQX.reportError('Invalid touch event');
-                var touchInfo = ev.touches[0];
-                return touchInfo.pageY;
+            that.handleTouchEnd = function (ev) {
+                this.getMyPlotter().handleMouseUp(that, ev, null);
             }
 
-            that._onTouchStart = function (ev) {
-                if (ev.touches.length == 1) {
-                    this.touchMoving = true;
-                    this.getMyPlotter().handleMouseDown(that, ev, { x: this.getTouchPosElementX(ev), channelY: this.getTouchPosElementY(ev), pageY: this.getTouchPosPageY(ev) });
-                    if (ev.stopPropagation)
-                        ev.stopPropagation();
-                    if (ev.preventDefault)
-                        ev.preventDefault();
-                }
+            that.handleTouchCancel = function (ev) {
+                this.getMyPlotter().handleMouseUp(that, ev, null);
             }
 
-            that._onTouchMove = function (ev) {
-                if ((ev.touches.length == 1) && (this.touchMoving)) {
-                    this.getMyPlotter().handleMouseMove(that, ev, { x: this.getTouchPosElementX(ev), channelY: this.getTouchPosElementY(ev), pageY: this.getTouchPosPageY(ev) });
-                    if (ev.stopPropagation)
-                        ev.stopPropagation();
-                    if (ev.preventDefault)
-                        ev.preventDefault();
-                }
-            }
-
-            that._onTouchEnd = function (ev) {
-                if (this.touchMoving) {
-                    this.touchMoving = false;
-                    this.getMyPlotter().handleMouseUp(that, ev, null);
-                    if (ev.stopPropagation)
-                        ev.stopPropagation();
-                    if (ev.preventDefault)
-                        ev.preventDefault();
-                }
-            }
-
-            that._onTouchCancel = function (ev) {
-                if (this.touchMoving) {
-                    this.touchMoving = false;
-                    this.getMyPlotter().handleMouseUp(that, ev, null);
-                }
-            }
-
-            that._onGestureStart = function (ev) {
+            that.handleGestureStart = function (ev) {
                 this.previousScale = 1.0;
                 this.scaleCenterPosxX = 200;
                 if (ev.pageX)
                     this.scaleCenterPosxX = ev.pageX - $(this.getCanvasElement('center')).offset().left;
-                if (ev.preventDefault)
-                    ev.preventDefault();
-                if (ev.stopPropagation)
-                    ev.stopPropagation();
             }
 
-            that._onGestureChange = function (ev) {
+            that.handleGestureChange = function (ev) {
                 if (ev.scale) {
                     this.getMyPlotter().reScale(ev.scale / this.previousScale, this.scaleCenterPosxX);
                     this.previousScale = ev.scale;
                 }
-                if (ev.preventDefault)
-                    ev.preventDefault();
-                if (ev.stopPropagation)
-                    ev.stopPropagation();
             }
 
-            that._onGestureEnd = function (ev) {
-                if (ev.preventDefault)
-                    ev.preventDefault();
-                if (ev.stopPropagation)
-                    ev.stopPropagation();
+            that.handleGestureEnd = function (ev) {
             }
 
             that._onMouseDown = function (ev) {
                 $(document).bind("mouseup.ChannelCanvas", $.proxy(that._onMouseDragUp, that));
                 $(document).bind("mousemove.ChannelCanvas", $.proxy(that._onMouseDragMove, that));
-                this.getMyPlotter().handleMouseDown(that, ev, { x: this.getEventPosX(ev), channelY: this.getEventPosY(ev), pageY:ev.pageY });
+                this.getMyPlotter().handleMouseDown(that, ev, { x: this.getEventPosX(ev), channelY: this.getEventPosY(ev), pageY: ev.pageY });
                 ev.returnValue = false;
                 return false;
             }

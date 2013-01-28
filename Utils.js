@@ -8,10 +8,6 @@
             throw txt;
         }
 
-        DQX.foreach = function (arr, arg, fnc) {
-            for (var i = 0; i < arr.length; i++)
-                fnc(arr[i], arg);
-        }
 
         //Sort helpers
         DQX.ByProperty = function (prop) {
@@ -324,6 +320,102 @@
         };
 
 
+        /////////////////////////////////////////////////////////////////////////////////////
+        // Aguments a class that handles a html element so that it listens to touch & gesture events
+        /////////////////////////////////////////////////////////////////////////////////////
+
+        DQX.augmentTouchEvents = function (that, elemID) {
+
+            var _touchMoving = false;
+
+            var getSingleTouchInfo = function (ev) {
+                if (!ev.touches) DQX.reportError('No touch event');
+                if (ev.touches.length < 1) DQX.reportError('Invalid touch event');
+                var touchInfo = ev.touches[0];
+                return {
+                    elemX: touchInfo.pageX - $('#'+elemID).offset().left,
+                    elemY: touchInfo.pageY - $('#'+elemID).offset().top,
+                    pageX: touchInfo.pageX,
+                    pageY: touchInfo.pageY
+                }
+            }
+
+            var _onTouchStart = function (ev) {
+                if (ev.touches.length == 1) {
+                    _touchMoving = true;
+                    if (ev.stopPropagation)
+                        ev.stopPropagation();
+                    if (ev.preventDefault)
+                        ev.preventDefault();
+                    that.handleTouchStart(getSingleTouchInfo(ev), ev);
+                }
+            }
+
+            var _onTouchMove = function (ev) {
+                if ((ev.touches.length == 1) && (_touchMoving)) {
+                    if (ev.stopPropagation)
+                        ev.stopPropagation();
+                    if (ev.preventDefault)
+                        ev.preventDefault();
+                    that.handleTouchMove(getSingleTouchInfo(ev), ev);
+                }
+            }
+
+            var _onTouchEnd = function (ev) {
+                if (_touchMoving) {
+                    _touchMoving = false;
+                    if (ev.stopPropagation)
+                        ev.stopPropagation();
+                    if (ev.preventDefault)
+                        ev.preventDefault();
+                    that.handleTouchStop(ev);
+                }
+            }
+
+            var _onTouchCancel = function (ev) {
+                if (_touchMoving) {
+                    _touchMoving = false;
+                    that.handleTouchStop();
+                }
+            }
+
+            var _onGestureStart = function (ev) {
+                if (ev.preventDefault)
+                    ev.preventDefault();
+                if (ev.stopPropagation)
+                    ev.stopPropagation();
+                that.handleGestureStart(ev);
+            }
+
+            var _onGestureChange = function (ev) {
+                if (ev.preventDefault)
+                    ev.preventDefault();
+                if (ev.stopPropagation)
+                    ev.stopPropagation();
+                that.handleGestureChange(ev);
+            }
+
+            var _onGestureEnd = function (ev) {
+                if (ev.preventDefault)
+                    ev.preventDefault();
+                if (ev.stopPropagation)
+                    ev.stopPropagation();
+                that.handleGestureEnd(ev);
+            }
+
+
+            var element = document.getElementById(elemID);
+            if (!element)
+                DQX.reportError('Invalid element ' + elemID);
+            element.addEventListener("touchstart", _onTouchStart, false);
+            element.addEventListener("touchmove", _onTouchMove, false);
+            element.addEventListener("touchend", _onTouchEnd, false);
+            element.addEventListener("touchcancel", _onTouchCancel, false);
+            element.addEventListener("gesturestart", _onGestureStart, false);
+            element.addEventListener("gesturechange", _onGestureChange, false);
+            element.addEventListener("gestureend", _onGestureEnd, false);
+        }
+
 
         //------------------------------------------------
 
@@ -449,7 +541,7 @@
             while ((target) && (ct <= 1)) {
                 if ((target.className) && ((typeof target.className == 'string'))) {
                     if (target.className.slice(0, 11) == 'DQXHelpLink') {
-                        Msg.send({type: 'ShowHelp'},target.id);
+                        Msg.send({ type: 'ShowHelp' }, target.id);
                         return;
                     }
                 }
