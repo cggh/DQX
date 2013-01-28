@@ -187,15 +187,17 @@
 
             that.handleMouseDown = function (channel, ev, args) {
                 this._mousePressX0 = args.x;
-                this._mousePressY0 = args.y;
+                this._mousePressY0 = args.pageY;
                 this._hasMouseMoved = false;
                 this._dragging = false;
                 this._mousemarking = false;
                 if (!ev.ctrlKey) {
                     //                    $(this.canvasCenterElement).css('cursor', 'col-resize');
                     this._dragging = true;
-                    this._dragstartoffset = this._offsetX;
+                    this._dragstartoffsetX = this._offsetX;
                     this._dragstartx = args.x;
+                    this._dragstartoffsetY = this.getElemJQ("BodyScroll").scrollTop();
+                    this._dragstarty = args.pageY;
                     this._lastmouseposx = args.x;
                 }
                 else {
@@ -212,18 +214,19 @@
 
             that.handleMouseMove = function (channel, ev, args) {
                 var mousePressX1 = args.x;
-                var mousePressY1 = args.y;
+                var mousePressY1 = args.pageY;
                 if (Math.abs(mousePressX1 - this._mousePressX0) + Math.abs(mousePressY1 - this._mousePressY0) > 5)
                     this._hasMouseMoved = true;
 
                 if (this._dragging) {
                     var mouseposx = args.x;
-                    this._offsetX = this._dragstartoffset - (mouseposx - this._dragstartx);
+                    this._offsetX = this._dragstartoffsetX - (mouseposx - this._dragstartx);
                     this.clipViewRange();
                     //this.delToolTip();
                     this.updateNavigator();
                     this.render();
                     this._lastmouseposx = mouseposx;
+                    this.getElemJQ("BodyScroll").scrollTop(this._dragstartoffsetY-(args.pageY-this._dragstarty))
                 }
                 if (this._mousemarking) {
                     this._markPos2 = this.screenPos2XVal(mousePressX1);

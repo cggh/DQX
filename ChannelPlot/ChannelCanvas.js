@@ -147,6 +147,7 @@
                 canvasElement.addEventListener("touchstart", $.proxy(that._onTouchStart, that), false);
                 canvasElement.addEventListener("touchmove", $.proxy(that._onTouchMove, that), false);
                 canvasElement.addEventListener("touchend", $.proxy(that._onTouchEnd, that), false);
+                canvasElement.addEventListener("touchcancel", $.proxy(that._onTouchCancel, that), false);
                 canvasElement.addEventListener("gesturestart", $.proxy(that._onGestureStart, that), false);
                 canvasElement.addEventListener("gesturechange", $.proxy(that._onGestureChange, that), false);
                 canvasElement.addEventListener("gestureend", $.proxy(that._onGestureEnd, that), false);
@@ -191,38 +192,59 @@
 
             }
 
-            that.getTouchPosX = function (ev) {
+            that.getTouchPosElementX = function (ev) {
                 if (ev.touches.length < 1) DQX.reportError('Invalid touch event');
                 var touchInfo = ev.touches[0];
                 return touchInfo.pageX - $(this.getCanvasElement('center')).offset().left;
             }
 
-            that.getTouchPosY = function (ev) {
+            that.getTouchPosElementY = function (ev) {
+                return this.getTouchPosPageY(ev) - $(this.getCanvasElement('center')).offset().top;
+            }
+
+            that.getTouchPosPageY = function (ev) {
                 if (ev.touches.length < 1) DQX.reportError('Invalid touch event');
                 var touchInfo = ev.touches[0];
-                return touchInfo.pageY - $(this.getCanvasElement('center')).offset().top;
+                return touchInfo.pageY;
             }
 
             that._onTouchStart = function (ev) {
                 if (ev.touches.length == 1) {
-                    this.getMyPlotter().handleMouseDown(that, ev, { x: this.getTouchPosX(ev), y: this.getTouchPosY(ev) });
+                    this.touchMoving = true;
+                    this.getMyPlotter().handleMouseDown(that, ev, { x: this.getTouchPosElementX(ev), channelY: this.getTouchPosElementY(ev), pageY: this.getTouchPosPageY(ev) });
                     if (ev.stopPropagation)
                         ev.stopPropagation();
+                    if (ev.preventDefault)
+                        ev.preventDefault();
                 }
             }
 
             that._onTouchMove = function (ev) {
-                if (ev.touches.length == 1) {
-                    this.getMyPlotter().handleMouseMove(that, ev, { x: this.getTouchPosX(ev), y: this.getTouchPosY(ev) });
+                if ((ev.touches.length == 1) && (this.touchMoving)) {
+                    this.getMyPlotter().handleMouseMove(that, ev, { x: this.getTouchPosElementX(ev), channelY: this.getTouchPosElementY(ev), pageY: this.getTouchPosPageY(ev) });
                     if (ev.stopPropagation)
                         ev.stopPropagation();
+                    if (ev.preventDefault)
+                        ev.preventDefault();
                 }
             }
 
             that._onTouchEnd = function (ev) {
-                this.getMyPlotter().handleMouseUp(that, ev, null);
-                if (ev.stopPropagation)
-                    ev.stopPropagation();
+                if (this.touchMoving) {
+                    this.touchMoving = false;
+                    this.getMyPlotter().handleMouseUp(that, ev, null);
+                    if (ev.stopPropagation)
+                        ev.stopPropagation();
+                    if (ev.preventDefault)
+                        ev.preventDefault();
+                }
+            }
+
+            that._onTouchCancel = function (ev) {
+                if (this.touchMoving) {
+                    this.touchMoving = false;
+                    this.getMyPlotter().handleMouseUp(that, ev, null);
+                }
             }
 
             that._onGestureStart = function (ev) {
@@ -257,7 +279,7 @@
             that._onMouseDown = function (ev) {
                 $(document).bind("mouseup.ChannelCanvas", $.proxy(that._onMouseDragUp, that));
                 $(document).bind("mousemove.ChannelCanvas", $.proxy(that._onMouseDragMove, that));
-                this.getMyPlotter().handleMouseDown(that, ev, { x: this.getEventPosX(ev), y: this.getEventPosY(ev) });
+                this.getMyPlotter().handleMouseDown(that, ev, { x: this.getEventPosX(ev), channelY: this.getEventPosY(ev), pageY:ev.pageY });
                 ev.returnValue = false;
                 return false;
             }
@@ -265,13 +287,13 @@
             that._onMouseDragUp = function (ev) {
                 $(document).unbind("mouseup.ChannelCanvas");
                 $(document).unbind("mousemove.ChannelCanvas");
-                this.getMyPlotter().handleMouseUp(that, ev, { x: this.getEventPosX(ev), y: this.getEventPosY(ev) });
+                this.getMyPlotter().handleMouseUp(that, ev, { x: this.getEventPosX(ev), channelY: this.getEventPosY(ev), pageY: ev.pageY });
                 ev.returnValue = false;
                 return false;
             }
 
             that._onMouseDragMove = function (ev) {
-                this.getMyPlotter().handleMouseMove(that, ev, { x: this.getEventPosX(ev), y: this.getEventPosY(ev) });
+                this.getMyPlotter().handleMouseMove(that, ev, { x: this.getEventPosX(ev), channelY: this.getEventPosY(ev), pageY: ev.pageY });
                 ev.returnValue = false;
                 return false;
             }
