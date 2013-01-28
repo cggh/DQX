@@ -230,8 +230,8 @@
                 this.scaleCenterPosxX = 200;
                 if (ev.pageX)
                     this.scaleCenterPosxX = ev.pageX - $(this.getCanvasElement('center')).offset().left;
-                if (ev.event.preventDefault)
-                    ev.event.preventDefault();
+                if (ev.preventDefault)
+                    ev.preventDefault();
                 if (ev.stopPropagation)
                     ev.stopPropagation();
             }
@@ -241,15 +241,15 @@
                     this.getMyPlotter().reScale(ev.scale / this.previousScale, this.scaleCenterPosxX);
                     this.previousScale = ev.scale;
                 }
-                if (ev.event.preventDefault)
-                    ev.event.preventDefault();
+                if (ev.preventDefault)
+                    ev.preventDefault();
                 if (ev.stopPropagation)
                     ev.stopPropagation();
             }
 
             that._onGestureEnd = function (ev) {
-                if (ev.event.preventDefault)
-                    ev.event.preventDefault();
+                if (ev.preventDefault)
+                    ev.preventDefault();
                 if (ev.stopPropagation)
                     ev.stopPropagation();
             }
