@@ -25,6 +25,7 @@
             var dragHeaderElem = dragElem.find('.DQXDragHeader');
             if (dragHeaderElem.length == 0)
                 DQX.reportError('Draggable container has no header element');
+            var headerID = dragHeaderElem.attr('id');
             var dragOffsetX = 0;
             var dragOffsetY = 0;
             var boxW = 0;
@@ -59,6 +60,33 @@
                 dragElem.css('z-index', Popup._floatBoxMaxIndex);
                 return false;
             });
+
+            var touchHandler = {
+                handleTouchStart: function (info, ev) {
+                    var posX = dragElem.position().left;
+                    var posY = dragElem.position().top;
+                    var mouseStartX = info.pageX;
+                    var mouseStartY = info.pageY;
+                    boxW = dragElem.outerWidth();
+                    boxH = dragElem.outerHeight();
+                    dragOffsetX = posX - mouseStartX;
+                    dragOffsetY = posY - mouseStartY;
+                    dragElem.css('opacity', 0.7);
+                    Popup._floatBoxMaxIndex++;
+                    dragElem.css('z-index', Popup._floatBoxMaxIndex);
+                },
+
+                handleTouchMove: function (info, ev) {
+                    dragOnMouseMove(info);
+                },
+
+                handleTouchStop: function() {
+                    dragElem.css('opacity', 1);
+                }
+            }
+
+
+            DQX.augmentTouchEvents(touchHandler, headerID, true, false);
         }
 
         Popup.isPinned = function (ID) {
