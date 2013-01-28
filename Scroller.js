@@ -21,8 +21,9 @@
             that.scrollerDragging = false;
 
             that.registerHandlers(that.getMyCanvasElement());
+            DQX.augmentTouchEvents(that, that.myCanvasID, true, false);
 
-            that.setMinScrollSize = function(fr) {
+            that.setMinScrollSize = function (fr) {
                 this.minScrollSize = fr;
             }
 
@@ -244,12 +245,31 @@
                 $('#' + this.myCanvasID).css('cursor', sizemouse ? 'col-resize' : 'auto');
             }
 
+            that.handleTouchStart = function (info, ev) {
+                this._onMouseDown(info);
+            }
+
+            that.handleTouchMove = function (info, ev) {
+                this._onMouseMove(info);
+            }
+
+            that.handleTouchEnd = function (ev) {
+                this._onMouseUp(info);
+            }
+
+            that.handleTouchCancel = function (ev) {
+                this._onMouseUp(info);
+            }
+
 
             return that;
         }
 
 
 
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
         Scroller.vScrollWidth = 20;
@@ -407,6 +427,18 @@
                     sizemouse = true;
 
                 $('#' + this.myCanvasID).css('cursor', sizemouse ? 'row-resize' : 'auto');
+            }
+
+            that.handleTouchStart = function (info, ev) {
+            }
+
+            that.handleTouchMove = function (info, ev) {
+            }
+
+            that.handleTouchEnd = function (ev) {
+            }
+
+            that.handleTouchCancel = function (ev) {
             }
 
 

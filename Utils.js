@@ -324,7 +324,7 @@
         // Aguments a class that handles a html element so that it listens to touch & gesture events
         /////////////////////////////////////////////////////////////////////////////////////
 
-        DQX.augmentTouchEvents = function (that, elemID) {
+        DQX.augmentTouchEvents = function (that, elemID, handleDrag, handleScale) {
 
             var _touchMoving = false;
 
@@ -333,8 +333,8 @@
                 if (ev.touches.length < 1) DQX.reportError('Invalid touch event');
                 var touchInfo = ev.touches[0];
                 return {
-                    elemX: touchInfo.pageX - $('#'+elemID).offset().left,
-                    elemY: touchInfo.pageY - $('#'+elemID).offset().top,
+                    elemX: touchInfo.pageX - $('#' + elemID).offset().left,
+                    elemY: touchInfo.pageY - $('#' + elemID).offset().top,
                     pageX: touchInfo.pageX,
                     pageY: touchInfo.pageY
                 }
@@ -407,13 +407,17 @@
             var element = document.getElementById(elemID);
             if (!element)
                 DQX.reportError('Invalid element ' + elemID);
-            element.addEventListener("touchstart", _onTouchStart, false);
-            element.addEventListener("touchmove", _onTouchMove, false);
-            element.addEventListener("touchend", _onTouchEnd, false);
-            element.addEventListener("touchcancel", _onTouchCancel, false);
-            element.addEventListener("gesturestart", _onGestureStart, false);
-            element.addEventListener("gesturechange", _onGestureChange, false);
-            element.addEventListener("gestureend", _onGestureEnd, false);
+            if (handleDrag) {
+                element.addEventListener("touchstart", _onTouchStart, false);
+                element.addEventListener("touchmove", _onTouchMove, false);
+                element.addEventListener("touchend", _onTouchEnd, false);
+                element.addEventListener("touchcancel", _onTouchCancel, false);
+            }
+            if (handleScale) {
+                element.addEventListener("gesturestart", _onGestureStart, false);
+                element.addEventListener("gesturechange", _onGestureChange, false);
+                element.addEventListener("gestureend", _onGestureEnd, false);
+            }
         }
 
 

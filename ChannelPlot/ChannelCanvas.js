@@ -143,7 +143,7 @@
                 $('#' + this.getCanvasID('center')).mouseenter($.proxy(that._onMouseEnter, that));
                 $('#' + this.getCanvasID('center')).mouseleave($.proxy(that._onMouseLeave, that));
 
-                DQX.augmentTouchEvents(this, this.getCanvasID('center'));
+                DQX.augmentTouchEvents(this, this.getCanvasID('center'),true,true);
 
                 if (this.needVScrollbar()) {
                     this.vScroller = Scroller.VScrollBar(this.getCanvasID("VSC"));
@@ -185,6 +185,7 @@
             }
 
             that.handleTouchStart = function (info,ev) {
+                this.handleMouseClicked(info.elemX, info.elemY);
                 this.getMyPlotter().handleMouseDown(that, ev, { x: info.elemX, channelY: info.elemY, pageY: info.pageY });
             }
 
