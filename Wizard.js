@@ -102,18 +102,19 @@
                 ];
 
                 for (var buttonNr = 0; buttonNr < buttons.length; buttonNr++) {
-                    var button = buttons[buttonNr];
-                    var boxButtonCancel = DocEl.Div({ id: button.id, parent: boxButtons });
-                    boxButtonCancel.setCssClass("DQXWizardButton");
-                    boxButtonCancel.addElem('<IMG SRC="' + button.bitmap + '" border=0 ALT="" style="float:' + button.floatPos + ';margin-right:3px;margin-left:3px"></IMG>');
-                    boxButtonCancel.addElem(button.name);
+                    var buttonInfo = buttons[buttonNr];
+                    var buttonContent = '<IMG SRC="' + buttonInfo.bitmap + '" border=0 ALT="" style="float:' + buttonInfo.floatPos + ';margin-right:3px;margin-left:3px"></IMG>' + buttonInfo.name;
+                    buttonInfo.control = Controls.Button(buttonInfo.id, { content: buttonContent, buttonClass: 'DQXWizardButton', fastTouch: true });
+                    boxButtons.addElem(buttonInfo.control.renderHtml());
+                    buttonInfo.control.setOnChanged($.proxy(buttonInfo.handler, that));
                 }
 
                 //Help button
                 var boxButtonHelp = DocEl.Div({ id: 'WizBoxButtonHelp', parent: boxFooter });
-                boxButtonHelp.setCssClass("DQXWizardButton");
-                boxButtonHelp.addStyle("margin-left", "8px");
-                boxButtonHelp.addElem('<IMG SRC="' + DQXBMP('info3.png') + '" border=0 ALT="" align="middle" style="margin-right:3px;margin-left:3px;margin-top:-3px"></IMG>');
+                var helpButtonContent='<IMG SRC="' + DQXBMP('info3.png') + '" border=0 ALT="" align="middle" style="margin-right:3px;margin-left:3px;margin-top:-3px"></IMG>';
+                helpButtonControl = Controls.Button('WizBoxButtonHelp', { content: helpButtonContent, buttonClass: 'DQXWizardButton', fastTouch: true });
+                helpButtonControl.setOnChanged($.proxy(that._onHelp, that));
+                boxButtonHelp.addElem(helpButtonControl.renderHtml());
 
 
                 $('#WizBackGround').append(box.toString());
@@ -123,12 +124,10 @@
                 $('#WizBoxButtonPrevious').hide();
                 $('#WizBoxButtonFinish').hide();
 
-                for (var buttonNr = 0; buttonNr < buttons.length; buttonNr++) {
-                    var button = buttons[buttonNr];
-                    $('#' + button.id).mousedown($.proxy(button.handler, this));
-                }
+                for (var buttonNr = 0; buttonNr < buttons.length; buttonNr++)
+                    buttons[buttonNr].control.postCreateHtml();
+                helpButtonControl.postCreateHtml();
 
-                $('#WizBoxButtonHelp').mousedown($.proxy(this._onHelp, this));
 
                 this._setPage(0);
             }

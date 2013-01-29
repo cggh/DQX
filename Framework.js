@@ -354,6 +354,7 @@
                         $('#' + frame.myID).append(helpButton.toString());
                         $('#' + frame.myID).mousedown(function () {
                             Msg.send({ type: 'ShowHelp' }, helpButton.getID());
+                            return false;
                         });
                     }
 

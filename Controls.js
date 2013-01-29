@@ -499,6 +499,8 @@
                 that._buttonClass = args.buttonClass;
             if (args.width)
                 that._width = args.width;
+            if (args.fastTouch)
+                that._fastTouch = args.fastTouch;
 
             that.renderHtml = function () {
                 var bt = DocEl.Div({ id: this.getFullID('') });
@@ -515,6 +517,18 @@
 
             that.postCreateHtml = function () {
                 this.getJQElement('').mousedown($.proxy(that._onChange, that));
+                if (that._fastTouch) {
+                    var element = document.getElementById(this.getFullID(''));
+                    element.addEventListener("touchstart", that._onTouchStart, false);
+                }
+            }
+
+            that._onTouchStart = function (ev) {
+                if (ev.stopPropagation)
+                    ev.stopPropagation();
+                if (ev.preventDefault)
+                    ev.preventDefault();
+                that._onChange();
             }
 
             that._onChange = function () {
@@ -744,10 +758,10 @@
         Controls.HelpButton = function (iid, args) {
             args.bitmap = DQXBMP('info4.png');
             //args.vertShift = 3;
-            var that = Controls.LinkButton(iid,args);
+            var that = Controls.LinkButton(iid, args);
 
             that.setOnChanged(function () {
-                Documentation.showHelp('LNK'+this.myID);
+                Documentation.showHelp('LNK' + this.myID);
             })
             return that;
         }
