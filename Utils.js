@@ -117,6 +117,44 @@
             return lst;
         }
 
+        DQX._activityList = [];
+
+        DQX._updateActivityStatus = function () {
+            if (DQX._activityList.length > 0) {
+                if ($('#DQXActivityBox').length == 0) {
+                    var DocEl = require(DQXSC("DocEl"));
+                    var box = DocEl.Div({ id: 'DQXActivityBox' });
+                    box.addStyle("position", "absolute");
+                    box.addStyle("left", '0px');
+                    box.addStyle("top", '0px');
+                    box.addStyle('background-color', 'rgb(255,128,128)');
+                    $('#DQXUtilContainer').append(box.toString());
+                }
+                var content = [];
+                $.each(DQX._activityList, function (idx, el) { content += el + '<br>'; });
+                $('#DQXActivityBox').html(content);
+            }
+            else {
+                $('#DQXActivityBox').remove();
+            }
+        }
+
+        DQX.pushActivity = function (msg) {
+            DQX._activityList.push(msg);
+            DQX._updateActivityStatus();
+        }
+
+        DQX.popActivity = function () {
+            DQX._activityList.pop();
+            DQX._updateActivityStatus();
+        }
+
+        DQX.executeActivity = function (msg, activity) {
+            DQX.pushActivity(msg);
+            activity();
+            DQX.popActivity();
+        }
+
         DQX._processingRequestCount = 0;
 
 

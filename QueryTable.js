@@ -229,6 +229,7 @@
 
             //Renders the table
             that.render = function () {
+                DQX.pushActivity("Creating table");
 
                 var messageHandlers = [];
 
@@ -267,7 +268,7 @@
                     rightgroup.addStyle('position', 'relative');
                     rightgroup.addStyle('top', '5px');
                     rightgroup.addStyle('right', '5px');
-                    rightgroup.addElem('<a href=' + downloadlink + '><IMG class="DQXBitmapLink" SRC='+DQXBMP('download.png')+' border=0 title="Download this data as TAB-delimited file" ALT="Download"></a>')
+                    rightgroup.addElem('<a href=' + downloadlink + '><IMG class="DQXBitmapLink" SRC=' + DQXBMP('download.png') + ' border=0 title="Download this data as TAB-delimited file" ALT="Download"></a>')
                     rs_pager += rightgroup.toString();
                 }
 
@@ -303,7 +304,7 @@
                         }
                         if (thecol._hyperlinkHeaderMessageScope) {
                             var st = '<IMG class="DQXQueryTableLinkHeader" id="{theid}" SRC=' + DQXBMP('link2.png') + ' border=0 class="DQXBitmapLink" ALT="Link" title="{theid}" style="position:absolute;right:-3px;top:-6px">'
-                            st=st.DQXformat({ theid: (thecol.myCompID + '~headerlink~' + this.myBaseID), hint: thecol._hyperlinkHeaderHint });
+                            st = st.DQXformat({ theid: (thecol.myCompID + '~headerlink~' + this.myBaseID), hint: thecol._hyperlinkHeaderHint });
                             rs_table[tbnr] += ' ' + st;
                         }
                         if (thecol.sortOption) {
@@ -359,7 +360,7 @@
                                     isLink = true;
                                     var linkID = thecol.myCompID + '~' + rownr + '~link~' + this.myBaseID;
                                     rs_table[tbnr] += '<span class="DQXQueryTableLinkCell" id="{id}">'.DQXformat({ id: linkID });
-                                    rs_table[tbnr] += '<IMG SRC="'+DQXBMP('link3.png')+'" border=0  id={id} title="{hint}" ALT="Link"> '.
+                                    rs_table[tbnr] += '<IMG SRC="' + DQXBMP('link3.png') + '" border=0  id={id} title="{hint}" ALT="Link"> '.
                                         DQXformat({ hint: thecol._hyperlinkCellHint, id: linkID });
                                 }
                                 rs_table[tbnr] += cell_content;
@@ -396,6 +397,8 @@
                 $('#' + this.myBaseID).find('.DQXTableRow').mouseenter(that._onRowMouseEnter);
                 $('#' + this.myBaseID).find('.DQXTableRow').mouseleave(that._onRowMouseLeave);
                 $('#' + this.myBaseID).find('.DQXTableRow').mousedown(that._onRowMouseDown);
+
+                DQX.popActivity();
             }
 
             that.modifyHightlightRow = function (newRowNr) {
@@ -626,16 +629,16 @@
 
             that.onResize = function () {
                 var availabeH = this.getRootElem().innerHeight() - DQX.scrollBarWidth - 15;
+                var lineH = 21;
                 if (availabeH != this.lastAvailabeH) {
-                    //this.myTable.myPageSize = Math.max(1, (availabeH - 50) / 17);
-                    //this.myTable.render();
-                    //return;
+                    this.myTable.myPageSize = Math.max(1, Math.floor((availabeH - 70) / lineH));
+                    this.myTable.render();
                     do {
                         var requiredH = this.getVerticalUserSize();
-                        if (requiredH < availabeH)
+                        if (requiredH + lineH < availabeH)
                             this.myTable._onMoreLines();
                     }
-                    while (requiredH < availabeH)
+                    while (requiredH + lineH < availabeH)
                     do {
                         var requiredH = this.getVerticalUserSize();
                         if (requiredH > availabeH)

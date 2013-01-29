@@ -30,8 +30,13 @@
 
             that.handleResize = function () {
                 if ('onResize' in that) {
-                    if ((that.getRootElem().width() > 5) && (that.getRootElem().height() > 5))
-                        that.onResize();
+                    if ((that.getRootElem().width() > 5) && (that.getRootElem().height() > 5)) {
+                        if ((that._lastResizedSizeX != that.getRootElem().width()) || (that._lastResizedSizeY != that.getRootElem().height())) {
+                            that.onResize();
+                            that._lastResizedSizeX = that.getRootElem().width();
+                            that._lastResizedSizeY = that.getRootElem().height();
+                        }
+                    }
                 }
             }
 
