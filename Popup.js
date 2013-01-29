@@ -2,22 +2,29 @@
     function ($, DQX, DocEl, Msg, Controls) {
         var Popup = {};
 
-        Popup._popupCount = 0;
+        Popup.checkBackgroundBlockNeeded = function () {
+            var blockingPopupsPresent = false;
+            $('#DQXBackBlocker').find(".DQXFloatBox").each(function (index, Element) { blockingPopupsPresent = true; });
+            if (!blockingPopupsPresent)
+                $('#DQXBackBlocker').remove();
+        }
 
         DQX.ClosePopup = function (index) {
             $("#" + index).remove();
-            Popup._popupCount = Math.max(0, Popup._popupCount - 1);
-            if (Popup._popupCount==0)
-                $('#DQXBackBlocker').remove();
+            Popup.checkBackgroundBlockNeeded();
         }
         DQX._popupIndex = 0;
 
         DQX.SwitchPinned = function (ID) {
             var elem = $("#" + ID);
             var newStatus = !Popup.isPinned(ID);
-            elem.find('.DQXPinBoxUnpinned').remove();
-            elem.find('.DQXPinBoxPinned').remove();
-            elem.append(Popup.createPinBox(ID, newStatus));
+            if (newStatus) {
+                $("#" + ID).appendTo("#DQXUtilContainer");
+                Popup.checkBackgroundBlockNeeded();
+                elem.find('.DQXPinBoxUnpinned').remove();
+                elem.find('.DQXPinBoxPinned').remove();
+                elem.append(Popup.createPinBox(ID, newStatus));
+            }
         }
 
         Popup._floatBoxMaxIndex = 99;
@@ -99,12 +106,12 @@
         }
 
         Popup.createPinBox = function (ID, isPinned) {
-            var bmp = isPinned ? DQXBMP('pin2.png') : DQXBMP('pin0.png');
+            var bmp = isPinned ? DQXBMP('pin3.png') : DQXBMP('pin4.png');
             var thepinner = DocEl.JavaScriptBitmaplink(bmp, "Keep this info box visible", "DQX.SwitchPinned('" + ID + "')");
             thepinner.setCssClass(isPinned ? "DQXPinBoxPinned" : "DQXPinBoxUnpinned");
             thepinner.addStyle('position', 'absolute');
-            thepinner.addStyle('right', '-7px');
-            thepinner.addStyle('top', '-14px');
+            thepinner.addStyle('right', '-11px');
+            thepinner.addStyle('top', '-18px');
             return thepinner.toString();
         }
 
@@ -194,7 +201,6 @@
                 var pageSizeY = $(window).height();
                 $('#' + ID).offset({ left: (pageSizeX - w) / 2, top: (pageSizeY - h) / 2 });
             }
-            Popup._popupCount += 1;
             return ID;
         }
 
