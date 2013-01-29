@@ -518,7 +518,7 @@
                 bt.addElem(that.content);
                 if (this._width)
                     bt.setWidthPx(this._width);
-                return '&nbsp;&nbsp;' + bt.toString();
+                return bt.toString();
             }
 
             that.postCreateHtml = function () {
@@ -534,6 +534,12 @@
                     ev.stopPropagation();
                 if (ev.preventDefault)
                     ev.preventDefault();
+                setTimeout(function () {
+                    this.getJQElement('').addClass('DQXBitmapButtonHighlight');
+                    setTimeout(function () {
+                        this.getJQElement('').removeClass('DQXBitmapButtonHighlight');
+                    }, 500)
+                } , 50);
                 that._onChange();
             }
 

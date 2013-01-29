@@ -1,5 +1,5 @@
-﻿define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel")],
-    function ($, DQX, DocEl, Msg, FramePanel) {
+﻿define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel"), DQXSC("Controls")],
+    function ($, DQX, DocEl, Msg, FramePanel, Controls) {
 
         //Namespace for query tables
         var QueryTable = {}
@@ -231,12 +231,44 @@
             that.render = function () {
                 DQX.pushActivity("Creating table");
 
-                var messageHandlers = [];
+                if (!this._pagerCreated) {
+                    var rs_pager = "";
+                    rs_pager += '<span style="position:relative;bottom:-7px;">';
+                    var navButtonControls = [];
+                    navButtonControls.push(Controls.Button(that.myBaseID + '_goFirst', { bitmap: DQXBMP('first.png'), description: 'First page', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onFirst, that)));
+                    navButtonControls.push(Controls.Button(that.myBaseID + '_goPrevious', { bitmap: DQXBMP('previous.png'), description: 'Previous page', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onBack, that)));
+                    navButtonControls.push(Controls.Button(that.myBaseID + '_goNext', { bitmap: DQXBMP('next.png'), description: 'Next page', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onForward, that)));
+                    navButtonControls.push(Controls.Button(that.myBaseID + '_goLast', { bitmap: DQXBMP('lastpage.png'), description: 'Last page', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onLast, that)));
+                    $.each(navButtonControls, function (idx, bt) { rs_pager += bt.renderHtml(); });
+                    rs_pager += '</span>';
+                    rs_pager += '<span id="{id}"></span>'.DQXformat({ id: that.myBaseID + '_status' });
 
-                var addBitmapButton = function (extensionid, imagefile, description) {
-                    messageHandlers.push(extensionid);
-                    return '<IMG id=' + that.myBaseID + extensionid + ' SRC="' + imagefile + '" border=0 class="DQXBitmapLink" ALT="' + description + '" TITLE="' + description + '">';
+                    var rightgroup = DocEl.Span({ id: that.myBaseID + '_right' });
+                    rightgroup.addStyle('float', 'right');
+                    rightgroup.addStyle('vertical-align', 'bottom');
+                    rightgroup.addStyle('position', 'relative');
+                    rightgroup.addStyle('top', '5px');
+                    rightgroup.addStyle('right', '5px');
+                    rs_pager += rightgroup.toString();
+
+
+                    /*                if (!this.autoSizeHeight) {
+                    rs_pager += "&nbsp;&nbsp;";
+                    rs_pager += addBitmapButton("_onMoreLines", DQXBMP('morelines.png'), "More lines on page");
+                    rs_pager += "&nbsp;";
+                    rs_pager += addBitmapButton("_onLessLines", DQXBMP('lesslines.png'), "Less lines on page");
+                    }*/
+
+                    this.getElement('Pager').html(rs_pager);
+                    $.each(navButtonControls, function (idx, bt) { bt.postCreateHtml(); });
+                    this._pagerCreated = true;
                 }
+
+                /*                var messageHandlers = [];
+                var addBitmapButton = function (extensionid, imagefile, description) {
+                messageHandlers.push(extensionid);
+                return '<IMG id=' + that.myBaseID + extensionid + ' SRC="' + imagefile + '" border=0 class="DQXBitmapLink" ALT="' + description + '" TITLE="' + description + '">';
+                }*/
 
                 var row1 = Math.max(0, this.myTableOffset - 200);
                 var row2 = this.myTableOffset + this.myPageSize + 200;
@@ -249,38 +281,20 @@
                 if ('totalRecordCount' in this.myDataFetcher)
                     this.totalRecordCount = this.myDataFetcher.totalRecordCount;
 
-                var rs_pager = "";
-                var rs_footer = '';
-                rs_pager += '<span style="position:relative;bottom:-8px;">';
-                rs_pager += addBitmapButton("_onFirst", DQXBMP("first.png"), "First page");
-                rs_pager += addBitmapButton("_onBack", DQXBMP("previous.png"), "Previous page");
-                rs_pager += addBitmapButton("_onForward", DQXBMP('next.png'), "Next page");
-                if (datacomplete) {
-                    rs_pager += addBitmapButton("_onLast", DQXBMP('lastpage.png'), "Last page");
-                }
-                rs_pager += "</span>";
+                var st = "&nbsp;&nbsp;&nbsp;Current: " + (this.myTableOffset + 1) + "-" + (this.myTableOffset + this.myPageSize);
+                if (this.totalRecordCount > 0)
+                    st += '; Total: ' + this.totalRecordCount;
+                $('#' + that.myBaseID + '_status').html(st);
+
+
                 if (datacomplete && this._dataValid) {
                     var downloadlink = this.myDataFetcher.createDownloadUrl();
-
-                    var rightgroup = DocEl.Span();
-                    rightgroup.addStyle('float', 'right');
-                    rightgroup.addStyle('vertical-align', 'bottom');
-                    rightgroup.addStyle('position', 'relative');
-                    rightgroup.addStyle('top', '5px');
-                    rightgroup.addStyle('right', '5px');
-                    rightgroup.addElem('<a href=' + downloadlink + '><IMG class="DQXBitmapLink" SRC=' + DQXBMP('download.png') + ' border=0 title="Download this data as TAB-delimited file" ALT="Download"></a>')
-                    rs_pager += rightgroup.toString();
+                    $('#' + that.myBaseID + '_right').html('<a href=' + downloadlink + '><IMG class="DQXBitmapLink" SRC=' + DQXBMP('download.png') + ' border=0 title="Download this data as TAB-delimited file" ALT="Download"></a>');
                 }
+                else
+                    $('#' + that.myBaseID + '_right').html('');
 
-                if (!this.autoSizeHeight) {
-                    rs_pager += "&nbsp;&nbsp;";
-                    rs_pager += addBitmapButton("_onMoreLines", DQXBMP('morelines.png'), "More lines on page");
-                    rs_pager += "&nbsp;";
-                    rs_pager += addBitmapButton("_onLessLines", DQXBMP('lesslines.png'), "Less lines on page");
-                }
 
-                rs_pager += "&nbsp;&nbsp;&nbsp;Current: ";
-                rs_pager += (this.myTableOffset + 1) + "-" + (this.myTableOffset + this.myPageSize);
 
                 var rs_table = [];
                 for (var tbnr = 0; tbnr <= 1; tbnr++)
@@ -376,15 +390,15 @@
                 for (var tbnr = 0; tbnr <= 1; tbnr++)
                     rs_table[tbnr] += "</table>";
 
+                this.getElement('Footer').html('');
                 this.getElement('Body1')[0].innerHTML = rs_table[0];
                 this.getElement('Body2')[0].innerHTML = rs_table[1];
-                this.getElement('Pager').html(rs_pager);
-                this.getElement('Footer').html(rs_footer);
 
-                for (var i = 0; i < messageHandlers.length; i++) {
-                    var id = messageHandlers[i];
-                    $('#' + this.myBaseID + id).click($.proxy(that[id], that));
-                }
+
+                /*                for (var i = 0; i < messageHandlers.length; i++) {
+                var id = messageHandlers[i];
+                $('#' + this.myBaseID + id).click($.proxy(that[id], that));
+                }*/
 
                 if (this._highlightRowNr >= 0)
                     for (var tbnr = 0; tbnr <= 1; tbnr++)
