@@ -348,10 +348,13 @@
                     info.addHtml(str);
                     info.render();
                     if (helpDocID) {
-                        var helpButton = DocEl.Div({ id: 'LNK'+helpDocID });
+                        var helpButton = DocEl.Div({ id: 'LNK' + helpDocID });
                         helpButton.setCssClass('DQXHelpLink DQXIntroBoxHelpLink');
                         helpButton.addElem('<IMG SRC="' + DQXBMP('info4.png') + '" border=0  ALT="" style="float:left;margin-right:2px">More information...')
                         $('#' + frame.myID).append(helpButton.toString());
+                        $('#' + frame.myID).mousedown(function () {
+                            Msg.send({ type: 'ShowHelp' }, helpButton.getID());
+                        });
                     }
 
                 });

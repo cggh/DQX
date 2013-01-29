@@ -22,6 +22,9 @@
             this.addAttribute("id", iID);
         }
 
+        DocEl._Element.prototype.getID = function () {
+            return this.myID;
+        }
 
         DocEl._Element.prototype.addAttribute = function (id, content) {
             this.myAttributes[id] = '' + content;
