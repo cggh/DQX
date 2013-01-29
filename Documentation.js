@@ -17,7 +17,7 @@
         }
 
         Documentation._onNext = function () {
-            if (Documentation.topicStackPointer < Documentation.topicStack.length-1) {
+            if (Documentation.topicStackPointer < Documentation.topicStack.length - 1) {
                 Documentation.topicStackPointer++;
                 Documentation._displayHelp(Documentation.topicStack[Documentation.topicStackPointer]);
             }
@@ -67,9 +67,8 @@
             box.addStyle("left", (pageSizeX - boxSizeX) / 2 + 'px');
             box.addStyle("top", 50 + 'px');
             box.addStyle('width', boxSizeX + 'px');
-            box.addStyle('max-height', (pageSizeY - 100) + 'px');
-            box.addStyle("overflow", "auto");
             box.setCssClass("DQXDocuBox");
+            box.addStyle("overflow", "hidden");
 
             var boxHeader = DocEl.Div({ id: 'DocuBoxHeader', parent: box });
             boxHeader.setCssClass("DQXDocuBoxHeader DQXDragHeader");
@@ -96,6 +95,7 @@
 
             var boxContent = DocEl.Div({ id: 'DocuBoxContent', parent: box });
             boxContent.setCssClass("DQXDocuBoxBody");
+            boxContent.addStyle('max-height', (pageSizeY - 100 - 100) + 'px');
 
             //boxContent.setHeightPx(boxSizeY - 4 - 105);
 
@@ -131,7 +131,7 @@
             var helpcontent = docElem.html();
             $('#DocuBoxContent').html(helpcontent);
 
-            $('#DocuBoxButtonPrevious').css('opacity', (Documentation.topicStackPointer>0) ? 1 : 0.3);
+            $('#DocuBoxButtonPrevious').css('opacity', (Documentation.topicStackPointer > 0) ? 1 : 0.3);
             $('#DocuBoxButtonNext').css('opacity', (Documentation.topicStackPointer < Documentation.topicStack.length - 1) ? 1 : 0.3);
 
         }

@@ -247,31 +247,15 @@ body
 { 
     background-color:rgb(240,240,250); 
 background: rgb(239,246,252); /* Old browsers */
-background: -moz-linear-gradient(-45deg, rgba(239,246,252,1) 0%, rgba(211,224,237,1) 100%); /* FF3.6+ */
-background: -webkit-gradient(linear, left top, right bottom, color-stop(0%,rgba(239,246,252,1)), color-stop(100%,rgba(211,224,237,1))); /* Chrome,Safari4+ */
-background: -webkit-linear-gradient(-45deg, rgba(239,246,252,1) 0%,rgba(211,224,237,1) 100%); /* Chrome10+,Safari5.1+ */
-background: -o-linear-gradient(-45deg, rgba(239,246,252,1) 0%,rgba(211,224,237,1) 100%); /* Opera 11.10+ */
-background: -ms-linear-gradient(-45deg, rgba(239,246,252,1) 0%,rgba(211,224,237,1) 100%); /* IE10+ */
-background: linear-gradient(135deg, rgba(239,246,252,1) 0%,rgba(211,224,237,1) 100%); /* W3C */
-filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eff6fc', endColorstr='#d3e0ed',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+background: -moz-linear-gradient(-45deg, rgba(239,246,252,1) 0%, rgba(192,213,234,1) 100%); /* FF3.6+ */
+background: -webkit-gradient(linear, left top, right bottom, color-stop(0%,rgba(239,246,252,1)), color-stop(100%,rgba(192,213,234,1))); /* Chrome,Safari4+ */
+background: -webkit-linear-gradient(-45deg, rgba(239,246,252,1) 0%,rgba(192,213,234,1) 100%); /* Chrome10+,Safari5.1+ */
+background: -o-linear-gradient(-45deg, rgba(239,246,252,1) 0%,rgba(192,213,234,1) 100%); /* Opera 11.10+ */
+background: -ms-linear-gradient(-45deg, rgba(239,246,252,1) 0%,rgba(192,213,234,1) 100%); /* IE10+ */
+background: linear-gradient(135deg, rgba(239,246,252,1) 0%,rgba(192,213,234,1) 100%); /* W3C */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eff6fc', endColorstr='#c0d5ea',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
     padding:5px; 
     cursor:text; 
-}
-
-.DQXFloatBoxHelp
-{
-    border-color:rgb(20,20,130) !important;
-}
-
-.DQXFloatBoxHeaderHelp
-{
-    background-color:rgb(20,20,130) !important;
-}
-
-.DQXFloatBoxContentHelp
-{
-    background-color:rgb(220,220,230) !important; 
-    padding:15px;
 }
 
 
@@ -858,9 +842,17 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', end
 
 .DQXDocuBoxBody
   {
-    overflow-y:auto;
+    overflow:auto;
     padding:12px;
     background-color:rgb(250,250,250);
+background: rgb(249,249,249) !important;
+background: -moz-linear-gradient(-45deg, rgba(249,249,249,1) 0%, rgba(234,234,234,1) 100%) !important;
+background: -webkit-gradient(linear, left top, right bottom, color-stop(0%,rgba(249,249,249,1)), color-stop(100%,rgba(234,234,234,1))) !important;
+background: -webkit-linear-gradient(-45deg, rgba(249,249,249,1) 0%,rgba(234,234,234,1) 100%) !important;
+background: -o-linear-gradient(-45deg, rgba(249,249,249,1) 0%,rgba(234,234,234,1) 100%) !important;
+background: -ms-linear-gradient(-45deg, rgba(249,249,249,1) 0%,rgba(234,234,234,1) 100%) !important;
+background: linear-gradient(135deg, rgba(249,249,249,1) 0%,rgba(234,234,234,1) 100%) !important;
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f9f9f9', endColorstr='#eaeaea',GradientType=1 ) !important;
 }
 
 .DQXDocuBoxFooter

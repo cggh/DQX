@@ -111,7 +111,8 @@
 
                 //Help button
                 var boxButtonHelp = DocEl.Div({ id: 'WizBoxButtonHelp', parent: boxFooter });
-                var helpButtonContent='<IMG SRC="' + DQXBMP('info3.png') + '" border=0 ALT="" align="middle" style="margin-right:3px;margin-left:3px;margin-top:-3px"></IMG>';
+                boxButtonHelp.addStyle('padding-left','8px');
+                var helpButtonContent = '<IMG SRC="' + DQXBMP('info3.png') + '" border=0 ALT="" align="middle" style="margin-right:3px;margin-left:3px;margin-top:-3px"></IMG>Help';
                 helpButtonControl = Controls.Button('WizBoxButtonHelp', { content: helpButtonContent, buttonClass: 'DQXWizardButton', fastTouch: true });
                 helpButtonControl.setOnChanged($.proxy(that._onHelp, that));
                 boxButtonHelp.addElem(helpButtonControl.renderHtml());
@@ -171,7 +172,7 @@
             }
 
             that._onHelp = function () {
-                Msg.send({ type: 'ShowHelp' }, 'LNKHelpCatVariation');
+                Msg.send({ type: 'ShowHelp' }, 'LNK' + this.getCurrentPage().helpid);
             }
 
             that._onFinish = function () {
