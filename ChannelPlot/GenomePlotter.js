@@ -1,5 +1,5 @@
-﻿define([DQXSCJQ(), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelPlotter"), DQXSC("DataFetcher/DataFetcherAnnotation"), DQXSC("ChannelPlot/ChannelAnnotation"), DQXSC("SQL"), DQXSC("DocEl"), DQXSC("DataDecoders")],
-    function ($, Msg, ChannelPlotter, DataFetcherAnnotation, ChannelAnnotation, SQL, DocEl, DataDecoders) {
+﻿define([DQXSCJQ(), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelPlotter"), DQXSC("DataFetcher/DataFetcherAnnotation"), DQXSC("ChannelPlot/ChannelAnnotation"), DQXSC("SQL"), DQXSC("DocEl"), DQXSC("DataDecoders"), DQXSC("Controls")],
+    function ($, Msg, ChannelPlotter, DataFetcherAnnotation, ChannelAnnotation, SQL, DocEl, DataDecoders, Controls) {
         var GenomePlotter = {};
 
 
@@ -140,7 +140,7 @@
             }
 
             that._onZoomOut = function () {
-                this.reScale(1.0/1.5);
+                this.reScale(1.0 / 1.5);
             }
 
             //internal: request gene list was succesful
@@ -244,21 +244,17 @@
 
             var navButtonDiv = DocEl.Div({ parent: headerDiv });
             navButtonDiv.addStyle('float', 'left');
-            var bts = [];
-            bts.push(DocEl.JavaScriptBitmaplink(DQXBMP('zoomin1.png'), "Zoom in", "", { id: that.getSubID('Zoomin'), parent: navButtonDiv }));
-            bts.push(DocEl.JavaScriptBitmaplink(DQXBMP('zoomout1.png'), "Zoom out", "", { id: that.getSubID('Zoomout'), parent: navButtonDiv }));
-            bts.push(DocEl.JavaScriptBitmaplink(DQXBMP('arrow3left.png'), "Scroll left", "", { id: that.getSubID('ScrollLeft'), parent: navButtonDiv }));
-            bts.push(DocEl.JavaScriptBitmaplink(DQXBMP('arrow3right.png'), "Scroll right", "", { id: that.getSubID('ScrollRight'), parent: navButtonDiv }));
-            $.each(bts, function (idx, bt) {
-                bt.addStyle('padding-left', '7px');
-                bt.addStyle('padding-right', '7px');
-            });
+
+            navButtonControls = [];
+            navButtonControls.push(Controls.Button(that.getSubID('BtZoomin'), { bitmap: DQXBMP('zoomin1.png'), description: 'Zoom in', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onZoomIn, that)));
+            navButtonControls.push(Controls.Button(that.getSubID('BtZoomout'), { bitmap: DQXBMP('zoomout1.png'), description: 'Zoom out', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onZoomOut, that)));
+            navButtonControls.push(Controls.Button(that.getSubID('BtScrollLeft'), { bitmap: DQXBMP('arrow3left.png'), description: 'Scroll left', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onScrollLeft, that)));
+            navButtonControls.push(Controls.Button(that.getSubID('BtScrollRight'), { bitmap: DQXBMP('arrow3right.png'), description: 'Scroll right', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onScrollRight, that)));
+            $.each(navButtonControls,function(idx,bt) { navButtonDiv.addElem(bt.renderHtml()); });
+
             that.getElemJQ('Header').html(headerDiv.toString());
             that.getElemJQ("ChromoPicker").change($.proxy(that._onChangeChromosome, that));
-            that.getElemJQ("ScrollLeft").mousedown($.proxy(that._onScrollLeft, that));
-            that.getElemJQ("ScrollRight").mousedown($.proxy(that._onScrollRight, that));
-            that.getElemJQ("Zoomin").mousedown($.proxy(that._onZoomIn, that));
-            that.getElemJQ("Zoomout").mousedown($.proxy(that._onZoomOut, that));
+            $.each(navButtonControls, function (idx, bt) { bt.postCreateHtml(); });
 
 
             var footerDiv = DocEl.Div();

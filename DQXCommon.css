@@ -970,3 +970,23 @@ background: -ms-linear-gradient(top, #f3f9ac 0%,#ffe36b 100%); /* IE10+ */
 background: linear-gradient(to bottom, #f3f9ac 0%,#ffe36b 100%); /* W3C */
 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f3f9ac', endColorstr='#ffe36b',GradientType=0 ); /* IE6-9 */
 }
+
+
+
+.DQXBitmapButton 
+{
+}
+
+.DQXBitmapButton:hover
+{
+    /*outline: 2px dotted;
+    outline-color: rgba(255,150,100,0.7);*/
+    background: #f3f9ac; /* Old browsers */
+    background: -moz-linear-gradient(top, #f3f9ac 0%, #ffe36b 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f3f9ac), color-stop(100%,#ffe36b)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top, #f3f9ac 0%,#ffe36b 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top, #f3f9ac 0%,#ffe36b 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top, #f3f9ac 0%,#ffe36b 100%); /* IE10+ */
+    background: linear-gradient(to bottom, #f3f9ac 0%,#ffe36b 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f3f9ac', endColorstr='#ffe36b',GradientType=0 ); /* IE6-9 */
+}

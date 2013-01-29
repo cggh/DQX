@@ -489,8 +489,14 @@
 
         Controls.Button = function (iid, args) {
             var that = Controls.Control(iid);
-            if (!args.content) DQX.reportError("No button content provided");
-            that.content = args.content;
+            that.content = '<No content>';
+            var description = '';
+            if (args.description)
+                description = args.description;
+            if (args.content)
+                that.content = args.content;
+            if (args.bitmap)
+                that.content = '<IMG SRC="' + args.bitmap + '" border=0 ALT="' + description + '" TITLE="' + description + '" style="padding-left:5px; padding-right:5px; padding-top:1px; padding-bottom:1px">';
             that._controlExtensionList.push('');
             if (args.hint)
                 that._hint = args.hint;
