@@ -223,29 +223,37 @@ body
 { 
     border-width:8px;
     border-style:solid;
-    border-color:rgb(20,20,120);
+    border-color:rgb(0,0,120);
     position:absolute; 
     left:850px; 
     top:100px; 
-    box-shadow: 8px 8px 14px rgba(0,0,0,0.85); 
+    box-shadow: 4px 4px 20px 3px rgba(0,0,0,0.95); 
  	z-index:999;
 }
 .DQXFloatBoxHeader
 { 
     background-color:rgb(20,20,120); 
-    border-width:1px;
-    border-style:solid;
-    border-color:rgb(20,20,120);
-    padding:8px; 
+    padding:8px;
+    padding-left:12px;
     cursor:move; 
     font-size:10pt;
     font-weight:bold;
     color:rgb(255,230,200);
+    background-image:url(Bitmaps/barback_blue.png);
+    height:19px;
 }
 
 .DQXFloatBoxContent
 { 
     background-color:rgb(240,240,250); 
+background: rgb(239,246,252); /* Old browsers */
+background: -moz-linear-gradient(-45deg, rgba(239,246,252,1) 0%, rgba(211,224,237,1) 100%); /* FF3.6+ */
+background: -webkit-gradient(linear, left top, right bottom, color-stop(0%,rgba(239,246,252,1)), color-stop(100%,rgba(211,224,237,1))); /* Chrome,Safari4+ */
+background: -webkit-linear-gradient(-45deg, rgba(239,246,252,1) 0%,rgba(211,224,237,1) 100%); /* Chrome10+,Safari5.1+ */
+background: -o-linear-gradient(-45deg, rgba(239,246,252,1) 0%,rgba(211,224,237,1) 100%); /* Opera 11.10+ */
+background: -ms-linear-gradient(-45deg, rgba(239,246,252,1) 0%,rgba(211,224,237,1) 100%); /* IE10+ */
+background: linear-gradient(135deg, rgba(239,246,252,1) 0%,rgba(211,224,237,1) 100%); /* W3C */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eff6fc', endColorstr='#d3e0ed',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
     padding:5px; 
     cursor:text; 
 }

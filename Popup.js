@@ -2,9 +2,13 @@
     function ($, DQX, DocEl, Msg, Controls) {
         var Popup = {};
 
+        Popup._popupCount = 0;
 
         DQX.ClosePopup = function (index) {
             $("#" + index).remove();
+            Popup._popupCount = Math.max(0, Popup._popupCount - 1);
+            if (Popup._popupCount==0)
+                $('#DQXBackBlocker').remove();
         }
         DQX._popupIndex = 0;
 
@@ -80,7 +84,7 @@
                     dragOnMouseMove(info);
                 },
 
-                handleTouchStop: function() {
+                handleTouchStop: function () {
                     dragElem.css('opacity', 1);
                 }
             }
@@ -104,6 +108,38 @@
             return thepinner.toString();
         }
 
+        Popup.createBackBlocker = function () {
+            if ($('#DQXBackBlocker').length > 0)
+                return;
+
+            var background = DocEl.Div({ id: 'DQXBackBlocker' });
+            background.addStyle("position", "absolute");
+            background.addStyle("left", '0px');
+            background.addStyle("top", '0px');
+            background.addStyle('width', '100%');
+            background.addStyle('height', '100%');
+            var wizbackcol = 'rgba(100,100,100,0.4)';
+            background.addStyle('background-color', wizbackcol);
+            background.addStyle('z-index', '2000');
+            $('#DQXUtilContainer').append(background.toString());
+
+            $('#DQXBackBlocker').mousedown(function (ev) {
+                if (ev.target.id == 'DQXBackBlocker') {
+                    $('#DQXBackBlocker').css('background-color', 'rgba(50,50,50,0.6)');
+                    setTimeout(function () {
+                        $('#DQXBackBlocker').css('background-color', wizbackcol);
+                        setTimeout(function () {
+                            $('#DQXBackBlocker').css('background-color', 'rgba(50,50,50,0.6)');
+                            setTimeout(function () {
+                                $('#DQXBackBlocker').css('background-color', wizbackcol);
+                            }, 150);
+                        }, 150);
+                    }, 150);
+                    //alert("Please close the wizard if you want to return to the application");
+                }
+            });
+        }
+
         Popup.create = function (title, content) {
             var wasSet = false;
             var popupID = '';
@@ -121,6 +157,7 @@
                 return popupID;
             }
             else {
+                Popup.createBackBlocker();
 
                 var posx = DQX.mousePosX + 10;
                 var posy = DQX.mousePosY + 10;
@@ -140,16 +177,16 @@
                 thebody.setCssClass("DQXFloatBoxContent");
                 thebody.addElem(content);
 
-                var thecloser = DocEl.JavaScriptBitmaplink(DQXBMP("close.png"), "Close", "DQX.ClosePopup('" + ID + "')");
+                var thecloser = DocEl.JavaScriptBitmaplink(DQXBMP("close2.png"), "Close", "DQX.ClosePopup('" + ID + "')");
                 thebox.addElem(thecloser);
                 thecloser.addStyle('position', 'absolute');
-                thecloser.addStyle('left', '-10px');
-                thecloser.addStyle('top', '-10px');
+                thecloser.addStyle('left', '-17px');
+                thecloser.addStyle('top', '-17px');
 
                 thebox.addElem(Popup.createPinBox(ID, false));
 
                 var content = thebox.toString();
-                $('#DQXUtilContainer').append(content);
+                $('#DQXBackBlocker').append(content);
                 Popup.makeDraggable(ID);
                 var w = $('#' + ID).width();
                 var h = $('#' + ID).height();
@@ -157,21 +194,8 @@
                 var pageSizeY = $(window).height();
                 $('#' + ID).offset({ left: (pageSizeX - w) / 2, top: (pageSizeY - h) / 2 });
             }
+            Popup._popupCount += 1;
             return ID;
-        }
-
-        //Show a help box corresponding to a help id item in the DOM
-        Popup.showHelp = function (id) {
-            var docElem = $('#DQXDocumentation').find('#' + id);
-            if (docElem.length == 0) DQX.reportError("Broken help link " + id);
-            var helpcontent = docElem.html();
-            var div = DocEl.Div();
-            var docH = DQX.getWindowClientH();
-            div.addStyle('max-width', '750px');
-            div.addStyle('max-height', (docH - 100) + 'px');
-            div.addStyle("overflow", "auto");
-            div.addElem(helpcontent);
-            Popup.create('Help', div.toString());
         }
 
         return Popup;

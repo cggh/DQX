@@ -37,7 +37,7 @@
             background.addStyle("top", '0px');
             background.addStyle('width', '100%');
             background.addStyle('height', '100%');
-            var wizbackcol = 'rgba(100,100,100,0.3)';
+            var wizbackcol = 'rgba(100,100,100,0.4)';
             background.addStyle('background-color', wizbackcol);
             background.addStyle('z-index', '2000');
             $('#DQXUtilContainer').append(background.toString());
