@@ -224,6 +224,11 @@
                 return this;
             }
 
+            that.setAnimateTransition = function () {
+                this._animateTransition = true;
+                return this;
+            }
+
             //Set the margin size (i.e. the space between the outer border of this frame and the outer border of its client frame, containing subframes or the final panel)
             that.setMargins = function (sz) {
                 DQX.checkIsNumber(sz);
@@ -539,10 +544,59 @@
                 $(tabset).children('.DQXTabs').children('.DQXTab').addClass('DQXTabInactive');
                 $('#' + newid).addClass("DQXTabActive");
                 $('#' + newid).removeClass("DQXTabInactive");
-                $(tabset).children('.DQXTabBody').children('.DQXTabContent').css('display', 'none');
+
                 var content_show = 'C' + newid;
-                $(tabset).find("#" + content_show).css('display', 'inline');
+
+                var content_hide = null;
+                $.each($(tabset).children('.DQXTabBody').children('.DQXTabContent'), function (idx, obj) {
+                    if ($(obj).css('display') != 'none')
+                        content_hide = $(obj).attr('id');
+                });
+                if (!content_hide) DQX.reportError('Unable to determine active tab');
+
+
+                var elemHide = $(tabset).find("#" + content_hide);
+                var elemShow = $(tabset).find("#" + content_show);
+                if (elemHide.length != 1) DQX.reportError('Invalid tab ' + content_hide);
+                if (elemShow.length != 1) DQX.reportError('Invalid tab ' + content_show);
+
+                if (this._animateTransition) {
+                    var transientOpacity = 0.8;
+                    var elemClient = $('#' + that.getClientDivID() + '_tabbody');
+                    var x0 = elemClient.offset().left;
+                    var y0 = elemClient.offset().top;
+                    var lx = elemClient.outerWidth();
+                    var ly = elemClient.outerHeight();
+                    var background = DocEl.Div({ id: 'DQXTabTransientBlocker' });
+                    background.addStyle("position", "absolute");
+                    background.addStyle("left", x0 + 'px');
+                    background.addStyle("top", y0 + 'px');
+                    background.addStyle('width', lx + 'px');
+                    background.addStyle('height', ly + 'px');
+                    background.addStyle('background-color', 'rgb(100,100,100)');
+                    background.addStyle('opacity', transientOpacity);
+                    background.addStyle('z-index', '2000');
+                    $('#DQXUtilContainer').append(background.toString());
+                }
+
+                elemHide.hide();
+                elemShow.show();
                 Msg.broadcast({ type: 'ClickTab', id: that.getClientDivID() }, newid);
+
+                if (this._animateTransition) {
+                    var transientAction = function () {
+                        if (transientOpacity > 0) {
+                            $('#DQXTabTransientBlocker').css('opacity', transientOpacity);
+                            transientOpacity -= 0.1;
+                            setTimeout(transientAction, 25);
+                        }
+                        else {
+                            $('#DQXTabTransientBlocker').remove();
+                        }
+                    }
+                    transientAction();
+                }
+
             };
 
             that._createTabItems = function () {
@@ -845,7 +899,8 @@
                 }
 
                 if (!subFramesOnly)
-                    if (this.isStacker()) this._createTabItems();
+                    if (this.isStacker())
+                        this._createTabItems();
 
                 if (this.isFinalPanel()) {
                     if (this.myClientObject != null)
@@ -876,12 +931,13 @@
                 if (!this.isStacker()) DQX.reportError("Container is not a tab");
                 if (this.getActiveTabFrameID() == newtab)
                     return false;
+                var newTabID = null;
                 for (var fnr = 0; fnr < this.memberFrames.length; fnr++) {
-                    if (newtab == this.memberFrames[fnr].myFrameID) {
-                        var tabid = this.getClientDivID() + '_tab_' + fnr;
-                        that._performSwitchTab(tabid);
-                    }
+                    if (newtab == this.memberFrames[fnr].myFrameID)
+                        newTabID = this.getClientDivID() + '_tab_' + fnr;
                 }
+                if (!newTabID) DQX.reportError('Tab switch: invalid end tag');
+                that._performSwitchTab(newTabID);
                 return true;
             }
 
