@@ -646,9 +646,30 @@
                 clientel.mousemove($.proxy(this._handleOnMouseMove, this));
                 for (var fnr = 0; fnr < this.memberFrames.length; fnr++) {
                     if (fnr < this.memberFrames.length - 1) {
-                        $('#' + this.getSeparatorDivID(fnr)).mousedown($.proxy(this._handleSplitterOnMouseDown, this));
-                        $('#' + this.getSeparatorDivID(fnr)).mousemove($.proxy(this._handleSplitterOnMouseMove, this));
-                        clientel.mousemove($.proxy(this._handleSplitterOnMouseMove, this));
+                        if (this.isSplitter()) {
+                            $('#' + this.getSeparatorDivID(fnr)).mousedown($.proxy(this._handleSplitterOnMouseDown, this));
+                            $('#' + this.getSeparatorDivID(fnr)).mousemove($.proxy(this._handleSplitterOnMouseMove, this));
+                            clientel.mousemove($.proxy(this._handleSplitterOnMouseMove, this));
+/*Code to make splitters moveable on touc devices
+                            var touchHandler = {
+                                handleTouchStart: function (info, ev) {
+                                    var splitid = that.getSeparatorDivID(fnr);
+                                    ev.pageX = info.pageX;
+                                    ev.pageY = info.pageY;
+                                    ev.target = { id: splitid };
+                                    that._handleSplitterOnMouseDown(ev);
+                                },
+                                handleTouchMove: function (info, ev) {
+                                    var splitid = that.getSeparatorDivID(fnr);
+                                    ev.pageX = info.pageX;
+                                    ev.pageY = info.pageY;
+                                    ev.target = { id: splitid };
+                                    that._handleSplitterOnMouseMove(ev);
+                                }
+                            };
+                            DQX.augmentTouchEvents(touchHandler, this.getSeparatorDivID(fnr), true, false);
+*/
+                        }
                     }
                     this.memberFrames[fnr]._postCreateHTML();
                 }
