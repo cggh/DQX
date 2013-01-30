@@ -15,7 +15,6 @@
             that.myComment = '';
             that.TablePart = iTablePart;
             that._visible = true;
-            that.Collapsed = false;
             that._hyperlinkCellMessageScope = null;
             that._hyperlinkCellHint = '';
             that._hyperlinkHeaderMessageScope = null;
@@ -308,19 +307,11 @@
                     var thecol = this.myColumns[colnr];
                     if (thecol.isVisible()) {
                         var tbnr = thecol.TablePart;
-                        rs_table[tbnr] += '<th TITLE="{comment}"><div style="position:relative;padding-right:15px">'.DQXformat({ comment: thecol.myComment });
-                        if (!thecol.Collapsed) {
-                            rs_table[tbnr] += thecol.myName;
-                            // rs_table[tbnr] += '&nbsp;<a onclick=\"QueryTable._reflectOwnMessage(\'' + this.myBaseID + '\',\'Collapse\',\'' + thecol.myCompID + '\')\" href=\"javascript:void(0)\"><</a>'
-                        }
-                        else {
-                            // rs_table[tbnr] += '&nbsp;<a onclick=\"QueryTable._reflectOwnMessage(\'' + this.myBaseID + '\',\'Collapse\',\'' + thecol.myCompID + '\')\" href=\"javascript:void(0)\">></a>'
-                        }
-                        if (thecol._hyperlinkHeaderMessageScope) {
-                            var st = '<IMG class="DQXQueryTableLinkHeader" id="{theid}" SRC=' + DQXBMP('link2.png') + ' border=0 class="DQXBitmapLink" ALT="Link" title="{theid}" style="position:absolute;right:-3px;top:-6px">'
-                            st = st.DQXformat({ theid: (thecol.myCompID + '~headerlink~' + this.myBaseID), hint: thecol._hyperlinkHeaderHint });
-                            rs_table[tbnr] += ' ' + st;
-                        }
+                        rs_table[tbnr] += '<th TITLE="{comment}"><div id="{theid}" class="DQXQueryTableHeaderText" style="position:relative;padding-right:15px;height:100%;">'
+                            .DQXformat({ comment: thecol.myComment, theid: (thecol.myCompID + '~headertext~' + this.myBaseID) });
+                        rs_table[tbnr] += thecol.myName;
+                        if (thecol.myName.indexOf('<br>')<0)
+                        rs_table[tbnr] += '<br>&nbsp;';
                         if (thecol.sortOption) {
                             var bitmapname = DQXBMP("arrow5down.png");
                             if (this.myDataFetcher.positionField == thecol.sortOption.toString()) {
@@ -329,11 +320,17 @@
                                 else
                                     bitmapname = DQXBMP("arrow4up.png");
                             }
-                            var st = '<IMG class="DQXQueryTableSortHeader" id="{id}" SRC={bmp} border=0 class="DQXBitmapLink" title="Sort by this column" ALT="Link" style="position:absolute;right:-4px;bottom:-4px">'.
+                            var st = '<IMG class="DQXQueryTableSortHeader" id="{id}" SRC={bmp} border=0 class="DQXBitmapLink" title="Sort by this column" ALT="Link" style="position:absolute;right:-4px;bottom:-3px">'.
                                 DQXformat({ id: thecol.myCompID + '~sort~' + this.myBaseID, bmp: bitmapname });
                             rs_table[tbnr] += ' ' + st;
                         }
-                        rs_table[tbnr] += "</div></th>";
+                        if (thecol._hyperlinkHeaderMessageScope) {
+                            var st = '<IMG class="DQXQueryTableLinkHeader" id="{theid}" SRC=' + DQXBMP('link2.png') + ' border=0 class="DQXBitmapLink" ALT="Link" title="{theid}" style="position:absolute;right:-5px;top:-5px">'
+                            st = st.DQXformat({ theid: (thecol.myCompID + '~headerlink~' + this.myBaseID), hint: thecol._hyperlinkHeaderHint });
+                            rs_table[tbnr] += ' ' + st;
+                        }
+                        rs_table[tbnr] += "</div>";
+                        rs_table[tbnr] += "</th>";
                     }
                 }
 
@@ -365,8 +362,6 @@
                                     cell_color = thecol.CellToColor(cell_content);
                                     cell_content = thecol.CellToText(cell_content);
                                     cell_title = cell_content;
-                                    if (thecol.Collapsed)
-                                        cell_content = "";
                                 }
                                 rs_table[tbnr] += "<td style='background-color:" + cell_color + "'>";
                                 var isLink = false;
@@ -406,6 +401,7 @@
 
 
                 $('#' + this.myBaseID).find('.DQXQueryTableLinkCell').click($.proxy(that._onClickLinkCell, that));
+                $('#' + this.myBaseID).find('.DQXQueryTableHeaderText').click($.proxy(that._onClickLinkHeader, that));
                 $('#' + this.myBaseID).find('.DQXQueryTableLinkHeader').click($.proxy(that._onClickLinkHeader, that));
                 $('#' + this.myBaseID).find('.DQXQueryTableSortHeader').click($.proxy(that._onClickSortHeader, that));
                 $('#' + this.myBaseID).find('.DQXTableRow').mouseenter(that._onRowMouseEnter);
@@ -482,6 +478,7 @@
                 var tokens = ev.target.id.split('~');
                 var column = this.findColumn(tokens[0]);
                 Msg.broadcast(column._hyperlinkHeaderMessageScope, tokens[0]);
+                return false;
             }
 
             that._onClickSortHeader = function (ev) {
@@ -498,7 +495,18 @@
                 this.myTableOffset = 0;
                 this._highlightRowNr = -1;
                 this.render();
+                return false;
+            }
 
+            that.sortByColumn = function (colid, reverse) {
+                var column = this.findColumn(colid);
+                var newPositionField = column.sortOption.toString();
+                this.myDataFetcher.sortReverse = reverse;
+                this.myDataFetcher.positionField = newPositionField;
+                this.myDataFetcher.clearData();
+                this.myTableOffset = 0;
+                this._highlightRowNr = -1;
+                this.render();
             }
 
             //This function is called when a key was pressed
@@ -642,7 +650,7 @@
             }
 
             that.onResize = function () {
-                var availabeH = this.getRootElem().innerHeight() - DQX.scrollBarWidth - 15;
+                var availabeH = this.getRootElem().innerHeight() - DQX.scrollBarWidth - 25;
                 var lineH = 21;
                 if (availabeH != this.lastAvailabeH) {
                     this.myTable.myPageSize = Math.max(1, Math.floor((availabeH - 70) / lineH));

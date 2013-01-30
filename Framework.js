@@ -573,7 +573,7 @@
                     background.addStyle("top", y0 + 'px');
                     background.addStyle('width', lx + 'px');
                     background.addStyle('height', ly + 'px');
-                    background.addStyle('background-color', 'rgb(100,100,100)');
+                    background.addStyle('background-color', 'rgb(60,60,60)');
                     background.addStyle('opacity', transientOpacity);
                     background.addStyle('z-index', '2000');
                     $('#DQXUtilContainer').append(background.toString());
@@ -587,8 +587,8 @@
                     var transientAction = function () {
                         if (transientOpacity > 0) {
                             $('#DQXTabTransientBlocker').css('opacity', transientOpacity);
-                            transientOpacity -= 0.1;
-                            setTimeout(transientAction, 25);
+                            transientOpacity -= 0.15;
+                            setTimeout(transientAction, 50);
                         }
                         else {
                             $('#DQXTabTransientBlocker').remove();
