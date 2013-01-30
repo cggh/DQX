@@ -587,14 +587,14 @@
                     var transientAction = function () {
                         if (transientOpacity > 0) {
                             $('#DQXTabTransientBlocker').css('opacity', transientOpacity);
-                            transientOpacity -= 0.15;
+                            transientOpacity -= 0.3;
                             setTimeout(transientAction, 50);
                         }
                         else {
                             $('#DQXTabTransientBlocker').remove();
                         }
                     }
-                    transientAction();
+                    setTimeout(transientAction, 125);
                 }
 
             };
