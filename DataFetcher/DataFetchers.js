@@ -48,6 +48,8 @@
             this.serverurl = iserverurl; //The server url to contact for this
             this.tablename = itablename; //The name of the table to fetch from
             this._requestNr = 0;
+            if (!itablename)
+                DQX.reportError('Invalid table name');
 
             this.positionField = ipositionfield; //The field that contains the position information (use 'LIMIT' for data fetchers that are based on record numbers)
             this.sortReverse = false;
@@ -407,6 +409,8 @@
             that.tableName = itableName; //The name of the table to fetch from
             that.columns = [];
             that._maxResultCount = 100000;
+            if (!itableName)
+                DQX.reportError('Invalid table name');
 
             that.addColumn = function (id, encoding) {
                 this.columns.push({ id: id, encoding: encoding });
