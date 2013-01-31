@@ -507,6 +507,7 @@
                 that._width = args.width;
             if (args.fastTouch)
                 that._fastTouch = args.fastTouch;
+            that._enabled = true;
 
             that.renderHtml = function () {
                 var bt = DocEl.Div({ id: this.getFullID('') });
@@ -539,12 +540,21 @@
                     setTimeout(function () {
                         this.getJQElement('').removeClass('DQXBitmapButtonHighlight');
                     }, 500)
-                } , 50);
+                }, 50);
                 that._onChange();
             }
 
             that._onChange = function () {
-                this._notifyChanged();
+                if (this._enabled)
+                    this._notifyChanged();
+            }
+
+            that.enable = function (status) {
+                this._enabled = status;
+                if (this._enabled)
+                    this.getJQElement('').css('opacity', 1);
+                else
+                    this.getJQElement('').css('opacity', 0.4);
             }
 
             return that;

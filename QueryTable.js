@@ -91,6 +91,11 @@
             that.totalRecordCount = -1; //means not yet determined
 
             //Finds a html element in the cluster of elements that define this table
+            that.getElementID = function (extension) {
+                return this.myBaseID + extension;
+            }
+
+            //Finds a html element in the cluster of elements that define this table
             that.getElement = function (extension) {
                 var id = "#" + this.myBaseID + extension;
                 var rs = $(id);
@@ -238,6 +243,7 @@
                     navButtonControls.push(Controls.Button(that.myBaseID + '_goPrevious', { bitmap: DQXBMP('previous.png'), description: 'Previous page', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onBack, that)));
                     navButtonControls.push(Controls.Button(that.myBaseID + '_goNext', { bitmap: DQXBMP('next.png'), description: 'Next page', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onForward, that)));
                     navButtonControls.push(Controls.Button(that.myBaseID + '_goLast', { bitmap: DQXBMP('lastpage.png'), description: 'Last page', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onLast, that)));
+                    this.navButtonControls = navButtonControls;
                     $.each(navButtonControls, function (idx, bt) { rs_pager += bt.renderHtml(); });
                     rs_pager += '</span>';
                     rs_pager += '<span id="{id}"></span>'.DQXformat({ id: that.myBaseID + '_status' });
@@ -263,11 +269,7 @@
                     this._pagerCreated = true;
                 }
 
-                /*                var messageHandlers = [];
-                var addBitmapButton = function (extensionid, imagefile, description) {
-                messageHandlers.push(extensionid);
-                return '<IMG id=' + that.myBaseID + extensionid + ' SRC="' + imagefile + '" border=0 class="DQXBitmapLink" ALT="' + description + '" TITLE="' + description + '">';
-                }*/
+
 
                 var row1 = Math.max(0, this.myTableOffset - 200);
                 var row2 = this.myTableOffset + this.myPageSize + 200;
@@ -310,8 +312,8 @@
                         rs_table[tbnr] += '<th TITLE="{comment}"><div id="{theid}" class="DQXQueryTableHeaderText" style="position:relative;padding-right:15px;height:100%;">'
                             .DQXformat({ comment: thecol.myComment, theid: (thecol.myCompID + '~headertext~' + this.myBaseID) });
                         rs_table[tbnr] += thecol.myName;
-                        if (thecol.myName.indexOf('<br>')<0)
-                        rs_table[tbnr] += '<br>&nbsp;';
+                        if (thecol.myName.indexOf('<br>') < 0)
+                            rs_table[tbnr] += '<br>&nbsp;';
                         if (thecol.sortOption) {
                             var bitmapname = DQXBMP("arrow5down.png");
                             if (this.myDataFetcher.positionField == thecol.sortOption.toString()) {
@@ -359,6 +361,8 @@
                                 if (downloadrownr >= 0) {
                                     hascontent = true;
                                     cell_content = this.myDataFetcher.getColumnPoint(downloadrownr, thecol.myCompID);
+                                    if (thecol.customTextCreator)
+                                        cell_content = thecol.customTextCreator(this.myDataFetcher, downloadrownr);
                                     cell_color = thecol.CellToColor(cell_content);
                                     cell_content = thecol.CellToText(cell_content);
                                     cell_title = cell_content;
@@ -386,14 +390,9 @@
                     rs_table[tbnr] += "</table>";
 
                 this.getElement('Footer').html('');
-                this.getElement('Body1')[0].innerHTML = rs_table[0];
-                this.getElement('Body2')[0].innerHTML = rs_table[1];
+                this.getElement('Body1').html(rs_table[0]);
+                this.getElement('Body2').html(rs_table[1]);
 
-
-                /*                for (var i = 0; i < messageHandlers.length; i++) {
-                var id = messageHandlers[i];
-                $('#' + this.myBaseID + id).click($.proxy(that[id], that));
-                }*/
 
                 if (this._highlightRowNr >= 0)
                     for (var tbnr = 0; tbnr <= 1; tbnr++)
@@ -407,6 +406,12 @@
                 $('#' + this.myBaseID).find('.DQXTableRow').mouseenter(that._onRowMouseEnter);
                 $('#' + this.myBaseID).find('.DQXTableRow').mouseleave(that._onRowMouseLeave);
                 $('#' + this.myBaseID).find('.DQXTableRow').mousedown(that._onRowMouseDown);
+
+                this.navButtonControls[0].enable(this.myTableOffset > 0);
+                this.navButtonControls[1].enable(this.myTableOffset > 0);
+                var endReached = this.myTableOffset + this.myPageSize >= this.totalRecordCount;
+                this.navButtonControls[2].enable(!endReached);
+                this.navButtonControls[3].enable(!endReached);
 
                 DQX.popActivity();
             }
@@ -558,6 +563,23 @@
                     this._onLineUp(3);
                 return false;
             }
+            /*
+            that.handleTouchStart = function (info, ev) {
+            that._dragstartoffsetX = that.getElement("Body2").scrollLeft();
+            this._dragTableOffset = this.myTableOffset;
+            that._dragstartx = info.pageX;
+            that._dragstarty = info.pageY;
+            }
+
+            that.handleTouchMove = function (info, ev) {
+            that.getElement("Body2").scrollLeft(that._dragstartoffsetX - (info.pageX - that._dragstartx))
+            var newOffset = Math.round(this._dragTableOffset - (info.pageY - that._dragstarty) / 21);
+            if (newOffset != this.myTableOffset) {
+            this.myTableOffset = newOffset;
+            this.render();
+            }
+            }
+            */
 
             that.onResize = function () {
             }
@@ -567,6 +589,8 @@
             //Initialise some event handlers
             that.getElement('Body1').bind('DOMMouseScroll mousewheel', $.proxy(that.OnMouseWheel, that));
             that.getElement('Body2').bind('DOMMouseScroll mousewheel', $.proxy(that.OnMouseWheel, that));
+
+            //DQX.augmentTouchEvents(that, that.getElementID('Body2'), true, false);
 
             return that;
         }
@@ -620,7 +644,7 @@
                 tablebody1.addStyle("border-right-width", '2px');
                 tablebody1.addStyle("border-style", 'solid');
                 tablebody1.addStyle("border-color", 'rgb(60,60,60)');
-                var div2 = DocEl.Div({ parent: holder });
+                var div2 = DocEl.Div({ parent: holder, id: that.getSubId("BodyContainer") });
                 div2.addStyle('overflow', 'auto'); //.setWidthPc(95);
                 var tablebody2 = DocEl.Div({ parent: div2, id: that.getSubId("Body2") });
                 tablebody2.addStyle("overflow-x", "scroll").addStyle("overflow-y", "hidden");
