@@ -189,6 +189,7 @@
         DocEl.Edit = function (content, args) {
             var that = DocEl.Create("input", args);
             that.addAttribute("type", 'text');
+            //that.addAttribute("pattern", "[0-9]*");
             that.addAttribute("value", content);
             return that;
         }

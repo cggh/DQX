@@ -473,6 +473,17 @@
         // The global DQX startup function
         /////////////////////////////////////////////////////////////////////////////////////
 
+        DQX._onError = function (message, url, lineNumber) {
+            var errorTokens = { type: 'JSException', message: message, source: url, linenr: lineNumber, browser: navigator.userAgent };
+            //Display error for testing purposes
+            var msg = '';
+            $.each(errorTokens, function (key, value) {
+                msg += key + '= ' + value + '\n';
+            });
+            alert(msg);
+            return true;
+        };
+
         DQX.Init = function () {
 
             DQX.scrollBarWidth = getScrollBarWidth();
@@ -491,6 +502,8 @@
             });
 
             $(document).keydown(DQX._handleKeyDown);
+
+            window.onerror = DQX._onError;
         }
 
 

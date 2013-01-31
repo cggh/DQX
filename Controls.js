@@ -608,8 +608,13 @@
                 that.size = args.size;
             if (args.hint)
                 that._hint = args.hint;
+            that._notifyEnter = null;
 
             that._controlExtensionList.push('');
+
+            that.setNotifyEnter = function (handler) {
+                this._notifyEnter = handler;
+            }
 
             that.renderHtml = function () {
                 var edt = DocEl.Edit(that.value, { id: this.getFullID('') });
@@ -617,6 +622,9 @@
                     edt.addHint(this._hint);
                 edt.addAttribute('size', that.size);
                 edt.addAttribute('name', this.getFullID(''));
+                edt.addAttribute('autocorrect', "off");
+                edt.addAttribute('autocapitalize', "off");
+                edt.addAttribute('autocomplete', "off");
                 var rs = '';
                 if (this.myLabel) {
                     var label = DocEl.Label({ target: this.getFullID('Label') });
@@ -627,7 +635,16 @@
             }
 
             that.postCreateHtml = function () {
-                this.getJQElement('').bind("propertychange keyup input paste", $.proxy(that._onChange, that));
+                this.getJQElement('').bind("propertychange input paste", $.proxy(that._onChange, that));
+                this.getJQElement('').bind("keyup", $.proxy(that._onKeyUp, that));
+            }
+
+            that._onKeyUp = function (ev) {
+                this._onChange();
+                if (ev.keyCode == 13) {
+                    if (this._notifyEnter)
+                        this._notifyEnter();
+                }
             }
 
             that._onChange = function () {

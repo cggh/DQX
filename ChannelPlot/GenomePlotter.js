@@ -250,7 +250,7 @@
             navButtonControls.push(Controls.Button(that.getSubID('BtZoomout'), { bitmap: DQXBMP('zoomout1.png'), description: 'Zoom out', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onZoomOut, that)));
             navButtonControls.push(Controls.Button(that.getSubID('BtScrollLeft'), { bitmap: DQXBMP('arrow3left.png'), description: 'Scroll left', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onScrollLeft, that)));
             navButtonControls.push(Controls.Button(that.getSubID('BtScrollRight'), { bitmap: DQXBMP('arrow3right.png'), description: 'Scroll right', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onScrollRight, that)));
-            $.each(navButtonControls,function(idx,bt) { navButtonDiv.addElem(bt.renderHtml()); });
+            $.each(navButtonControls, function (idx, bt) { navButtonDiv.addElem(bt.renderHtml()); });
 
             that.getElemJQ('Header').html(headerDiv.toString());
             that.getElemJQ("ChromoPicker").change($.proxy(that._onChangeChromosome, that));
