@@ -78,7 +78,7 @@
 
                 //Determine vertical size of bottom part with per SNP position graphs
                 var graphSizeY = 20;
-                DQX.foreach(this.myDataFetcher.getSnPositInfoList(), this, function (info, self) {
+                $.each(this.myDataFetcher.getSnPositInfoList(), function (idx, info) {
                     if (info.Display)
                         graphSizeY += info.displaySizeY;
                 });
@@ -603,7 +603,8 @@
                 posY += channelSizeY;
 
 
-                DQX.foreach(this.myDataFetcher.getSnPositInfoList(), this, function (info, self) {
+                var self = this;
+                $.each(this.myDataFetcher.getSnPositInfoList(), function (idx, info) {
                     if (info.Display) {
                         var channelSizeY = info.displaySizeY;
                         var backgrad = drawInfo.centerContext.createLinearGradient(0, posY, 0, posY + channelSizeY);
@@ -689,7 +690,8 @@
                 if (this.hoverSnp >= 0) {
                     infostr = 'SNP info<br/>';
                     infostr += 'Position: ' + this.data.posits[this.hoverSnp] + '<br/>';
-                    DQX.foreach(this.myDataFetcher.getSnPositInfoList(), this, function (info, self) {
+                    var self = this;
+                    $.each(this.myDataFetcher.getSnPositInfoList(), function (idx, info) {
                         var vl = self.data.getSnpInfo(info.ID)[self.hoverSnp];
                         if (info.DataType == 'Value') vl = vl.toFixed(3); //!!!a hack that needs to be resolved
                         infostr += info.Name + '= ';
