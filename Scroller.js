@@ -246,19 +246,23 @@
             }
 
             that.handleTouchStart = function (info, ev) {
-                this._onMouseDown(info);
+                ev.pageX = info.pageX;
+                ev.pageY = info.pageY;
+                this._onMouseDown(ev);
             }
 
             that.handleTouchMove = function (info, ev) {
-                this._onMouseMove(info);
+                ev.pageX = info.pageX;
+                ev.pageY = info.pageY;
+                this._onMouseMove(ev);
             }
 
             that.handleTouchEnd = function (ev) {
-                this._onMouseUp(info);
+                this._onMouseUp(ev);
             }
 
             that.handleTouchCancel = function (ev) {
-                this._onMouseUp(info);
+                this._onMouseUp(ev);
             }
 
 

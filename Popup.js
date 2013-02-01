@@ -91,7 +91,7 @@
                     dragOnMouseMove(info);
                 },
 
-                handleTouchStop: function () {
+                handleTouchEnd: function () {
                     dragElem.css('opacity', 1);
                 }
             }

@@ -385,7 +385,8 @@
                         ev.stopPropagation();
                     if (ev.preventDefault)
                         ev.preventDefault();
-                    that.handleTouchStart(getSingleTouchInfo(ev), ev);
+                    if (that.handleTouchStart)
+                        that.handleTouchStart(getSingleTouchInfo(ev), ev);
                 }
             }
 
@@ -395,7 +396,8 @@
                         ev.stopPropagation();
                     if (ev.preventDefault)
                         ev.preventDefault();
-                    that.handleTouchMove(getSingleTouchInfo(ev), ev);
+                    if (that.handleTouchMove)
+                        that.handleTouchMove(getSingleTouchInfo(ev), ev);
                 }
             }
 
@@ -406,14 +408,16 @@
                         ev.stopPropagation();
                     if (ev.preventDefault)
                         ev.preventDefault();
-                    that.handleTouchStop(ev);
+                    if (that.handleTouchEnd)
+                        that.handleTouchEnd(ev);
                 }
             }
 
             var _onTouchCancel = function (ev) {
                 if (_touchMoving) {
                     _touchMoving = false;
-                    that.handleTouchStop();
+                    if (that.handleTouchEnd)
+                        that.handleTouchEnd();
                 }
             }
 
@@ -422,7 +426,8 @@
                     ev.preventDefault();
                 if (ev.stopPropagation)
                     ev.stopPropagation();
-                that.handleGestureStart(ev);
+                if (that.handleGestureStart)
+                    that.handleGestureStart(ev);
             }
 
             var _onGestureChange = function (ev) {
@@ -430,7 +435,8 @@
                     ev.preventDefault();
                 if (ev.stopPropagation)
                     ev.stopPropagation();
-                that.handleGestureChange(ev);
+                if (that.handleGestureChange)
+                    that.handleGestureChange(ev);
             }
 
             var _onGestureEnd = function (ev) {
@@ -438,7 +444,8 @@
                     ev.preventDefault();
                 if (ev.stopPropagation)
                     ev.stopPropagation();
-                that.handleGestureEnd(ev);
+                if (that.handleGestureEnd)
+                    that.handleGestureEnd(ev);
             }
 
 

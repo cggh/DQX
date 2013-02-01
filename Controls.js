@@ -536,9 +536,9 @@
                 if (ev.preventDefault)
                     ev.preventDefault();
                 setTimeout(function () {
-                    this.getJQElement('').addClass('DQXBitmapButtonHighlight');
+                    that.getJQElement('').addClass('DQXBitmapButtonHighlight');
                     setTimeout(function () {
-                        this.getJQElement('').removeClass('DQXBitmapButtonHighlight');
+                        that.getJQElement('').removeClass('DQXBitmapButtonHighlight');
                     }, 500)
                 }, 50);
                 that._onChange();
