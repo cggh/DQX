@@ -20,6 +20,11 @@ body
 	overflow:hidden;
 }
 
+.DQXSmallText
+{
+	font-size:8pt;
+}
+
 .DQXLarge
 {
 	font-size:11pt;
