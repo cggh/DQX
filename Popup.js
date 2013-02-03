@@ -105,6 +105,11 @@
             return elem.find('.DQXPinBoxPinned').length > 0;
         }
 
+        Popup.closeIfNeeded = function (ID) {
+            if (!Popup.isPinned(ID))
+                DQX.ClosePopup(ID);
+        }
+
         Popup.createPinBox = function (ID, isPinned) {
             var bmp = isPinned ? DQXBMP('pin3.png') : DQXBMP('pin4.png');
             var thepinner = DocEl.JavaScriptBitmaplink(bmp, "Keep this info box visible", "DQX.SwitchPinned('" + ID + "')");
