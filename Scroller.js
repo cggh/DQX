@@ -11,7 +11,7 @@
             that.rangeMin = 0; //zero fraction translates to this value
             that.rangeMax = 1; //one fraction translates to this value
             that.scrollPos = 0.0; //scroll position, as fraction
-            that.ScrollSize = 0.2; //size, as fraction
+            that.ScrollSize = 0.05; //size, as fraction
             that.minScrollSize = 0.0005; //this determines the maximum zoom factor for the zoom slider
             that.myConsumer = null;
 

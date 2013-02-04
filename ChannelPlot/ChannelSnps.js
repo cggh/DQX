@@ -587,8 +587,8 @@
                         var refBase = data.SnpRefBase[i];
                         var altBase = data.SnpAltBase[i];
                         var showIndication = false;
-                        if ((refBase == '.') && (altBase == '+')) { showIndication = true; drawInfo.centerContext.fillStyle = DQX.Color(1, 0, 0).toString(); }
-                        if ((refBase == '+') && (altBase == '.')) { showIndication = true; drawInfo.centerContext.fillStyle = DQX.Color(0, 0.7, 0).toString(); }
+                        if ((refBase != '+') && (altBase == '+')) { showIndication = true; drawInfo.centerContext.fillStyle = DQX.Color(1, 0, 0).toString(); }
+                        if ((refBase == '+') && (altBase != '+')) { showIndication = true; drawInfo.centerContext.fillStyle = DQX.Color(0, 0.7, 0).toString(); }
                         if ((refBase == '+') && (altBase == '+')) { showIndication = true; drawInfo.centerContext.fillStyle = DQX.Color(0, 0, 1).toString(); }
                         if (showIndication)
                             drawInfo.centerContext.fillRect(positXCorrLeft[i] + 0.5, posY + 5, positXCorrRight[i] - positXCorrLeft[i] - 0.25, 10);

@@ -125,7 +125,7 @@
             }
 
             this.getSnPositInfoList = function () {
-                if (!this._listSnpPositionInfo) DQX.reportError("Information not available");
+                if (!this._listSnpPositionInfo) return [];
                 return this._listSnpPositionInfo;
             }
 
@@ -414,11 +414,13 @@
                 rs.isFiltered = isFiltered;
 
                 rs.SnpPosInfo = [];
-                for (var infonr = 0; infonr < this._listSnpPositionInfo.length; infonr++) {
-                    var src = this.buffSnpPosInfo[infonr];
-                    var lst = [];
-                    for (var i = 0; i < idxlist.length; i++) lst.push(src[idxlist[i]]);
-                    rs.SnpPosInfo.push(lst);
+                if (this._listSnpPositionInfo) {
+                    for (var infonr = 0; infonr < this._listSnpPositionInfo.length; infonr++) {
+                        var src = this.buffSnpPosInfo[infonr];
+                        var lst = [];
+                        for (var i = 0; i < idxlist.length; i++) lst.push(src[idxlist[i]]);
+                        rs.SnpPosInfo.push(lst);
+                    }
                 }
                 rs.SnpRefBase = [];
                 rs.SnpAltBase = [];
