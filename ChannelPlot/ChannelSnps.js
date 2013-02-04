@@ -172,19 +172,19 @@
                     var parentstate0 = parentstates[0];
                     var parentstate1 = parentstates[1];
                     var parentpresents = [];
-                    var parentconc = [];
+                    var parentconc = []; //-1: discordant, 0=concordant ref 1=concordant alt
                     var parentbin0 = [];
                     for (var i = 0; i < posits.length; i++) {
                         parentpresents.push(data.seqdata[this.parentIDs[0]].pres[i] && data.seqdata[this.parentIDs[1]].pres[i]);
                         parentbin0.push(Math.round(parentstate0[i]));
                         if ((parentstate0[i] <= 0.5) && (parentstate1[i] <= 0.5)) {
-                            parentconc.push(1);
+                            parentconc.push(0);
                         } else {
                             if ((parentstate0[i] >= 0.5) && (parentstate1[i] >= 0.5)) {
                                 parentconc.push(1);
                             }
                             else {
-                                parentconc.push(0);
+                                parentconc.push(-1);
                             }
                         }
                     }
@@ -206,12 +206,13 @@
                         var fr1 = i * 1.0 / colorcount;
                         var fr2 = Math.pow(1 - fr1, 0.3);
                         var frh = 1 - 2 * Math.abs(0.5 - fr1);
-                        colors.push(DQX.Color(0.7 * Math.pow(fr1, 0.5), 0.4, fr2).toString());
+                        colors.push(DQX.Color(1.0 * Math.pow(fr1, 0.5), 0.0, fr2).toString());
                     }
                 }
                 var absentcolor = 'rgb(180,180,180)';
-                var conformcolor = 'rgb(100,180,100)';
-                var disconformcolor = 'rgb(255,90,0)';
+                var conformcolor1 = 'rgb(200,150,0)';
+                var conformcolor2 = 'rgb(0,180,0)';
+                var disconformcolor = 'rgb(0,0,0)';
 
                 drawInfo.leftContext.fillStyle = "rgb(0,0,0)";
                 drawInfo.leftContext.font = '11px sans-serif';
@@ -273,13 +274,19 @@
                                             }
                                         }
                                         else {
-                                            if (parentconc[i]) {
+                                            if (parentconc[i] >= 0) {
                                                 if (Math.round(frac) != parentbin0[i]) {
-                                                    colornr = 98;
-                                                    if (colornr != lastcolornr) {
-                                                        drawInfo.centerContext.fillStyle = conformcolor;
-                                                        lastcolornr = colornr;
+                                                    if (parentconc[i] == 0) {
+                                                        colornr = 101;
+                                                        if (colornr != lastcolornr)
+                                                            drawInfo.centerContext.fillStyle = conformcolor1;
                                                     }
+                                                    else {
+                                                        colornr = 102;
+                                                        if (colornr != lastcolornr)
+                                                            drawInfo.centerContext.fillStyle = conformcolor2;
+                                                    }
+                                                    lastcolornr = colornr;
                                                 }
                                                 else {
                                                     colornr = 97;

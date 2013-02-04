@@ -338,9 +338,8 @@
 
 
 
-                if ((this._dataValid) && (!datacomplete)) rs_pager += '&nbsp;<span style="background-color:rgb(192,0,0);font-weight:bold">FETCHING...</span>';
-                else rs_pager += "; Total: " + Math.max(0, this.totalRecordCount);
-                if (this.hasFetchFailed) rs_pager += "&nbsp;FETCH FAILED !";
+                if ((this._dataValid) && (!datacomplete)) $('#' + that.myBaseID + '_status').html('<span style="background-color:rgb(255,0,0);font-weight:bold">FETCHING...</span>');
+                if (this.hasFetchFailed) $('#' + that.myBaseID + '_status').html('<span style="background-color:rgb(255,0,0);font-weight:bold;">FETCH FAILED !!!</span>');
 
                 for (var rownr0 = 0; rownr0 < this.myPageSize; rownr0++) {
                     var rownr = this.myTableOffset + rownr0;
