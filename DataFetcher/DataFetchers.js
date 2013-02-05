@@ -437,10 +437,11 @@
                 respHandler(data);
             }
 
-            that._ajaxFailure_FetchRange = function (resp) {
+            that._ajaxFailure_FetchRange = function (resp, failHandler) {
                 if (this.showDownload)
                     DQX.stopProcessing();
-                alert('Fetch failure: ' + resp);
+                if (failHandler)
+                    failHandler('Server error');
             }
 
             that._createActiveColumnListString = function () {
@@ -472,7 +473,7 @@
                 $.ajax({
                     url: urlstring,
                     success: function (resp) { thethis._ajaxResponse_FetchRange(resp, respHandler, failHandler) },
-                    error: function (resp) { thethis._ajaxFailure_FetchRange(resp) }
+                    error: function (resp) { thethis._ajaxFailure_FetchRange(resp, failHandler) }
                 });
             }
 
