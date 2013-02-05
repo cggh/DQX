@@ -61,6 +61,12 @@
             if (!(membername in tryobj)) DQX.reportError('Object should have member "{memb}"'.DQXformat({ memb: membername }));
         }
 
+        //reports an error if an object does not have a specific function
+        DQX.requireMemberFunction = function (tryobj, membername) {
+            DQX.requireMember(tryobj, membername);
+            DQX.checkIsFunction(tryobj[membername]);
+        }
+
         //reports an error if the argument is not a string
         DQX.checkIsString = function (value) {
             if (typeof value != 'string') DQX.reportError('Expected string value');

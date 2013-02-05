@@ -43,23 +43,34 @@
         if (_debug_) Controls._surveillance();
 
 
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        //A compound control grouping a list of controls in a horizontal way
+        ////////////////////////////////////////////////////////////////////////////////////////////
+
         Controls.CompoundHor = function (icontrols) {
             var that = {};
             that._legend = '';
-            that._controls = icontrols;
+            that._controls = [];
 
-            that.setLegend = function (txt) {
-                this._legend = txt;
-                return this;
-            }
-
+            //Clears the list of member controls
             that.clear = function () {
                 that._controls = [];
             }
 
+            //add a new control to the list
             that.addControl = function (item) {
+                DQX.requireMemberFunction(item, 'getID');
                 that._controls.push(item);
                 return item;
+            }
+
+            if (icontrols)
+                $.each(icontrols, function (idx, ctrl) { that.addControl(ctrl); });
+
+            //Sets a header legend for the group
+            that.setLegend = function (txt) {
+                this._legend = txt;
+                return this;
             }
 
             that.getID = function () {
@@ -72,12 +83,10 @@
                     this._controls[i].setContextID(id);
             }
 
-
             that.modifyEnabled = function (newstate) {
                 for (var i = 0; i < this._controls.length; i++)
                     this._controls[i].modifyEnabled(id);
             }
-
 
             that.renderHtml = function () {
                 var st = '';
@@ -98,6 +107,7 @@
                     this._controls[i].postCreateHtml(id);
             }
 
+            //Finds & returns a member control by id
             that.findControl = function (id) {
                 for (var i = 0; i < this._controls.length; i++) {
                     var rs = this._controls[i].findControl(id);
@@ -110,26 +120,36 @@
         }
 
 
+
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        //A compound control grouping a list of controls in a horizontal way
+        ////////////////////////////////////////////////////////////////////////////////////////////
+
         Controls.CompoundVert = function (icontrols) {
             var that = {};
             that._legend = '';
             that._controls = [];
             that._margin = 3;
-            if (icontrols)
-                that._controls = icontrols;
 
-            that.setLegend = function (txt) {
-                this._legend = txt;
-                return this;
-            }
-
+            //Clears the list of member controls
             that.clear = function () {
                 that._controls = [];
             }
 
+            //add a new control to the list
             that.addControl = function (item) {
+                DQX.requireMemberFunction(item, 'getID');
                 that._controls.push(item);
                 return item;
+            }
+
+            if (icontrols)
+                $.each(icontrols, function (idx, ctrl) { that.addControl(ctrl); });
+
+            //Sets a header legend for the group
+            that.setLegend = function (txt) {
+                this._legend = txt;
+                return this;
             }
 
             that.getID = function () {
@@ -142,12 +162,10 @@
                     this._controls[i].setContextID(id);
             }
 
-
             that.modifyEnabled = function (newstate) {
                 for (var i = 0; i < this._controls.length; i++)
                     this._controls[i].modifyEnabled(id);
             }
-
 
             that.renderHtml = function () {
                 var st = '';
@@ -178,6 +196,7 @@
                 }, 200);
             }
 
+            //Finds & returns a member control by id
             that.findControl = function (id) {
                 for (var i = 0; i < this._controls.length; i++) {
                     var rs = this._controls[i].findControl(id);
@@ -190,6 +209,9 @@
         }
 
 
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        //A compound control grouping a list of controls on a grid
+        ////////////////////////////////////////////////////////////////////////////////////////////
 
         Controls.CompoundGrid = function () {
             var that = {};
@@ -197,11 +219,14 @@
             that.sepH = 12;
             that.sepV = 5;
 
+            //Clears the member controls
             that.clear = function () {
                 that._controlRows = [];
             }
 
+            //Adds a member control
             that.setItem = function (rowNr, colNr, item) {
+                DQX.requireMemberFunction(item, 'getID');
                 while (this._controlRows.length <= rowNr)
                     this._controlRows.push([]);
                 while (this._controlRows[rowNr].length <= colNr)
@@ -209,6 +234,7 @@
                 this._controlRows[rowNr][colNr] = item;
             }
 
+            //Gets a member control by position in the grid
             that.getItem = function (rowNr, colNr) {
                 if ((rowNr < 0) || (rowNr >= this._controlRows.length))
                     return null;
@@ -224,7 +250,6 @@
                             fnc(this._controlRows[rowNr][colNr]);
             }
 
-
             that.getID = function () {
                 if (!this.getItem(0, 0)) DQX.reportError('Compound control has no components');
                 return this.getItem(0, 0).getID(id);
@@ -234,11 +259,9 @@
                 this._loopItems(function (it) { it.setContextID(id); });
             }
 
-
             that.modifyEnabled = function (newstate) {
                 this._loopItems(function (it) { it.modifyEnabled(id); });
             }
-
 
             that.renderHtml = function () {
                 var st = '<table style="padding-top:{pt}px;">'.DQXformat({ pt: this.sepV });
@@ -261,6 +284,7 @@
                 this._loopItems(function (it) { it.postCreateHtml(); });
             }
 
+            //Finds & returns a member control by id
             that.findControl = function (id) {
                 this._loopItems(function (it) {
                     var rs = it.findControl(id);
@@ -269,7 +293,6 @@
                 return null;
             }
 
-
             return that;
         }
 
@@ -277,6 +300,8 @@
 
 
         //////////////////////////////////////////////////////////////////////////////////////////////
+        //A static label control
+        ////////////////////////////////////////////////////////////////////////////////////////////
 
         Controls.Label = function (icontent) {
             var that = {};
@@ -291,7 +316,6 @@
             that.modifyEnabled = function (newstate) {
             }
 
-
             that.renderHtml = function () {
                 return this._content;
             }
@@ -304,7 +328,9 @@
 
 
 
-        //////////////////////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        // Base class for all controls that implement an UI element
+        ////////////////////////////////////////////////////////////////////////////////////////////
 
         Controls.Control = function (iid) {
             var that = {};
@@ -321,6 +347,7 @@
                     DQX.reportError('Control creation error: element with ID ' + iid + ' is already present');
             }
 
+            //Defines this control to have the focus
             that.setHasDefaultFocus = function () {
                 this._hasDefaultFocus = true;
                 return this;
@@ -354,7 +381,6 @@
                 this.myContextID = id;
             }
 
-
             that.renderHtml = function () {
                 Controls._addToControlPostCreateWaitList(this);
                 this._postCreateHtmlExecuted = false;
@@ -375,35 +401,41 @@
                 }
             }
 
+            //Adds a callback function that will be called when the value of the control was changed
             that.addValueChangedListener = function (handler) {
                 Msg.listen('', { type: 'CtrlValueChanged', id: this.getID() }, handler);
             }
 
-            that.setOnChanged = function (handler) {//provide a handler function that will be called when the control changes
+            //provide a single handler function that will be called when the control changes
+            that.setOnChanged = function (handler) {
                 this.onChanged = handler;
                 return this;
             }
 
+            //Internal
             that._notifyChanged = function () {
                 if (this.onChanged)
                     this.onChanged(this.myID, this);
                 Msg.broadcast({ type: 'CtrlValueChanged', id: this.myID, contextid: this.myContextID }, this);
             }
 
+            //Trivial implementation of finding a control
             that.findControl = function (id) {
                 if (id == this.myID) return this;
                 else return null;
             }
 
+            //Determines if the control is currently rendered in the DOM tree
             that.isRendered = function () {
                 return this.getJQElement('').length > 0;
             }
 
+            //Sets the focus to this control
             that.setFocus = function () {
-                //this.getJQElement('').focus();
                 document.getElementById(this.getFullID('')).focus();
             }
 
+            //Internal: called after the html was rendered
             that.postCreateHtml = function () {
                 if (!this._postCreateHtmlExecuted) {
                     if (_debug_)
@@ -420,7 +452,9 @@
         }
 
 
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        // A static piece of text
+        ////////////////////////////////////////////////////////////////////////////////////////////
 
         Controls.Static = function (content) {
             var that = Controls.Control(null);
@@ -457,7 +491,9 @@
 
 
 
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        // A piece of html that can be modified
+        ////////////////////////////////////////////////////////////////////////////////////////////
 
         Controls.Html = function (iid, content) {
             var that = Controls.Control(iid);
@@ -484,6 +520,7 @@
                 return null;
             }
 
+            //modify the content of the control
             that.modifyValue = function (newContent) {
                 that.myContent = newContent;
                 this.getJQElement('').html(newContent);
@@ -494,7 +531,9 @@
         }
 
 
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        // A check box
+        ////////////////////////////////////////////////////////////////////////////////////////////
 
         Controls.Check = function (iid, args) {
             var that = Controls.Control(iid);
@@ -536,11 +575,13 @@
                 }
             }
 
+            //Returns the status of the check box
             that.getValue = function () {
                 this.isChecked = this.getJQElement('').is(':checked');
                 return this.isChecked;
             }
 
+            //Modify the status of the check box
             that.modifyValue = function (newstate) {
                 if (newstate == this.getValue()) return;
                 this.isChecked = newstate;
@@ -555,7 +596,10 @@
         }
 
 
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        // A button
+        ////////////////////////////////////////////////////////////////////////////////////////////
 
         Controls.Button = function (iid, args) {
             var that = Controls.Control(iid);
@@ -573,7 +617,7 @@
             that._controlExtensionList.push('');
             if (args.hint)
                 that._hint = args.hint;
-            that._buttonClass = 'DQXWizardButton'; // "DQXToolButton1"
+            that._buttonClass = 'DQXWizardButton';
             if (args.buttonClass)
                 that._buttonClass = args.buttonClass;
             if (args.width)
@@ -626,6 +670,7 @@
                     this._notifyChanged();
             }
 
+            //enable / disable the button
             that.enable = function (status) {
                 this._enabled = status;
                 if (this._enabled)
@@ -637,7 +682,9 @@
             return that;
         }
 
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        // A hyperlink
+        ////////////////////////////////////////////////////////////////////////////////////////////
 
         Controls.Hyperlink = function (iid, args) {
             var that = Controls.Control(iid);
@@ -672,7 +719,9 @@
 
 
 
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        // An edit box
+        ////////////////////////////////////////////////////////////////////////////////////////////
 
         Controls.Edit = function (iid, args) {
             var that = Controls.Control(iid);
@@ -733,11 +782,13 @@
                 }
             }
 
+            //Return the content of the edit box
             that.getValue = function () {
                 this.value = this.getJQElement('').val();
                 return this.value;
             }
 
+            //Modify the content of the edit box
             that.modifyValue = function (newvalue) {
                 if (newvalue == this.getValue()) return;
                 this.value = newvalue;
@@ -749,7 +800,9 @@
         }
 
 
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        // A combo box
+        ////////////////////////////////////////////////////////////////////////////////////////////
 
         Controls.Combo = function (iid, args) {
             var that = Controls.Control(iid);
@@ -772,11 +825,11 @@
             }
             that._buildStatesMap();
 
+            //determines if an item is in the current set of states
             that.isState = function (id) {
                 if (!('_statesMap' in this)) return false;
                 return (id in this._statesMap);
             }
-
 
             that._buildSelectContent = function () {
                 var st = '';
@@ -809,11 +862,13 @@
                 this._notifyChanged();
             }
 
+            //Returns the currently selected item
             that.getValue = function () {
                 this._selectedState = this.getJQElement('').find(":selected").attr('value');
                 return this._selectedState;
             }
 
+            //Sets what item is selected
             that.modifyValue = function (newstate) {
                 if (newstate == this.getValue()) return;
                 if (!this.isState(newstate))
@@ -829,7 +884,9 @@
 
 
 
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        // A hyperlink button
+        ////////////////////////////////////////////////////////////////////////////////////////////
 
         Controls.LinkButton = function (iid, args) {
             var that = Controls.Control(iid);
@@ -869,12 +926,14 @@
             return that;
         }
 
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        // A help button, where the id of the control is the documentation id
+        ////////////////////////////////////////////////////////////////////////////////////////////
 
         Controls.HelpButton = function (iid, args) {
             args.bitmap = DQXBMP('info4.png');
             //args.vertShift = 3;
-            var that = Controls.LinkButton('HLPB'+iid, args);
+            var that = Controls.LinkButton('HLPB' + iid, args);
 
             that.setOnChanged(function () {
                 Documentation.showHelp('LNK' + iid);
@@ -883,7 +942,9 @@
         }
 
 
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        // A radio button group
+        ////////////////////////////////////////////////////////////////////////////////////////////
 
         Controls.RadioGroup = function (iid, args) {
             var that = Controls.Control(iid);
@@ -967,7 +1028,9 @@
         }
 
 
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        // A list
+        ////////////////////////////////////////////////////////////////////////////////////////////
 
         Controls.List = function (iid, args) {
             var that = Controls.Control(iid);
@@ -978,7 +1041,7 @@
             if ('height' in args)
                 that._height = args.height;
             that._checkList = false;
-            if ('checkList' in args)
+            if ('checkList' in args)//Items in the list have check boxes
                 that._checkList = args.checkList;
             that._allowSelectItem = true;
             if ('allowSelectItem' in args)
@@ -1019,8 +1082,14 @@
                 return lst;
             }
 
+            //sets the items of the list, and specifies the active item
             that.setItems = function (lst, activeItem) {
-                this._items = lst;
+                this._items = [];
+                $.each(lst, function (idx, item) {
+                    DQX.requireMember(item, 'id');
+                    DQX.requireMember(item, 'content');
+                    that._items.push(item);
+                });
                 this._itemsMap = {};
                 for (var nr = 0; nr < this._items.length; nr++)
                     this._itemsMap[this._items[nr].id] = this._items[nr];
@@ -1029,6 +1098,7 @@
                 this.getJQElement('').html(this._renderItems());
             }
 
+            //returns an item from the list, by id
             that.findItem = function (itemID) {
                 if (!this._itemsMap)
                     DQX.reportError('List items not initialised');
@@ -1105,10 +1175,12 @@
                 }
             }
 
+            //returns the currently active item
             that.getValue = function () {
                 return this._activeItem;
             }
 
+            //sets the currently active item
             that.modifyValue = function (newvalue) {
                 if (this._activeItem)
                     this.getJQElement('').children('#' + this._getLineID(this._activeItem)).addClass('DQXLargeListItem').removeClass('DQXLargeListItemSelected');
@@ -1117,6 +1189,7 @@
                 this._notifyChanged();
             }
 
+            //For a checked list, return the list with currently checked items
             that.getCheckedItems = function () {
                 var items = [];
                 for (var i = 0; i < this._items.length; i++) {
@@ -1131,6 +1204,8 @@
         }
 
 
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // A horizontal value slider
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         Controls.ValueSlider = function (iid, args) {
