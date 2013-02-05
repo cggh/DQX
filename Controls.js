@@ -273,6 +273,11 @@
             that._controlExtensionList = [];
             that._hasDefaultFocus = false;
 
+            if (_debug_) {
+                if ($('#' + iid).length > 0)
+                    DQX.reportError('Control creation error: element with ID '+iid+' is already present');
+            }
+
             that.setHasDefaultFocus = function () {
                 this._hasDefaultFocus = true;
                 return this;
