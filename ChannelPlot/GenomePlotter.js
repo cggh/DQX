@@ -254,7 +254,7 @@
 
             that.getElemJQ('Header').html(headerDiv.toString());
             that.getElemJQ("ChromoPicker").change($.proxy(that._onChangeChromosome, that));
-            $.each(navButtonControls, function (idx, bt) { bt.postCreateHtml(); });
+            Controls.ExecPostCreateHtml();
 
 
             var footerDiv = DocEl.Div();

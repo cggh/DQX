@@ -125,9 +125,7 @@
                 $('#WizBoxButtonPrevious').hide();
                 $('#WizBoxButtonFinish').hide();
 
-                for (var buttonNr = 0; buttonNr < buttons.length; buttonNr++)
-                    buttons[buttonNr].control.postCreateHtml();
-                helpButtonControl.postCreateHtml();
+                Controls.ExecPostCreateHtml();
 
 
                 this._setPage(0);

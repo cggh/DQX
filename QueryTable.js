@@ -265,7 +265,7 @@
                     }*/
 
                     this.getElement('Pager').html(rs_pager);
-                    $.each(navButtonControls, function (idx, bt) { bt.postCreateHtml(); });
+                    Controls.ExecPostCreateHtml();
                     this._pagerCreated = true;
                 }
 

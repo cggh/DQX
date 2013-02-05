@@ -2,6 +2,47 @@
     function (Msg, DocEl, Scroller, Documentation) {
         var Controls = {};
 
+        Controls._currentControlNr = 0;
+
+        Controls._getNextControlID = function () {
+            Controls._currentControlNr++;
+            return "AutoControlID_" + Controls._currentControlNr;
+        }
+
+        Controls._postCreateWaitList = {}
+
+        Controls._addToControlPostCreateWaitList = function (ctrl) {
+            Controls._postCreateWaitList[ctrl.getID()] = ctrl;
+        }
+
+        Controls._removeFromControlPostCreateWaitList = function (ctrl) {
+            delete Controls._postCreateWaitList[ctrl.getID()];
+        }
+
+        //Call this function to automatically execute any necessary code for controls after the rendering of the control html to the DOM
+        Controls.ExecPostCreateHtml = function () {
+            $.each(Controls._postCreateWaitList, function (key, ctrl) {
+                if (ctrl.isRendered()) {
+                    ctrl.postCreateHtml();
+                    delete Controls._postCreateWaitList[key];
+                }
+            });
+        }
+
+        DQX.ExecPostCreateHtml = function () {
+            Controls.ExecPostCreateHtml();
+        }
+
+        //Initiate some surveillance code that performs some sanity checks
+        Controls._surveillance = function () {
+            $.each(Controls._postCreateWaitList, function (key, ctrl) {
+                DQX.reportError('Post Html creation not executed for control ' + key);
+            });
+            setTimeout(Controls._surveillance, 2000);
+        }
+        if (_debug_) Controls._surveillance();
+
+
         Controls.CompoundHor = function (icontrols) {
             var that = {};
             that._legend = '';
@@ -268,6 +309,8 @@
         Controls.Control = function (iid) {
             var that = {};
             that.myID = iid;
+            if (!iid)
+                that.myID = Controls._getNextControlID();
             that.myContextID = '';
             that._enabled = true;
             that._controlExtensionList = [];
@@ -275,7 +318,7 @@
 
             if (_debug_) {
                 if ($('#' + iid).length > 0)
-                    DQX.reportError('Control creation error: element with ID '+iid+' is already present');
+                    DQX.reportError('Control creation error: element with ID ' + iid + ' is already present');
             }
 
             that.setHasDefaultFocus = function () {
@@ -312,6 +355,11 @@
             }
 
 
+            that.renderHtml = function () {
+                Controls._addToControlPostCreateWaitList(this);
+                this._postCreateHtmlExecuted = false;
+                return this._execRenderHtml();
+            }
 
             that.getJQElement = function (extension) {
                 return $('#' + this.getFullID(extension));
@@ -347,9 +395,25 @@
                 else return null;
             }
 
+            that.isRendered = function () {
+                return this.getJQElement('').length > 0;
+            }
+
             that.setFocus = function () {
                 //this.getJQElement('').focus();
                 document.getElementById(this.getFullID('')).focus();
+            }
+
+            that.postCreateHtml = function () {
+                if (!this._postCreateHtmlExecuted) {
+                    if (_debug_)
+                        if (!this.isRendered())
+                            DQX.reportError('PostCreate called on unrendered control: ' + this.myID);
+                    var ln0 = this.getJQElement().length;
+                    Controls._removeFromControlPostCreateWaitList(this);
+                    this._execPostCreateHtml();
+                    this._postCreateHtmlExecuted = true;
+                }
             }
 
             return that;
@@ -359,7 +423,7 @@
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         Controls.Static = function (content) {
-            var that = Controls.Control('');
+            var that = Controls.Control(null);
             that.myContent = content;
             that._isComment = false;
 
@@ -367,8 +431,8 @@
 
             that._controlExtensionList.push('');
 
-            that.renderHtml = function () {
-                var lb = DocEl.Div();
+            that._execRenderHtml = function () {
+                var lb = DocEl.Div({ id: this.getFullID('') });
                 lb.addStyle("padding-top", "2px");
                 lb.addStyle("padding-bottom", "2px");
                 lb.addStyle('display', 'inline-block');
@@ -378,7 +442,7 @@
                 return lb.toString();
             }
 
-            that.postCreateHtml = function () {
+            that._execPostCreateHtml = function () {
             }
 
             that._onChange = function () {
@@ -401,7 +465,7 @@
 
             that._controlExtensionList.push('');
 
-            that.renderHtml = function () {
+            that._execRenderHtml = function () {
                 var lb = DocEl.Div({ id: this.getFullID('') });
                 lb.addStyle("padding-top", "2px");
                 lb.addStyle("padding-bottom", "2px");
@@ -410,7 +474,7 @@
                 return lb.toString();
             }
 
-            that.postCreateHtml = function () {
+            that._execPostCreateHtml = function () {
             }
 
             that._onChange = function () {
@@ -423,6 +487,7 @@
             that.modifyValue = function (newContent) {
                 that.myContent = newContent;
                 this.getJQElement('').html(newContent);
+                Controls.ExecPostCreateHtml();
             }
 
             return that;
@@ -444,7 +509,7 @@
 
             that._controlExtensionList.push('');
 
-            that.renderHtml = function () {
+            that._execRenderHtml = function () {
                 var chk = DocEl.Check({ id: this.getFullID('') });
                 if (this.hint)
                     chk.addHint(this.hint);
@@ -457,7 +522,7 @@
                 return chk.toString() + label.toString();
             }
 
-            that.postCreateHtml = function () {
+            that._execPostCreateHtml = function () {
                 var target = 'change.controlevent';
                 this.getJQElement('').unbind(target).bind(target, $.proxy(that._onChange, that));
             }
@@ -500,8 +565,11 @@
                 description = args.description;
             if (args.content)
                 that.content = args.content;
-            if (args.bitmap)
-                that.content = '<IMG SRC="' + args.bitmap + '" border=0 ALT="' + description + '" TITLE="' + description + '" style="padding-left:5px; padding-right:5px; padding-top:1px; padding-bottom:1px">';
+            if (args.bitmap) {
+                that.content = '<IMG SRC="' + args.bitmap + '" border=0 ALT="' + description + '" TITLE="' + description + '" style="padding-left:5px; padding-right:5px; padding-top:1px; padding-bottom:1px;float:left">';
+                if (args.content)
+                    that.content += args.content;
+            }
             that._controlExtensionList.push('');
             if (args.hint)
                 that._hint = args.hint;
@@ -510,11 +578,13 @@
                 that._buttonClass = args.buttonClass;
             if (args.width)
                 that._width = args.width;
+            if (args.height)
+                that._height = args.height;
             if (args.fastTouch)
                 that._fastTouch = args.fastTouch;
             that._enabled = true;
 
-            that.renderHtml = function () {
+            that._execRenderHtml = function () {
                 var bt = DocEl.Div({ id: this.getFullID('') });
                 if (this._hint)
                     bt.addHint(this._hint);
@@ -524,10 +594,12 @@
                 bt.addElem(that.content);
                 if (this._width)
                     bt.setWidthPx(this._width);
+                if (this._height)
+                    bt.setHeightPx(this._height);
                 return bt.toString();
             }
 
-            that.postCreateHtml = function () {
+            that._execPostCreateHtml = function () {
                 this.getJQElement('').mousedown($.proxy(that._onChange, that));
                 if (that._fastTouch) {
                     var element = document.getElementById(this.getFullID(''));
@@ -575,7 +647,7 @@
             if (args.hint)
                 that._hint = args.hint;
 
-            that.renderHtml = function () {
+            that._execRenderHtml = function () {
                 var bt = DocEl.Div({ id: this.getFullID('') });
                 if (this._hint)
                     bt.addHint(this._hint);
@@ -587,7 +659,7 @@
                 return bt.toString();
             }
 
-            that.postCreateHtml = function () {
+            that._execPostCreateHtml = function () {
                 this.getJQElement('').mousedown($.proxy(that._onChange, that));
             }
 
@@ -621,7 +693,7 @@
                 this._notifyEnter = handler;
             }
 
-            that.renderHtml = function () {
+            that._execRenderHtml = function () {
                 var edt = DocEl.Edit(that.value, { id: this.getFullID('') });
                 if (this._hint)
                     edt.addHint(this._hint);
@@ -639,7 +711,7 @@
                 return rs + edt.toString();
             }
 
-            that.postCreateHtml = function () {
+            that._execPostCreateHtml = function () {
                 this.getJQElement('').bind("propertychange input paste", $.proxy(that._onChange, that));
                 this.getJQElement('').bind("keyup", $.proxy(that._onKeyUp, that));
             }
@@ -717,7 +789,7 @@
                 return st;
             }
 
-            that.renderHtml = function () {
+            that._execRenderHtml = function () {
                 var cmb = DocEl.Create('select', { id: this.getFullID('') });
                 if (this._hint)
                     cmb.addHint(this._hint);
@@ -727,7 +799,7 @@
                 return label.toString() + ' ' + cmb.toString();
             }
 
-            that.postCreateHtml = function () {
+            that._execPostCreateHtml = function () {
                 var target = 'change.controlevent';
                 this.getJQElement('').unbind(target).bind(target, $.proxy(that._onChange, that));
             }
@@ -771,14 +843,14 @@
                 that._vertShift = args.vertShift;
             that._controlExtensionList.push('');
 
-            that.renderHtml = function () {
+            that._execRenderHtml = function () {
                 var st = '<IMG id="{id}" SRC="' + this.myBitmap + '" border=0 class="DQXBitmapLink" ALT="{desc1}" TITLE="{desc2}" style="margin-bottom:{shift}px" align="middle">';
                 st = st.DQXformat(
                 { id: this.getFullID(''), desc1: that.description, desc2: that._hint, shift: (-this._vertShift) });
                 return st;
             }
 
-            that.postCreateHtml = function () {
+            that._execPostCreateHtml = function () {
                 var target = 'mousedown.controlevent';
                 this.getJQElement('').unbind(target).bind(target, $.proxy(that._onClick, that));
             }
@@ -858,7 +930,7 @@
                 return st;
             }
 
-            that.renderHtml = function () {
+            that._execRenderHtml = function () {
                 var cmb = DocEl.Div({ id: this.getFullID('') });
                 cmb.addElem(this._buildSelectContent());
                 /*                var label = DocEl.Label({ target: this.getFullID('Label') });
@@ -866,7 +938,7 @@
                 return cmb.toString();
             }
 
-            that.postCreateHtml = function () {
+            that._execPostCreateHtml = function () {
                 var target = 'change.controlevent';
                 this.getJQElement('').unbind(target).bind(target, $.proxy(that._onChange, that));
             }
@@ -966,7 +1038,7 @@
                 return rs;
             }
 
-            that.renderHtml = function () {
+            that._execRenderHtml = function () {
                 var dv = DocEl.Div({ id: this.getFullID('') });
                 dv.setCssClass('DQXFormControl');
                 dv.addStyle('overflow-y', 'auto');
@@ -979,7 +1051,7 @@
                 return dv.toString();
             }
 
-            that.postCreateHtml = function () {
+            that._execPostCreateHtml = function () {
                 var target = 'mousedown.itemevent';
                 this.getJQElement('').unbind(target).bind(target, $.proxy(that._onChange, that));
 
@@ -1076,7 +1148,7 @@
 
             that._controlExtensionList.push('Canvas');
 
-            that.renderHtml = function () {
+            that._execRenderHtml = function () {
                 st = '<div style="width:{width}px">'.DQXformat({ width: this._width });
                 st += '<span >{content}</span>'.DQXformat({ content: that._label });
                 st += '<span id="{id}" style="float:right">1</span>'.DQXformat({ id: this.getFullID('Value') });
@@ -1086,7 +1158,7 @@
                 return st;
             }
 
-            that.postCreateHtml = function () {
+            that._execPostCreateHtml = function () {
                 this._scroller = Scroller.HScrollBar(this.getFullID('Canvas'));
                 this._scroller.myConsumer = this;
                 this._scroller.zoomareafraction = 0.001;

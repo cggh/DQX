@@ -160,6 +160,7 @@
                     if ($(this).find(".DQXPinBoxUnpinned").length > 0) {
                         $(this).find(".DQXFloatBoxHeader").html(title);
                         $(this).find(".DQXFloatBoxContent").html(content);
+                        DQX.ExecPostCreateHtml();
                         wasSet = true;
                         popupID = $(this).attr('id');
                     }
@@ -205,6 +206,7 @@
                 var pageSizeX = $(window).width();
                 var pageSizeY = $(window).height();
                 $('#' + ID).offset({ left: (pageSizeX - w) / 2, top: (pageSizeY - h) / 2 });
+                DQX.ExecPostCreateHtml();
             }
             return ID;
         }
