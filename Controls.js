@@ -874,10 +874,10 @@
         Controls.HelpButton = function (iid, args) {
             args.bitmap = DQXBMP('info4.png');
             //args.vertShift = 3;
-            var that = Controls.LinkButton(iid, args);
+            var that = Controls.LinkButton('HLPB'+iid, args);
 
             that.setOnChanged(function () {
-                Documentation.showHelp('LNK' + this.myID);
+                Documentation.showHelp('LNK' + iid);
             })
             return that;
         }
