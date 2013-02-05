@@ -2,7 +2,7 @@
     function ($, DocEl, Msg) {
         return function (iParentRef) {
             var that = {};
-            if (DQX.hasMember(iParentRef, 'getClientDivID')) {
+            if (DQX.hasMember(iParentRef, 'getClientDivID')) {//assume that the parent reference is a Framework.Frame object
                 that.myParentFrame = iParentRef;
                 that.myDivID = iParentRef.getClientDivID();
                 iParentRef.setClientObject(that);
@@ -28,6 +28,7 @@
 
             that.getRootElem = function () { return $('#' + that.myDivID); }
 
+            //Used internally by the framework
             that.handleResize = function () {
                 if ('onResize' in that) {
                     if ((that.getRootElem().width() > 5) && (that.getRootElem().height() > 5)) {
@@ -38,6 +39,17 @@
                         }
                     }
                 }
+            }
+
+            //Used internally by the framework
+            that.execPostInitialise = function () {
+                if (this._onPostInitialise)
+                    this._onPostInitialise();
+            }
+
+            //Call this function to provide a function that will be called the first time this panel appears, after the html has been created
+            that.setPostInitialiseHandler = function (handler) {
+                this._onPostInitialise = handler;
             }
 
             return that;

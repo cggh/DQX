@@ -650,25 +650,25 @@
                             $('#' + this.getSeparatorDivID(fnr)).mousedown($.proxy(this._handleSplitterOnMouseDown, this));
                             $('#' + this.getSeparatorDivID(fnr)).mousemove($.proxy(this._handleSplitterOnMouseMove, this));
                             clientel.mousemove($.proxy(this._handleSplitterOnMouseMove, this));
-/*Code to make splitters moveable on touc devices
+                            /*Code to make splitters moveable on touc devices
                             var touchHandler = {
-                                handleTouchStart: function (info, ev) {
-                                    var splitid = that.getSeparatorDivID(fnr);
-                                    ev.pageX = info.pageX;
-                                    ev.pageY = info.pageY;
-                                    ev.target = { id: splitid };
-                                    that._handleSplitterOnMouseDown(ev);
-                                },
-                                handleTouchMove: function (info, ev) {
-                                    var splitid = that.getSeparatorDivID(fnr);
-                                    ev.pageX = info.pageX;
-                                    ev.pageY = info.pageY;
-                                    ev.target = { id: splitid };
-                                    that._handleSplitterOnMouseMove(ev);
-                                }
+                            handleTouchStart: function (info, ev) {
+                            var splitid = that.getSeparatorDivID(fnr);
+                            ev.pageX = info.pageX;
+                            ev.pageY = info.pageY;
+                            ev.target = { id: splitid };
+                            that._handleSplitterOnMouseDown(ev);
+                            },
+                            handleTouchMove: function (info, ev) {
+                            var splitid = that.getSeparatorDivID(fnr);
+                            ev.pageX = info.pageX;
+                            ev.pageY = info.pageY;
+                            ev.target = { id: splitid };
+                            that._handleSplitterOnMouseMove(ev);
+                            }
                             };
                             DQX.augmentTouchEvents(touchHandler, this.getSeparatorDivID(fnr), true, false);
-*/
+                            */
                         }
                     }
                     this.memberFrames[fnr]._postCreateHTML();
@@ -812,6 +812,7 @@
                 this._executeInitialisers();
                 var frameel = $('#' + this.myID);
                 this._setPosition(frameel.position().left, frameel.position().top, frameel.width(), frameel.height(), true, false);
+                this._executePostInitialisers();
             }
 
 
@@ -828,6 +829,23 @@
                     this._initialised = true;
                     if (this._handleInitialise)
                         this._handleInitialise();
+                }
+            }
+
+
+            that._executePostInitialisers = function () {
+                for (var fnr = 0; fnr < this.memberFrames.length; fnr++) {
+                    var hidden = false;
+                    if (this.isStacker())
+                        if (fnr != this.activeTabNr)
+                            hidden = true;
+                    if (!hidden)
+                        this.memberFrames[fnr]._executePostInitialisers();
+                }
+                if (!this._postInitialised) {
+                    this._postInitialised = true;
+                    if (this.myClientObject)
+                        this.myClientObject.execPostInitialise();
                 }
             }
 
@@ -1050,6 +1068,7 @@
             var sy = myparent.innerHeight();
             Framework.frameRoot._executeInitialisers();
             Framework.frameRoot._setPosition(0, 0, sx, sy, false, false);
+            Framework.frameRoot._executePostInitialisers();
         }
 
         //This function is called periodically the monitor the required size updates of panels in frames
@@ -1100,6 +1119,8 @@
             }
 
             that._initialisePanels = function () {
+                if (!that.createPanels)
+                    DQX.reportError("View set does not have createPanels function");
                 that.createPanels();
             }
 
