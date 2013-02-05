@@ -1105,7 +1105,7 @@
             that.myFrame = iFrame;
             that.myStateID = iStateID;
 
-            that.registerView = function () {
+            that.registerView = function () {//called by the framework
                 HistoryManager.addView(this);
             }
 
