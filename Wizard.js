@@ -10,34 +10,59 @@
             that._pages = [];
             that._pageIndex = {};
 
-            that.addPage = function (page) {//each page should be a Control.XXX instance
+            //Adds a page to the wizard. 'page' should be an object containing:
+            //id: identifier of the page
+            //form: of the type Controls.Control
+            that.addPage = function (page) {
+                DQX.requireMember(page, 'id');
+                DQX.requireMember(page, 'form');
+                DQX.requireMemberFunction(page.form, 'getID');
                 page.form.setContextID(this.ID);
+                if (page.id in this._pageIndex)
+                    DQX.reportError('Page already present in wizard ' + page.id);
                 this._pageIndex[page.id] = this._pages.length;
                 this._pages.push(page);
             }
 
-
+            //Sets the title of the wizard
             that.setTitle = function (title) {
                 that._title = title;
             }
 
+            //returns the currently active page
             that.getCurrentPage = function () {
                 var pg = this._pages[this.pageNr];
                 if (!pg) DQX.reportError("Invalid wizard page");
                 return pg;
             }
+
+            //returns the index of the currently active page
             that.getPageNr = function (pageID) {
                 if (!(pageID in this._pageIndex))
                     DQX.reportError("Invalid wizard page " + pageID);
                 return this._pageIndex[pageID];
             }
 
+            //returns a page by page identifier
             that.getPage = function (pageID) {
                 return this._pages[this.getPageNr(pageID)];
             }
 
+            that.checkNotRunning = function () {
+                if (this._isRunning)
+                    DQX.reportError('Wizard is running');
+            }
+
+            that.checkRunning = function () {
+                if (!this._isRunning)
+                    DQX.reportError('Wizard is not running');
+            }
+
+            //executes the wizard
             that.run = function (onFinishFunction) {
+                this.checkNotRunning();
                 this._onFinishFunction = onFinishFunction;
+                this._isRunning = true;
                 var background = DocEl.Div({ id: 'WizBackGround' });
                 background.addStyle("position", "absolute");
                 background.addStyle("left", '0px');
@@ -61,7 +86,6 @@
                                 }, 150);
                             }, 150);
                         }, 150);
-                        //alert("Please close the wizard if you want to return to the application");
                     }
                 });
 
@@ -111,7 +135,7 @@
 
                 //Help button
                 var boxButtonHelp = DocEl.Div({ id: 'WizBoxButtonHelp', parent: boxFooter });
-                boxButtonHelp.addStyle('padding-left','8px');
+                boxButtonHelp.addStyle('padding-left', '8px');
                 var helpButtonContent = '<IMG SRC="' + DQXBMP('info3.png') + '" border=0 ALT="" align="middle" style="margin-right:3px;margin-left:3px;margin-top:-3px"></IMG>Help';
                 helpButtonControl = Controls.Button('WizBoxButtonHelp', { content: helpButtonContent, buttonClass: 'DQXWizardButton', fastTouch: true });
                 helpButtonControl.setOnChanged($.proxy(that._onHelp, that));
@@ -167,6 +191,7 @@
 
             that._onCancel = function () {
                 $('#WizBackGround').remove();
+                this._isRunning = false;
             }
 
             that._onHelp = function () {
@@ -187,12 +212,17 @@
                 return false;
             }
 
+            //Performs the 'Finish' action
             that.performFinish = function () {
+                this.checkRunning();
                 $('#WizBackGround').remove();
                 this._onFinishFunction();
+                this._isRunning = false;
             }
 
+            //jumps the wizard to a page, providing the page id
             that.jumpToPage = function (id) {
+                this.checkRunning();
                 this._pageTrace.push(this.pageNr);
                 this._setPage(this.getPageNr(id));
             }

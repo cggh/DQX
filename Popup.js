@@ -2,7 +2,7 @@
     function ($, DQX, DocEl, Msg, Controls) {
         var Popup = {};
 
-        Popup.checkBackgroundBlockNeeded = function () {
+        Popup._checkBackgroundBlockNeeded = function () {
             var blockingPopupsPresent = false;
             $('#DQXBackBlocker').find(".DQXFloatBox").each(function (index, Element) { blockingPopupsPresent = true; });
             if (!blockingPopupsPresent)
@@ -11,7 +11,7 @@
 
         DQX.ClosePopup = function (index) {
             $("#" + index).remove();
-            Popup.checkBackgroundBlockNeeded();
+            Popup._checkBackgroundBlockNeeded();
         }
         DQX._popupIndex = 0;
 
@@ -20,15 +20,16 @@
             var newStatus = !Popup.isPinned(ID);
             if (newStatus) {
                 $("#" + ID).appendTo("#DQXUtilContainer");
-                Popup.checkBackgroundBlockNeeded();
+                Popup._checkBackgroundBlockNeeded();
                 elem.find('.DQXPinBoxUnpinned').remove();
                 elem.find('.DQXPinBoxPinned').remove();
-                elem.append(Popup.createPinBox(ID, newStatus));
+                elem.append(Popup._createPinBox(ID, newStatus));
             }
         }
 
         Popup._floatBoxMaxIndex = 99;
 
+        //Converts a div element into a draggable box
         Popup.makeDraggable = function (id) {
             var dragElem = $('#' + id);
             if (dragElem.length == 0)
@@ -105,12 +106,13 @@
             return elem.find('.DQXPinBoxPinned').length > 0;
         }
 
+        //Call this function to close a popup box if it is not pinned, providing the popup unique identifier
         Popup.closeIfNeeded = function (ID) {
             if (!Popup.isPinned(ID))
                 DQX.ClosePopup(ID);
         }
 
-        Popup.createPinBox = function (ID, isPinned) {
+        Popup._createPinBox = function (ID, isPinned) {
             var bmp = isPinned ? DQXBMP('pin3.png') : DQXBMP('pin4.png');
             var thepinner = DocEl.JavaScriptBitmaplink(bmp, "Keep this info box visible", "DQX.SwitchPinned('" + ID + "')");
             thepinner.setCssClass(isPinned ? "DQXPinBoxPinned" : "DQXPinBoxUnpinned");
@@ -120,7 +122,7 @@
             return thepinner.toString();
         }
 
-        Popup.createBackBlocker = function () {
+        Popup._createBackBlocker = function () {
             if ($('#DQXBackBlocker').length > 0)
                 return;
 
@@ -147,11 +149,12 @@
                             }, 150);
                         }, 150);
                     }, 150);
-                    //alert("Please close the wizard if you want to return to the application");
                 }
             });
         }
 
+        //Creates a new popup box, providing a title and html content
+        //The function returns a unique identifier for this popup
         Popup.create = function (title, content) {
             var wasSet = false;
             var popupID = '';
@@ -170,7 +173,7 @@
                 return popupID;
             }
             else {
-                Popup.createBackBlocker();
+                Popup._createBackBlocker();
 
                 var posx = DQX.mousePosX + 10;
                 var posy = DQX.mousePosY + 10;
@@ -196,7 +199,7 @@
                 thecloser.addStyle('left', '-17px');
                 thecloser.addStyle('top', '-17px');
 
-                thebox.addElem(Popup.createPinBox(ID, false));
+                thebox.addElem(Popup._createPinBox(ID, false));
 
                 var content = thebox.toString();
                 $('#DQXBackBlocker').append(content);

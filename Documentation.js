@@ -23,7 +23,7 @@
             }
         }
 
-        Documentation.createBox = function () {
+        Documentation._createBox = function () {
 
             if ($('#DocuBoxBackGround').length > 0)
                 return;
@@ -118,7 +118,7 @@
             if (id.slice(0, 3) != 'LNK')
                 DQX.reportError('Invalid help link ' + id);
             id = id.slice(3, 999);
-            Documentation.createBox();
+            Documentation._createBox();
             Documentation.topicStack = Documentation.topicStack.slice(0, Documentation.topicStackPointer + 1);
             Documentation.topicStack.push(id);
             Documentation.topicStackPointer = Documentation.topicStack.length - 1;
