@@ -1224,7 +1224,7 @@
             that._controlExtensionList.push('Canvas');
 
             that._execRenderHtml = function () {
-                st = '<div style="width:{width}px">'.DQXformat({ width: this._width });
+                st = '<div id="{id}" style="width:{width}px">'.DQXformat({ id: this.getFullID(''), width: this._width });
                 st += '<span >{content}</span>'.DQXformat({ content: that._label });
                 st += '<span id="{id}" style="float:right">1</span>'.DQXformat({ id: this.getFullID('Value') });
                 st += "</div>";
