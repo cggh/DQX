@@ -9,10 +9,10 @@ define([DQXSCJQ(), DQXSC("Msg")],
             //Call this function to add a new view to the manager
             addView: function (view) {
                 HistoryManager.views.push(view);
-                if (view.myStateID) {
-                    if (view.myStateD in HistoryManager.viewsMap)
+                if (view.getStateID()) {
+                    if (view.getStateID() in HistoryManager.viewsMap)
                         DQX.reportError("Duplicate view state id");
-                    HistoryManager.viewsMap[view.myStateID] = view;
+                    HistoryManager.viewsMap[view.getStateID()] = view;
                 }
             },
 
@@ -102,8 +102,8 @@ define([DQXSCJQ(), DQXSC("Msg")],
                 //attempt 1: match by id of the tab that was clicked
                 for (var viewNr = 0; viewNr < HistoryManager.views.length; viewNr++) {
                     var view = HistoryManager.views[viewNr];
-                    if (view.myFrame != null) {
-                        if (newid == view.myFrame.myFrameID) {
+                    if (view.getFrame() != null) {
+                        if (newid == view.getFrame().myFrameID) {
                             if (activeView)
                                 DQX.reportError("Duplicate matching view");
                             activeView = view;
@@ -114,8 +114,8 @@ define([DQXSCJQ(), DQXSC("Msg")],
                     //attempt 2: match by identifying visible frame
                     for (var viewNr = 0; viewNr < HistoryManager.views.length; viewNr++) {
                         var view = HistoryManager.views[viewNr];
-                        if (view.myFrame != null) {
-                            if (view.myFrame.isVisible()) {
+                        if (view.getFrame() != null) {
+                            if (view.getFrame().isVisible()) {
                                 if (activeView)
                                     DQX.reportError("Duplicate matching view");
                                 activeView = view;

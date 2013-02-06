@@ -299,7 +299,7 @@
 
             //Adds a new subframe to an existing container-style frame (= splitter or tab)
             that.addMemberFrame = function (iframe) {
-                DQX.requireMember(iframe, 'setInitialiseFunction');
+                DQX.requireMemberFunction(iframe, 'setInitialiseFunction');
                 if (this.isFinalPanel()) DQX.reportError("Can't add frames to a final panel");
                 iframe.myID = "Frame" + Framework.frameCounter;
                 Framework.frameCounter++;
@@ -1035,8 +1035,15 @@
                 return true;
             }
 
+            //Fills a final frame with some html content
+            that.setContentHtml = function (content) {
+                this.checkFinalPanel();
+                $('#' + this.getClientDivID()).html(content);
+                DQX.ExecPostCreateHtml();
+            }
+
             //Fills a final frame with some static content
-            that.setStaticContent = function (divid) {
+            that.setContentStaticDiv = function (divid) {
                 this.checkFinalPanel();
                 var content = $('#' + divid).html();
                 $('#' + this.getClientDivID()).html(content);
@@ -1106,19 +1113,21 @@
 
         Framework.ViewSet = function (iFrame, iStateID) {
             var that = {};
-            that.myFrame = iFrame;
-            that.myStateID = iStateID;
+            that._myFrame = iFrame;
+            that._myStateID = iStateID;
 
             that.registerView = function () {//called by the framework
                 HistoryManager.addView(this);
             }
 
-            that.getStateID = function () { return this.myStateID; }
+            that.getStateID = function () { return this._myStateID; }
+
+            that.getFrame = function () { return this._myFrame; }
 
 
             that.getStateKeys = function () {//default implementation, can be overwritten
                 var mp = {};
-                mp[this.myStateID] = null;
+                mp[this._myStateID] = null;
                 return mp;
             }
 
@@ -1128,7 +1137,7 @@
                 that.createPanels();
             }
 
-            that.myFrame.setInitialiseFunction(that._initialisePanels);
+            that._myFrame.setInitialiseFunction(that._initialisePanels);
 
             return that;
         }
@@ -1139,7 +1148,7 @@
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // A class that implements a html form, consisting of Controls
+        // A class that implements a frame panel containing a html form, consisting of Controls
         ///////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1154,7 +1163,7 @@
 
             //Adds a new control to the form, derived from Control.Control
             that.addControl = function (ctrl) {
-                DQX.requireMember(ctrl, 'getID');
+                DQX.requireMemberFunction(ctrl, 'getID');
                 that._content.addControl(ctrl);
                 return ctrl;
             }
