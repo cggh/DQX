@@ -79,7 +79,16 @@
             return Framework.Frame(iid, 'Final', isizeweight).setFrameClassClient('DQXClient');
         }
 
+
+
+
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////
         //A class that implements a frame
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+
         Framework.Frame = function (iid, itype, isizeweight) {
             DQX.checkIsString(iid);
             if (itype != '-')
@@ -218,12 +227,14 @@
                 return this;
             }
 
+            //Specifies the frame to adapt its vertical size automatically to the size of the content
             that.setAutoSize = function () {
                 this.setMinSize(Framework.dimY, 1);
                 this.autoSizeY = true;
                 return this;
             }
 
+            //Specifies that transitions between stacked members (e.g. tabs) should be animated
             that.setAnimateTransition = function () {
                 this._animateTransition = true;
                 return this;
@@ -288,8 +299,8 @@
 
             //Adds a new subframe to an existing container-style frame (= splitter or tab)
             that.addMemberFrame = function (iframe) {
+                DQX.requireMember(iframe, 'setInitialiseFunction');
                 if (this.isFinalPanel()) DQX.reportError("Can't add frames to a final panel");
-                //iframe.myID = this.myID + '_' + this.memberFrames.length.toString();
                 iframe.myID = "Frame" + Framework.frameCounter;
                 Framework.frameCounter++;
                 this.memberFrames.push(iframe);
@@ -317,6 +328,7 @@
                 return iframe;
             }
 
+            //Inserts a new frame at the top of an existing frame, containing a static content
             that.InsertStaticHeader = function (content, iclss, tpe) {
                 var clss = iclss;
                 if (!clss)
@@ -338,6 +350,7 @@
                 });
             }
 
+            //Inserts an info box frame at the top of an existing frame
             that.InsertIntroBox = function (bitmap, content, helpDocID) {
                 var frame = this.InsertFrameTop(Framework.FrameFinal('', 0.01));
                 frame.setFrameClassClient('DQXIntroInfo').setFrameClass('DQXIntroInfo').setMargins(12).setAllowScrollBars(false, false);
@@ -493,10 +506,6 @@
                         titlediv.setCssClass('DQXTitleBar');
                     titlediv.addElem(this.myDisplayTitle);
                 }
-
-                /*                if (this.marginTop > 0) {
-                var titlediv = DocEl.Div({ parent: thediv, id: this.getVisibleTitleDivID() });
-                }*/
 
                 if (this.isSplitter()) {
                     for (var fnr = 0; fnr < this.memberFrames.length - 1; fnr++) {
@@ -770,7 +779,6 @@
 
             //adjusts the frame size fraction so that they obey the size limitations
             that._adjustFrameSizeFractions = function (totsize) {
-
                 var widths = [];
                 var widths_min = [];
                 var widths_max = [];
@@ -815,7 +823,6 @@
                 this._executePostInitialisers();
             }
 
-
             that._executeInitialisers = function () {
                 for (var fnr = 0; fnr < this.memberFrames.length; fnr++) {
                     var hidden = false;
@@ -831,7 +838,6 @@
                         this._handleInitialise();
                 }
             }
-
 
             that._executePostInitialisers = function () {
                 for (var fnr = 0; fnr < this.memberFrames.length; fnr++) {
@@ -1044,8 +1050,6 @@
             }
 
 
-
-
             ////////////// FINAL INITIALISATION CODE
 
             if (that.isFinalPanel()) {
@@ -1080,17 +1084,13 @@
         Framework._updateSize();
 
 
-
-
         //Renders the framework to the html page, in a div
         Framework.render = function (frameRoot, divid) {
             Framework.frameRoot = frameRoot;
             var html = frameRoot._createElements(1).toString();
             $('#' + divid).html(html);
             frameRoot._postCreateHTML();
-
             $(window).resize(Framework._handleResize)
-
             Framework._handleResize();
         }
 
@@ -1099,13 +1099,17 @@
 
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // A class that contains a view state of the application
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////
 
         Framework.ViewSet = function (iFrame, iStateID) {
             var that = {};
             that.myFrame = iFrame;
             that.myStateID = iStateID;
 
-            that.registerView = function () {
+            that.registerView = function () {//called by the framework
                 HistoryManager.addView(this);
             }
 
@@ -1124,11 +1128,6 @@
                 that.createPanels();
             }
 
-            that.disableAutoCreatePanels = function () {
-                that.myFrame.setInitialiseFunction(null);
-            }
-
-
             that.myFrame.setInitialiseFunction(that._initialisePanels);
 
             return that;
@@ -1139,20 +1138,28 @@
 
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // A class that implements a html form, consisting of Controls
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////
 
         Framework.Form = function (iid, iParentRef) {
             var that = FramePanel(iid, iParentRef);
             that._content = Controls.CompoundHor([]);
 
+            //Resets the content of the form
             that.clear = function () {
                 that._content.clear();
             }
 
+            //Adds a new control to the form, derived from Control.Control
             that.addControl = function (ctrl) {
+                DQX.requireMember(ctrl, 'getID');
                 that._content.addControl(ctrl);
                 return ctrl;
             }
 
+            //Adds html content to the form
             that.addHtml = function (content) {
                 that._content.addControl(Controls.Label(content));
             }
@@ -1161,17 +1168,18 @@
                 return this.getDivID() + 'Inner';
             }
 
+            //renders the form to the DOM
             that.render = function () {
                 var st = that._content.renderHtml();
                 st = '<div id="' + this._getInnerDivID() + '">' + st + '</div>';
                 $('#' + this.getDivID()).html(st);
                 this.content = st;
                 that._content.postCreateHtml();
-
                 if (this.myParentFrame.autoSizeY)
                     Framework._handleResize(); //force resizing of the frames if the content was changed
             }
 
+            //Returns the natural vertical size of the form
             that.getAutoSizeY = function () {
                 var obj = document.getElementById(this._getInnerDivID());
                 if (obj)
@@ -1180,6 +1188,7 @@
                     return 0;
             }
 
+            //Called by the framework, but nothing needs to be done here
             that.handleResize = function () {
             }
 

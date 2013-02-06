@@ -29,6 +29,7 @@
             };
         };
 
+        //Returns a html string that highlights every occurrence of a specific string in a flat text
         DQX.highlightText = function (data, search) {
             function preg_quote(str) { return (str + '').replace(/([\\\.\+\*\?\[\^\]\$\(\)\{\}\=\!\<\>\|\:])/g, "\\$1"); }
             return data.replace(new RegExp("(" + preg_quote(search) + ")", 'gi'), '<span class="DQXHighlight">$1</span>');
@@ -48,28 +49,40 @@
             return elem.html();
         }
 
+        //determines if an object has a specific member
         DQX.hasMember = function (tryobj, membername) {
             if (typeof (tryobj) != 'object') return false;
             return membername in tryobj;
         }
 
+        //reports an error if an object does not have a specific member
         DQX.requireMember = function (tryobj, membername) {
             if (typeof (tryobj) != 'object') DQX.reportError('variable cannot have a member because it is not an object');
             if (!(membername in tryobj)) DQX.reportError('Object should have member "{memb}"'.DQXformat({ memb: membername }));
         }
 
+        //reports an error if an object does not have a specific function
+        DQX.requireMemberFunction = function (tryobj, membername) {
+            DQX.requireMember(tryobj, membername);
+            DQX.checkIsFunction(tryobj[membername]);
+        }
+
+        //reports an error if the argument is not a string
         DQX.checkIsString = function (value) {
             if (typeof value != 'string') DQX.reportError('Expected string value');
         }
 
+        //reports an error if the argument is not a boolean
         DQX.checkIsBoolean = function (value) {
             if (typeof value != 'boolean') DQX.reportError('Expected boolean value');
         }
 
+        //reports an error if the argument is not a number
         DQX.checkIsNumber = function (value) {
             if (typeof value != 'number') DQX.reportError('Expected number value');
         }
 
+        //reports an error if the argument is not a function
         DQX.checkIsFunction = function (value) {
             if (typeof value != 'function') DQX.reportError('Expected function');
         }
@@ -513,7 +526,7 @@
             window.onerror = DQX._onError;
         }
 
-
+        //Returns a html string that contains a link to a help document
         DQX.createHelpLink = function (docID, content) {
             var span = DocEl.Span({ id: docID });
             span.setCssClass("DQXHelpLink");
@@ -528,14 +541,6 @@
 
         DQX.initPostCreate = function () {
 
-            /*
-            // Initialise functionality for help buttons
-            $('.DQXInfoButton').each(function (idx, tabset) {
-            var id = $(this).html();
-            $(this).html('<img src="Bitmaps/info.png" alt="info"/>');
-            $(this).click(function () { DQX.showHelp(id); return false; });
-            });
-            */
             // Fill in the include sections
             $('.DQXInclude').each(function (idx, tabset) {
                 var id = $(this).html();

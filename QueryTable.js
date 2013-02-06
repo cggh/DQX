@@ -265,7 +265,7 @@
                     }*/
 
                     this.getElement('Pager').html(rs_pager);
-                    $.each(navButtonControls, function (idx, bt) { bt.postCreateHtml(); });
+                    Controls.ExecPostCreateHtml();
                     this._pagerCreated = true;
                 }
 
@@ -282,9 +282,13 @@
                 if ('totalRecordCount' in this.myDataFetcher)
                     this.totalRecordCount = this.myDataFetcher.totalRecordCount;
 
-                var st = "&nbsp;&nbsp;&nbsp;Current: " + (this.myTableOffset + 1) + "-" + (this.myTableOffset + this.myPageSize);
-                if (this.totalRecordCount > 0)
+                if (this.totalRecordCount == 0) {
+                    st = '<span style="background-color:rgb(255,128,128)"><b>This result set does not contain any data</b><span>';
+                }
+                else {
+                    var st = "&nbsp;&nbsp;&nbsp;Current: " + (this.myTableOffset + 1) + "-" + (this.myTableOffset + this.myPageSize);
                     st += '; Total: ' + this.totalRecordCount;
+                }
                 $('#' + that.myBaseID + '_status').html(st);
 
 

@@ -3,33 +3,68 @@ define([DQXSCJQ(), DQXSC("Msg")],
         var HistoryManager = {
 
             stateKeys: null,
+            views: [],
+            viewsMap: {},
 
+            //Call this function to add a new view to the manager
+            addView: function (view) {
+                HistoryManager.views.push(view);
+                if (view.myStateID) {
+                    if (view.myStateD in HistoryManager.viewsMap)
+                        DQX.reportError("Duplicate view state id");
+                    HistoryManager.viewsMap[view.myStateID] = view;
+                }
+            },
+
+            //Call this function to initialise the first view
             init: function () {
-                HistoryManager.onChanged();
+                HistoryManager._onChanged();
             },
 
+            //Internal: actualise the application status
             updateState: function () {
-                if (this.globalLoadState == null)
-                    DQX.reportError('globalLoadState is not defined');
-                this.globalLoadState(this.stateKeys);
+                if ((!$.isEmptyObject(this.stateKeys)) && (!this.started)) {//do something sensible when the reload was hit on a page different from the start page
+                    this.started = true;
+                    this.setState({});
+                    return;
+                }
+                if ((!this.stateKeys) || ($.isEmptyObject(this.stateKeys))) {//do something sensible when no state is provided
+                    if (!this.viewsMap['start']) {
+                        return;
+                        DQX.reportError('No start view provided');
+                    }
+                    this.viewsMap['start'].activateState(this.stateKeys);
+                    return;
+                }
+                var view = null;
+                for (var viewNr = 0; viewNr < this.views.length; viewNr++) {
+                    if (this.views[viewNr].getStateID() in this.stateKeys) {
+                        if (view != null)
+                            DQX.reportError("Duplicate applicable view");
+                        view = this.views[viewNr];
+                    }
+                }
+                if (view != null)
+                    view.activateState(this.stateKeys);
             },
 
-
-            setState: function (stateKeys) {
-                this.stateKeys = stateKeys;
+            //Sets a new state
+            setState: function (iStateKeys) {
+                this.stateKeys = iStateKeys;
                 var str = '';
-                for (key in stateKeys) {
+                for (key in this.stateKeys) {
                     if (str.length > 0) str += '&';
                     str += key;
-                    if (stateKeys[key] != null)
-                        str += '=' + stateKeys[key];
+                    if (this.stateKeys[key] != null)
+                        str += '=' + this.stateKeys[key];
                 }
                 this.updateState();
                 window.location.hash = str;
                 _gaq.push(['_trackEvent', 'State', 'set', str]); 
             },
 
-            onChanged: function () {
+            //Reacts to a change in url hash tag
+            _onChanged: function () {
                 var newstateKeys = {};
                 var tokens = window.location.hash.substring(1).split('&');
                 for (var tokennr = 0; tokennr < tokens.length; tokennr++) {
@@ -57,19 +92,9 @@ define([DQXSCJQ(), DQXSC("Msg")],
                 }
             },
 
-            views: [],
-            viewsMap: {},
 
-            addView: function (view) {
-                HistoryManager.views.push(view);
-                if (view.myStateID) {
-                    if (view.myStateD in HistoryManager.viewsMap)
-                        DQX.reportError("Duplicate view state id");
-                    HistoryManager.viewsMap[view.myStateID] = view;
-                }
-            },
-
-            reactSwitchTab: function (scope, newid) {
+            //Listens to tab changes, and automatically figure out if they mean a change in view state
+            _reactSwitchTab: function (scope, newid) {
                 if (HistoryManager.__ignoreSwitchTab)
                     return;
 
@@ -98,43 +123,17 @@ define([DQXSCJQ(), DQXSC("Msg")],
                         }
                     }
                 }
-
                 if (activeView)
                     HistoryManager.setState(activeView.getStateKeys());
             },
 
-
-            globalLoadState: function (stateKeys) {
-                if ((!$.isEmptyObject(stateKeys)) && (!HistoryManager.started)) {//do something sensible when the reload was hit on a page different from the start page
-                    HistoryManager.started = true;
-                    HistoryManager.setState({});
-                    return;
-                }
-                if ((!stateKeys) || ($.isEmptyObject(stateKeys))) {//do something sensible when no state is provided
-                    if (!HistoryManager.viewsMap['start']) {
-                        return;
-                        DQX.reportError('No start view provided');
-                    }
-                    HistoryManager.viewsMap['start'].activateState(stateKeys);
-                    return;
-                }
-                var view = null;
-                for (var viewNr = 0; viewNr < HistoryManager.views.length; viewNr++) {
-                    if (HistoryManager.views[viewNr].getStateID() in stateKeys) {
-                        if (view != null)
-                            DQX.reportError("Duplicate applicable view");
-                        view = HistoryManager.views[viewNr];
-                    }
-                }
-                if (view != null)
-                    view.activateState(stateKeys);
-            }
-
-
+            end:true
         }
 
+        //Register the required handlers
+        window.onhashchange = $.proxy(HistoryManager._onChanged, HistoryManager);
+        Msg.listen('', { type: 'ChangeTab' }, HistoryManager._reactSwitchTab);
 
-        window.onhashchange = $.proxy(HistoryManager.onChanged, HistoryManager);
-        Msg.listen('', { type: 'ChangeTab' }, HistoryManager.reactSwitchTab);
+
         return HistoryManager;
     });
