@@ -26,6 +26,7 @@ define([DQXSCJQ(), DQXSC("Msg")],
                 }
                 this.updateState();
                 window.location.hash = str;
+                _gaq.push(['_trackEvent', 'State', 'set', str]); 
             },
 
             onChanged: function () {
