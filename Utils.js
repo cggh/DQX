@@ -561,10 +561,13 @@
         DQX._globalKeyDownReceiverStack = [];
         DQX._globalKeyDownReceiverIndex = 0;
 
-        DQX.registerGlobalKeyDownReceiver = function (handler) {
-            DQX._globalKeyDownReceiverIndex++;
-            DQX._globalKeyDownReceiverStack.unshift({ id: DQX._globalKeyDownReceiverIndex, handler: handler });
-            return DQX._globalKeyDownReceiverIndex;
+        DQX.registerGlobalKeyDownReceiver = function (handler, registerID) {
+            if (!registerID) {
+                DQX._globalKeyDownReceiverIndex++;
+                registerID = DQX._globalKeyDownReceiverIndex;
+            }
+            DQX._globalKeyDownReceiverStack.unshift({ id: registerID, handler: handler });
+            return registerID;
         }
 
         DQX.unRegisterGlobalKeyDownReceiver = function (registerID) {
@@ -577,6 +580,8 @@
         DQX._onHoverKeyReceivers = {};
 
         DQX._handleKeyDown = function (ev) {
+            if (ev.keyCode == 27)
+                ev.isEscape = true;
             if (DQX._globalKeyDownReceiverStack.length > 0) {
                 DQX._globalKeyDownReceiverStack[0].handler(ev);
                 return;

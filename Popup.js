@@ -11,6 +11,7 @@
 
         DQX.ClosePopup = function (index) {
             $("#" + index).remove();
+            DQX.unRegisterGlobalKeyDownReceiver(index);
             Popup._checkBackgroundBlockNeeded();
         }
         DQX._popupIndex = 0;
@@ -24,6 +25,7 @@
                 elem.find('.DQXPinBoxUnpinned').remove();
                 elem.find('.DQXPinBoxPinned').remove();
                 elem.append(Popup._createPinBox(ID, newStatus));
+                DQX.unRegisterGlobalKeyDownReceiver(ID);//should not receive global keyboard events anymore
             }
         }
 
@@ -210,6 +212,9 @@
                 var pageSizeY = $(window).height();
                 $('#' + ID).offset({ left: (pageSizeX - w) / 2, top: (pageSizeY - h) / 2 });
                 DQX.ExecPostCreateHtml();
+                DQX.registerGlobalKeyDownReceiver(function (ev) {
+                    if (ev.isEscape) DQX.ClosePopup(ID);
+                }, ID);
             }
             return ID;
         }
