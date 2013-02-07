@@ -489,20 +489,23 @@
         DQX._mouseEventReceiverList = [];
 
 
-        /////////////////////////////////////////////////////////////////////////////////////
-        // The global DQX startup function
-        /////////////////////////////////////////////////////////////////////////////////////
 
         DQX._onError = function (message, url, lineNumber) {
             var errorTokens = { type: 'JSException', message: message, source: url, linenr: lineNumber, browser: navigator.userAgent };
-            //Display error for testing purposes
-            var msg = '';
-            $.each(errorTokens, function (key, value) {
-                msg += key + '= ' + value + '\n';
-            });
-            alert(msg);
+            if (_debug_) {
+                //Display error for testing purposes
+                var msg = '';
+                $.each(errorTokens, function (key, value) {
+                    msg += key + '= ' + value + '\n';
+                });
+                alert(msg);
+            }
             return true;
         };
+
+        /////////////////////////////////////////////////////////////////////////////////////
+        // The global DQX startup function
+        /////////////////////////////////////////////////////////////////////////////////////
 
         DQX.Init = function () {
 
@@ -586,7 +589,6 @@
             return delta;
         }
 
-
         DQX._registerKeyReceiver = function (theElem, fn) {
             DQX._keyReceivers[theElem] = fn;
         }
@@ -595,12 +597,9 @@
             delete DQX._keyReceivers[theElem];
         }
 
-
-
         DQX.addMouseEventReceiver = function (obj) {
             this._mouseEventReceiverList.push(obj);
         }
-
 
         DQX._handleMouseDown = function (ev) {
             var target = ev.target;
@@ -617,7 +616,6 @@
             }
         }
 
-
         DQX._handleMouseUp = function (ev) {
             for (var i in DQX._mouseEventReceiverList) {
                 if (DQX._mouseEventReceiverList[i]._mousedown) {
@@ -627,7 +625,6 @@
             }
         }
 
-
         DQX._findMouseEventReceiver = function (iCanvasID) {
             for (var i in DQX._mouseEventReceiverList)
                 if (DQX._mouseEventReceiverList[i].myCanvasID == iCanvasID)
@@ -635,9 +632,7 @@
             return null;
         }
 
-
         DQX._lastMouseHoverTarget = null;
-
 
         DQX._handleMouseMove = function (ev) {
             //first try and see if this is a mousedown event
@@ -739,55 +734,6 @@
             return bestjump;
         }
 
-        //Draws a tooltip in a canvas drawing context
-        DQX.DrawUtil.DrawChannelToolTip = function (context, _toolTipInfo) {
-            var xp = _toolTipInfo.xp + 0.5;
-            var yp = _toolTipInfo.yp + 1 + 0.5;
-
-            //Determine x size
-            context.font = 'bold 12px sans-serif';
-            context.textBaseline = 'top';
-            context.textAlign = 'left';
-            var xlen = 10;
-            for (var linenr in _toolTipInfo.lines)
-                xlen = Math.max(xlen, context.measureText(_toolTipInfo.lines[linenr].Text).width);
-            xlen += 2;
-            var ylen = _toolTipInfo.lines.length * 16 + 6;
-
-            var dff = 20;
-            context.globalAlpha = 1;
-            var backgrad = context.createLinearGradient(0, yp, 0, yp + ylen + dff);
-            backgrad.addColorStop(0, "rgb(255,255,160)");
-            backgrad.addColorStop(1, "rgb(255,190,80)");
-
-            context.fillStyle = backgrad;
-
-            context.strokeStyle = "rgb(0,0,0)";
-
-            context.beginPath();
-            context.moveTo(xp, yp);
-            context.lineTo(xp + dff / 2, yp + dff);
-            context.lineTo(xp + xlen, yp + dff);
-            context.lineTo(xp + xlen, yp + dff + ylen);
-            context.lineTo(xp - dff / 2, yp + dff + ylen);
-            context.lineTo(xp - dff / 2, yp + dff);
-            context.closePath();
-            context.shadowColor = "black";
-            context.shadowBlur = 10;
-            context.fill();
-            context.stroke();
-            context.shadowColor = "transparent";
-
-
-
-            for (var linenr in _toolTipInfo.lines) {
-                var line = _toolTipInfo.lines[linenr];
-                context.fillStyle = line.Color;
-                context.fillText(line.Text, xp - 3, yp + dff + 3 + linenr * 16);
-            }
-            context.globalAlpha = 1.0;
-        }
-
         DQX.getWindowClientW = function () {
             var docW = window.innerWidth;
             if (!docW)
@@ -820,12 +766,6 @@
             resp += "</table>"
             return resp;
         }
-
-
-        DQX.HtmlWriteKeyValuePair = function (KeyName, Content) {
-            return "<b>" + KeyName + "</b>= " + Content;
-        }
-
 
 
         return DQX;
