@@ -1184,6 +1184,7 @@
                 $('#' + this.getDivID()).html(st);
                 this.content = st;
                 that._content.postCreateHtml();
+                DQX.ExecPostCreateHtml();
                 if (this.myParentFrame.autoSizeY)
                     Framework._handleResize(); //force resizing of the frames if the content was changed
             }
