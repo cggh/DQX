@@ -7,6 +7,7 @@
 
         Documentation._onCancel = function () {
             $('#DocuBoxBackGround').remove();
+            DQX.unRegisterGlobalKeyDownReceiver('DocuBox');
         }
 
         Documentation._onPrevious = function () {
@@ -108,6 +109,9 @@
                 $('#' + button.id).mousedown($.proxy(button.handler, this));
             }
 
+            DQX.registerGlobalKeyDownReceiver(function (ev) {
+                if (ev.isEscape) Documentation._onCancel('DocuBox');
+            }, 'DocuBox');
 
         }
 

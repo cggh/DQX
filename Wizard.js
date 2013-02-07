@@ -59,7 +59,7 @@
             }
 
             that._onKeyDown = function (ev) {
-                if (ev.keyCode == 27)
+                if (ev.isEscape)
                     this._onCancel();
             }
 
