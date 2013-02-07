@@ -558,23 +558,47 @@
             var q = 0;
         }
 
-        DQX._keyReceivers = {};
+        DQX._globalKeyDownReceiverStack = [];
+        DQX._globalKeyDownReceiverIndex = 0;
+
+        DQX.registerGlobalKeyDownReceiver = function (handler) {
+            DQX._globalKeyDownReceiverIndex++;
+            DQX._globalKeyDownReceiverStack.unshift({ id: DQX._globalKeyDownReceiverIndex, handler: handler });
+            return DQX._globalKeyDownReceiverIndex;
+        }
+
+        DQX.unRegisterGlobalKeyDownReceiver = function (registerID) {
+            for (var i = 0; i < DQX._globalKeyDownReceiverStack.length; i++)
+                if (DQX._globalKeyDownReceiverStack[i].id == registerID) {
+                    DQX._globalKeyDownReceiverStack.splice(i, 1);
+                }
+        }
+
+        DQX._onHoverKeyReceivers = {};
 
         DQX._handleKeyDown = function (ev) {
-            for (var id in DQX._keyReceivers)
-                if (DQX._keyReceivers[id])
-                    if (DQX._keyReceivers[id](ev)) {
+            if (DQX._globalKeyDownReceiverStack.length > 0) {
+                DQX._globalKeyDownReceiverStack[0].handler(ev);
+                return;
+            }
+            for (var id in DQX._onHoverKeyReceivers)
+                if (DQX._onHoverKeyReceivers[id])
+                    if (DQX._onHoverKeyReceivers[id](ev)) {
                         return false;
                     }
         }
 
-        DQX.setKeyDownReceiver = function (elemID, fn) {
+
+        //Registers a html element (identifier by an ID) to receive keydown events when the mouse is hovering over it. Events are sent to a function provided as argument
+        DQX.setOnHoverKeyDownReceiver = function (elemID, fn) {
+            if ($('#' + elemID).length == 0)
+                DQX.reportError('Unable to register keydown receiver: DOM element ' + elemID + ' not found');
             var theElem = elemID;
             $('#' + elemID).mouseover(function (ev) {
-                DQX._registerKeyReceiver(theElem, fn);
+                DQX._onHoverKeyReceivers[theElem] = fn;
             });
             $('#' + elemID).mouseout(function (ev) {
-                DQX._unregisterKeyReceiver(theElem);
+                delete DQX._onHoverKeyReceivers[theElem];
             });
         }
 
@@ -587,14 +611,6 @@
             else
                 if (ev1.detail) { delta = -ev1.detail / 3; }
             return delta;
-        }
-
-        DQX._registerKeyReceiver = function (theElem, fn) {
-            DQX._keyReceivers[theElem] = fn;
-        }
-
-        DQX._unregisterKeyReceiver = function (theElem) {
-            delete DQX._keyReceivers[theElem];
         }
 
         DQX.addMouseEventReceiver = function (obj) {

@@ -58,6 +58,12 @@
                     DQX.reportError('Wizard is not running');
             }
 
+            that._onKeyDown = function (ev) {
+                if (ev.keyCode == 27)
+                    this._onCancel();
+            }
+
+
             //executes the wizard
             that.run = function (onFinishFunction) {
                 this.checkNotRunning();
@@ -152,6 +158,8 @@
                 Controls.ExecPostCreateHtml();
 
 
+                this._keyDownReceiverID = DQX.registerGlobalKeyDownReceiver($.proxy(that._onKeyDown,that));
+
                 this._setPage(0);
             }
 
@@ -189,9 +197,15 @@
                 return (this.getCurrentPage().onFinish);
             }
 
-            that._onCancel = function () {
+            that._stopRunning = function () {
+                DQX.unRegisterGlobalKeyDownReceiver(this._keyDownReceiverID);
                 $('#WizBackGround').remove();
                 this._isRunning = false;
+            }
+
+
+            that._onCancel = function () {
+                this._stopRunning();
             }
 
             that._onHelp = function () {
@@ -215,9 +229,8 @@
             //Performs the 'Finish' action
             that.performFinish = function () {
                 this.checkRunning();
-                $('#WizBackGround').remove();
+                this._stopRunning();
                 this._onFinishFunction();
-                this._isRunning = false;
             }
 
             //jumps the wizard to a page, providing the page id

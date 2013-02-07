@@ -670,7 +670,7 @@
             that.myTable = QueryTable.Table(that.getDivID(), idatafetcher);
             that.myTable.autoSizeHeight = true;
 
-            DQX.setKeyDownReceiver(that.getID(), $.proxy(that.myTable.onKeyDown, that.myTable));
+            DQX.setOnHoverKeyDownReceiver(that.getID(), $.proxy(that.myTable.onKeyDown, that.myTable));
 
             that.getVerticalUserSize = function () {
                 return $('#' + that.getSubId("BodyHolder")).outerHeight() + $('#' + that.getSubId("Pager")).outerHeight() + $('#' + that.getSubId("Footer")).outerHeight(); ;
