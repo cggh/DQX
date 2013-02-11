@@ -89,7 +89,7 @@
                 }
                 $('#' + this.myListDivID).html(lst1 + lst2);
 
-                $('#' + this.myListDivID).children().click($.proxy(that._clickItem, that));
+                $('#' + this.myListDivID).children().click(that._clickItem);
             }
 
             that._onChangeFilter = function () {
@@ -113,10 +113,11 @@
             }
 
             that._clickItem = function (ev) {
-                var id = ev.target.id;
-                if (id == '')
-                    id = $(ev.target).parent().attr('id');
-                this.setActiveItem(id);
+                var elem=$(this);
+//                while ((!elem.hasClass('DQXLargeListItem')) && (!elem.hasClass('DQXLargeListItemSelected')) && (elem.parent().length > 0))
+//                    elem=elem.parent();
+                var id = elem.attr('id');
+                that.setActiveItem(id);
             }
 
             that.handleResize = function () {
