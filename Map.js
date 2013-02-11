@@ -1,5 +1,5 @@
-﻿define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), DQXSC("Msg"), DQXSC("Utils"), DQXSC("FramePanel"), DQXSCAsync("https://maps.googleapis.com/maps/api/js?libraries=visualization&sensor=false")],
-    function ($, Countries, GeoJSON, Msg, DQX, FramePanel) {
+﻿define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), DQXSC("lib/StyledMarker"), DQXSC("Msg"), DQXSC("Utils"), DQXSC("FramePanel"), DQXSCAsync("https://maps.googleapis.com/maps/api/js?libraries=visualization&sensor=false")],
+    function ($, Countries, GeoJSON, StyledMarker, Msg, DQX, FramePanel) {
 
         var GMaps = {}
 
@@ -280,12 +280,23 @@
                     var obj = this;
                     (function (iarg) {//closure because we need persistent counter
                         var pointnr = iarg;
-                        var markerobject = {
-                            position: new google.maps.LatLng(ipointset[pointnr].lattit, ipointset[pointnr].longit),
-                            map: obj.myMapObject.myMap
+                        var markerobject;
+                        if ('styleIcon' in ipointset[pointnr]) {
+                            markerobject = new StyledMarker.StyledMarker({
+                                styleIcon:new StyledMarker.StyledIcon(StyledMarker.StyledIconTypes.MARKER,ipointset[pointnr].styleIcon),
+                                position: new google.maps.LatLng(ipointset[pointnr].lattit, ipointset[pointnr].longit),
+                                map: obj.myMapObject.myMap
+                            });
                         }
-                        if ('image' in obj)
-                            markerobject.icon = obj.image;
+                        else {
+                            markerobject= new google.maps.Marker(
+                                {
+                                    position: new google.maps.LatLng(ipointset[pointnr].lattit, ipointset[pointnr].longit),
+                                    map: obj.myMapObject.myMap,
+                                    icon: obj.image
+                                });
+
+                        }
                         if (obj.myPointSet[pointnr].location_type == 'country') {
                             google_objs = GeoJSON(Countries.geo_json_by_fullname[obj.myPointSet[pointnr].given_name], obj.polygon_options);
                             if (!google_objs[0].error) {
@@ -300,7 +311,7 @@
                             }
 
                         } else {
-                            obj.myPointSet[pointnr].markers = [new google.maps.Marker(markerobject)];
+                            obj.myPointSet[pointnr].markers = [markerobject];
                             google.maps.event.addListener(obj.myPointSet[pointnr].markers[0], 'click',
                             function () { obj._handleOnPointClicked(pointnr); }
                         );

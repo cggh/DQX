@@ -43,6 +43,34 @@ body
     font-weight:bold;
 }
 
+.DQXWell
+{
+    min-height: 15px;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid darkgray;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    box-shadow: inset 1px rgba(0,0,0,.15);
+    -moz-box-shadow: inset 1px 1px rgba(0,0,0,.15);
+    -webkit-box-shadow: inset 1px 1px rgba(0,0,0,.15);
+}
+
+.DQXFRight
+{
+    float:right;
+}
+.DQXFLeft
+{
+    float:left;
+}
+.DQXBlock {
+    display: inline-block;
+}
+
+.DQXClearfix {
+    clear: both;
+}
 
 /******************************************************************************************
 ** DQX Help
@@ -481,7 +509,15 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eff6fc', end
 	cursor:pointer;
 }
 
-
+.DQXLargeFlag
+{
+    padding-right: 5px;
+    height: 16px;
+}
+.DQXSmallFlag
+{
+    padding-right: 5px;
+}
 .DQXGlowButton
 {
 	padding:3px;
