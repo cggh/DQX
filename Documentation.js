@@ -117,26 +117,29 @@
 
 
         //Show a help box corresponding to a help id item in the DOM
-        Documentation.showHelp = function (origID) {
-            var id = origID;
-            if (id.slice(0, 3) != 'LNK')
-                DQX.reportError('Invalid help link ' + id);
-            id = id.slice(3, 999);
+        Documentation.showHelp = function (url) {
             Documentation._createBox();
             Documentation.topicStack = Documentation.topicStack.slice(0, Documentation.topicStackPointer + 1);
-            Documentation.topicStack.push(id);
+            Documentation.topicStack.push(url);
             Documentation.topicStackPointer = Documentation.topicStack.length - 1;
-            Documentation._displayHelp(id);
+            Documentation._displayHelp(url);
         }
 
-        Documentation._displayHelp = function (id) {
-            var docElem = $('#DQXDocumentation').find('#' + id);
-            if (docElem.length == 0) DQX.reportError("Broken help link " + id);
-            var helpcontent = docElem.html();
-            $('#DocuBoxContent').html(helpcontent);
-
+        Documentation._displayHelp = function (url) {
             $('#DocuBoxButtonPrevious').css('opacity', (Documentation.topicStackPointer > 0) ? 1 : 0.3);
             $('#DocuBoxButtonNext').css('opacity', (Documentation.topicStackPointer < Documentation.topicStack.length - 1) ? 1 : 0.3);
+
+            DQX.setProcessing("Downloading...");
+            $.get(url, {})
+            .done(function (data) {
+                DQX.stopProcessing();
+                $('#DocuBoxContent').html($('<div/>').append(data).find('#HelpContent').html());
+            })
+            .fail(function () {
+                DQX.stopProcessing();
+                alert("Failed to download documentation item '"+url+"'");
+            });
+
 
         }
 

@@ -785,11 +785,14 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7f7f7', end
 
 .DQXToolButton1, .DQXToolButton2, .DQXToolButton3
 {
-    margin:5px;
+    margin:3px;
     cursor:pointer;
     border:2px solid black;
     box-shadow: 2px 2px 6px rgba(0,0,0,0.45); 
-    padding:6px;
+    padding-top:4px;
+    padding-bottom:4px;
+    padding-left:6px;
+    padding-right:6px;
     border-radius: 5px;
 	/*border-style: outset;*/
 }  

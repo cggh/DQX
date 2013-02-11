@@ -628,8 +628,9 @@
             while ((target) && (ct <= 1)) {
                 if ((target.className) && ((typeof target.className == 'string'))) {
                     if (target.className.slice(0, 11) == 'DQXHelpLink') {
-                        Msg.send({ type: 'ShowHelp' }, target.id);
-                        return;
+                        var linkID = ($(target)).attr('href');
+                        Msg.send({ type: 'ShowHelp' }, linkID);
+                        return true;
                     }
                 }
                 target = target.parentElement;

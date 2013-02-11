@@ -167,7 +167,7 @@
                 this.pageNr = ipageNr;
                 $('#WizBoxContent').html(this._pages[this.pageNr].form.renderHtml());
                 this._pages[this.pageNr].form.postCreateHtml();
-                if (this._pages[this.pageNr].helpid)
+                if (this._pages[this.pageNr].helpUrl)
                     $('#WizBoxButtonHelp').show();
                 else
                     $('#WizBoxButtonHelp').hide();
@@ -209,7 +209,7 @@
             }
 
             that._onHelp = function () {
-                Msg.send({ type: 'ShowHelp' }, 'LNK' + this.getCurrentPage().helpid);
+                Msg.send({ type: 'ShowHelp' }, this.getCurrentPage().helpUrl);
             }
 
             that._onFinish = function () {
