@@ -203,6 +203,12 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#787878', end
 	cursor:pointer;
 }
 
+.DQXQueryTableHeaderText
+{
+	cursor:pointer;
+}
+
+
 .DQXQueryTableLinkCell 
 {
     padding:0px;
