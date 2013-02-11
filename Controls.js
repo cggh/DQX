@@ -941,13 +941,13 @@
         // A help button, where the id of the control is the documentation id
         ////////////////////////////////////////////////////////////////////////////////////////////
 
-        Controls.HelpButton = function (iid, args) {
+        Controls.HelpButton = function (url, args) {
             args.bitmap = DQXBMP('info4.png');
             //args.vertShift = 3;
-            var that = Controls.LinkButton('HLPB' + iid, args);
+            var that = Controls.LinkButton(null, args);
 
             that.setOnChanged(function () {
-                Documentation.showHelp('LNK' + iid);
+                Documentation.showHelp(url);
             })
             return that;
         }
