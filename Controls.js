@@ -891,8 +891,10 @@
         Controls.LinkButton = function (iid, args) {
             var that = Controls.Control(iid);
             that.myBitmap = args.bitmap;
+            that.text = args.text;
             that.description = '';
             that._hint = '';
+            console.log(args);
             if (args.hint)
                 that._hint = args.hint;
             that._vertShift = 0;
@@ -901,10 +903,19 @@
             that._controlExtensionList.push('');
 
             that._execRenderHtml = function () {
-                var st = '<IMG id="{id}" SRC="' + this.myBitmap + '" border=0 class="DQXBitmapLink" ALT="{desc1}" TITLE="{desc2}" style="margin-bottom:{shift}px" align="middle">';
-                st = st.DQXformat(
-                { id: this.getFullID(''), desc1: that.description, desc2: that._hint, shift: (-this._vertShift) });
-                return st;
+                if (this.myBitmap) {
+                    var st = '<IMG id="{id}" SRC="' + this.myBitmap + '" border=0 class="DQXBitmapLink" ALT="{desc1}" TITLE="{desc2}" style="margin-bottom:{shift}px" align="middle">';
+                    st = st.DQXformat(
+                        { id: this.getFullID(''), desc1: that.description, desc2: that._hint, shift: (-this._vertShift) });
+                    return st;
+                }
+                else {
+                    var st = '<a id="{id}" class="DQXHyperlink">{text}</a>';
+                    st = st.DQXformat(
+                        { id: this.getFullID(''), text:this.text});
+                    return st;
+                }
+
             }
 
             that._execPostCreateHtml = function () {

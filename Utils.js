@@ -35,6 +35,12 @@
             return data.replace(new RegExp("(" + preg_quote(search) + ")", 'gi'), '<span class="DQXHighlight">$1</span>');
         }
 
+        DQX.pluralise = function (str, number) {
+            if (number > 1) {
+                return str+'s';
+            }
+            return str;
+        }
 
         DQX.timeoutRetry = 10000;
         DQX.timeoutAjax = 15000;
@@ -126,7 +132,8 @@
 
 
         DQX.parseResponse = function (resp) {
-            lst = JSON.parse(resp);
+            //lst = JSON.parse(resp);
+            lst = resp;
             return lst;
         }
 
@@ -314,7 +321,18 @@
                 return faildefault;
         }
 
-
+        DQX.niceColours = [
+            "#2e3436",
+            "#204a87",
+            "#a40000",
+            "#d3d7cf",
+            "#5c3566",
+            "#ce5c00",
+            "#4e9a06",
+            "#e9b96e",
+            "#c4a000",
+            "#729fcf"
+        ];
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////
         // Some helper functions that assist in finding back an object instance using a unique ID
@@ -526,7 +544,7 @@
 
             $(document).keydown(DQX._handleKeyDown);
 
-            window.onerror = DQX._onError;
+//            window.onerror = DQX._onError;
         }
 
         //Returns a html string that contains a link to a help document
