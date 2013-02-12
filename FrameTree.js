@@ -199,7 +199,7 @@
                     this._itemList[i].postCreateHtml();
 
                 $('#' + this.getDivID()).find('.DQXTreeButton').click($.proxy(that._clickTreeButton, that));
-                $('#' + this.getDivID()).find('.DQXTreeItem').mousedown($.proxy(that._clickTreeItem, that));
+                $('#' + this.getDivID()).find('.DQXTreeItem').mousedown(that._clickTreeItem);
             }
 
             that.setActiveItem = function (id, noEvent) {
@@ -217,12 +217,10 @@
             }
 
             that._clickTreeItem = function (ev) {
-                var id = ev.target.id;
-                if (id == '')
-                    id = $(ev.target).parent().attr('id');
+                var id = $(this).attr('id');
                 if (id) {
                     id = id.split('_DQXIt_')[1];
-                    this.setActiveItem(id);
+                    that.setActiveItem(id);
                 }
             }
 

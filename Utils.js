@@ -132,8 +132,8 @@
 
 
         DQX.parseResponse = function (resp) {
-            //lst = JSON.parse(resp);
-            lst = resp;
+            lst = JSON.parse(resp);
+            //lst = resp;
             return lst;
         }
 

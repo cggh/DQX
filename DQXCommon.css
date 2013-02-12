@@ -20,6 +20,12 @@ body
 	overflow:hidden;
 }
 
+ul li
+{
+    margin-top:5px;
+    margin-bottom:5px;
+}
+
 .DQXSmallText
 {
 	font-size:8pt;
@@ -224,6 +230,12 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#787878', end
     color: rgb(100,100,200) !important;
 	cursor:pointer;
 }
+
+.DQXQueryTableHeaderText
+{
+	cursor:pointer;
+}
+
 
 .DQXQueryTableLinkCell 
 {
@@ -925,6 +937,7 @@ background: -o-linear-gradient(-45deg, rgba(249,249,249,1) 0%,rgba(234,234,234,1
 background: -ms-linear-gradient(-45deg, rgba(249,249,249,1) 0%,rgba(234,234,234,1) 100%) !important;
 background: linear-gradient(135deg, rgba(249,249,249,1) 0%,rgba(234,234,234,1) 100%) !important;
 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f9f9f9', endColorstr='#eaeaea',GradientType=1 ) !important;
+    line-height:140%;
 }
 
 .DQXDocuBoxFooter
