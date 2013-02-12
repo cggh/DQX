@@ -23,7 +23,6 @@
                 }
 
                 that.activateState = function (stateKeys) {
-                    enableHomeButton();
                     var st = stateKeys.doc;
                     this.activeUrl = st.replace(/\*/g, "/");
                     this.getFrame().makeVisible();
