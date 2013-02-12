@@ -896,7 +896,6 @@
             that.text = args.text;
             that.description = '';
             that._hint = '';
-            //console.log(args);
             if (args.hint)
                 that._hint = args.hint;
             that._vertShift = 0;
