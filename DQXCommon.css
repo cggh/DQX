@@ -518,6 +518,21 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eff6fc', end
 {
     padding-right: 5px;
 }
+
+.DQXColourBox
+{
+    width: 12px;
+    height: 12px;
+    display: inline-block;
+    background-color: #ccc;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    /*position: absolute;*/
+    /*left: 5px;*/
+    /*top: 5px;*/
+}
+
 .DQXGlowButton
 {
 	padding:3px;
