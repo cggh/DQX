@@ -27,6 +27,8 @@
                     delete Controls._postCreateWaitList[key];
                 }
             });
+            DQX._registerStaticLinkHandlers();
+            DQX._registerActionLinkHandlers();
         }
 
         DQX.ExecPostCreateHtml = function () {
@@ -912,7 +914,7 @@
                 else {
                     var st = '<a id="{id}" class="DQXHyperlink">{text}</a>';
                     st = st.DQXformat(
-                        { id: this.getFullID(''), text:this.text});
+                        { id: this.getFullID(''), text: this.text });
                     return st;
                 }
 
