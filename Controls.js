@@ -902,19 +902,19 @@
             that._controlExtensionList.push('');
 
             that._execRenderHtml = function () {
+                var st = '<a id=' + this.getFullID('') + ' class="DQXHyperlink">';
+                if (this.text) {
+                    st += this.text;
+                }
                 if (this.myBitmap) {
-                    var st = '<IMG id="{id}" SRC="' + this.myBitmap + '" border=0 class="DQXBitmapLink" ALT="{desc1}" TITLE="{desc2}" style="margin-bottom:{shift}px" align="middle">';
-                    st = st.DQXformat(
-                        { id: this.getFullID(''), desc1: that.description, desc2: that._hint, shift: (-this._vertShift) });
-                    return st;
+                    //var s = '<IMG SRC="' + this.myBitmap + '" border=0 class="DQXBitmapLink" ALT="{desc1}" TITLE="{desc2}" style="margin-bottom:{shift}px" align="middle">';
+                    var s = '<IMG SRC="' + this.myBitmap + '" border=0 class="DQXBitmapLink" ALT="{desc1}" TITLE="{desc2}">';
+                    s = s.DQXformat(
+                        { desc1: that.description, desc2: that._hint, shift: (-this._vertShift) });
+                    st = st + s;
                 }
-                else {
-                    var st = '<a id="{id}" class="DQXHyperlink">{text}</a>';
-                    st = st.DQXformat(
-                        { id: this.getFullID(''), text:this.text});
-                    return st;
-                }
-
+                st += '</a>';
+                return st;
             }
 
             that._execPostCreateHtml = function () {
