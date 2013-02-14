@@ -546,7 +546,7 @@
 
             $(document).keydown(DQX._handleKeyDown);
 
-            //            window.onerror = DQX._onError;
+            window.onerror = DQX._onError;
         }
 
         //Returns a html string that contains a link to a help document
