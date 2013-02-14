@@ -37,7 +37,7 @@
 
         DQX.pluralise = function (str, number) {
             if (number > 1) {
-                return str+'s';
+                return str + 's';
             }
             return str;
         }
@@ -536,6 +536,7 @@
                 timeout: DQX.timeoutAjax
             });
 
+            $(document).click(DQX._handleMouseClick);
             $(document).mousedown(DQX._handleMouseDown);
             $(document).mouseup(DQX._handleMouseUp);
             $(document).mousemove(DQX._handleMouseMove);
@@ -545,7 +546,7 @@
 
             $(document).keydown(DQX._handleKeyDown);
 
-//            window.onerror = DQX._onError;
+            //            window.onerror = DQX._onError;
         }
 
         //Returns a html string that contains a link to a help document
@@ -641,7 +642,28 @@
             this._mouseEventReceiverList.push(obj);
         }
 
-        DQX._handleMouseDown = function (ev) {
+        DQX._registerStaticLinkHandlers = function () {
+            $('.DQXStaticDocLink').each(function (idx, el) {
+                $(this).click(function () {
+                    var linkID = ($(this)).attr('href');
+                    Msg.send({ type: 'ShowStaticDoc' }, linkID);
+                    return false;
+                });
+            });
+        }
+
+        DQX._registerActionLinkHandlers = function () {
+            $('.DQXActionLink').each(function (idx, el) {
+                $(this).click(function () {
+                    var actionID = ($(this)).attr('href');
+                    Msg.send({ type: actionID });
+                    return false;
+                });
+            });
+        }
+
+
+        DQX._handleMouseClick = function (ev) {
             var target = ev.target;
             var ct = 0;
             while ((target) && (ct <= 1)) {
@@ -649,12 +671,16 @@
                     if (target.className.slice(0, 11) == 'DQXHelpLink') {
                         var linkID = ($(target)).attr('href');
                         Msg.send({ type: 'ShowHelp' }, linkID);
-                        return true;
+                        ev.preventDefault();
+                        return false;
                     }
                 }
                 target = target.parentElement;
                 ct++;
             }
+        }
+
+        DQX._handleMouseDown = function (ev) {
         }
 
         DQX._handleMouseUp = function (ev) {

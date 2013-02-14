@@ -27,6 +27,8 @@
                     delete Controls._postCreateWaitList[key];
                 }
             });
+            DQX._registerStaticLinkHandlers();
+            DQX._registerActionLinkHandlers();
         }
 
         DQX.ExecPostCreateHtml = function () {

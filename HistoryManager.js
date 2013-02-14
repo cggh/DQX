@@ -2,6 +2,7 @@ define([DQXSCJQ(), DQXSC("Msg")],
     function ($, Msg) {
         var HistoryManager = {
 
+            _callBackChangeState: null,
             stateKeys: null,
             views: [],
             viewsMap: {},
@@ -14,6 +15,11 @@ define([DQXSCJQ(), DQXSC("Msg")],
                         DQX.reportError("Duplicate view state id");
                     HistoryManager.viewsMap[view.getStateID()] = view;
                 }
+            },
+
+            //Call this function to specify a handler that will be called each time the state changes
+            setCallBackChangeState: function (handler) {
+                this._callBackChangeState = handler;
             },
 
             //Call this function to initialise the first view
@@ -46,6 +52,8 @@ define([DQXSCJQ(), DQXSC("Msg")],
                 }
                 if (view != null)
                     view.activateState(this.stateKeys);
+                if (this._callBackChangeState)
+                    this._callBackChangeState(this.stateKeys);
             },
 
             //Sets a new state
@@ -60,7 +68,7 @@ define([DQXSCJQ(), DQXSC("Msg")],
                 }
                 this.updateState();
                 window.location.hash = str;
-                _gaq.push(['_trackEvent', 'State', 'set', str]); 
+                _gaq.push(['_trackEvent', 'State', 'set', str]);
             },
 
             //Reacts to a change in url hash tag
@@ -127,7 +135,7 @@ define([DQXSCJQ(), DQXSC("Msg")],
                     HistoryManager.setState(activeView.getStateKeys());
             },
 
-            end:true
+            end: true
         }
 
         //Register the required handlers

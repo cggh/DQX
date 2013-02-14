@@ -1113,6 +1113,8 @@
 
         Framework.ViewSet = function (iFrame, iStateID) {
             var that = {};
+            if (!iFrame)
+                DQX.reportError("Invalid frame");
             that._myFrame = iFrame;
             that._myStateID = iStateID;
 

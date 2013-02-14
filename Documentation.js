@@ -133,7 +133,7 @@
             $.get(url, {})
             .done(function (data) {
                 DQX.stopProcessing();
-                $('#DocuBoxContent').html($('<div/>').append(data).find('#HelpContent').html());
+                $('#DocuBoxContent').html($('<div/>').append(data).find('.DQXHelpContent').html());
             })
             .fail(function () {
                 DQX.stopProcessing();
