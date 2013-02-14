@@ -105,8 +105,6 @@
                     var thethis = this;
                     $.ajax({
                         url: myurl.toString(),
-                        dataType: 'TEXT',
-                        type: 'get',
                         success: function (resp) { thethis.AjaxResponse(resp); },
                         error: function (resp) { thethis._ajaxFailure(resp); }
                     });
