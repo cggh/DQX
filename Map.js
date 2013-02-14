@@ -1,5 +1,5 @@
-﻿define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), /*DQXSC("lib/StyledMarker"), */DQXSC("Msg"), DQXSC("Utils"), DQXSC("FramePanel"), DQXSCAsync("https://maps.googleapis.com/maps/api/js?libraries=visualization&sensor=false")],
-    function ($, Countries, GeoJSON, /*StyledMarker, */Msg, DQX, FramePanel) {
+﻿define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), DQXSC("lib/StyledMarker"), DQXSC("Msg"), DQXSC("Utils"), DQXSC("FramePanel"), DQXSCAsync("https://maps.googleapis.com/maps/api/js?libraries=visualization&sensor=false")],
+    function ($, Countries, GeoJSON, StyledMarker, Msg, DQX, FramePanel) {
 
         var GMaps = {}
 
