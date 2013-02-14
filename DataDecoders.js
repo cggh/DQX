@@ -180,7 +180,7 @@
                 return _b64codec.arrayB642Float(datastr, this.length, this.slope, this.offset);
             }
             that.decodeSingle = function (datastr, offset) {
-                return _b64codec.B642IntFixed(datastr,offset,this.length)*this.slope+this.offset;
+                return _b64codec.B642IntFixed(datastr, offset, this.length) * this.slope + this.offset;
             }
             that.getRecordLength = function () { return this.length; };
             return that;
@@ -212,6 +212,32 @@
             return that;
         }
 
+
+        DataDecoders.Encoder.BooleanListB64 = function (info) {
+            var that = {};
+            DQX.checkIsNumber(info.Count);
+            that.rangeSlope = parseFloat(info.RangeSlope);
+            that.valueCount = parseInt(info.Count);
+            that.byteCount = Math.floor((that.valueCount + 5) / 6.0)
+            var _b64codec = DataDecoders.B64();
+            that.decodeArray = function (datastr) {
+                return '-';
+            }
+            that.decodeSingle = function (datastr, offset) {
+                var vl = _b64codec.B642IntFixed(datastr, offset, this.byteCount);
+                var rs = [];
+                for (var i = 0; i < this.valueCount; i++) {
+                    rs.unshift(vl & 1);
+                    vl = vl >> 1;
+                }
+                return rs;
+            }
+            that.getRecordLength = function () { return this.byteCount; };
+
+            return that;
+        }
+
+
         DataDecoders.Encoder.Create = function (info) {
             if (info['ID'] == 'Int2B64')
                 return DataDecoders.Encoder.Int2B64(info);
@@ -223,6 +249,8 @@
                 return DataDecoders.Encoder.FixedString(info);
             if (info['ID'] == 'Boolean')
                 return DataDecoders.Encoder.Boolean(info);
+            if (info['ID'] == 'BooleanListB64')
+                return DataDecoders.Encoder.BooleanListB64(info);
             DQX.reportError("Invalid encoder id " + info['ID']);
         }
 

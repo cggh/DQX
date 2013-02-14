@@ -84,6 +84,9 @@
                         if (token == 'SnpPositionFields') {
                             this._parseSnpPositionFields(content);
                         }
+                        if (token == 'Filters') {
+                            this._filters=content.split('\t');
+                        }
                     }
                 }
                 this._sequenceIDListOriginal = [];

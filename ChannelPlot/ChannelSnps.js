@@ -705,6 +705,13 @@
                         infostr += vl;
                         infostr += '<br/>';
                     });
+                    //show filters that were applied to this snp
+                    infostr += '<b>Applied filters</b><br/>';
+                    var filterFlagList = self.data.getSnpInfo('FilterFlags')[self.hoverSnp];
+                    $.each(filterFlagList, function (idx, flag) {
+                        if (flag)
+                            infostr += self.myDataFetcher._filters[idx]+'<br>';
+                    });
                 }
                 Msg.broadcast({ type: 'SnpInfoChanged', id: this.getID() }, infostr);
             }
