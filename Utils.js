@@ -132,8 +132,8 @@
 
 
         DQX.parseResponse = function (resp) {
-            lst = JSON.parse(resp);
-            //lst = resp;
+            //lst = JSON.parse(resp);
+            lst = resp;
             return lst;
         }
 
@@ -322,7 +322,6 @@
         }
 
         DQX.niceColours = [
-            "#2e3436",
             "#204a87",
             "#a40000",
             "#d3d7cf",
@@ -331,7 +330,9 @@
             "#4e9a06",
             "#e9b96e",
             "#c4a000",
-            "#729fcf"
+            "#729fcf",
+            "#2e3436"
+
         ];
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////
