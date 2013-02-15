@@ -234,6 +234,7 @@
                 while (this._controlRows[rowNr].length <= colNr)
                     this._controlRows[rowNr].push(null);
                 this._controlRows[rowNr][colNr] = item;
+                return item;
             }
 
             //Gets a member control by position in the grid
@@ -497,7 +498,7 @@
         // A piece of html that can be modified
         ////////////////////////////////////////////////////////////////////////////////////////////
 
-        Controls.Html = function (iid, content) {
+        Controls.Html = function (iid, content, css_class) {
             var that = Controls.Control(iid);
             that.myContent = content;
 
@@ -505,9 +506,13 @@
 
             that._execRenderHtml = function () {
                 var lb = DocEl.Div({ id: this.getFullID('') });
-                lb.addStyle("padding-top", "2px");
-                lb.addStyle("padding-bottom", "2px");
-                lb.addStyle('display', 'inline-block');
+                if (css_class) {
+                    lb.setCssClass(css_class);
+                } else {
+                    lb.addStyle("padding-top", "2px");
+                    lb.addStyle("padding-bottom", "2px");
+                    lb.addStyle('display', 'inline-block');
+                }
                 lb.addElem(this.myContent);
                 return lb.toString();
             }
