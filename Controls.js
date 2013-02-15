@@ -498,6 +498,7 @@
         ////////////////////////////////////////////////////////////////////////////////////////////
 
         Controls.Html = function (iid, content) {
+            DQX.checkIsString(content);
             var that = Controls.Control(iid);
             that.myContent = content;
 

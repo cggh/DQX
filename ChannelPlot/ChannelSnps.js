@@ -37,7 +37,19 @@
 
 
             that.setDataSource = function (dataid) {//call this to attach to a data source on the server
-                this.myDataFetcher.setDataSource(dataid, function () { that.getMyPlotter().render(); });
+                this.myDataFetcher.setDataSource(dataid, function () {
+                    if (that._CallBackFirstDataFetch) {
+                        that._CallBackFirstDataFetch();
+                        that._CallBackFirstDataFetch = null;
+                    }
+                    that.getMyPlotter().render();
+                });
+            }
+
+            //Call this function to set a callback function that will be called the first time data was fetched from the server
+            that.setCallBackFirstDataFetch = function (handler) {
+                DQX.checkIsFunction(handler);
+                that._CallBackFirstDataFetch = handler;
             }
 
 
@@ -710,7 +722,7 @@
                     var filterFlagList = self.data.getSnpInfo('FilterFlags')[self.hoverSnp];
                     $.each(filterFlagList, function (idx, flag) {
                         if (flag)
-                            infostr += self.myDataFetcher._filters[idx]+'<br>';
+                            infostr += self.myDataFetcher._filters[idx] + '<br>';
                     });
                 }
                 Msg.broadcast({ type: 'SnpInfoChanged', id: this.getID() }, infostr);

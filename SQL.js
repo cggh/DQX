@@ -383,8 +383,9 @@
         SQL.WhereClause.encode = function (whc) {
             var jsonstring = JSON.stringify(whc);
             var st = Base64.encode(jsonstring);
-            st = st.replace("+", "-");
-            st = st.replace("/", "_");
+            st = st.replace(/\+/g, "-");
+            st = st.replace(/\//g, "_");
+            //st = st.replace(/=/g, "*");!!! this should be added in client& server code
             return st;
         }
 

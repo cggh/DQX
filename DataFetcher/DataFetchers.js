@@ -294,6 +294,8 @@
 
             //Returns the url that can be used to download the data set this fetcher is currently serving
             this.createDownloadUrl = function () {
+                if (!this.positionField)
+                    DQX.reportError("positionField is missing in DataFetcher");
                 //prepare the url
                 var collist = this._createActiveColumnListString();
                 var thequery = SQL.WhereClause.Trivial();
