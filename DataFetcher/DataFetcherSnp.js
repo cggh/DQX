@@ -4,7 +4,7 @@
 
         DataFetcherSnp.SnpFilterData = function () {
             var that = {};
-            that.applyVCFFilter = true;
+            that.applyVCFFilter = false;
             that.minAvgCoverage = 0;
             that.minAvgPurity = 0;
             that.minPresence = 0;
@@ -34,6 +34,9 @@
             this._myChromoID = '';
             this.decoder = DataDecoders.ValueListDecoder();
             this.b64codec = DataDecoders.B64();
+
+            this._filters = []; // list of filter ids's
+            this._activeFilterMap = {}; //set of active filter ID's
 
             //The currently fetched range of data
             this._currentRangeMin = 1000.0;
@@ -83,6 +86,9 @@
                             this._parentIDs = content.split('\t');
                         if (token == 'SnpPositionFields') {
                             this._parseSnpPositionFields(content);
+                        }
+                        if (token == 'Filters') {
+                            this._filters = content.split('\t');
                         }
                     }
                 }
@@ -154,6 +160,11 @@
                 this._currentRangeMax = -1000.0;
                 this.buffPosits = [];
                 this._isFetching = false;
+            }
+
+            this.setFilterActive = function (filterid, newStatus) {
+                this._activeFilterMap[filterid] = newStatus;
+                this.clearData();
             }
 
             //internal
@@ -274,6 +285,13 @@
                         seqids += seqid;
                     }
 
+                    //create list of active filters
+                    var activeFilterMask = '';
+                    var self = this;
+                    $.each(this._filters, function (idx, filterid) {
+                        activeFilterMask += (self._activeFilterMap[filterid]) ? '1' : '0';
+                    });
+
                     //prepare the url
                     var myurl = DQX.Url(this.serverurl);
                     myurl.addUrlQueryItem("datatype", "snpinfo");
@@ -284,6 +302,7 @@
                     myurl.addUrlQueryItem("chromoid", this._myChromoID);
                     myurl.addUrlQueryItem("folder", this.dataid);
                     myurl.addUrlQueryItem("snpinforeclen", this._recordLength);
+                    myurl.addUrlQueryItem("filters", activeFilterMask);
 
 
                     this._isFetching = true;
