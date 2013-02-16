@@ -3,10 +3,27 @@
 
         QueryBuilder = {};
 
+        //////////////////////////////////////////////////////////////////////////////////////////
+        // Interactive query builder FramePanel
+        //////////////////////////////////////////////////////////////////////////////////////////
+
+        QueryBuilder.Panel = function (iParentRef) {
+            var that = QueryBuilder.Builder(iParentRef);
+
+            that.handleResize = function () {
+                if ((that.getRootElem().width() > 5) && (that.getRootElem().height() > 5))
+                    this._reRender();
+            }
+
+            return that;
+        }
+
+
         ///////////////////////////////////////////////////////////////////////////////////////////////////
         // The query builder class
         ///////////////////////////////////////////////////////////////////////////////////////////////////
         // iDivID = the id of the div that serves as a container for the htnl elements
+        // NOTE: this should not be called directly. Use QueryBuilder.Panel instead
 
         QueryBuilder.Builder = function (iParentRef) {
             var that = FramePanel(iParentRef);
@@ -696,20 +713,6 @@
             return that;
         }
 
-        //////////////////////////////////////////////////////////////////////////////////////////
-        // Interactive query builder GUI component
-        //////////////////////////////////////////////////////////////////////////////////////////
-
-        QueryBuilder.Panel = function (iParentRef, args) {
-            var that = QueryBuilder.Builder(iParentRef);
-
-            that.handleResize = function () {
-                if ((that.getRootElem().width() > 5) && (that.getRootElem().height() > 5))
-                    this._reRender();
-            }
-
-            return that;
-        }
 
         return QueryBuilder;
     });

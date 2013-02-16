@@ -1,5 +1,16 @@
 ﻿define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg")],
     function ($, DocEl, Msg) {
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Creates a FramePanel base class
+        // A frame panel is a GUI component that is placed as an endpoint in a frame (Framework.FrameFinal)
+        // Example GUI components that are derived from this:
+        // QueryTable.Panel, ChannelPlotter.Panel, GMaps.GMap, QueryBuilder.Panel, FrameList, FreameTree
+        //
+        // iParentRef can be a Framework.Frame object, or a string containing the id of the html div that will hold this panel
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
         return function (iParentRef) {
             var that = {};
             if (DQX.hasMember(iParentRef, 'getClientDivID')) {//assume that the parent reference is a Framework.Frame object

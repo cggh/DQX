@@ -2,6 +2,15 @@
     function ($, DocEl, Msg, DQX, Framework, Controls, Popup) {
         var Wizard = {};
 
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Wizard class
+        // This implements a transient popup window, showing a sequence of page with back/forward/ok/cancel buttons
+        // Each wizard page contains a form with a set controls
+        //  -> use 'addPage' to design the wizard by adding pages
+        //  -> use 'run' to execute the wizard
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        //Creates a wizard, providing a unique identifier
         Wizard.Create = function (iID) {
             var that = {};
 
@@ -10,10 +19,22 @@
             that._pages = [];
             that._pageIndex = {};
 
+            //Sets the title of the wizard
+            that.setTitle = function (title) {
+                that._title = title;
+            }
+
             //Adds a page to the wizard. 'page' should be an object containing:
-            //id: identifier of the page
-            //form: of the type Controls.Control
+            //   id : identifier of the page (unique inside the wizard)
+            //   form : of the type Controls.Control, usually this will be a compound control (e.g. Controls.CompoundVert)
+            //   helpUrl (optional) : the document url with help content (introduces a help button on the page)
+            //   hideNext (optional) : if true, the "Next" button will be hidden on this page
+            //   reportValidationError (optional) : A function that will be called when the page is about to be completed, and that validates the content of the page.
+            //        Errors can be reported by returning a string from this function. This will block the progress, and display the error
+            //  onFinish (optional) : a function indicating that this is the final page of the wizard session. If this function is present, the page will have a 'finish' button,
+            //        the wizard will complete after the page was completed, and this onFinish function will be called
             that.addPage = function (page) {
+                this._checkNotRunning();
                 DQX.requireMember(page, 'id');
                 DQX.requireMember(page, 'form');
                 DQX.requireMemberFunction(page.form, 'getID');
@@ -24,11 +45,6 @@
                 this._pages.push(page);
             }
 
-            //Sets the title of the wizard
-            that.setTitle = function (title) {
-                that._title = title;
-            }
-
             //returns the currently active page
             that.getCurrentPage = function () {
                 var pg = this._pages[this.pageNr];
@@ -36,37 +52,42 @@
                 return pg;
             }
 
-            //returns the index of the currently active page
+            //returns the index of a page, providing the page ID
             that.getPageNr = function (pageID) {
                 if (!(pageID in this._pageIndex))
                     DQX.reportError("Invalid wizard page " + pageID);
                 return this._pageIndex[pageID];
             }
 
-            //returns a page by page identifier
+            //returns a page by page ID
             that.getPage = function (pageID) {
                 return this._pages[this.getPageNr(pageID)];
             }
 
-            that.checkNotRunning = function () {
+            //For internal checks: throws an error if the wizard is running
+            that._checkNotRunning = function () {
                 if (this._isRunning)
                     DQX.reportError('Wizard is running');
             }
 
-            that.checkRunning = function () {
+            //For internal checks: throws an error if the wizard is not running
+            that._checkRunning = function () {
                 if (!this._isRunning)
                     DQX.reportError('Wizard is not running');
             }
 
+            //Internal
             that._onKeyDown = function (ev) {
                 if (ev.isEscape)
                     this._onCancel();
             }
 
 
-            //executes the wizard
+            //Executes the wizard
+            //onFinishFunction will be called when the wizard is completed
             that.run = function (onFinishFunction) {
-                this.checkNotRunning();
+                DQX.checkIsFunction(onFinishFunction);
+                this._checkNotRunning();
                 this._onFinishFunction = onFinishFunction;
                 this._isRunning = true;
                 var background = DocEl.Div({ id: 'WizBackGround' });
@@ -158,12 +179,14 @@
                 Controls.ExecPostCreateHtml();
 
 
-                this._keyDownReceiverID = DQX.registerGlobalKeyDownReceiver($.proxy(that._onKeyDown,that));
+                this._keyDownReceiverID = DQX.registerGlobalKeyDownReceiver($.proxy(that._onKeyDown, that));
 
                 this._setPage(0);
             }
 
+            //Internal: sets the active page while running the wizard
             that._setPage = function (ipageNr) {
+                this._checkRunning();
                 this.pageNr = ipageNr;
                 $('#WizBoxContent').html(this._pages[this.pageNr].form.renderHtml());
                 this._pages[this.pageNr].form.postCreateHtml();
@@ -192,11 +215,13 @@
                     this.getCurrentPage().onStart();
             }
 
+            //Internal: determines if the currently active page is the final one in the sequence
             that._isFinalPage = function () {
                 if (this.pageNr == this._pages.length - 1) return true;
                 return (this.getCurrentPage().onFinish);
             }
 
+            //Internal: stops the execution of the wizard
             that._stopRunning = function () {
                 DQX.unRegisterGlobalKeyDownReceiver(this._keyDownReceiverID);
                 $('#WizBackGround').remove();
@@ -228,14 +253,14 @@
 
             //Performs the 'Finish' action
             that.performFinish = function () {
-                this.checkRunning();
+                this._checkRunning();
                 this._stopRunning();
                 this._onFinishFunction();
             }
 
             //jumps the wizard to a page, providing the page id
             that.jumpToPage = function (id) {
-                this.checkRunning();
+                this._checkRunning();
                 this._pageTrace.push(this.pageNr);
                 this._setPage(this.getPageNr(id));
             }

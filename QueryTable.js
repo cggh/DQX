@@ -1,8 +1,102 @@
 ﻿define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel"), DQXSC("Controls")],
     function ($, DQX, DocEl, Msg, FramePanel, Controls) {
 
-        //Namespace for query tables
         var QueryTable = {}
+
+
+        //////////////////////////////////////////////////////////////////////////////////////////
+        // Query table FramePanel
+        //////////////////////////////////////////////////////////////////////////////////////////
+        // argument idatafetcher: of type DataFetchers.Table
+        //
+        // *** Optional settings **********
+        // args.leftfraction: relative size of the left, nonscrolling component of the table
+        //
+        // NOTE: most of the functionality for managing the querytable should be accessed via
+        // the member object returned by getTable, which is of type QueryTable.Table
+        //////////////////////////////////////////////////////////////////////////////////////////
+
+
+        QueryTable.Panel = function (iParentRef, idatafetcher, args) {
+            var that = FramePanel(iParentRef);
+            DQX.requireMemberFunction(idatafetcher, "setSortOption");
+
+            var html = '';
+            {//Create header
+                var header = DocEl.Div();
+                header.setCssClass("DQXLight");
+                header.addStyle('padding-bottom', '5px');
+                var pager_txt = DocEl.Span({ parent: header, id: that.getSubId("Pager") });
+                html += header;
+            }
+            {//Create nonscrolling & scrolling tables
+                var holder = DocEl.Div({ id: that.getSubId("BodyHolder") });
+                var div1 = DocEl.Div({ parent: holder });
+                div1.makeFloatLeft().addStyle('overflow', 'auto');
+                div1.addStyle('max-width', (args.leftfraction || 50).toString() + '%');
+                var tablebody1 = DocEl.Div({ parent: div1, id: that.getSubId("Body1") });
+                tablebody1.addStyle("overflow-x", "scroll").addStyle("overflow-y", "hidden");
+                tablebody1.addStyle("border-width", '0px');
+                tablebody1.addStyle("border-right-width", '2px');
+                tablebody1.addStyle("border-style", 'solid');
+                tablebody1.addStyle("border-color", 'rgb(60,60,60)');
+                var div2 = DocEl.Div({ parent: holder, id: that.getSubId("BodyContainer") });
+                div2.addStyle('overflow', 'auto'); //.setWidthPc(95);
+                var tablebody2 = DocEl.Div({ parent: div2, id: that.getSubId("Body2") });
+                tablebody2.addStyle("overflow-x", "scroll").addStyle("overflow-y", "hidden");
+                tablebody2.setBackgroundColor(DQX.Color(0.7, 0.7, 0.7));
+                html += holder;
+            }
+            {//Create footer
+                var footer = DocEl.Div();
+                var footer_txt = DocEl.Span({ parent: footer, id: (that.getSubId("Footer")) });
+                footer.addStyle("clear", "both");
+                footer.addStyle("padding-top", "3px");
+                html += footer;
+            }
+            //Render html
+            that.getRootElem().html(html);
+
+            //This creates the object that holds the actual table management code
+            that.myTable = QueryTable.Table(that.getDivID(), idatafetcher);
+            that.myTable.autoSizeHeight = true;
+
+            //Returns the actual table object
+            that.getTable = function () { return this.myTable; }
+
+            DQX.setOnHoverKeyDownReceiver(that.getID(), $.proxy(that.myTable.onKeyDown, that.myTable));
+
+            //Internal: returns the total vertical size of the table
+            that._getVerticalUserSize = function () {
+                return $('#' + that.getSubId("BodyHolder")).outerHeight() + $('#' + that.getSubId("Pager")).outerHeight() + $('#' + that.getSubId("Footer")).outerHeight(); ;
+            }
+
+            //Implements an event handler from FramePanel
+            that.onResize = function () {
+                var availabeH = this.getRootElem().innerHeight() - DQX.scrollBarWidth - 25;
+                var lineH = 21;
+                if (availabeH != this.lastAvailabeH) {
+                    this.myTable.myPageSize = Math.max(1, Math.floor((availabeH - 70) / lineH));
+                    this.myTable.render();
+                    do {
+                        var requiredH = this._getVerticalUserSize();
+                        if (requiredH + lineH < availabeH)
+                            this.myTable._onMoreLines();
+                    }
+                    while (requiredH + lineH < availabeH)
+                    do {
+                        var requiredH = this._getVerticalUserSize();
+                        if (requiredH > availabeH)
+                            this.myTable._onLessLines();
+                    }
+                    while (requiredH > availabeH)
+                }
+                this.lastAvailabeH = availabeH;
+            }
+
+            return that;
+        }
+
 
         //Defines a column in a query table
         //Name is the displayed title of the column
@@ -20,13 +114,17 @@
             that._hyperlinkHeaderMessageScope = null;
             that._hyperlinkHeaderHint = '';
 
+            //Overridable. Returns the displayed cell text, given its original content
             that.CellToText = function (content) { return content; }
+
+            //Overridable. Returns the background color of a cell, given its content
             that.CellToColor = function (content) { return "white"; }
             if (that.TablePart == 0)
                 that.CellToColor = function (content) { return "rgb(240,240,240)"; }
 
             //Use this function to convert a column cell into a hyperlink.
-            //A message will be sent when the user clicks the link
+            //A message will be sent when the user clicks the link (see Msg for further details about messageScope)
+            //Optionally, a hint text can be provided that will be displayed when hovering over the hyperlink
             that.makeHyperlinkCell = function (messageScope, hint) {
                 this._hyperlinkCellMessageScope = messageScope;
                 if (hint)
@@ -34,16 +132,20 @@
             }
 
             //Use this function to convert a column header into a hyperlink.
-            //A message will be sent when the user clicks the link
+            //A message will be sent when the user clicks the link (see Msg for further details about messageScope)
+            //Optionally, a hint text can be provided that will be displayed when hovering over the hyperlink
             that.makeHyperlinkHeader = function (messageScope, hint) {
                 this._hyperlinkHeaderMessageScope = messageScope;
                 if (hint)
                     this._hyperlinkHeaderHint = hint;
             }
 
+            //Returns the visibility status of a column
             that.isVisible = function () {
                 return this._visible;
             }
+
+            //Modifies the visibility status of a column
             that.setVisible = function (newStatus) {
                 this._visible = newStatus;
             }
@@ -51,32 +153,15 @@
             return that;
         }
 
-        QueryTable._reflectOwnMessage = function (ID, message1, message2, message3) {
-            return QueryTable.FindTable(ID)._onOwnMessage(message1, message2, message3);
-        }
-
-
-        QueryTable._list = [];
-
-
-        //Returns a channelplot by its center canvas id, or return null if not found
-        QueryTable.FindTable = function (iID) {
-            for (var i in QueryTable._list)
-                if (QueryTable._list[i].myBaseID == iID)
-                    return QueryTable._list[i];
-            return null;
-        }
 
 
         ///////////////////////////////////////////////////////////////////////////////
         // The Query table class
         ///////////////////////////////////////////////////////////////////////////////
-        // iBaseID: the identifier of the div that contains the table elements
-        // iDataFetcher: the DQX.DataFetcher.Curve class that provides the data for this table
+        // This should not be instantiated independently, but is automaticall created as a member of QueryTable.Panel
 
         QueryTable.Table = function (iBaseID, iDataFetcher) {
             var that = {};
-            QueryTable._list.push(that);
             that.myBaseID = iBaseID;
             that.myDataFetcher = iDataFetcher;
             that.myColumns = [];
@@ -90,12 +175,12 @@
             that.myTableOffset = 0;
             that.totalRecordCount = -1; //means not yet determined
 
-            //Finds a html element in the cluster of elements that define this table
+            //Internal usage. Finds a html element in the cluster of elements that define this table
             that.getElementID = function (extension) {
                 return this.myBaseID + extension;
             }
 
-            //Finds a html element in the cluster of elements that define this table
+            //Internal usage. Finds a html element in the cluster of elements that define this table
             that.getElement = function (extension) {
                 var id = "#" + this.myBaseID + extension;
                 var rs = $(id);
@@ -106,12 +191,13 @@
 
             //Adds a new column to the table, providing a QueryTable.Column
             that.addTableColumn = function (iCol) {
+                DQX.requireMemberFunction(iCol, 'CellToText');
                 this.myDataFetcher.activateFetchColumn(iCol.myCompID);
                 this.myColumns.push(iCol);
                 return iCol;
             }
 
-            //finds and returns a column definition, providing the column identifier
+            //finds and returns a column definition, providing the column identifier. returns null if not found
             that.findColumn = function (iColID) {
                 for (var colnr in this.myColumns)
                     if (this.myColumns[colnr].myCompID == iColID)
@@ -119,7 +205,7 @@
                 return null;
             }
 
-            //finds and returns a column definition, providing the column identifier
+            //finds and returns a column definition, providing the column identifier. Throws an error if not found
             that.findColumnRequired = function (iColID) {
                 var rs = this.findColumn(iColID);
                 if (!rs)
@@ -128,13 +214,14 @@
             }
 
             //Adds a new sort option to the table
-            //iOption: of type DQX.TableSort
+            //iOption: of type SQL.TableSort
             that.addSortOption = function (iName, iOption) {
+                DQX.requireMemberFunction(iOption, 'getPrimaryColumnID');
                 this.mySortOptions.push({ name: iName, Option: iOption });
                 this.findColumnRequired(iOption.getPrimaryColumnID()).sortOption = iOption;
             }
 
-            //This function is called by the datafetcher to inform the table that new data is ready
+            //This function is called by the datafetcher to inform the table that new data is ready. In reaction, we render the table
             that.notifyDataReady = function () {
                 if (this.myDataFetcher.isValid())
                     this._dataValid = true;
@@ -223,7 +310,8 @@
                 }
             }
 
-            //Defines the query that is used to return the table content
+            //Defines the restricting query that is used to return the table content
+            //iquery should be one of the query objects defined in SQL.WhereClause
             that.setQuery = function (iquery) {
                 this._highlightRowNr = -1;
                 this.myDataFetcher._userQuery1 = iquery;
@@ -231,7 +319,7 @@
             }
 
 
-            //Renders the table
+            //Renders the table to html
             that.render = function () {
                 DQX.pushActivity("Creating table");
 
@@ -255,14 +343,6 @@
                     rightgroup.addStyle('top', '5px');
                     rightgroup.addStyle('right', '5px');
                     rs_pager += rightgroup.toString();
-
-
-                    /*                if (!this.autoSizeHeight) {
-                    rs_pager += "&nbsp;&nbsp;";
-                    rs_pager += addBitmapButton("_onMoreLines", DQXBMP('morelines.png'), "More lines on page");
-                    rs_pager += "&nbsp;";
-                    rs_pager += addBitmapButton("_onLessLines", DQXBMP('lesslines.png'), "Less lines on page");
-                    }*/
 
                     this.getElement('Pager').html(rs_pager);
                     Controls.ExecPostCreateHtml();
@@ -419,6 +499,7 @@
                 DQX.popActivity();
             }
 
+            //Sets the highlight to a new row
             that.modifyHightlightRow = function (newRowNr) {
                 if (this.hasHighlight) {
                     if (newRowNr >= 0) {
@@ -437,14 +518,17 @@
                 }
             }
 
+            //Determines if a row is currently hightlighted
             that.hasHighlightRow = function () {
                 return that._highlightRowNr >= 0;
             }
 
+            //Returns the row number of the currently highlighted row
             that.getHighlightRowNr = function () {
                 return that._highlightRowNr;
             }
 
+            //Returns the content of a cell, identifier by the row number and column identifier
             that.getCellValue = function (rownr, colID) {
                 var downloadrownr = this.myDataFetcher.findIndexByXVal(rownr);
                 if (downloadrownr < 0) return null;
@@ -598,109 +682,6 @@
             return that;
         }
 
-        //////////////////////////////////////////////////////////////////////////////////////////
-        // Query table GUI component
-        //////////////////////////////////////////////////////////////////////////////////////////
-
-
-        QueryTable.Panel = function (iParentRef, idatafetcher, args) {
-            var that = FramePanel(iParentRef);
-
-            var html = '';
-
-
-            {//Create header
-                var header = DocEl.Div();
-                header.setCssClass("DQXLight");
-                header.addStyle('padding-bottom', '5px');
-                var pager_txt = DocEl.Span({ parent: header, id: that.getSubId("Pager") });
-                html += header;
-            }
-
-            {//Create tables
-                var holder = DocEl.Div({ id: that.getSubId("BodyHolder") });
-                //holder.addStyle("overflow", "auto");
-
-
-                //This variant uses a guaranteed fixed % distribution over both parts, and also guarantees that the table stretches the full extent        
-                //        var div1 = DocEl.Div({ parent: holder });
-                //        div1.makeFloatLeft().addStyle('overflow', 'auto').setWidthPc(args.leftfraction || 50);
-                //        var tablebody1 = DocEl.Div({ parent: div1, id: that.getSubId("Body1") });
-                //        tablebody1.addStyle("overflow-x", "scroll").addStyle("overflow-y", "hidden");
-                //        tablebody1.addStyle("border-width",'0px');
-                //        tablebody1.addStyle("border-right-width", '2px');
-                //        tablebody1.addStyle("border-style", 'solid');
-                //        tablebody1.addStyle("border-color", 'rgb(60,60,60)');
-                //        var div2 = DocEl.Div({ parent: holder });
-                //        div2.makeFloatLeft().addStyle('overflow', 'auto').setWidthPc(100 - (args.leftfraction || 50));
-                //        var tablebody2 = DocEl.Div({ parent: div2, id: that.getSubId("Body2") });
-                //        tablebody2.addStyle("overflow-x", "scroll").addStyle("overflow-y", "hidden");
-                //        
-
-                //This variant uses a maximum % distribution for the left part, and makes the left part never use more than required. It does not guarantee that the table stretches the full extent        
-                var div1 = DocEl.Div({ parent: holder });
-                div1.makeFloatLeft().addStyle('overflow', 'auto');
-                div1.addStyle('max-width', (args.leftfraction || 50).toString() + '%');
-                var tablebody1 = DocEl.Div({ parent: div1, id: that.getSubId("Body1") });
-                tablebody1.addStyle("overflow-x", "scroll").addStyle("overflow-y", "hidden");
-                tablebody1.addStyle("border-width", '0px');
-                tablebody1.addStyle("border-right-width", '2px');
-                tablebody1.addStyle("border-style", 'solid');
-                tablebody1.addStyle("border-color", 'rgb(60,60,60)');
-                var div2 = DocEl.Div({ parent: holder, id: that.getSubId("BodyContainer") });
-                div2.addStyle('overflow', 'auto'); //.setWidthPc(95);
-                var tablebody2 = DocEl.Div({ parent: div2, id: that.getSubId("Body2") });
-                tablebody2.addStyle("overflow-x", "scroll").addStyle("overflow-y", "hidden");
-                tablebody2.setBackgroundColor(DQX.Color(0.7, 0.7, 0.7));
-
-                html += holder;
-            }
-
-            {//Create footer
-                var footer = DocEl.Div();
-                var footer_txt = DocEl.Span({ parent: footer, id: (that.getSubId("Footer")) });
-                footer.addStyle("clear", "both");
-                footer.addStyle("padding-top", "3px");
-                html += footer;
-            }
-
-            that.getRootElem().html(html);
-
-
-            that.myTable = QueryTable.Table(that.getDivID(), idatafetcher);
-            that.myTable.autoSizeHeight = true;
-
-            DQX.setOnHoverKeyDownReceiver(that.getID(), $.proxy(that.myTable.onKeyDown, that.myTable));
-
-            that.getVerticalUserSize = function () {
-                return $('#' + that.getSubId("BodyHolder")).outerHeight() + $('#' + that.getSubId("Pager")).outerHeight() + $('#' + that.getSubId("Footer")).outerHeight(); ;
-            }
-
-            that.onResize = function () {
-                var availabeH = this.getRootElem().innerHeight() - DQX.scrollBarWidth - 25;
-                var lineH = 21;
-                if (availabeH != this.lastAvailabeH) {
-                    this.myTable.myPageSize = Math.max(1, Math.floor((availabeH - 70) / lineH));
-                    this.myTable.render();
-                    do {
-                        var requiredH = this.getVerticalUserSize();
-                        if (requiredH + lineH < availabeH)
-                            this.myTable._onMoreLines();
-                    }
-                    while (requiredH + lineH < availabeH)
-                    do {
-                        var requiredH = this.getVerticalUserSize();
-                        if (requiredH > availabeH)
-                            this.myTable._onLessLines();
-                    }
-                    while (requiredH > availabeH)
-                }
-                this.lastAvailabeH = availabeH;
-            }
-
-
-            return that;
-        }
 
 
         return QueryTable;

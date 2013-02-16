@@ -2,41 +2,25 @@
     function ($, SQL, DQX, DataDecoders) {
         var DataFetchers = {}
 
+
+
         //////////////////////////////////////////////////////////////////////////////////////
-        //  Class DataFetchers.CurveColumn
+        //  Class DataFetchers.Table
         //////////////////////////////////////////////////////////////////////////////////////
+        // A wrapper around DataFetchers.Curve, making it suitable for paged querying of table data
 
-        DataFetchers.CurveColumn = function (iEncoding) {
-            var that = {};
-            that.myEncodingList = {
-                "String": "ST",    //returns string data
-                "Float2": "F2",    //returns floats in 2 base64 bytes
-                "Float3": "F3",     //returns floats in 3 base64 bytes
-                "Int": "IN",        //returns exact integers
-                "IntB64": "IB",     //returns exact integers
-                "IntDiff": "ID"     //returns exact integers as differences with previous values
+        DataFetchers.Table = function (iserverurl, itablename) {
+            var that = new DataFetchers.Curve(iserverurl, itablename, 'LIMIT');
+
+            //Sets the sort column(s), provided as a SQL.TableSort object, and the sort order
+            that.setSortOption = function (sortInfo, sortReverse) {
+                DQX.requireMemberFunction(sortInfo, 'getPrimaryColumnID');
+                this.positionField = sortInfo.toString();
+                this.sortReverse = sortReverse;
             }
-
-            if (!(iEncoding in that.myEncodingList))
-                DQX.reportError("Invalid column encoding " + iEncoding);
-            that.myEncodingID = that.myEncodingList[iEncoding];
-
-            that.myActiveCount = 0;
-            that.myDownloadValues = []; //holds the currently downloaded values of this column
-
-
-            that.clearData = function () {
-                this.myDownloadValues = [];
-            }
-
-            that.isActive = function () {
-                return this.myActiveCount > 0;
-            }
-
 
             return that;
         }
-
 
         //////////////////////////////////////////////////////////////////////////////////////
         //  Class DataFetchers.Curve
@@ -98,8 +82,8 @@
 
 
             //adds a column to be fetched, providing a column id and a color
-            this.addFetchColumn = function (cid, encoding, colr) {
-                this.myColumns[cid] = DataFetchers.CurveColumn(encoding, colr);
+            this.addFetchColumn = function (cid, encoding) {
+                this.myColumns[cid] = DataFetchers.CurveColumn(encoding);
                 this.clearData();
                 return this.myColumns[cid];
             }
@@ -256,6 +240,9 @@
                     var qrytype = "qry";
                     if (this.useLimit) qrytype = "pageqry"
 
+                    if (!this.positionField)
+                        DQX.reportError("positionField is missing in DataFetcher");
+
                     //prepare the url
                     var myurl = DQX.Url(this.serverurl);
                     myurl.addUrlQueryItem("datatype", qrytype);
@@ -264,7 +251,8 @@
                     myurl.addUrlQueryItem("tbname", this.tablename);
                     myurl.addUrlQueryItem("collist", collist);
                     myurl.addUrlQueryItem("posfield", this.positionField);
-                    myurl.addUrlQueryItem("order", this.positionField);
+                    if (this.positionField)
+                        myurl.addUrlQueryItem("order", this.positionField);
                     myurl.addUrlQueryItem("start", rangemin); //not used by server: only used for reflecting info to this client response code
                     myurl.addUrlQueryItem("stop", rangemax); //idem
                     myurl.addUrlQueryItem("sortreverse", this.sortReverse ? 1 : 0);
@@ -294,8 +282,6 @@
 
             //Returns the url that can be used to download the data set this fetcher is currently serving
             this.createDownloadUrl = function () {
-                if (!this.positionField)
-                    DQX.reportError("positionField is missing in DataFetcher");
                 //prepare the url
                 var collist = this._createActiveColumnListString();
                 var thequery = SQL.WhereClause.Trivial();
@@ -399,6 +385,44 @@
             }
         }
 
+
+
+
+        //////////////////////////////////////////////////////////////////////////////////////
+        //  Class DataFetchers.CurveColumn
+        //////////////////////////////////////////////////////////////////////////////////////
+
+        DataFetchers.CurveColumn = function (iEncoding) {
+            var that = {};
+            that.myEncodingList = {
+                "String": "ST",    //returns string data
+                "Float2": "F2",    //returns floats in 2 base64 bytes
+                "Float3": "F3",     //returns floats in 3 base64 bytes
+                "Int": "IN",        //returns exact integers
+                "IntB64": "IB",     //returns exact integers, bqse64 encoded
+                "IntDiff": "ID"     //returns exact integers as differences with previous values
+            }
+
+            if (!(iEncoding in that.myEncodingList))
+                DQX.reportError("Invalid column encoding " + iEncoding);
+            that.myEncodingID = that.myEncodingList[iEncoding];
+
+            that.myActiveCount = 0; //reference counting to determine if this column data is used
+            that.myDownloadValues = []; //holds the currently downloaded values of this column
+
+            //Clears all fetched data
+            that.clearData = function () {
+                this.myDownloadValues = [];
+            }
+
+            //Determines if this column data is currently used
+            that.isActive = function () {
+                return this.myActiveCount > 0;
+            }
+
+            return that;
+        }
+
         //////////////////////////////////////////////////////////////////////////////////////
         //  RecordsetFetcher: fetches a set of records from the server
         /// !!!NOTE: in the server code, a kind of authorisation check will have to be built, validating that the client can have read access to this table
@@ -464,7 +488,6 @@
                 myurl.addUrlQueryItem("qry", SQL.WhereClause.encode(query));
                 myurl.addUrlQueryItem("tbname", this.tableName);
                 myurl.addUrlQueryItem("collist", this._createActiveColumnListString());
-                //myurl.addUrlQueryItem("posfield", this.positionField);
                 myurl.addUrlQueryItem("order", orderField);
                 myurl.addUrlQueryItem("sortreverse", 0);
                 myurl.addUrlQueryItem("needtotalcount", 0);

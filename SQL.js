@@ -403,14 +403,11 @@
             }
 
             that.toString = function () {
-                var rs = "";
-                for (var i in this.columnList) {
-                    if (i > 0) rs += "~";
-                    rs += this.columnList[i];
-                }
-                return rs;
+                return this.columnList.join('~');
             }
             return that;
         }
+
+
         return SQL;
     });
