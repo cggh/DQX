@@ -1,9 +1,22 @@
-﻿define(
+﻿/************************************************************************************************************************************
+*************************************************************************************************************************************
+
+Helper functions and classes that assist in creating hierarchical html markup
+
+Call the toString member function to obtain the html string
+
+
+*************************************************************************************************************************************
+*************************************************************************************************************************************/
+
+define(
     function () {
 
         var DocEl = {};
 
         //The base class for each document element. We use prototypes here, because we don't want to duplicate functions for each instance
+        // args.id (optional) : id of the html element
+        // args.parent (optional) : parent DocEl that will contain this element
         DocEl._Element = function (itype, args) {
             this.myType = itype;
             this.myAttributes = {};
@@ -13,7 +26,10 @@
             //do the stuff with the arguments provided
             if (typeof args != 'undefined') {
                 if ('id' in args) this.setID(args.id);
-                if ('parent' in args) args.parent.addElem(this);
+                if ('parent' in args) {
+                    if (!(args.parent instanceof DocEl._Element)) DQX.reportError("DocEl parent is not a DocEl");
+                    args.parent.addElem(this);
+                }
             }
         }
 

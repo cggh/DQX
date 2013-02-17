@@ -1,4 +1,43 @@
-﻿define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("FramePanel"), DQXSC("HistoryManager")],
+﻿/************************************************************************************************************************************
+*************************************************************************************************************************************
+
+Defines the global page layout engine (called the 'Framework').
+The page is defined as a hierarchic tree of nested 'Frames', and there are several ways of layouting child frames in a parent frame.
+
+---------------- FRAMES -----------------
+
+The following are the types of frames available:
+  * FrameGroupHor : container, the child frames are layouted horizontally next to each other
+  * FrameGroupVert : container, the child frames are layouted vertically under each other
+  * FrameGroupTab :  container, only one child frame is visible, and a tab control allows the user to select which one
+  * FrameGroupStack: container, only one child frame is visible, and the code defines which one (i.e. no tabs)
+  * FrameGroupStack: final frame, holding a visible GUI element (called a 'Panel')
+
+Notes for FrameGroupHor and FrameGroupVert:
+  - The child frames contain a relative size fraction (called 'sizeweight'), that determines what size they occupy in the parent frame
+  - It is possible to specify a minimum and maximum absolute size (in pixels) for each child frame.
+  - A separator will be displayed between each child frame, and the user can drag this separator to a new position
+
+Further notes:
+  - A frame can have a title bar
+
+
+
+ ---------------- Framework.ViewSet ----------------
+ See further in the file (todo: move this to a separate file)
+
+
+
+
+ ---------------- Framework.Form ----------------
+ See further in the file (todo: move this to a separate file)
+
+
+*************************************************************************************************************************************
+*************************************************************************************************************************************/
+
+
+define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("FramePanel"), DQXSC("HistoryManager")],
     function ($, DocEl, Msg, Controls, FramePanel, HistoryManager) {
         var Framework = {};
         //two constants defining the X and Y direction
@@ -23,36 +62,6 @@
             'Tab': 3, //Contains a set of subframes organised as tabs
             'Stack': 4//Contains a set of subframes organised as a stack without tabs
         };
-
-        //A class that encapsulates a Range of possible sizes for a frame (used for both X and Y sizes)
-        Framework.SizeRange = function () {
-            var that = {};
-            that.minSize = 120;
-            that.maxSize = 99999999;
-            that.setMinSize = function (sz) {
-                this.minSize = sz;
-            }
-            that.setFixedSize = function (sz) {
-                this.minSize = sz;
-                this.maxSize = sz;
-                return this;
-            }
-            that._isFixedSize = function () {
-                return this.maxSize == this.minSize;
-            }
-            that._getMinSize = function () {
-                return this.minSize;
-            }
-            that._getMaxSize = function () {
-                return this.maxSize;
-            }
-            return that;
-        }
-
-        //Creates an instance of a frame has a not yet determined function
-        Framework.FrameGeneric = function (iid, isizeweight) {
-            return Framework.Frame(iid, '-', isizeweight);
-        }
 
         //Creates an instance of a frame that groups a set of subframes in a horizontal way (i.e. with vertical separators)
         Framework.FrameGroupHor = function (iid, isizeweight) {
@@ -79,15 +88,47 @@
             return Framework.Frame(iid, 'Final', isizeweight).setFrameClassClient('DQXClient');
         }
 
+        //Creates an instance of a frame has a not yet determined function
+        Framework.FrameGeneric = function (iid, isizeweight) {
+            return Framework.Frame(iid, '-', isizeweight);
+        }
+
+        //A class that encapsulates a Range of possible sizes for a frame (used for both X and Y sizes)
+        Framework.SizeRange = function () {
+            var that = {};
+            that.minSize = 120;
+            that.maxSize = 99999999;
+            that.setMinSize = function (sz) {
+                this.minSize = sz;
+            }
+            that.setFixedSize = function (sz) {
+                this.minSize = sz;
+                this.maxSize = sz;
+                return this;
+            }
+            that._isFixedSize = function () {
+                return this.maxSize == this.minSize;
+            }
+            that._getMinSize = function () {
+                return this.minSize;
+            }
+            that._getMaxSize = function () {
+                return this.maxSize;
+            }
+            return that;
+        }
+
+
 
 
 
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        //A class that implements a frame
+        // Class that implements a frame
         ///////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////
+        // NOTE: don't instantiate this class directly. Use one of the above defined specific creation functions
 
         Framework.Frame = function (iid, itype, isizeweight) {
             DQX.checkIsString(iid);
@@ -121,43 +162,29 @@
 
             that.getFramework = function () { return Framework; }
 
-            that.getVisibleTitleDivID = function () {
-                return this.myID + '_DisplayTitle';
-            }
-            that.getClientContainerDivID = function () {
-                return this.myID + '_clientcontainer';
-            }
-            that.getClientDivID = function () {
-                return this.myID + '_client';
-            }
-            that.getSeparatorDivID = function (sepnr) {
-                return this.myID + '_sep_' + sepnr;
-            }
-            that.isFinalPanel = function () {
-                return (this.myType == 'Final');
-            }
-            that.isStacker = function () {
-                return (this.myType == 'Tab') || (this.myType == 'Stack');
-            }
-            that.hasTabs = function () {
-                return (this.myType == 'Tab');
-            }
-            that.isHorSplitter = function () {
-                return (this.myType == 'GroupHor');
-            }
-            that.isVertSplitter = function () {
-                return (this.myType == 'GroupVert');
-            }
-            that.isSplitter = function () {
-                return (this.isHorSplitter()) || (this.isVertSplitter());
-            }
+            //Internal: get some div identifiers
+            that.getVisibleTitleDivID = function () { return this.myID + '_DisplayTitle'; }
+            that.getClientContainerDivID = function () { return this.myID + '_clientcontainer'; }
+            that.getClientDivID = function () { return this.myID + '_client'; }
+            that.getSeparatorDivID = function (sepnr) { return this.myID + '_sep_' + sepnr; }
+            //Determine if this is a final panel (as opposed to a container panel)
+            that.isFinalPanel = function () { return (this.myType == 'Final'); }
+            //Determine if this panel stacks its client panels (i.e. only one at a time visible)
+            that.isStacker = function () { return (this.myType == 'Tab') || (this.myType == 'Stack'); }
+            //Determine if this is a tab-style container
+            that.hasTabs = function () { return (this.myType == 'Tab'); }
+            //Determine if this is a horizontal grouper
+            that.isHorSplitter = function () { return (this.myType == 'GroupHor'); }
+            //Determine if this is a vertical grouper
+            that.isVertSplitter = function () { return (this.myType == 'GroupVert'); }
+            //Determine if this is a horizontal or a vertical grouper
+            that.isSplitter = function () { return (this.isHorSplitter()) || (this.isVertSplitter()); }
+
             that.checkSplitter = function () {//This function throws an error of the frame is not of the splitter type
-                if (!this.isSplitter())
-                    DQX.reportError("Frame is not a splitter");
+                if (!this.isSplitter()) DQX.reportError("Frame is not a splitter");
             }
             that.checkFinalPanel = function () {//This function throws an error of the frame is not of the final type
-                if (!this.isFinalPanel())
-                    DQX.reportError("Frame is not a final frame (i.e. containing a client panel)");
+                if (!this.isFinalPanel()) DQX.reportError("Frame is not a final frame (i.e. containing a client panel)");
             }
             that.splitterDim = function () {//returns the orientation of the splitter
                 if (this.isHorSplitter()) return 0;
@@ -179,7 +206,7 @@
                     return 0;
             }
 
-            that.isStackMember = function () {
+            that.isStackMember = function () {//Determines if this panel is member of a stacking parent (stack or tab)
                 if (!this._parentFrame) return false;
                 return this._parentFrame.isStacker();
             }
@@ -189,24 +216,21 @@
 
             //Sets an initialisation handler function. This function will be called the first time the frame becomes visible
             that.setInitialiseFunction = function (handler) {
-                if (handler)
-                    DQX.checkIsFunction(handler);
+                if (handler) DQX.checkIsFunction(handler);
                 this._handleInitialise = handler;
                 return this;
             }
 
             //Converts a generic frame into a vertical splitter
             that.makeGroupVert = function () {
-                if (this.myType != '-')
-                    DQX.reportError('Frame is not generic');
+                if (this.myType != '-') DQX.reportError('Frame is not generic');
                 this.myType = 'GroupVert';
                 return this;
             }
 
             //Converts a generic frame into a horizontal splitter
             that.makeGroupHor = function () {
-                if (this.myType != '-')
-                    DQX.reportError('Frame is not generic');
+                if (this.myType != '-') DQX.reportError('Frame is not generic');
                 this.myType = 'GroupHor';
                 return this;
             }
@@ -297,7 +321,7 @@
                 return this;
             }
 
-            //Adds a new subframe to an existing container-style frame (= splitter or tab)
+            //Adds a new subframe to an existing container-style frame (= splitter or stacker)
             that.addMemberFrame = function (iframe) {
                 DQX.requireMemberFunction(iframe, 'setInitialiseFunction');
                 if (this.isFinalPanel()) DQX.reportError("Can't add frames to a final panel");
@@ -308,7 +332,7 @@
                 return iframe;
             }
 
-            //Inserts a new frame at the top of an existing frame
+            //Inserts a new frame at the top of an existing frame, creating the necessary intermediate level
             that.InsertFrameTop = function (iframe) {
                 var parent = this._parentFrame;
                 if (!parent)
@@ -380,9 +404,9 @@
                 return frame;
             }
 
-
-            //Sets the client panel for a final frame
+            //Sets the client panel for a final frame. This should be a class derived from FramePanel
             that.setClientObject = function (iobj) {
+                DQX.checkIsFunction(iobj.getID);
                 this.myClientObject = iobj;
             }
 
@@ -968,14 +992,13 @@
             }
 
 
-            ///////////// RUNTIME CALLS
+            ///////////// MORE RUNTIME CALLS
 
             //Activates another subframe in a tabbed frame, specified by its ID
             //The function returns true if this invoked an actual change
             that.switchTab = function (newtab) {
                 if (!this.isStacker()) DQX.reportError("Container is not a tab");
-                if (this.getActiveTabFrameID() == newtab)
-                    return false;
+                if (this.getActiveTabFrameID() == newtab) return false;
                 var newTabID = null;
                 for (var fnr = 0; fnr < this.memberFrames.length; fnr++) {
                     if (newtab == this.memberFrames[fnr].myFrameID)
@@ -992,7 +1015,7 @@
                 return this.memberFrames[this.activeTabNr].myFrameID;
             }
 
-            //Sets a new display title
+            //Sets a new display title (to be called runtime)
             that.modifyDisplayTitle = function (newtitle) {
                 $('#' + this.getVisibleTitleDivID()).text(newtitle);
             }
@@ -1035,14 +1058,14 @@
                 return true;
             }
 
-            //Fills a final frame with some html content
+            //Fills a final frame with some html content (to be called on a live frame)
             that.setContentHtml = function (content) {
                 this.checkFinalPanel();
                 $('#' + this.getClientDivID()).html(content);
                 DQX.ExecPostCreateHtml();
             }
 
-            //Fills a final frame with some static content
+            //Fills a final frame with some static content (to be called on a live frame)
             that.setContentStaticDiv = function (divid) {
                 this.checkFinalPanel();
                 var content = $('#' + divid).html();
@@ -1068,7 +1091,11 @@
             return that;
         }
 
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+        // Some general framework functions
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
         Framework._handleResize = function () {
@@ -1107,9 +1134,17 @@
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // A class that contains a view state of the application
+        // A base class that contains a view state of the application
         ///////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////
+        //  Classes derived from this serve as input for HistoryManager.addView
+        //  A viewset is associated with a Frame. Typically, a group of stacked frames correspond to a group of ViewSet,
+        //  and changing the currently visible frame changes the active ViewSet
+        //  The 'StateID' provides a unique identifier for this VieWset, which will be used as a tracker on the url
+        //  Classes derived from this need to implement:
+        //    - getStateKeys: returns a object with key-value pairs that are used to define the state of the view
+        //    - activateState(stateKeys): activates the view, provided the state keys. In a stacked frames configuration,
+        //      this typically involved activating the correct child frame so that it becomes visible
 
         Framework.ViewSet = function (iFrame, iStateID) {
             var that = {};
@@ -1133,6 +1168,11 @@
                 return mp;
             }
 
+            that.activateState = function () {//should be overriden
+                DQX.reportError('View does not implement activateState');
+            }
+
+
             that._initialisePanels = function () {
                 if (!that.createPanels)
                     DQX.reportError("View set does not have createPanels function");
@@ -1150,7 +1190,7 @@
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // A class that implements a frame panel containing a html form, consisting of Controls
+        // A class that implements a FramePanel containing a html form, consisting of Controls
         ///////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1170,7 +1210,7 @@
                 return ctrl;
             }
 
-            //Adds html content to the form
+            //Adds static html content to the form
             that.addHtml = function (content) {
                 that._content.addControl(Controls.Label(content));
             }
@@ -1206,6 +1246,9 @@
 
             return that;
         }
+
+
+
         return Framework;
     });
 

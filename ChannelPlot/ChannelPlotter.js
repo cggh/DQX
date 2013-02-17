@@ -1,4 +1,12 @@
-﻿define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel"), DQXSC("Scroller"), DQXSC("ChannelPlot/ChannelCanvas"), DQXSC("ChannelPlot/ChannelYVals")],
+﻿/************************************************************************************************************************************
+*************************************************************************************************************************************
+
+
+
+*************************************************************************************************************************************
+*************************************************************************************************************************************/
+
+define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel"), DQXSC("Scroller"), DQXSC("ChannelPlot/ChannelCanvas"), DQXSC("ChannelPlot/ChannelYVals")],
     function ($, DocEl, Msg, FramePanel, Scroller, ChannelCanvas, ChannelYVals) {
         var ChannelPlotter = {};
 

@@ -1,4 +1,14 @@
-﻿define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel")],
+﻿/************************************************************************************************************************************
+*************************************************************************************************************************************
+
+A FramePanel that implements a list
+
+The list will broadcast a SelectItem message when a new item in the list was selected
+
+*************************************************************************************************************************************
+*************************************************************************************************************************************/
+
+define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel")],
     function ($, DocEl, Msg, FramePanel) {
         return function (iid, iParentRef) {
             var that = FramePanel(iid, iParentRef);
@@ -10,11 +20,18 @@
             that._isCreated = false;
             that._hasFilter = false;
 
+            //Call this function to make the list have a search function that shows string matches
             that.setHasFilter = function () {
                 that._hasFilter = true;
                 return that;
             }
 
+            //Sets the list items
+            // * iItems: list of object with the following properties:
+            //       - id :  internal identifier for the item
+            //       - content : displayed text
+            //       - icon : bitmap to show next to the list item
+            // * newactiveitem (optional) : identifier of the new selected item
             that.setItems = function (iItems, newactiveitem) {
                 this.items = [];
                 var activefound = false;
@@ -30,6 +47,7 @@
                     this._activeItem = newactiveitem;
             }
 
+            //Renders to the DOM
             that.render = function () {
                 if (!this._isCreated) {//initialise: render the required elements
                     var htmlContent = '';
@@ -98,6 +116,8 @@
                 $('#' + this.myListDivID).scrollTop(0);
             }
 
+            //Sets the new highlighted item, providing the list item id
+            //If noEvent is true, this will not generate a selection changed event
             that.setActiveItem = function (id, noEvent) {
                 if (this._activeItem)
                     $('#' + this.myListDivID).children('#' + this._activeItem).addClass('DQXLargeListItem').removeClass('DQXLargeListItemSelected');
@@ -107,6 +127,7 @@
                     Msg.broadcast({ type: 'SelectItem', id: this.myID }, this._activeItem);
             }
 
+            //Automatically scroll the highlighted item in the visible area
             that.scrollActiveInView = function () {
                 var offset = $('#' + this.myListDivID).children('#' + this._activeItem).position().top;
                 $('#' + this.myListDivID).scrollTop(offset);
@@ -114,8 +135,6 @@
 
             that._clickItem = function (ev) {
                 var elem=$(this);
-//                while ((!elem.hasClass('DQXLargeListItem')) && (!elem.hasClass('DQXLargeListItemSelected')) && (elem.parent().length > 0))
-//                    elem=elem.parent();
                 var id = elem.attr('id');
                 that.setActiveItem(id);
             }
@@ -123,9 +142,7 @@
             that.handleResize = function () {
             }
 
-
-            ////////////////////////
-
+            //Returns the currently highlighted item in the list
             that.getActiveItem = function () {
                 return this._activeItem;
             }

@@ -1,4 +1,12 @@
-﻿define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg")],
+﻿/************************************************************************************************************************************
+*************************************************************************************************************************************
+
+
+
+*************************************************************************************************************************************
+*************************************************************************************************************************************/
+
+define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg")],
     function ($, DocEl, Msg) {
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -13,6 +21,9 @@
 
         return function (iParentRef) {
             var that = {};
+
+            that.getID = function () { return this.myID; }
+
             if (DQX.hasMember(iParentRef, 'getClientDivID')) {//assume that the parent reference is a Framework.Frame object
                 that.myParentFrame = iParentRef;
                 that.myDivID = iParentRef.getClientDivID();
@@ -31,7 +42,6 @@
                 return this;
             }
 
-            that.getID = function () { return this.myID; }
 
             that.getDivID = function () { return this.myDivID; }
 

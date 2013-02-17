@@ -1,4 +1,14 @@
-﻿define([DQXSCRQ(), DQXSC("Framework"), DQXSC("HistoryManager"), DQXSC("Msg"), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Controls")],
+﻿/************************************************************************************************************************************
+*************************************************************************************************************************************
+
+Implements a Framework.ViewSet that can be used to browse a set of static html pages, emulating navigation tools in the browser
+
+This listens to ShowStaticDoc messages to show a html document
+
+*************************************************************************************************************************************
+*************************************************************************************************************************************/
+
+define([DQXSCRQ(), DQXSC("Framework"), DQXSC("HistoryManager"), DQXSC("Msg"), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Controls")],
     function (require, Framework, HistoryManager, Msg, DQX, DocEl, Controls) {
         StaticDocViewModule = {
 
@@ -7,12 +17,14 @@
                 that.myPage = iPage;
                 that.registerView();
 
+                //Called automatically
                 that.createPanels = function () {
                     this.panelStaticDoc = Framework.Form(this.getFrame());
                     this.panelStaticDoc.render();
                 };
 
 
+                //Called automatically
                 that.createFramework = function () {
                 };
 

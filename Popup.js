@@ -1,4 +1,14 @@
-﻿define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls")],
+﻿/************************************************************************************************************************************
+*************************************************************************************************************************************
+
+Defines a popup window
+
+Use Popup.create to create a new popup, and DQX.ClosePopup to close it.
+
+*************************************************************************************************************************************
+*************************************************************************************************************************************/
+
+define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls")],
     function ($, DQX, DocEl, Msg, Controls) {
         var Popup = {};
 
@@ -9,6 +19,7 @@
                 $('#DQXBackBlocker').remove();
         }
 
+        //Closes a popup, providing the unique identifier that was returned by Popup.create
         DQX.ClosePopup = function (index) {
             $("#" + index).remove();
             DQX.unRegisterGlobalKeyDownReceiver(index);
@@ -16,6 +27,7 @@
         }
         DQX._popupIndex = 0;
 
+        //Internal
         DQX.SwitchPinned = function (ID) {
             var elem = $("#" + ID);
             var newStatus = !Popup.isPinned(ID);
@@ -31,7 +43,7 @@
 
         Popup._floatBoxMaxIndex = 99;
 
-        //Converts a div element into a draggable box
+        //Converts a div element into a draggable box, providing the div id
         Popup.makeDraggable = function (id) {
             var dragElem = $('#' + id);
             if (dragElem.length == 0)

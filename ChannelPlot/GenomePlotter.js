@@ -1,4 +1,13 @@
-﻿define([DQXSCJQ(), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelPlotter"), DQXSC("DataFetcher/DataFetcherAnnotation"), DQXSC("ChannelPlot/ChannelAnnotation"), DQXSC("SQL"), DQXSC("DocEl"), DQXSC("DataDecoders"), DQXSC("Controls")],
+﻿/************************************************************************************************************************************
+*************************************************************************************************************************************
+
+
+
+*************************************************************************************************************************************
+*************************************************************************************************************************************/
+
+
+define([DQXSCJQ(), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelPlotter"), DQXSC("DataFetcher/DataFetcherAnnotation"), DQXSC("ChannelPlot/ChannelAnnotation"), DQXSC("SQL"), DQXSC("DocEl"), DQXSC("DataDecoders"), DQXSC("Controls")],
     function ($, Msg, ChannelPlotter, DataFetcherAnnotation, ChannelAnnotation, SQL, DocEl, DataDecoders, Controls) {
         var GenomePlotter = {};
 

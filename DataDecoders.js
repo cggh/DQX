@@ -1,4 +1,13 @@
-﻿define([DQXSCJQ(), DQXSC("Utils")],
+﻿/************************************************************************************************************************************
+*************************************************************************************************************************************
+
+Contains codecs that are used to efficiently communicate with the DQXServer counterpart
+
+
+*************************************************************************************************************************************
+*************************************************************************************************************************************/
+
+define([DQXSCJQ(), DQXSC("Utils")],
     function ($, DQX) {
 
         var DataDecoders = {}
@@ -237,7 +246,7 @@
             return that;
         }
 
-
+        //Factory function that automatically creates a codec based on the properties
         DataDecoders.Encoder.Create = function (info) {
             if (info['ID'] == 'Int2B64')
                 return DataDecoders.Encoder.Int2B64(info);

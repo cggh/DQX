@@ -1,8 +1,27 @@
-﻿define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel") ],
+﻿/************************************************************************************************************************************
+*************************************************************************************************************************************
+
+A FramePanel that implements a tree
+
+The tree will broadcast a SelectItem message when a new item in the tree was selected
+
+NOTE: TreeCtrl.Tree.root represents the singe root item of the tree
+Branches can be added to the root by calling addItem on this root item.
+
+
+*************************************************************************************************************************************
+*************************************************************************************************************************************/
+
+define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel")],
     function ($, DocEl, Msg, FramePanel) {
         var TreeCtrl = {};
 
-        ////////////////////////// A class representing a branch in the tree ///////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // A class representing a branch in the tree
+        //   * iID: identifier of the branch
+        //   * icontent: text to display
+        // NOTE: Use the creator function TreeCtrl.Branch to create a branch
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         TreeCtrl._objectBranch = function (iID, icontent) {
             this.myID = iID;
@@ -20,6 +39,7 @@
             return this;
         }
 
+        //determine whether or not the branch is collapsed
         TreeCtrl._objectBranch.prototype.setCollapsed = function (status) {
             this._collapsed = status;
             return this;
@@ -31,19 +51,24 @@
             return this;
         }
 
+        //Internal
         TreeCtrl._objectBranch.prototype.renderHtml = function () {
             return this.content.toString();
         }
 
+        //Internal
         TreeCtrl._objectBranch.prototype.postCreateHtml = function () {
         }
 
 
+        //Return the child members of this branch
         TreeCtrl._objectBranch.prototype.getItems = function () {
             return this.items;
         }
 
+        //Add a new child to this branch
         TreeCtrl._objectBranch.prototype.addItem = function (item) {
+            if (!(item instanceof TreeCtrl._objectBranch)) DQX.reportError("Invalid type for branch member");
             this.items.push(item);
             item.myParent = this;
             if (this.myTree)
@@ -51,6 +76,7 @@
             return item;
         }
 
+        //Internal
         TreeCtrl._objectBranch.prototype.setTree = function (tree) {
             if ((this.myTree != null) && (this.myTree !== tree))
                 DQX.reportError('Item is already attached to a tree');
@@ -61,7 +87,7 @@
         TreeCtrl._objectBranch.prototype._setTreeSub = function (tree) { }
 
 
-        //The creator function
+        //The creator function. Use this function to create a tree branch
         TreeCtrl.Branch = function (iID, icontent) {
             return new TreeCtrl._objectBranch(iID, icontent);
         }
@@ -69,6 +95,7 @@
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // Encapsulates a form control into a tree item
+        // This creates a tree branch that contains a UI widget as defined in Controls.
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         TreeCtrl.Control = function (icontrol) {
@@ -103,10 +130,12 @@
             that._itemMap = {}; //map structured container of the items
             that._activeItem = '';
 
+            //Return the highlighted item in the tree
             that.getActiveItem = function () {
                 return that._activeItem;
             }
 
+            //Find a tree item by its identifier
             that.findItem = function (id) {
                 return this._itemMap[id];
             }
@@ -128,12 +157,8 @@
 
 
 
-            that._getDivIDButton = function (id) {
-                return this.myID + '_DQXBt_' + id;
-            }
-            that._getDivIDItem = function (id) {
-                return this.myID + '_DQXIt_' + id;
-            }
+            that._getDivIDButton = function (id) { return this.myID + '_DQXBt_' + id; }
+            that._getDivIDItem = function (id) { return this.myID + '_DQXIt_' + id; }
 
             that._createButtonHtml = function (_collapsed) {
                 return '<IMG SRC="' + DQXBMP(_collapsed ? 'morelines.png' : 'lesslines.png') + '" border=0 ALT="" TITLE="" class="DQXTreeButtonImage" style="float:left;padding-right:6px">';
@@ -186,6 +211,7 @@
                 }
             }
 
+            //Render the panel to the DOM tree
             that.render = function () {
                 var dv = DocEl.Div({ id: 'tree' });
                 //dv.setBackgroundColor(DQX.Color(1, 0, 0));
@@ -202,6 +228,8 @@
                 $('#' + this.getDivID()).find('.DQXTreeItem').mousedown(that._clickTreeItem);
             }
 
+            // Specify the new highlighted item in the try, by its identifier
+            // if noEvent is true, not notification message will be sent
             that.setActiveItem = function (id, noEvent) {
                 if (this._activeItem)
                     $('#' + this.getDivID()).find('#' + this._getDivIDItem(this._activeItem)).removeClass('DQXTreeItemSelected');
@@ -211,6 +239,7 @@
                     Msg.broadcast({ type: 'SelectItem', id: this.myID }, this._activeItem);
             }
 
+            //Automatically scroll the highlighted item in the visible area
             that.scrollActiveInView = function () {
                 var offset = $('#' + this.getDivID()).children('#' + this._activeItem);
                 $('#' + this.getDivID()).scrollTop(offset);

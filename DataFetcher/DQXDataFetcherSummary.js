@@ -1,4 +1,4 @@
-﻿
+﻿/*
 
 
 DQX.Encoder={};
@@ -387,3 +387,4 @@ DQX.DataFetcher.Summary = function (iserverurl, iminBlockSize, idesiredPointCoun
 
 
 }
+*/
