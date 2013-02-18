@@ -1167,11 +1167,11 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
                 mp[this._myStateID] = null;
                 return mp;
             }
-
+            
             that.activateState = function () {//should be overriden
                 DQX.reportError('View does not implement activateState');
             }
-
+            
 
             that._initialisePanels = function () {
                 if (!that.createPanels)
