@@ -78,18 +78,22 @@
                 if (availabeH != this.lastAvailabeH) {
                     this.myTable.myPageSize = Math.max(1, Math.floor((availabeH - 70) / lineH));
                     this.myTable.render();
+                    var ctr = 0;
                     do {
                         var requiredH = this._getVerticalUserSize();
                         if (requiredH + lineH < availabeH)
                             this.myTable._onMoreLines();
+                        ctr++;
                     }
-                    while (requiredH + lineH < availabeH)
+                    while ((requiredH + lineH < availabeH) && (ctr < 5) && (requiredH > 0))
+                    var ctr = 0;
                     do {
                         var requiredH = this._getVerticalUserSize();
                         if (requiredH > availabeH)
                             this.myTable._onLessLines();
+                        ctr++;
                     }
-                    while (requiredH > availabeH)
+                    while ((requiredH > availabeH) && (ctr < 5) && (requiredH > 0));
                 }
                 this.lastAvailabeH = availabeH;
             }
