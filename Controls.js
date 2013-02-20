@@ -441,7 +441,14 @@ define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller"), DQXSC("Documentation")]
                     this._execPostCreateHtml();
                     this._postCreateHtmlExecuted = true;
                     this.modifyEnabled(this._enabled); //make sure the enabled state that was set before rendering is applied
+                    if (this._backgroundColorString)
+                        this.getJQElement('').css('background-color', this._backgroundColorString);
                 }
+            }
+
+            that.setBackgroundColor = function (color) {
+                this._backgroundColorString = color.toString();
+                this.getJQElement('').css('background-color', this._backgroundColorString);
             }
 
             return that;
@@ -759,6 +766,8 @@ define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller"), DQXSC("Documentation")]
                 return rs + edt.toString();
             }
 
+
+
             that._execPostCreateHtml = function () {
                 this.getJQElement('').bind("propertychange input paste", $.proxy(that._onChange, that));
                 this.getJQElement('').bind("keyup", $.proxy(that._onKeyUp, that));
@@ -780,6 +789,8 @@ define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller"), DQXSC("Documentation")]
                     this._notifyChanged();
                 }
             }
+
+
 
             //Return the content of the edit box
             that.getValue = function () {
@@ -821,7 +832,7 @@ define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller"), DQXSC("Documentation")]
 
             that._buildStatesMap = function () {
                 this._statesMap = {};
-                $.each(this.myStates, function(idx,state) {
+                $.each(this.myStates, function (idx, state) {
                     DQX.requireMember(state, 'id');
                     DQX.requireMember(state, 'name');
                     that._statesMap[state.id] = state.name;
