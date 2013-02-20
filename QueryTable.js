@@ -383,7 +383,9 @@
 
                 if (datacomplete && this._dataValid) {
                     var downloadlink = this.myDataFetcher.createDownloadUrl();
-                    $('#' + that.myBaseID + '_right').html('<a href=' + downloadlink + '><IMG class="DQXBitmapLink" SRC=' + DQXBMP('download.png') + ' border=0 title="Download this data as TAB-delimited file" ALT="Download"></a>');
+                    var downloadHtml = '<a href=' + downloadlink + '><IMG class="DQXBitmapLink" SRC=' + DQXBMP('download.png') + ' border=0 title="Download this data as TAB-delimited file" ALT="Download"></a>';
+                    var downloadHtml = '<a href=' + downloadlink + '><span class="DQXHyperlink">Download<br>table</span></a>';
+                    $('#' + that.myBaseID + '_right').html(downloadHtml);
                 }
                 else
                     $('#' + that.myBaseID + '_right').html('');
