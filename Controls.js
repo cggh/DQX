@@ -921,14 +921,15 @@ define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller"), DQXSC("Documentation")]
 
             that._execRenderHtml = function () {
                 var st = '<a id=' + this.getFullID('') + ' class="DQXHyperlink">';
-                if (this.text) {
-                    st += this.text;
-                }
                 if (this.myBitmap) {
                     var s = '<IMG SRC="' + this.myBitmap + '" border=0 class="DQXBitmapLink" ALT="{desc1}" TITLE="{desc2}">';
                     s = s.DQXformat(
                         { desc1: that.description, desc2: that._hint, shift: (-this._vertShift) });
                     st = st + s;
+                }
+                if (this.text) {
+                    if (this.myBitmap) st += ' ';
+                    st += this.text;
                 }
                 st += '</a>';
                 return st;
