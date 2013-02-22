@@ -281,29 +281,36 @@ define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), DQXSC("lib/St
                 }
             }
 
-            that.setPoints = function (ipointset) {
+            that.setPoints = function (ipointset, showLabels) {
                 this.clearPoints();
                 this.myPointSet = ipointset;
                 for (var i = 0; i < ipointset.length; i++) {
                     var obj = this;
                     (function (iarg) {//closure because we need persistent counter
                         var pointnr = iarg;
-                        var markerobject;
-                        var marerOptions = {
-                            position: new google.maps.LatLng(ipointset[pointnr].lattit, ipointset[pointnr].longit),
+                        var pointInfo = ipointset[pointnr];
+                        var markerObject = null;
+                        var markerOptions = {
+                            position: new google.maps.LatLng(pointInfo.lattit, pointInfo.longit),
                             map: obj.myMapObject.myMap,
                             icon: obj.image
                         }
-                        if (ipointset[pointnr].title)
-                            marerOptions.title = ipointset[pointnr].title;
-                        if ('styleIcon' in ipointset[pointnr]) {
-                            marerOptions.styleIcon = new StyledMarker.StyledIcon(StyledMarker.StyledIconTypes.MARKER, ipointset[pointnr].styleIcon);
-                            markerobject = new StyledMarker.StyledMarker(marerOptions);
+                        if (pointInfo.title)
+                            markerOptions.title = pointInfo.title;
+                        if ('styleIcon' in pointInfo) {
+                            markerOptions.styleIcon = new StyledMarker.StyledIcon(StyledMarker.StyledIconTypes.MARKER, pointInfo.styleIcon);
+                            markerObject = new StyledMarker.StyledMarker(markerOptions);
                         }
-                        else {
-                            markerobject = new google.maps.Marker(marerOptions);
+                        if (pointInfo.labelName) {
+                            var labelColor = "ffffff";
+                            if (pointInfo.labelColor)
+                                labelColor = pointInfo.labelColor;
+                            markerOptions.styleIcon = new StyledMarker.StyledIcon(StyledMarker.StyledIconTypes.BUBBLE, { color: labelColor, text: pointInfo.labelName });
+                            markerObject = new StyledMarker.StyledMarker(markerOptions);
+                        }
+                        if (!markerObject)
+                            markerObject = new google.maps.Marker(markerOptions);
 
-                        }
                         if (obj.myPointSet[pointnr].location_type == 'country') {
                             google_objs = GeoJSON(Countries.geo_json_by_fullname[obj.myPointSet[pointnr].given_name], obj.polygon_options);
                             if (!google_objs[0].error) {
@@ -318,13 +325,30 @@ define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), DQXSC("lib/St
                             }
 
                         } else {
-                            obj.myPointSet[pointnr].markers = [markerobject];
+                            obj.myPointSet[pointnr].markers = [markerObject];
                             google.maps.event.addListener(obj.myPointSet[pointnr].markers[0], 'click',
                             function () { obj._handleOnPointClicked(pointnr); }
                         );
                         }
 
                     })(i);
+                }
+                if (showLabels) {
+                    var layouter = GMaps.MapItemLayouter(this.myMapObject, '');
+                    for (var i = 0; i < ipointset.length; i++) {
+                        var pointInfo = ipointset[i];
+                        layouter.addItem(pointInfo.longit, pointInfo.lattit, 50);
+                    }
+                    layouter.calculatePositions();
+                    for (var i = 0; i < ipointset.length; i++) {
+                        var pointInfo = ipointset[i];
+                        var dy = (layouter.items[i].longit2 - layouter.items[i].longit) * Math.cos(layouter.items[i].lattit / 180 * Math.PI);
+                        var dx = layouter.items[i].lattit2 - layouter.items[i].lattit;
+                        var rd = Math.sqrt(dx * dx + dy * dy);
+                        dx /= rd; dy /= rd;
+                        GMaps.Overlay.Label(this.myMapObject, '', GMaps.Coord(layouter.items[i].longit, layouter.items[i].lattit), 20 * dx, 20 * dy, pointInfo.labelName);
+                    }
+
                 }
                 this._updateVisible();
             }
@@ -397,7 +421,7 @@ define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), DQXSC("lib/St
                 var heatmapData = [];
                 for (var pointnr = 0; pointnr < ipointset.length; pointnr++)
                     heatmapData.push({
-                        location: new google.maps.LatLng(ipointset[pointnr].lattit, ipointset[pointnr].longit),
+                        location: new google.maps.LatLng(pointInfo.lattit, pointInfo.longit),
                         weight: 1
                     });
                 that._myHeatMap = new google.maps.visualization.HeatmapLayer({
@@ -539,6 +563,54 @@ define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), DQXSC("lib/St
 
             return that;
         }
+
+        GMaps.Overlay.Label = function (imapobject, iid, icentercoord, ioffsetX, ioffsetY, itext) {
+            var that = GMaps.Overlay._Base(imapobject, iid);
+            that.myID = iid;
+            that._centerCoord = icentercoord;
+            that._offsetX = ioffsetX;
+            that._offsetY = ioffsetY;
+            that._text = itext;
+            DQX.ObjectMapper.Add(that);
+
+            that.render = function () {
+                var ps0 = this.convCoordToPixels(this._centerCoord);
+                var ps1 = { x: ps0.x + this._offsetX, y: ps0.y + this._offsetY };
+                var bb = {};
+                bb.x0 = Math.min(ps0.x, ps1.x);
+                bb.y0 = Math.min(ps0.y, ps1.y);
+                bb.x1 = Math.max(ps0.x, ps1.x)+600;
+                bb.y1 = Math.max(ps0.y, ps1.y)+600;
+
+                var dfx = ps1.x - ps0.x;
+                var dfy = ps1.y - ps0.y;
+                var dst = Math.sqrt(dfx * dfx + dfy * dfy);
+                var drx = dfx / dst;
+                var dry = dfy / dst;
+                var wd = 3.0;
+
+
+                var data = "<svg>";
+                data += '<polygon points="{x1},{y1},{x2},{y2},{x3},{y3}" style="stroke-width: 2px; stroke: rgb(40,40,40); fill:rgb(40,40,40)"/>'.DQXformat({
+                    x1: ps0.x - bb.x0,
+                    y1: ps0.y - bb.y0,
+                    x2: ps1.x + wd * dry - bb.x0,
+                    y2: ps1.y - wd * drx - bb.y0,
+                    x3: ps1.x - wd * dry - bb.x0,
+                    y3: ps1.y + wd * drx - bb.y0
+                });
+
+                data += '<text x="{x}" y="{y}" fill="black">{txt}</text>'.DQXformat({ x: ps1.x-bb.x0, y: ps1.y-bb.y0, txt: this._text })
+
+                data += "</svg>";
+                this.myDiv.innerHTML = data;
+                return bb;
+
+            }
+
+            return that;
+        }
+
 
 
 

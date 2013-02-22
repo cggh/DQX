@@ -302,6 +302,10 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("DocEl")],
                     return 'rgba(' + Math.round(this.getR() * 255) + ',' + Math.round(this.getG() * 255) + ',' + Math.round(this.getB() * 255) + ',' + this.getA().toFixed(3) + ')';
             }
 
+            that.toStringHEX = function () {
+                return (Math.round(this.getR() * 255)).toString(16) + (Math.round(this.getG() * 255)).toString(16) + (Math.round(this.getB() * 255)).toString(16);
+            }
+
             //Returns a darkened version of the color, amount between 0 and 1
             that.darken = function (amount) {
                 var fc = 1.0 - amount;
