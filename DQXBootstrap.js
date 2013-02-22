@@ -14,7 +14,13 @@ function setupRequireJS() {
         alert('Fatal error: versionString is missing');
     require.config({
         paths: {
-            "jquery": "DQX/Externals/jquery"
+            jquery: "DQX/Externals/jquery",
+            d3: "DQX/Externals/d3"
+        },
+        shim: {
+            d3: {
+                exports: 'd3'
+            }
         },
         waitSeconds: 15,
         urlArgs: "version="+versionString
