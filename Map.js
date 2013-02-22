@@ -355,8 +355,8 @@ define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), DQXSC("lib/St
                             //markerOptions.styleIcon = new StyledMarker.StyledIcon(StyledMarker.StyledIconTypes.BUBBLE, { color: labelColor, text: pointInfo.labelName });
                             //markerObject = new StyledMarker.StyledMarker(markerOptions);
                         }
-                        //!!!                        if (!markerObject)
-                        //                            markerObject = new google.maps.Marker(markerOptions);
+                        if (!markerObject)
+                            markerObject = new google.maps.Marker(markerOptions);
 
                         if (obj.myPointSet[pointnr].location_type == 'country') {
                             google_objs = GeoJSON(Countries.geo_json_by_fullname[obj.myPointSet[pointnr].given_name], obj.polygon_options);
@@ -398,7 +398,7 @@ define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), DQXSC("lib/St
                             dx = 1; dy = 1;
                         }
                         var rd = Math.sqrt(dx * dx + dy * dy);
-                        dx *= 30 / rd; dy *= 30 / rd;
+                        dx *= 15 / rd; dy *= 15 / rd;
                         var label = GMaps.Overlay.Label(this.myMapObject, '', GMaps.Coord(layouter.items[i].longit, layouter.items[i].lattit), dx, -dy, pointInfo.labelName);
                         label.pointID = pointInfo.id;
                         label.setOnClick(function () {
@@ -661,6 +661,7 @@ define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), DQXSC("lib/St
 
 
                 var data = '<svg style="">';
+/*
                 data += '<polygon points="{x1},{y1},{x2},{y2},{x3},{y3}" style="stroke-width: 2px; stroke: rgb(40,40,40); fill:rgb(40,40,40)"/>'.DQXformat({
                     x1: ps0.x - bb.x0,
                     y1: ps0.y - bb.y0,
@@ -669,7 +670,7 @@ define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), DQXSC("lib/St
                     x3: ps1.x - wd * dry - bb.x0,
                     y3: ps1.y + wd * drx - bb.y0
                 });
-
+*/
 
                 var hH = 9;
 
@@ -680,8 +681,8 @@ define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), DQXSC("lib/St
                 txt.addAttribute('height', 2 * hH);
                 txt.addStyle("fill", "rgb(255,255,128)");
                 txt.addStyle("stroke", "black");
-                //txt.addStyle("fill-opacity", "0.7");
-                //txt.addStyle("stroke-opacity", "0.7");
+                txt.addStyle("fill-opacity", "0.7");
+                txt.addStyle("stroke-opacity", "0.7");
                 //                stroke:pink;stroke-width:5;fill-opacity:0.1;stroke-opacity:0.9"/>
 
                 data += txt.toString();
