@@ -6,8 +6,8 @@ Defines a FramePanel that encapsulates a Google Maps view with overlays
 *************************************************************************************************************************************
 *************************************************************************************************************************************/
 
-define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), DQXSC("lib/StyledMarker"), DQXSC("Msg"), DQXSC("Utils"), DQXSC("FramePanel"), DQXSCAsync("https://maps.googleapis.com/maps/api/js?libraries=visualization&sensor=false")],
-    function ($, Countries, GeoJSON, StyledMarker, Msg, DQX, FramePanel) {
+define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), DQXSC("lib/StyledMarker"), DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Utils"), DQXSC("FramePanel"), DQXSCAsync("https://maps.googleapis.com/maps/api/js?libraries=visualization&sensor=false")],
+    function ($, Countries, GeoJSON, StyledMarker, Msg, DocEl, DQX, FramePanel) {
 
         var GMaps = {}
 
@@ -50,6 +50,64 @@ define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), DQXSC("lib/St
             that.Lattit2Y = function (lattit) {
                 return lattit / 360 * 40000;
             }
+
+
+            that.calculatePositions0 = function () {
+                for (var i = 0; i < this.items.length; i++) {
+                    var item = this.items[i];
+                    item.x0 = this.Longit2X(item.longit, item.lattit);
+                    item.y0 = this.Lattit2Y(item.lattit);
+                    item.dx = 0;
+                    item.dy = 0;
+                }
+
+                //Calculate average distance
+                var avDst = 0;
+                var dstCnt = 0;
+                for (var i1 = 0; i1 < this.items.length; i1++) {
+                    var item1 = this.items[i1];
+                    for (var i2 = 0; i2 < this.items.length; i2++) if (i1 != i2) {
+                        var item2 = this.items[i2];
+                        var dfx = item2.x0 - item1.x0;
+                        var dfy = item2.y0 - item1.y0;
+                        var dst = Math.sqrt(dfx * dfx + dfy * dfy);
+                        avDst += dst;
+                        dstCnt++;
+                    }
+                }
+                avDst /= dstCnt;
+
+                for (var iter = 0; iter < 50; iter++) {
+                    for (var i1 = 0; i1 < this.items.length; i1++) {
+                        var item1 = this.items[i1];
+                        var shiftx = 0;
+                        var shifty = 0;
+                        for (var i2 = 0; i2 < this.items.length; i2++) if (i1 != i2) {
+                            var item2 = this.items[i2];
+                            var dfx = (item2.x0 + item2.dx) - (item1.x0 + item1.dx);
+                            var dfy = (item2.y0 + item2.dy) - (item1.y0 + item1.dy);
+                            var dst = Math.sqrt(dfx * dfx + dfy * dfy);
+                            var dst2 = 0.01 + dst / avDst;
+                            dfx /= dst; dfy /= dst;
+                            var shiftsize = 0.5 / (dst2 * dst2);
+                            shiftx += -dfx * shiftsize;
+                            shifty += -dfy * shiftsize;
+                        }
+                        item1.dx += 0.5 * shiftx;
+                        item1.dy += 0.5 * shifty;
+                    }
+                }
+
+                for (var i = 0; i < this.items.length; i++) {
+                    var item = this.items[i];
+                    var longit2 = item.longit + this.DX2Longit(item.dx, item.lattit);
+                    var lattit2 = item.lattit + this.DY2Lattit(item.dy);
+                    item.longit2 = longit2;
+                    item.lattit2 = lattit2;
+                }
+
+            }
+
 
             that.calculatePositions = function () {
                 for (var i = 0; i < this.items.length; i++) {
@@ -126,17 +184,6 @@ define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), DQXSC("lib/St
                     var lattit2 = item.lattit + this.DY2Lattit(item.dy);
                     item.longit2 = longit2;
                     item.lattit2 = lattit2;
-                    if (false) {
-                        var polygondata = [{ longit: item.longit, lattit: item.lattit }, { longit: longit2, lattit: lattit2}];
-                        Map.Polygon(this.id + '_offset' + i, this.mapObject, polygondata);
-                        var polygondata = [];
-                        for (var ang = 0; ang < 2 * Math.PI; ang += 0.025) {
-                            var ddx = item.radius * Math.cos(ang);
-                            var ddy = item.radius * Math.sin(ang);
-                            polygondata.push({ longit: longit2 + this.DX2Longit(ddx, item.lattit), lattit: lattit2 + this.DY2Lattit(ddy) });
-                        }
-                        Map.Polygon(this.id + '_disc' + i, this.mapObject, polygondata);
-                    }
                 }
             }
             return that;
@@ -305,11 +352,11 @@ define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), DQXSC("lib/St
                             var labelColor = "ffffff";
                             if (pointInfo.labelColor)
                                 labelColor = pointInfo.labelColor;
-                            markerOptions.styleIcon = new StyledMarker.StyledIcon(StyledMarker.StyledIconTypes.BUBBLE, { color: labelColor, text: pointInfo.labelName });
-                            markerObject = new StyledMarker.StyledMarker(markerOptions);
+                            //markerOptions.styleIcon = new StyledMarker.StyledIcon(StyledMarker.StyledIconTypes.BUBBLE, { color: labelColor, text: pointInfo.labelName });
+                            //markerObject = new StyledMarker.StyledMarker(markerOptions);
                         }
-                        if (!markerObject)
-                            markerObject = new google.maps.Marker(markerOptions);
+                        //!!!                        if (!markerObject)
+                        //                            markerObject = new google.maps.Marker(markerOptions);
 
                         if (obj.myPointSet[pointnr].location_type == 'country') {
                             google_objs = GeoJSON(Countries.geo_json_by_fullname[obj.myPointSet[pointnr].given_name], obj.polygon_options);
@@ -325,10 +372,13 @@ define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), DQXSC("lib/St
                             }
 
                         } else {
-                            obj.myPointSet[pointnr].markers = [markerObject];
-                            google.maps.event.addListener(obj.myPointSet[pointnr].markers[0], 'click',
-                            function () { obj._handleOnPointClicked(pointnr); }
-                        );
+                            obj.myPointSet[pointnr].markers = [];
+                            if (markerObject != null) {
+                                obj.myPointSet[pointnr].markers.push(markerObject);
+                                google.maps.event.addListener(obj.myPointSet[pointnr].markers[0], 'click',
+                                    function () { obj._handleOnPointClicked(pointnr); }
+                                    );
+                            }
                         }
 
                     })(i);
@@ -337,16 +387,24 @@ define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), DQXSC("lib/St
                     var layouter = GMaps.MapItemLayouter(this.myMapObject, '');
                     for (var i = 0; i < ipointset.length; i++) {
                         var pointInfo = ipointset[i];
-                        layouter.addItem(pointInfo.longit, pointInfo.lattit, 50);
+                        layouter.addItem(pointInfo.longit, pointInfo.lattit, 150);
                     }
-                    layouter.calculatePositions();
+                    layouter.calculatePositions0();
                     for (var i = 0; i < ipointset.length; i++) {
                         var pointInfo = ipointset[i];
-                        var dy = (layouter.items[i].longit2 - layouter.items[i].longit) * Math.cos(layouter.items[i].lattit / 180 * Math.PI);
-                        var dx = layouter.items[i].lattit2 - layouter.items[i].lattit;
+                        var dx = layouter.items[i].dx;
+                        var dy = layouter.items[i].dy;
+                        if ((dx == 0) && (dy == 0)) {
+                            dx = 1; dy = 1;
+                        }
                         var rd = Math.sqrt(dx * dx + dy * dy);
-                        dx /= rd; dy /= rd;
-                        GMaps.Overlay.Label(this.myMapObject, '', GMaps.Coord(layouter.items[i].longit, layouter.items[i].lattit), 20 * dx, 20 * dy, pointInfo.labelName);
+                        dx *= 30 / rd; dy *= 30 / rd;
+                        var label = GMaps.Overlay.Label(this.myMapObject, '', GMaps.Coord(layouter.items[i].longit, layouter.items[i].lattit), dx, -dy, pointInfo.labelName);
+                        label.pointID = pointInfo.id;
+                        label.setOnClick(function () {
+                            Msg.broadcast({ type: 'ClickMapPoint', id: that.myID }, this.pointID);
+                        });
+                        obj.myPointSet[i].markers.push(label);
                     }
 
                 }
@@ -445,10 +503,14 @@ define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), DQXSC("lib/St
         //////////////////////////////////////////////////////////////////////////////////////////
 
         GMaps.Overlay = {};
-
-        GMaps.Overlay._Base = function (imapobject, iid) {
+        GMaps._overlayIDNr = 0;
+        GMaps.Overlay._Base = function (imapobject, iid, isSVG) {
             var that = new google.maps.OverlayView();
             that.myMapObject = imapobject;
+            if (!iid) {
+                GMaps._overlayIDNr++;
+                iid = 'GMapOverlay' + GMaps._overlayIDNr;
+            }
             that.myID = iid;
             imapobject._addOverlay(that);
             that.setMap(that.myMapObject.myMap);
@@ -474,8 +536,8 @@ define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), DQXSC("lib/St
             that.onAdd = function () {
                 this.myDiv = document.createElement('div');
                 this.myDiv.style.position = 'absolute';
-                //this.myDiv.style.background = 'green';
-                //        this.myDiv.style.backgroundColor = 'rgba(255,0,0,0.25)';
+                this.myDiv.style.overflow= 'visible';
+                //this.myDiv.style.pointerEvents = 'none';
                 var panes = this.getPanes();
                 panes.overlayMouseTarget.appendChild(this.myDiv);
 
@@ -508,7 +570,6 @@ define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), DQXSC("lib/St
 
         GMaps.Overlay.PieChart = function (imapobject, iid, icentercoord, iradius, ichart) {
             var that = GMaps.Overlay._Base(imapobject, iid);
-            that.myID = iid;
             that._centerCoordPieChart = icentercoord;
             that._centerCoord = icentercoord;
             that.myRadius = iradius;
@@ -529,7 +590,7 @@ define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), DQXSC("lib/St
                 bb.y0 = Math.min(ps0.y, ps.y - ps.dist);
                 bb.x1 = Math.max(ps0.x, ps.x + ps.dist);
                 bb.y1 = Math.max(ps0.y, ps.y + ps.dist);
-                var data = "<svg width={w} height={h}>".DQXformat({ w: (bb.x1 - bb.x0), h: (bb.y1 - bb.y0) });
+                var data = '<svg width={w} height={h} style="overflow:visible">'.DQXformat({ w: (bb.x1 - bb.x0), h: (bb.y1 - bb.y0) });
                 //data += '<filter id="dropshadow" height="130%"><feGaussianBlur in="SourceAlpha" stdDeviation="3"/> <!-- stdDeviation is how much to blur --><feOffset dx="2" dy="2" result="offsetblur"/> <!-- how much to offset --><feMerge><feMergeNode/> <!-- this contains the offset blurred image --><feMergeNode in="SourceGraphic"/> <!-- this contains the element that the filter is applied to --></feMerge></filter>';
                 data += this.myChart.render(ps.x - bb.x0, ps.y - bb.y0, ps.dist);
                 var dfx = ps0.x - ps.x;
@@ -566,21 +627,25 @@ define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), DQXSC("lib/St
 
         GMaps.Overlay.Label = function (imapobject, iid, icentercoord, ioffsetX, ioffsetY, itext) {
             var that = GMaps.Overlay._Base(imapobject, iid);
-            that.myID = iid;
             that._centerCoord = icentercoord;
             that._offsetX = ioffsetX;
             that._offsetY = ioffsetY;
             that._text = itext;
+            that._onClickHandler = null;
             DQX.ObjectMapper.Add(that);
+
+            that.setOnClick = function (handler) {
+                this._onClickHandler = handler;
+            }
 
             that.render = function () {
                 var ps0 = this.convCoordToPixels(this._centerCoord);
                 var ps1 = { x: ps0.x + this._offsetX, y: ps0.y + this._offsetY };
                 var bb = {};
                 bb.x0 = Math.min(ps0.x, ps1.x);
-                bb.y0 = Math.min(ps0.y, ps1.y);
-                bb.x1 = Math.max(ps0.x, ps1.x)+600;
-                bb.y1 = Math.max(ps0.y, ps1.y)+600;
+                bb.y0 = Math.min(ps0.y, ps1.y-20);
+                bb.x1 = Math.max(ps0.x, ps1.x);
+                bb.y1 = Math.max(ps0.y, ps1.y+20);
 
                 var dfx = ps1.x - ps0.x;
                 var dfy = ps1.y - ps0.y;
@@ -590,7 +655,7 @@ define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), DQXSC("lib/St
                 var wd = 3.0;
 
 
-                var data = "<svg>";
+                var data = '<svg style="">';
                 data += '<polygon points="{x1},{y1},{x2},{y2},{x3},{y3}" style="stroke-width: 2px; stroke: rgb(40,40,40); fill:rgb(40,40,40)"/>'.DQXformat({
                     x1: ps0.x - bb.x0,
                     y1: ps0.y - bb.y0,
@@ -600,13 +665,65 @@ define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), DQXSC("lib/St
                     y3: ps1.y + wd * drx - bb.y0
                 });
 
-                data += '<text x="{x}" y="{y}" fill="black">{txt}</text>'.DQXformat({ x: ps1.x-bb.x0, y: ps1.y-bb.y0, txt: this._text })
+
+                var hH = 9;
+
+                var txt = DocEl.Create('rect');
+                txt.addAttribute('x', ps1.x - bb.x0 - hH);
+                txt.addAttribute('y', ps1.y - bb.y0 - hH);
+                txt.addAttribute('width', 90);
+                txt.addAttribute('height', 2 * hH);
+                txt.addStyle("fill", "rgb(255,255,128)");
+                txt.addStyle("stroke", "black");
+                //txt.addStyle("fill-opacity", "0.7");
+                //txt.addStyle("stroke-opacity", "0.7");
+                //                stroke:pink;stroke-width:5;fill-opacity:0.1;stroke-opacity:0.9"/>
+
+                data += txt.toString();
+
+
+                var txt = DocEl.Create('text');
+                txt.addAttribute('y', ps1.y - bb.y0 + 5);
+                txt.addAttribute('font-size', '12');
+                txt.addAttribute('fill', 'black');
+                if (ps1.x < ps0.x) {
+                    txt.addAttribute('text-anchor', 'end');
+                    txt.addAttribute('x', ps1.x - bb.x0 + hH - 3);
+                } else {
+                    txt.addAttribute('x', ps1.x - bb.x0 - hH + 3);
+                }
+                txt.addElem(this._text);
+
+                data += txt.toString();
 
                 data += "</svg>";
                 this.myDiv.innerHTML = data;
+
+                var txt = this.myDiv.getElementsByTagName('text')[0];
+                var textLen = txt.getComputedTextLength();
+
+                var rc = this.myDiv.getElementsByTagName('rect')[0];
+                var recW = textLen + 10;
+                rc.width.baseVal.value = recW;
+
+                if (ps1.x < ps0.x) {
+                    txt.x.baseVal.value -= recW - 2 * hH;
+                    rc.x.baseVal.value -= recW - 2 * hH;
+                }
+
+                if (this._onClickHandler) {
+                    $(txt).click($.proxy(that._onClickHandler, that));
+                    $(rc).click($.proxy(that._onClickHandler, that));
+                }
+
+                bb.x0 = Math.min(bb.x0, ps1.x);
+                bb.x1 = Math.max(ps0.x, ps1.x+recW-hH);
+
+
                 return bb;
 
             }
+
 
             return that;
         }
@@ -671,6 +788,16 @@ define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), DQXSC("lib/St
             that.myMap = new google.maps.Map(document.getElementById(that.getDivID()), mapoptions);
             that.myMap.mapTypes.set('map_style_simple', styledMap);
             that.myMap.setMapTypeId('map_style_simple');
+
+/*            that.containerOverlay = new google.maps.OverlayView();
+            that.containerOverlay.setMap(that.myMap);
+            this.overlayDiv = document.createElement('div');
+            //this.overlayDiv.style.position = 'absolute';
+            this.overlayDiv.style.width = '100%';
+            this.overlayDiv.style.height = '100%';
+            var panes = that.containerOverlay.getPanes();
+            panes.overlayMouseTarget.appendChild(this.overlayDiv);*/
+
 
             that._myOverlays = [];
 
