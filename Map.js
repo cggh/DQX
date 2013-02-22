@@ -506,6 +506,7 @@ define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), DQXSC("lib/St
         GMaps._overlayIDNr = 0;
         GMaps.Overlay._Base = function (imapobject, iid, isSVG) {
             var that = new google.maps.OverlayView();
+
             that.myMapObject = imapobject;
             if (!iid) {
                 GMaps._overlayIDNr++;
@@ -536,7 +537,7 @@ define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), DQXSC("lib/St
             that.onAdd = function () {
                 this.myDiv = document.createElement('div');
                 this.myDiv.style.position = 'absolute';
-                this.myDiv.style.overflow= 'visible';
+                this.myDiv.style.overflow = 'visible';
                 //this.myDiv.style.pointerEvents = 'none';
                 var panes = this.getPanes();
                 panes.overlayMouseTarget.appendChild(this.myDiv);
@@ -639,13 +640,17 @@ define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), DQXSC("lib/St
             }
 
             that.render = function () {
+                //!!! This does not work properly on non-IE browsers
+                // Planned solution:
+                //  * Create arrow & label as separate overlays
+                //  * confine div boxes to precisely whats needed
                 var ps0 = this.convCoordToPixels(this._centerCoord);
                 var ps1 = { x: ps0.x + this._offsetX, y: ps0.y + this._offsetY };
                 var bb = {};
                 bb.x0 = Math.min(ps0.x, ps1.x);
-                bb.y0 = Math.min(ps0.y, ps1.y-20);
+                bb.y0 = Math.min(ps0.y, ps1.y - 20);
                 bb.x1 = Math.max(ps0.x, ps1.x);
-                bb.y1 = Math.max(ps0.y, ps1.y+20);
+                bb.y1 = Math.max(ps0.y, ps1.y + 20);
 
                 var dfx = ps1.x - ps0.x;
                 var dfy = ps1.y - ps0.y;
@@ -717,7 +722,7 @@ define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), DQXSC("lib/St
                 }
 
                 bb.x0 = Math.min(bb.x0, ps1.x);
-                bb.x1 = Math.max(ps0.x, ps1.x+recW-hH);
+                bb.x1 = Math.max(ps0.x, ps1.x + recW - hH);
 
 
                 return bb;
@@ -789,15 +794,30 @@ define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), DQXSC("lib/St
             that.myMap.mapTypes.set('map_style_simple', styledMap);
             that.myMap.setMapTypeId('map_style_simple');
 
-/*            that.containerOverlay = new google.maps.OverlayView();
+/*
+            //Create base overlay structure
+            that.containerOverlay = new google.maps.OverlayView();
             that.containerOverlay.setMap(that.myMap);
-            this.overlayDiv = document.createElement('div');
-            //this.overlayDiv.style.position = 'absolute';
-            this.overlayDiv.style.width = '100%';
-            this.overlayDiv.style.height = '100%';
-            var panes = that.containerOverlay.getPanes();
-            panes.overlayMouseTarget.appendChild(this.overlayDiv);*/
-
+            that.overlayDiv = document.createElement('div');
+            that.overlayDiv.style.position = 'absolute';
+            //that.overlayDiv.style.width = '3000px';
+            //that.overlayDiv.style.height = '3000px';
+            that.overlayDiv.style.backgroundColor = 'yellow';
+            //that.overlayDiv.style.display = 'none';
+            //that.overlayDiv.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" style="display:inline"> <circle cx="100" cy="50" r="40" stroke="black" stroke-width="2" fill="red"/></svg>';
+            that.containerOverlay.onAdd = function () {
+                var panes = that.containerOverlay.getPanes();
+                panes.overlayMouseTarget.appendChild(that.overlayDiv);
+            }
+            that.containerOverlay.draw = function (a, b, c) {
+                that.overlayDiv.style.left = '0px';
+                that.overlayDiv.style.top = '0px';
+                var w=$('#'+that.getDivID()).width();
+                var h = $('#' + that.getDivID()).width();
+                that.overlayDiv.style.width = w + 'px';
+                that.overlayDiv.style.height = h + 'px';
+            }
+*/
 
             that._myOverlays = [];
 
