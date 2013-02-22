@@ -58,7 +58,7 @@ define([DQXSCJQ(), DQXSC("SQL"), DQXSC("Utils"), DQXSC("DataDecoders")],
                 this.myParentIDList = [];
             }
 
-            this.AjaxResponse = function (resp) {
+            this.AjaxResponse = function (resp, success_callback) {
                 this.hasFetchFailed = false;
                 this._isFetching = false;
                 var vallistdecoder = DataDecoders.ValueListDecoder();
@@ -84,16 +84,34 @@ define([DQXSCJQ(), DQXSC("SQL"), DQXSC("Utils"), DQXSC("DataDecoders")],
                 this.myIDList = vallistdecoder.doDecode(keylist['IDs']);
                 this.myTypeList = vallistdecoder.doDecode(keylist['Types']);
                 this.myParentIDList = vallistdecoder.doDecode(keylist['ParentIDs']);
-                this.myDataConsumer.notifyDataReady();
+                if (success_callback) {
+                    var annots = [];
+                    for (var i = 0; i < this.myStartList.length; i++) {
+                        annots.push({
+                            start: this.myStartList[i],
+                            stop: this.myStopList[i],
+                            width: this.myStopList[i] - this.myStartList[i],
+                            name: this.myNameList[i],
+                            id: this.myIDList[i],
+                            type: this.myTypeList[i],
+                            parent: this.myParentIDList[i]
+                        });
+                    }
+                    success_callback(annots);
+                } else
+                    this.myDataConsumer.notifyDataReady();
             }
 
-            this._ajaxFailure = function (resp) {
+            this._ajaxFailure = function (resp, failure_callback) {
                 this.hasFetchFailed = true;
                 this._isFetching = false;
-                setTimeout($.proxy(this.myDataConsumer.notifyDataReady, this.myDataConsumer), DQX.timeoutRetry);
+                if (failure_callback)
+                    failure_callback(resp);
+                else
+                    setTimeout($.proxy(this.myDataConsumer.notifyDataReady, this.myDataConsumer), DQX.timeoutRetry);
             }
 
-            this._fetchRange = function (rangemin, rangemax) {
+            this._fetchRange = function (rangemin, rangemax, success_callback, failure_callback) {
                 if (!this._isFetching) {
                     range = Math.max(0, rangemax - rangemin) + 1;
                     rangemin -= range;
@@ -113,8 +131,8 @@ define([DQXSCJQ(), DQXSC("SQL"), DQXSC("Utils"), DQXSC("DataDecoders")],
                     var thethis = this;
                     $.ajax({
                         url: myurl.toString(),
-                        success: function (resp) { thethis.AjaxResponse(resp); },
-                        error: function (resp) { thethis._ajaxFailure(resp); }
+                        success: function (resp) { thethis.AjaxResponse(resp, success_callback); },
+                        error: function (resp) { thethis._ajaxFailure(resp, failure_callback); }
                     });
                 }
             }

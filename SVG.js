@@ -74,7 +74,89 @@ define([DQXSC("Utils")],
 
 
             return that;
-        }
+        };
+
+        SVG.translate = function(selection, x, y) {
+            selection.attr("transform", function(data, index) {
+                return "translate(" + (DQX.functor(x)(data, index)) + "," + DQX.functor(y)(data, index) + ")";
+            });
+        };
+
+        SVG.length = function(selection, attr, scale) {
+            selection.attr(attr, function(data, index) {
+                return scale(data[attr]) - scale(0);
+            });
+        };
+        SVG.clamp_scale = function(scale, min, max) {
+            var dom = scale.domain();
+            if (dom[0] <= min && dom[1] >= max)
+                scale.domain([min,max]);
+            else {
+                var dt = dom[1] - dom[0];
+                if (dom[0] < min) {
+                    dom[0] = min;
+                    dom[1] = dom[0] + dt;
+                    if (dom[1] > max)
+                        dom[1] = max;
+                }
+                if (dom[1] > max) {
+                    dom[1] = max;
+                    dom[0] = dom[1] - dt;
+                    if (dom[0] < min)
+                        dom[0] = min;
+                }
+                scale.domain(dom);
+            }
+        };
+        SVG.scale_min_width = function(scale, min_width) {
+            var dom = scale.domain();
+            var width = dom[1] - dom[0];
+            if (width < min_width){
+                dom[0] -= (min_width-width)/2;
+                dom[1] += (min_width-width)/2;
+                scale.domain(dom);
+            }
+        };
+        SVG.scale_integer_step = function(scale) {
+            var step = scale(1)-scale(0);
+            var dom = scale.domain();
+            var range = scale.range();
+            if (step > 1) {
+                step = Math.ceil(step);
+                scale.range([range[0], range[0]+(step*(dom[1]-dom[0]))]);
+            }
+        };
+
+        SVG.update_zoom = function(scale, zoom, min, max, canvas_left, canvas_right) {
+            var dom = scale.domain();
+            var new_scale = (max - min) / (dom[1] - dom[0]);
+            var unmoved_scale = d3.scale.linear().domain([min, max]).range([canvas_left, canvas_right]);
+            zoom.scale(new_scale).translate([canvas_left+(-unmoved_scale(dom[0])*new_scale),0]);
+        };
+        SVG.transition = function(selection, transition_time) {
+            return (transition_time > 0 ? selection.transition().duration(transition_time) : selection)
+        };
+        SVG.set_hue_light = function(obj, ref, alt, alt_color) {
+            var tot;
+            if (alt_color == null) alt_color = false;
+            tot = ref + alt;
+            if (alt_color) {
+                obj.light = Math.max(100 - (tot * 2.5), 75);
+            } else {
+                obj.light = Math.max(100 - (tot * 5), 50);
+            }
+            if (tot > 0) {
+                if (alt_color) {
+                    obj.hue = Math.round(118 - ((alt / tot) * 65));
+                } else {
+                    obj.hue = Math.round(231 + ((alt / tot) * 121));
+                }
+            } else {
+                obj.hue = 0;
+            }
+            return obj.col = "hsl(" + obj.hue + ", 100%, " + obj.light + "%)";
+        };
+
         return SVG;
     });
 

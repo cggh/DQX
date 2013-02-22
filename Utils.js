@@ -843,6 +843,41 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("DocEl")],
             return resp;
         }
 
-
+        ////////////////////////////////////////////////////////////////////////////////////
+        // Some functional programming helpers
+        ////////////////////////////////////////////////////////////////////////////////////
+        DQX.identity = function (x) {
+            return x;
+        };
+        DQX.return_arg = function(arg_number) {
+            return function() {
+                return arguments[arg_number];
+            }
+        }
+        DQX.functor = function(v) {
+            return typeof v === "function" ? v : function() {
+                return v;
+            };
+        };
+        DQX.chain = function() {
+            var args = arguments;
+            return function(v) {
+                var val = v;
+                for (var i = 0; i < args.length; i++) {
+                    val = args[i](val);
+                }
+                return val;
+            };
+        };
+        DQX.attr = function(v) {
+            return function(obj) {
+                return obj[v];
+            }
+        };
+        DQX.comp_attr = function(attr, comparator) {
+            return function(a,b) {
+                return comparator(a[attr], b[attr]);
+            }
+        };
         return DQX;
     });
