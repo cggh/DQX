@@ -522,10 +522,16 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eff6fc', end
 ** DQX Misc controls
 ******************************************************************************************/
 
+a:link, a:visited
+{
+	text-decoration:none;
+}
+
 .DQXHyperlink
 {
 	color:rgb(0,0,192);
 	cursor:pointer;
+	text-decoration:none;
 }
 
 .DQXLargeFlag

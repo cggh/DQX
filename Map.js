@@ -289,20 +289,19 @@ define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), DQXSC("lib/St
                     (function (iarg) {//closure because we need persistent counter
                         var pointnr = iarg;
                         var markerobject;
+                        var marerOptions = {
+                            position: new google.maps.LatLng(ipointset[pointnr].lattit, ipointset[pointnr].longit),
+                            map: obj.myMapObject.myMap,
+                            icon: obj.image
+                        }
+                        if (ipointset[pointnr].title)
+                            marerOptions.title = ipointset[pointnr].title;
                         if ('styleIcon' in ipointset[pointnr]) {
-                            markerobject = new StyledMarker.StyledMarker({
-                                styleIcon:new StyledMarker.StyledIcon(StyledMarker.StyledIconTypes.MARKER,ipointset[pointnr].styleIcon),
-                                position: new google.maps.LatLng(ipointset[pointnr].lattit, ipointset[pointnr].longit),
-                                map: obj.myMapObject.myMap
-                            });
+                            marerOptions.styleIcon = new StyledMarker.StyledIcon(StyledMarker.StyledIconTypes.MARKER, ipointset[pointnr].styleIcon);
+                            markerobject = new StyledMarker.StyledMarker(marerOptions);
                         }
                         else {
-                            markerobject= new google.maps.Marker(
-                                {
-                                    position: new google.maps.LatLng(ipointset[pointnr].lattit, ipointset[pointnr].longit),
-                                    map: obj.myMapObject.myMap,
-                                    icon: obj.image
-                                });
+                            markerobject = new google.maps.Marker(marerOptions);
 
                         }
                         if (obj.myPointSet[pointnr].location_type == 'country') {

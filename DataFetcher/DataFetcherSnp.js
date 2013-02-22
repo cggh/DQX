@@ -111,6 +111,7 @@ define([DQXSCJQ(), DQXSC("SQL"), DQXSC("Utils"), DQXSC("DataDecoders"), DQXSC("D
                 for (var i = 0; i < this._sequenceIDList.length; i++) {
                     this.mySeqs[this._sequenceIDList[i]] = DataFetcherSnp.SnpSequence(this._sequenceIDList[i]);
                 }
+                this._metaInfoPresent = true;
                 DQX.stopProcessing();
                 this._callOnCompleted();
             }
@@ -268,6 +269,7 @@ define([DQXSCJQ(), DQXSC("SQL"), DQXSC("Utils"), DQXSC("DataDecoders"), DQXSC("D
 
             //internal
             this._ajaxFailure_FetchRange = function (resp) {
+                alert('fetch error');
                 this.hasFetchFailed = true;
                 this._isFetching = false;
                 //tell the consumer of this that the data are 'ready'
@@ -311,12 +313,14 @@ define([DQXSCJQ(), DQXSC("SQL"), DQXSC("Utils"), DQXSC("DataDecoders"), DQXSC("D
                     myurl.addUrlQueryItem("folder", this.dataid);
                     myurl.addUrlQueryItem("snpinforeclen", this._recordLength);
                     myurl.addUrlQueryItem("filters", activeFilterMask);
+                    var urlString = myurl.toString();
+                    //                    alert(urlString);
 
 
                     this._isFetching = true;
                     var thethis = this;
                     $.ajax({
-                        url: myurl.toString(),
+                        url: urlString,
                         success: function (resp) { thethis._ajaxResponse_FetchRange(resp) },
                         error: function (resp) { thethis._ajaxFailure_FetchRange(resp) }
                     });
@@ -328,6 +332,8 @@ define([DQXSCJQ(), DQXSC("SQL"), DQXSC("Utils"), DQXSC("DataDecoders"), DQXSC("D
             this.IsDataReady = function (rangemin, rangemax) {
 
                 if (!this.dataid) return true; //don't fetch anything if the data source is not provided
+
+                if (!this._metaInfoPresent) return true;//don't fetch anything if the metainfo is not provided
 
                 if ((rangemin >= this._currentRangeMin) && (rangemax <= this._currentRangeMax)) {
                     var buffer = (rangemax - rangemin) / 2;

@@ -78,18 +78,22 @@
                 if (availabeH != this.lastAvailabeH) {
                     this.myTable.myPageSize = Math.max(1, Math.floor((availabeH - 70) / lineH));
                     this.myTable.render();
+                    var ctr = 0;
                     do {
                         var requiredH = this._getVerticalUserSize();
                         if (requiredH + lineH < availabeH)
                             this.myTable._onMoreLines();
+                        ctr++;
                     }
-                    while (requiredH + lineH < availabeH)
+                    while ((requiredH + lineH < availabeH) && (ctr < 5) && (requiredH > 0))
+                    var ctr = 0;
                     do {
                         var requiredH = this._getVerticalUserSize();
                         if (requiredH > availabeH)
                             this.myTable._onLessLines();
+                        ctr++;
                     }
-                    while (requiredH > availabeH)
+                    while ((requiredH > availabeH) && (ctr < 5) && (requiredH > 0));
                 }
                 this.lastAvailabeH = availabeH;
             }
@@ -107,6 +111,7 @@
             that.myName = iName;
             that.myCompID = iCompID;
             that.myComment = '';
+            that.minWidth = 10;
             that.TablePart = iTablePart;
             that._visible = true;
             that._hyperlinkCellMessageScope = null;
@@ -148,6 +153,10 @@
             //Modifies the visibility status of a column
             that.setVisible = function (newStatus) {
                 this._visible = newStatus;
+            }
+
+            that.setMinWidth = function (val) {
+                this.minWidth = val;
             }
 
             return that;
@@ -374,7 +383,9 @@
 
                 if (datacomplete && this._dataValid) {
                     var downloadlink = this.myDataFetcher.createDownloadUrl();
-                    $('#' + that.myBaseID + '_right').html('<a href=' + downloadlink + '><IMG class="DQXBitmapLink" SRC=' + DQXBMP('download.png') + ' border=0 title="Download this data as TAB-delimited file" ALT="Download"></a>');
+                    var downloadHtml = '<a href=' + downloadlink + '><IMG class="DQXBitmapLink" SRC=' + DQXBMP('download.png') + ' border=0 title="Download this data as TAB-delimited file" ALT="Download"></a>';
+                    var downloadHtml = '<a href=' + downloadlink + '><span class="DQXHyperlink">Download<br>table</span></a>';
+                    $('#' + that.myBaseID + '_right').html(downloadHtml);
                 }
                 else
                     $('#' + that.myBaseID + '_right').html('');
@@ -393,8 +404,8 @@
                     var thecol = this.myColumns[colnr];
                     if (thecol.isVisible()) {
                         var tbnr = thecol.TablePart;
-                        rs_table[tbnr] += '<th TITLE="{comment}"><div id="{theid}" class="DQXQueryTableHeaderText" style="position:relative;padding-right:15px;height:100%;">'
-                            .DQXformat({ comment: thecol.myComment, theid: (thecol.myCompID + '~headertext~' + this.myBaseID) });
+                        rs_table[tbnr] += '<th TITLE="{comment}"><div id="{theid}" class="DQXQueryTableHeaderText" style="position:relative;padding-right:15px;height:100%;min-width:{minw}px">'
+                            .DQXformat({ comment: thecol.myComment, theid: (thecol.myCompID + '~headertext~' + this.myBaseID), minw: thecol.minWidth });
                         rs_table[tbnr] += thecol.myName;
                         if (thecol.myName.indexOf('<br>') < 0)
                             rs_table[tbnr] += '<br>&nbsp;';

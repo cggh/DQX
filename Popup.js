@@ -12,6 +12,8 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls
     function ($, DQX, DocEl, Msg, Controls) {
         var Popup = {};
 
+        Popup.activePopupList = [];
+
         Popup._checkBackgroundBlockNeeded = function () {
             var blockingPopupsPresent = false;
             $('#DQXBackBlocker').find(".DQXFloatBox").each(function (index, Element) { blockingPopupsPresent = true; });
@@ -21,6 +23,9 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls
 
         //Closes a popup, providing the unique identifier that was returned by Popup.create
         DQX.ClosePopup = function (index) {
+            var posit = Popup.activePopupList.indexOf(index);
+            if ((posit < 0) && (_debg_)) DQX.reportError('Unable to find popup');
+            Popup.activePopupList.splice(posit, 1);
             $("#" + index).remove();
             DQX.unRegisterGlobalKeyDownReceiver(index);
             Popup._checkBackgroundBlockNeeded();
@@ -37,7 +42,7 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls
                 elem.find('.DQXPinBoxUnpinned').remove();
                 elem.find('.DQXPinBoxPinned').remove();
                 elem.append(Popup._createPinBox(ID, newStatus));
-                DQX.unRegisterGlobalKeyDownReceiver(ID);//should not receive global keyboard events anymore
+                DQX.unRegisterGlobalKeyDownReceiver(ID); //should not receive global keyboard events anymore
             }
         }
 
@@ -124,6 +129,13 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls
         Popup.closeIfNeeded = function (ID) {
             if (!Popup.isPinned(ID))
                 DQX.ClosePopup(ID);
+        }
+
+        //Automatically closes all unpinned (=blocking) popups
+        Popup.closeUnPinnedPopups = function () {
+            $.each(Popup.activePopupList, function (idx, popupID) {
+                Popup.closeIfNeeded(popupID);
+            });
         }
 
         Popup._createPinBox = function (ID, isPinned) {
@@ -228,6 +240,7 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls
                     if (ev.isEscape) DQX.ClosePopup(ID);
                 }, ID);
             }
+            Popup.activePopupList.push(ID);
             return ID;
         }
 
