@@ -136,25 +136,97 @@ define([DQXSC("Utils")],
         SVG.transition = function(selection, transition_time) {
             return (transition_time > 0 ? selection.transition().duration(transition_time) : selection)
         };
-        SVG.set_hue_light = function(obj, ref, alt, alt_color) {
-            var tot;
+        SVG.hue_to_rgb = function(m1, m2, hue) {
+            var v;
+            if (hue < 0)
+                hue += 1;
+            else if (hue > 1)
+                hue -= 1;
+
+            if (6 * hue < 1)
+                v = m1 + (m2 - m1) * hue * 6;
+            else if (2 * hue < 1)
+                v = m2;
+            else if (3 * hue < 2)
+                v = m1 + (m2 - m1) * (2/3 - hue) * 6;
+            else
+                v = m1;
+
+            return 255 * v;
+        }
+        SVG.hsl_to_rgb = function(h, s, l) {
+            var m1, m2, hue;
+            var r, g, b;
+            s /=100;
+            l /= 100;
+            if (s == 0)
+                r = g = b = (l * 255);
+            else {
+                if (l <= 0.5)
+                    m2 = l * (s + 1);
+                else
+                    m2 = l + s - l * s;
+                m1 = l * 2 - m2;
+                hue = h / 360;
+                r = SVG.hue_to_rgb(m1, m2, hue + 1/3);
+                g = SVG.hue_to_rgb(m1, m2, hue);
+                b = SVG.hue_to_rgb(m1, m2, hue - 1/3);
+            }
+            return {r: r, g: g, b: b};
+        };
+        SVG.genotype_rgb = function(ref, alt, alt_color) {
+            var tot, light, hue;
             if (alt_color == null) alt_color = false;
             tot = ref + alt;
             if (alt_color) {
-                obj.light = Math.max(100 - (tot * 2.5), 75);
+                light = Math.max(100 - (tot * 2.5), 75);
             } else {
-                obj.light = Math.max(100 - (tot * 5), 50);
+                light = Math.max(100 - (tot * 5), 50);
             }
             if (tot > 0) {
                 if (alt_color) {
-                    obj.hue = Math.round(118 - ((alt / tot) * 65));
+                    hue = Math.round(118 - ((alt / tot) * 65));
                 } else {
-                    obj.hue = Math.round(231 + ((alt / tot) * 121));
+                    hue = Math.round(231 + ((alt / tot) * 121));
                 }
             } else {
-                obj.hue = 0;
+                hue = 0;
             }
-            return obj.col = "hsl(" + obj.hue + ", 100%, " + obj.light + "%)";
+            return SVG.hsl_to_rgb(hue, 100, light);
+        };
+
+        var buffer = document.createElement('canvas');
+        buffer.height = 1;
+        var scaled_buffer = document.createElement('canvas');
+        scaled_buffer.height = 1;
+        SVG.data_uri_from_genotypes = function(genotypes) {
+            if (genotypes.length > 0) {
+                buffer.width = genotypes.length;
+                var c = buffer.getContext('2d');
+                var imageData = c.createImageData(buffer.width, buffer.height);
+                var data = imageData.data;
+                genotypes.forEach(function (genotype, i) {
+                    var index = i*4;
+                    var col = SVG.genotype_rgb(genotype.ref, genotype.alt);
+                    data[index] = col.r;
+                    data[index+1] = col.g;
+                    data[index+2] = col.b;
+                    data[index+3] = 255;
+
+                });
+                c.putImageData(imageData,0,0);
+                //Now we have to scale everything up due to a chrome bug.... https://bugs.webkit.org/show_bug.cgi?id=40881
+                scaled_buffer.width = genotypes.length*20;
+                c = scaled_buffer.getContext('2d');
+                c.webkitImageSmoothingEnabled = false;
+                c.mozImageSmoothingEnabled = false;
+                c.scale(20,1);
+                c.drawImage(buffer, 0, 0);
+                return scaled_buffer.toDataURL('image/png');
+            } else {
+                return "data:,"
+            }
+
         };
 
         return SVG;
