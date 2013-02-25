@@ -216,13 +216,13 @@ define([DQXSC("Utils")],
                 });
                 c.putImageData(imageData,0,0);
                 //Now we have to scale everything up due to a chrome bug.... https://bugs.webkit.org/show_bug.cgi?id=40881
-                scaled_buffer.width = genotypes.length*20;
-                c = scaled_buffer.getContext('2d');
-                c.webkitImageSmoothingEnabled = false;
-                c.mozImageSmoothingEnabled = false;
-                c.scale(20,1);
-                c.drawImage(buffer, 0, 0);
-                return scaled_buffer.toDataURL('image/png');
+//                scaled_buffer.width = genotypes.length*50;
+//                c = scaled_buffer.getContext('2d');
+//                c.webkitImageSmoothingEnabled = false;
+//                c.mozImageSmoothingEnabled = false;
+//                c.scale(50,1);
+//                c.drawImage(buffer, 0, 0);
+                return buffer.toDataURL('image/png');
             } else {
                 return "data:,"
             }
