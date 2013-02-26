@@ -139,6 +139,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
             that._parentFrame = null;
             that.myFrameID = iid;
             that.myDisplayTitle = '';
+            that._displayTitle2 = '';
             that.myType = itype;
             that.mySizeWeight = isizeweight;
             that.autoSizeY = false;
@@ -287,6 +288,13 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
             that.setDisplayTitle = function (ttle) {
                 DQX.checkIsString(ttle);
                 this.myDisplayTitle = ttle;
+                return this;
+            }
+
+            //Set a second title that will be visible right aligned in the frame title bar
+            that.setDisplayTitle2 = function (ttle) {
+                DQX.checkIsString(ttle);
+                this._displayTitle2 = ttle;
                 return this;
             }
 
@@ -528,7 +536,15 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
                         titlediv.setCssClass('DQXTitleBarRounded');
                     else
                         titlediv.setCssClass('DQXTitleBar');
-                    titlediv.addElem(this.myDisplayTitle);
+                    var leftTitle = DocEl.Span({ parent: titlediv });
+                    leftTitle.setCssClass("DQXTitleLeftPart");
+                    leftTitle.addElem(this.myDisplayTitle);
+                    if (this._displayTitle2) {
+                        var rightTitle = DocEl.Span({ parent: titlediv });
+                        rightTitle.setCssClass("DQXTitleBarRightInfo");
+                        rightTitle.addStyle("float", "right");
+                        rightTitle.addElem(this._displayTitle2);
+                    }
                 }
 
                 if (this.isSplitter()) {
@@ -1017,7 +1033,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
 
             //Sets a new display title (to be called runtime)
             that.modifyDisplayTitle = function (newtitle) {
-                $('#' + this.getVisibleTitleDivID()).text(newtitle);
+                $('#' + this.getVisibleTitleDivID()).find('.DQXTitleLeftPart').text(newtitle);
             }
 
             //Determines if a frame is currently visible (e.g. not hidden behind a tab)
@@ -1167,11 +1183,11 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
                 mp[this._myStateID] = null;
                 return mp;
             }
-            
+
             that.activateState = function () {//should be overriden
                 DQX.reportError('View does not implement activateState');
             }
-            
+
 
             that._initialisePanels = function () {
                 if (!that.createPanels)

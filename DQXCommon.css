@@ -794,7 +794,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7f7f7', end
 {
    font-size:20px;
    font-variant:small-caps;
-    color:rgb(255,250,170);
+   color:rgb(255,250,170);
  }
 
 .DQXTitleBarRounded
@@ -802,6 +802,15 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7f7f7', end
 	border-top-left-radius:12px;
 	border-top-right-radius:12px;
 }
+
+.DQXTitleBarRightInfo
+{
+    padding-left:7px;
+    font-weight:normal;
+    font-size:12px;
+    font-variant:normal;
+}
+
 
 .DQXFormControl
 {
@@ -861,7 +870,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7f7f7', end
 
 .DQXToolButton1, .DQXToolButton2, .DQXToolButton3
 {
-    margin:3px;
+    margin:6px;
     cursor:pointer;
     border:2px solid black;
     box-shadow: 2px 2px 6px rgba(0,0,0,0.45); 
