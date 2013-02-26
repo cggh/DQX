@@ -1166,6 +1166,9 @@ define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller"), DQXSC("Documentation")]
                 var target = 'mousedown.itemevent';
                 this.getJQElement('').unbind(target).bind(target, $.proxy(that._onChange, that));
 
+                var target = 'dblclick.itemevent';
+                this.getJQElement('').unbind(target).bind(target, $.proxy(that._onDoubleClick, that));
+
                 var target = 'change.itemevent';
                 this.getJQElement('').unbind(target).bind(target, $.proxy(that._onChangeCheck, that));
 
@@ -1185,6 +1188,17 @@ define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller"), DQXSC("Documentation")]
                     }
                 }
                 return rs;
+            }
+
+            that.setOnDoubleClick = function (handler) {
+                DQX.checkIsFunction(handler);
+                that._handleDoubleClick = handler;
+            }
+
+            that._onDoubleClick = function (ev) {
+                if (that._handleDoubleClick)
+                    that._handleDoubleClick();
+                return false;
             }
 
             that._onChangeCheck = function (ev) {
@@ -1214,6 +1228,7 @@ define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller"), DQXSC("Documentation")]
                         }
                     }
                 }
+                return false;
             }
 
             //returns the currently active item
