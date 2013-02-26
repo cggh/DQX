@@ -458,7 +458,7 @@ define([DQXSCJQ(), DQXSC("SQL"), DQXSC("Utils"), DQXSC("DataDecoders")],
                 if (this.showDownload)
                     DQX.stopProcessing();
                 var keylist = DQX.parseResponse(resp); //unpack the response
-                if ("Error" in keylist) {
+                if (keylist.Error) {
                     failHandler(keylist.Error);
                     return;
                 }

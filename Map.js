@@ -331,57 +331,61 @@ define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), DQXSC("lib/St
             that.setPoints = function (ipointset, showLabels) {
                 this.clearPoints();
                 this.myPointSet = ipointset;
-                for (var i = 0; i < ipointset.length; i++) {
-                    var obj = this;
-                    (function (iarg) {//closure because we need persistent counter
-                        var pointnr = iarg;
-                        var pointInfo = ipointset[pointnr];
-                        var markerObject = null;
-                        var markerOptions = {
-                            position: new google.maps.LatLng(pointInfo.lattit, pointInfo.longit),
-                            map: obj.myMapObject.myMap,
-                            icon: obj.image
-                        }
-                        if (pointInfo.title)
-                            markerOptions.title = pointInfo.title;
-                        if ('styleIcon' in pointInfo) {
-                            markerOptions.styleIcon = new StyledMarker.StyledIcon(StyledMarker.StyledIconTypes.MARKER, pointInfo.styleIcon);
-                            markerObject = new StyledMarker.StyledMarker(markerOptions);
-                        }
-                        if (pointInfo.labelName) {
-                            var labelColor = "ffffff";
-                            if (pointInfo.labelColor)
-                                labelColor = pointInfo.labelColor;
-                            //markerOptions.styleIcon = new StyledMarker.StyledIcon(StyledMarker.StyledIconTypes.BUBBLE, { color: labelColor, text: pointInfo.labelName });
-                            //markerObject = new StyledMarker.StyledMarker(markerOptions);
-                        }
-                        if (!markerObject)
-                            markerObject = new google.maps.Marker(markerOptions);
+                var obj = this;
+                $.each(this.myPointSet, function (idx, point) {
+                    point.markers = [];
+                });
+                if (!showLabels) {
+                    for (var i = 0; i < ipointset.length; i++) {
+                        (function (iarg) {//closure because we need persistent counter
+                            var pointnr = iarg;
+                            var pointInfo = ipointset[pointnr];
+                            var markerObject = null;
+                            var markerOptions = {
+                                position: new google.maps.LatLng(pointInfo.lattit, pointInfo.longit),
+                                map: obj.myMapObject.myMap,
+                                icon: obj.image
+                            }
+                            if (pointInfo.title)
+                                markerOptions.title = pointInfo.title;
+                            if ('styleIcon' in pointInfo) {
+                                markerOptions.styleIcon = new StyledMarker.StyledIcon(StyledMarker.StyledIconTypes.MARKER, pointInfo.styleIcon);
+                                markerObject = new StyledMarker.StyledMarker(markerOptions);
+                            }
+                            if (pointInfo.labelName) {
+                                var labelColor = "ffffff";
+                                if (pointInfo.labelColor)
+                                    labelColor = pointInfo.labelColor;
+                                //markerOptions.styleIcon = new StyledMarker.StyledIcon(StyledMarker.StyledIconTypes.BUBBLE, { color: labelColor, text: pointInfo.labelName });
+                                //markerObject = new StyledMarker.StyledMarker(markerOptions);
+                            }
+                            if (!markerObject)
+                                markerObject = new google.maps.Marker(markerOptions);
 
-                        if (obj.myPointSet[pointnr].location_type == 'country') {
-                            google_objs = GeoJSON(Countries.geo_json_by_fullname[obj.myPointSet[pointnr].given_name], obj.polygon_options);
-                            if (!google_objs[0].error) {
-                                obj.myPointSet[pointnr].markers = google_objs;
-                                for (var j = 0; j < google_objs.length; j++) {
-                                    google.maps.event.addListener(obj.myPointSet[pointnr].markers[j], 'click',
-                                   function () { obj._handleOnPointClicked(pointnr); });
+                            if (obj.myPointSet[pointnr].location_type == 'country') {
+                                google_objs = GeoJSON(Countries.geo_json_by_fullname[obj.myPointSet[pointnr].given_name], obj.polygon_options);
+                                if (!google_objs[0].error) {
+                                    obj.myPointSet[pointnr].markers = google_objs;
+                                    for (var j = 0; j < google_objs.length; j++) {
+                                        google.maps.event.addListener(obj.myPointSet[pointnr].markers[j], 'click',
+                                       function () { obj._handleOnPointClicked(pointnr); });
+                                    }
+                                } else {
+                                    console.log(obj.myPointSet[pointnr].given_name);
+                                    console.log(google_objs);
                                 }
+
                             } else {
-                                console.log(obj.myPointSet[pointnr].given_name);
-                                console.log(google_objs);
+                                if (markerObject != null) {
+                                    obj.myPointSet[pointnr].markers.push(markerObject);
+                                    google.maps.event.addListener(obj.myPointSet[pointnr].markers[0], 'click',
+                                        function () { obj._handleOnPointClicked(pointnr); }
+                                        );
+                                }
                             }
 
-                        } else {
-                            obj.myPointSet[pointnr].markers = [];
-                            if (markerObject != null) {
-                                obj.myPointSet[pointnr].markers.push(markerObject);
-                                google.maps.event.addListener(obj.myPointSet[pointnr].markers[0], 'click',
-                                    function () { obj._handleOnPointClicked(pointnr); }
-                                    );
-                            }
-                        }
-
-                    })(i);
+                        })(i);
+                    }
                 }
                 if (showLabels) {
                     var layouter = GMaps.MapItemLayouter(this.myMapObject, '');
@@ -390,22 +394,23 @@ define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), DQXSC("lib/St
                         layouter.addItem(pointInfo.longit, pointInfo.lattit, 150);
                     }
                     layouter.calculatePositions0();
-                    for (var i = 0; i < ipointset.length; i++) {
-                        var pointInfo = ipointset[i];
+                    $.each(this.myPointSet, function (i, pointInfo) {
                         var dx = layouter.items[i].dx;
                         var dy = layouter.items[i].dy;
                         if ((dx == 0) && (dy == 0)) {
                             dx = 1; dy = 1;
                         }
                         var rd = Math.sqrt(dx * dx + dy * dy);
-                        dx *= 15 / rd; dy *= 15 / rd;
-                        var label = GMaps.Overlay.Label(this.myMapObject, '', GMaps.Coord(layouter.items[i].longit, layouter.items[i].lattit), dx, -dy, pointInfo.labelName);
+                        dx *= 30 / rd; dy *= 30 / rd;
+                        var labelPointer = GMaps.Overlay.LabelArrow(obj.myMapObject, '', GMaps.Coord(layouter.items[i].longit, layouter.items[i].lattit), dx, -dy);
+                        var label = GMaps.Overlay.Label(obj.myMapObject, '', GMaps.Coord(layouter.items[i].longit, layouter.items[i].lattit), dx, -dy, pointInfo.labelName);
                         label.pointID = pointInfo.id;
                         label.setOnClick(function () {
                             Msg.broadcast({ type: 'ClickMapPoint', id: that.myID }, this.pointID);
                         });
-                        obj.myPointSet[i].markers.push(label);
-                    }
+                        pointInfo.markers.push(labelPointer);
+                        pointInfo.markers.push(label);
+                    });
 
                 }
                 this._updateVisible();
@@ -626,42 +631,34 @@ define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), DQXSC("lib/St
             return that;
         }
 
-        GMaps.Overlay.Label = function (imapobject, iid, icentercoord, ioffsetX, ioffsetY, itext) {
+
+        //////////////////////////////////////////////////////////////////////////////////////////
+        // 
+        //////////////////////////////////////////////////////////////////////////////////////////
+
+        GMaps.Overlay.LabelArrow = function (imapobject, iid, icentercoord, ioffsetX, ioffsetY) {
             var that = GMaps.Overlay._Base(imapobject, iid);
             that._centerCoord = icentercoord;
             that._offsetX = ioffsetX;
             that._offsetY = ioffsetY;
-            that._text = itext;
-            that._onClickHandler = null;
-            DQX.ObjectMapper.Add(that);
-
-            that.setOnClick = function (handler) {
-                this._onClickHandler = handler;
-            }
 
             that.render = function () {
-                //!!! This does not work properly on non-IE browsers
-                // Planned solution:
-                //  * Create arrow & label as separate overlays
-                //  * confine div boxes to precisely whats needed
+                var wd = 3.0;
                 var ps0 = this.convCoordToPixels(this._centerCoord);
                 var ps1 = { x: ps0.x + this._offsetX, y: ps0.y + this._offsetY };
                 var bb = {};
-                bb.x0 = Math.min(ps0.x, ps1.x);
-                bb.y0 = Math.min(ps0.y, ps1.y - 20);
-                bb.x1 = Math.max(ps0.x, ps1.x);
-                bb.y1 = Math.max(ps0.y, ps1.y + 20);
+                bb.x0 = Math.min(ps0.x, ps1.x) - wd;
+                bb.y0 = Math.min(ps0.y, ps1.y) - wd;
+                bb.x1 = Math.max(ps0.x, ps1.x) + wd;
+                bb.y1 = Math.max(ps0.y, ps1.y) + wd;
 
                 var dfx = ps1.x - ps0.x;
                 var dfy = ps1.y - ps0.y;
                 var dst = Math.sqrt(dfx * dfx + dfy * dfy);
                 var drx = dfx / dst;
                 var dry = dfy / dst;
-                var wd = 3.0;
-
 
                 var data = '<svg style="">';
-/*
                 data += '<polygon points="{x1},{y1},{x2},{y2},{x3},{y3}" style="stroke-width: 2px; stroke: rgb(40,40,40); fill:rgb(40,40,40)"/>'.DQXformat({
                     x1: ps0.x - bb.x0,
                     y1: ps0.y - bb.y0,
@@ -670,66 +667,85 @@ define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), DQXSC("lib/St
                     x3: ps1.x - wd * dry - bb.x0,
                     y3: ps1.y + wd * drx - bb.y0
                 });
-*/
-
-                var hH = 9;
-
-                var txt = DocEl.Create('rect');
-                txt.addAttribute('x', ps1.x - bb.x0 - hH);
-                txt.addAttribute('y', ps1.y - bb.y0 - hH);
-                txt.addAttribute('width', 90);
-                txt.addAttribute('height', 2 * hH);
-                txt.addStyle("fill", "rgb(255,255,128)");
-                txt.addStyle("stroke", "black");
-                txt.addStyle("fill-opacity", "0.7");
-                txt.addStyle("stroke-opacity", "0.7");
-                //                stroke:pink;stroke-width:5;fill-opacity:0.1;stroke-opacity:0.9"/>
-
-                data += txt.toString();
-
-
-                var txt = DocEl.Create('text');
-                txt.addAttribute('y', ps1.y - bb.y0 + 5);
-                txt.addAttribute('font-size', '12');
-                txt.addAttribute('fill', 'black');
-                if (ps1.x < ps0.x) {
-                    txt.addAttribute('text-anchor', 'end');
-                    txt.addAttribute('x', ps1.x - bb.x0 + hH - 3);
-                } else {
-                    txt.addAttribute('x', ps1.x - bb.x0 - hH + 3);
-                }
-                txt.addElem(this._text);
-
-                data += txt.toString();
 
                 data += "</svg>";
                 this.myDiv.innerHTML = data;
-
-                var txt = this.myDiv.getElementsByTagName('text')[0];
-                var textLen = txt.getComputedTextLength();
-
-                var rc = this.myDiv.getElementsByTagName('rect')[0];
-                var recW = textLen + 10;
-                rc.width.baseVal.value = recW;
-
-                if (ps1.x < ps0.x) {
-                    txt.x.baseVal.value -= recW - 2 * hH;
-                    rc.x.baseVal.value -= recW - 2 * hH;
-                }
-
-                if (this._onClickHandler) {
-                    $(txt).click($.proxy(that._onClickHandler, that));
-                    $(rc).click($.proxy(that._onClickHandler, that));
-                }
-
-                bb.x0 = Math.min(bb.x0, ps1.x);
-                bb.x1 = Math.max(ps0.x, ps1.x + recW - hH);
-
-
                 return bb;
-
             }
 
+            return that;
+        }
+
+
+        //////////////////////////////////////////////////////////////////////////////////////////
+        // 
+        //////////////////////////////////////////////////////////////////////////////////////////
+
+        GMaps.Overlay.Label = function (imapobject, iid, icentercoord, ioffsetX, ioffsetY, itext) {
+            var that = GMaps.Overlay._Base(imapobject, iid);
+            that._centerCoord = icentercoord;
+            that._offsetX = ioffsetX;
+            that._offsetY = ioffsetY;
+            that._text = itext;
+            that._onClickHandler = null;
+
+            that.setOnClick = function (handler) {
+                this._onClickHandler = handler;
+            }
+
+            that.render = function () {
+                var ps0 = this.convCoordToPixels(this._centerCoord);
+                var ps1 = { x: Math.round(ps0.x + this._offsetX), y: Math.round(ps0.y + this._offsetY) };
+                var halfHeight = 9;
+
+                var data = '<svg style="">';
+
+                data += '<defs><linearGradient id="grad1" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:rgb(255,255,80);stop-opacity:1" /><stop offset="100%" style="stop-color:rgb(255,192,0);stop-opacity:1" /></linearGradient></defs>';
+                var txt = DocEl.Create('rect');
+                txt.addAttribute('x', 1);
+                txt.addAttribute('y', 1);
+                txt.addAttribute('width', 90);
+                txt.addAttribute('height', 2 * halfHeight);
+                txt.addStyle("fill", "url(#grad1)");
+                txt.addStyle("stroke-width", "1");
+                txt.addStyle("stroke", "rgb(0,0,0)");
+                txt.addStyle("shape-rendering", "crispEdges");
+                //txt.addStyle("fill-opacity", "0.7");
+                //txt.addStyle("stroke-opacity", "0.7");
+                data += txt.toString();
+                var txt = DocEl.Create('text');
+                txt.addAttribute('x', 5);
+                txt.addAttribute('y', 2 * halfHeight - 4);
+                txt.addAttribute('font-size', '12');
+                txt.addAttribute('font-weight', 'bold');
+                txt.addAttribute('fill', 'black');
+                txt.addElem(this._text);
+                data += txt.toString();
+                data += "</svg>";
+                this.myDiv.innerHTML = data;
+
+                var txtElem = this.myDiv.getElementsByTagName('text')[0];
+                var textLen = txtElem.getComputedTextLength();
+
+                var rcElem = this.myDiv.getElementsByTagName('rect')[0];
+                var recW = textLen + 10;
+                rcElem.width.baseVal.value = recW;
+
+                if (this._onClickHandler) {
+                    $(txtElem).click($.proxy(that._onClickHandler, that));
+                    $(rcElem).click($.proxy(that._onClickHandler, that));
+                }
+
+                var bb = {};
+                if (ps1.x >= ps0.x)
+                    bb.x0 = ps1.x - 1 - halfHeight;
+                else
+                    bb.x0 = ps1.x - 1 - recW + halfHeight;
+                bb.x1 = bb.x0 + recW + 2;
+                bb.y0 = ps1.y - halfHeight - 1;
+                bb.y1 = bb.y0 + 2 * halfHeight + 2;
+                return bb;
+            }
 
             return that;
         }
@@ -795,7 +811,7 @@ define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), DQXSC("lib/St
             that.myMap.mapTypes.set('map_style_simple', styledMap);
             that.myMap.setMapTypeId('map_style_simple');
 
-/*
+            /*
             //Create base overlay structure
             that.containerOverlay = new google.maps.OverlayView();
             that.containerOverlay.setMap(that.myMap);
@@ -807,18 +823,18 @@ define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), DQXSC("lib/St
             //that.overlayDiv.style.display = 'none';
             //that.overlayDiv.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" style="display:inline"> <circle cx="100" cy="50" r="40" stroke="black" stroke-width="2" fill="red"/></svg>';
             that.containerOverlay.onAdd = function () {
-                var panes = that.containerOverlay.getPanes();
-                panes.overlayMouseTarget.appendChild(that.overlayDiv);
+            var panes = that.containerOverlay.getPanes();
+            panes.overlayMouseTarget.appendChild(that.overlayDiv);
             }
             that.containerOverlay.draw = function (a, b, c) {
-                that.overlayDiv.style.left = '0px';
-                that.overlayDiv.style.top = '0px';
-                var w=$('#'+that.getDivID()).width();
-                var h = $('#' + that.getDivID()).width();
-                that.overlayDiv.style.width = w + 'px';
-                that.overlayDiv.style.height = h + 'px';
+            that.overlayDiv.style.left = '0px';
+            that.overlayDiv.style.top = '0px';
+            var w=$('#'+that.getDivID()).width();
+            var h = $('#' + that.getDivID()).width();
+            that.overlayDiv.style.width = w + 'px';
+            that.overlayDiv.style.height = h + 'px';
             }
-*/
+            */
 
             that._myOverlays = [];
 
