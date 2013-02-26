@@ -12,6 +12,13 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("DocEl")],
         //Inject DQX into the global namespace so that click handlers can find it
         DQX = {};
 
+        DQX._globalUniqueID = 0;
+
+        DQX.getNextUniqueID = function () {
+            DQX._globalUniqueID++;
+            return 'UID' + DQX._globalUniqueID;
+        }
+
         DQX.reportError = function (txt) {
             alert("ERROR: " + txt);
             throw txt;
@@ -559,7 +566,7 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("DocEl")],
 
             $(document).keydown(DQX._handleKeyDown);
 
-//            window.onerror = DQX._onError;
+            //            window.onerror = DQX._onError;
         }
 
         //Returns a html string that contains a link to a help document
@@ -853,19 +860,19 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("DocEl")],
         DQX.identity = function (x) {
             return x;
         };
-        DQX.return_arg = function(arg_number) {
-            return function() {
+        DQX.return_arg = function (arg_number) {
+            return function () {
                 return arguments[arg_number];
             }
         }
-        DQX.functor = function(v) {
-            return typeof v === "function" ? v : function() {
+        DQX.functor = function (v) {
+            return typeof v === "function" ? v : function () {
                 return v;
             };
         };
-        DQX.chain = function() {
+        DQX.chain = function () {
             var args = arguments;
-            return function(v) {
+            return function (v) {
                 var val = v;
                 for (var i = 0; i < args.length; i++) {
                     val = args[i](val);
@@ -873,13 +880,13 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("DocEl")],
                 return val;
             };
         };
-        DQX.attr = function(v) {
-            return function(obj) {
+        DQX.attr = function (v) {
+            return function (obj) {
                 return obj[v];
             }
         };
-        DQX.comp_attr = function(attr, comparator) {
-            return function(a,b) {
+        DQX.comp_attr = function (attr, comparator) {
+            return function (a, b) {
                 return comparator(a[attr], b[attr]);
             }
         };

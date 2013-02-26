@@ -920,7 +920,7 @@ define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller"), DQXSC("Documentation")]
                 that._vertShift = args.vertShift;
 
             that._execRenderHtml = function () {
-                var st = '<a id=' + this.getFullID('') + ' class="DQXHyperlink">';
+                var st = '<a id={id} TITLE="{desc2}" class="DQXHyperlink">'.DQXformat({ id: this.getFullID(''), desc2: that._hint });
                 if (this.myBitmap) {
                     var s = '<IMG SRC="' + this.myBitmap + '" border=0 class="DQXBitmapLink" ALT="{desc1}" TITLE="{desc2}">';
                     s = s.DQXformat(
