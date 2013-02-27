@@ -890,5 +890,60 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("DocEl")],
                 return comparator(a[attr], b[attr]);
             }
         };
+        DQX.ratelimit = function (fn, delay) {
+            var last = (new Date()).getTime();
+            var timer = null;
+            return (function(arg) {
+                var now = (new Date()).getTime();
+                if (now - last > delay) {
+                    last = now;
+                    clearTimeout(timer);
+                    fn(arg);
+                }
+                else {
+                    clearTimeout(timer);
+                    timer = setTimeout(function () {
+                        fn(arg);
+                    }, delay+(delay *.15));
+                }
+            });
+        };
+        DQX.canvas_disable_smoothing = function(ctx) {
+            ctx.webkitImageSmoothingEnabled = false;
+            ctx.mozImageSmoothingEnabled = false;
+            ctx.imageSmoothingEnabled = false;
+        };
+        DQX.canvas_smooth_scaling_only = function () {
+            if (DQX._canvas_smooth_scaling_only == undefined) {
+                var buffer1 = document.createElement('canvas');
+                //Draw two pixels - one black, one white
+                buffer1.width = 2;
+                buffer1.height = 1;
+                var ctx = buffer1.getContext('2d');
+                var imageData = ctx.createImageData(buffer1.width, buffer1.height);
+                var data = imageData.data;
+                [255,255,255,255,0,0,0,255].forEach( function(val,i) {
+                    data[i] = val;
+                });
+                ctx.putImageData(imageData,0,0);
+                //Now draw those two pixels stretched onto 3...
+                var buffer2 = document.createElement('canvas');
+                buffer2.width = 3;
+                buffer2.height = 1;
+                ctx = buffer2.getContext('2d');
+                //Set the transform matrix to stretch
+                ctx.setTransform(buffer2.width/buffer1.width, 0, 0, 1, 0, 0);
+                //Do our best to turn off smoothing
+                DQX.canvas_disable_smoothing(ctx);
+                //Draw the two pixels streched
+                ctx.drawImage(buffer1,0,0);
+                data = ctx.getImageData(0,0,buffer2.width,buffer2.height).data;
+                //Pixel must not be grey!
+                var pixel = data[5]+data[6]+data[7];
+                DQX._canvas_smooth_scaling_only = !(pixel == 255*3 || pixel == 0);
+            }
+            return DQX._canvas_smooth_scaling_only;
+
+        };
         return DQX;
     });
