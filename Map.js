@@ -644,7 +644,7 @@ define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), DQXSC("lib/St
 
             that.render = function () {
                 var ps0 = this.convCoordToPixels(this._centerCoord, 8);
-                var scaleFactor1 = ps0.dist;
+                var scaleFactor1 = 0.75*ps0.dist;
                 var scaleFactor2 = Math.sqrt(scaleFactor1);
                 var ps1 = { x: ps0.x + this._offsetX, y: ps0.y + this._offsetY };
                 var bb = {};
@@ -704,8 +704,8 @@ define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), DQXSC("lib/St
                 var scaleFactor1 = ps0.dist;
                 var scaleFactor2 = Math.sqrt(scaleFactor1);
                 var halfHeight = Math.max(4, Math.min(9, Math.round(9 * scaleFactor2)));
-                var opacity1 = Math.min(1, scaleFactor2);
-                var opacity2 = Math.min(1, scaleFactor2);
+                var opacity1 = Math.min(1, scaleFactor1);
+                var opacity2 = Math.min(1, scaleFactor1);
                 if (mouseTargetOnly) {
                     opacity1 = 0;
                     opacity2 = 0;
