@@ -25,7 +25,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelCanva
             that.setTitle('Sequence');
 
 
-            that.myfetcher = new DataFetcherSummary.Fetcher(serverurl, 1, 1200);
+            that.myfetcher = new DataFetcherSummary.Fetcher(serverurl, 1, 800);
             //that.myfetcher.maxBlockSize = 1;
             that.mycol = that.myfetcher.addFetchColumn(that.myFolder, that.myConfig, "Base_avg", DQX.Color(1, 0, 0));
             that.myfetcher.activateFetchColumn(that.mycol.myID);

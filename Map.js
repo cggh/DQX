@@ -61,22 +61,6 @@ define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), DQXSC("lib/St
                     item.dy = 0;
                 }
 
-                //Calculate average distance
-                var avDst = 0;
-                var dstCnt = 0;
-                for (var i1 = 0; i1 < this.items.length; i1++) {
-                    var item1 = this.items[i1];
-                    for (var i2 = 0; i2 < this.items.length; i2++) if (i1 != i2) {
-                        var item2 = this.items[i2];
-                        var dfx = item2.x0 - item1.x0;
-                        var dfy = item2.y0 - item1.y0;
-                        var dst = Math.sqrt(dfx * dfx + dfy * dfy);
-                        avDst += dst;
-                        dstCnt++;
-                    }
-                }
-                avDst /= dstCnt;
-
                 for (var iter = 0; iter < 50; iter++) {
                     for (var i1 = 0; i1 < this.items.length; i1++) {
                         var item1 = this.items[i1];
@@ -87,7 +71,7 @@ define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), DQXSC("lib/St
                             var dfx = (item2.x0 + item2.dx) - (item1.x0 + item1.dx);
                             var dfy = (item2.y0 + item2.dy) - (item1.y0 + item1.dy);
                             var dst = Math.sqrt(dfx * dfx + dfy * dfy);
-                            var dst2 = 0.01 + dst / avDst;
+                            dst2 = Math.max(0.5, dst / 50);
                             dfx /= dst; dfy /= dst;
                             var shiftsize = 0.5 / (dst2 * dst2);
                             shiftx += -dfx * shiftsize;
@@ -280,12 +264,19 @@ define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), DQXSC("lib/St
         // Class displaying a set of points
         //////////////////////////////////////////////////////////////////////////////////////////
 
-        GMaps.PointSet = function (iid, imapobject, iminzoomlevel, bitmapfile, polygon_options) {
+        GMaps.PointSet = function (iid, imapobject, iminzoomlevel, bitmapfile, displayOptions) {
             var that = {};
+
+            if (!displayOptions) {
+                displayOptions = {
+                    showMarkers: true,
+                    polygonOptions: null
+                };
+            }
 
             that.myID = iid;
             that.myMapObject = imapobject;
-            that.polygon_options = polygon_options;
+            that.displayOptions = displayOptions;
             that.minZoomlevel = iminzoomlevel;
             that.myMapObject._addOverlay(that);
             that.myPointSet = [];
@@ -328,14 +319,44 @@ define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), DQXSC("lib/St
                 }
             }
 
-            that.setPoints = function (ipointset, showLabels) {
+            that.setPoints = function (ipointset) {
                 this.clearPoints();
                 this.myPointSet = ipointset;
                 var obj = this;
                 $.each(this.myPointSet, function (idx, point) {
                     point.markers = [];
                 });
-                if (!showLabels) {
+
+                if (this.displayOptions.showLabels) {
+                    var layouter = GMaps.MapItemLayouter(this.myMapObject, '');
+                    for (var i = 0; i < ipointset.length; i++) {
+                        var pointInfo = ipointset[i];
+                        layouter.addItem(pointInfo.longit, pointInfo.lattit, 150);
+                    }
+                    layouter.calculatePositions0();
+                    $.each(this.myPointSet, function (i, pointInfo) {
+                        var dx = layouter.items[i].dx;
+                        var dy = layouter.items[i].dy;
+                        if ((dx == 0) && (dy == 0)) {
+                            dx = 1; dy = 1;
+                        }
+                        var rd = Math.sqrt(dx * dx + dy * dy);
+                        dx *= 30 / rd; dy *= 30 / rd;
+                        var labelPointer = GMaps.Overlay.LabelArrow(obj.myMapObject, '', GMaps.Coord(layouter.items[i].longit, layouter.items[i].lattit), dx, -dy);
+                        //we create two labels, one visible in the overlay layer, and one invisible in the mousetarget layer
+                        var label1 = GMaps.Overlay.Label(obj.myMapObject, '', GMaps.Coord(layouter.items[i].longit, layouter.items[i].lattit), dx, -dy, pointInfo.labelName, false);
+                        var label2 = GMaps.Overlay.Label(obj.myMapObject, '', GMaps.Coord(layouter.items[i].longit, layouter.items[i].lattit), dx, -dy, pointInfo.labelName, true);
+                        label2.pointID = pointInfo.id;
+                        label2.setOnClick(function () {
+                            Msg.broadcast({ type: 'ClickMapPoint', id: that.myID }, this.pointID);
+                        });
+                        pointInfo.markers.push(labelPointer);
+                        pointInfo.markers.push(label1);
+                        pointInfo.markers.push(label2);
+                    });
+                }
+
+                if (this.displayOptions.showMarkers) {
                     for (var i = 0; i < ipointset.length; i++) {
                         (function (iarg) {//closure because we need persistent counter
                             var pointnr = iarg;
@@ -378,40 +399,16 @@ define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), DQXSC("lib/St
                             } else {
                                 if (markerObject != null) {
                                     obj.myPointSet[pointnr].markers.push(markerObject);
-                                    google.maps.event.addListener(obj.myPointSet[pointnr].markers[0], 'click',
-                                        function () { obj._handleOnPointClicked(pointnr); }
+                                    google.maps.event.addListener(markerObject, 'click',
+                                        function () {
+                                            obj._handleOnPointClicked(pointnr);
+                                        }
                                         );
                                 }
                             }
 
                         })(i);
                     }
-                }
-                if (showLabels) {
-                    var layouter = GMaps.MapItemLayouter(this.myMapObject, '');
-                    for (var i = 0; i < ipointset.length; i++) {
-                        var pointInfo = ipointset[i];
-                        layouter.addItem(pointInfo.longit, pointInfo.lattit, 150);
-                    }
-                    layouter.calculatePositions0();
-                    $.each(this.myPointSet, function (i, pointInfo) {
-                        var dx = layouter.items[i].dx;
-                        var dy = layouter.items[i].dy;
-                        if ((dx == 0) && (dy == 0)) {
-                            dx = 1; dy = 1;
-                        }
-                        var rd = Math.sqrt(dx * dx + dy * dy);
-                        dx *= 30 / rd; dy *= 30 / rd;
-                        var labelPointer = GMaps.Overlay.LabelArrow(obj.myMapObject, '', GMaps.Coord(layouter.items[i].longit, layouter.items[i].lattit), dx, -dy);
-                        var label = GMaps.Overlay.Label(obj.myMapObject, '', GMaps.Coord(layouter.items[i].longit, layouter.items[i].lattit), dx, -dy, pointInfo.labelName);
-                        label.pointID = pointInfo.id;
-                        label.setOnClick(function () {
-                            Msg.broadcast({ type: 'ClickMapPoint', id: that.myID }, this.pointID);
-                        });
-                        pointInfo.markers.push(labelPointer);
-                        pointInfo.markers.push(label);
-                    });
-
                 }
                 this._updateVisible();
             }
@@ -509,7 +506,7 @@ define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), DQXSC("lib/St
 
         GMaps.Overlay = {};
         GMaps._overlayIDNr = 0;
-        GMaps.Overlay._Base = function (imapobject, iid, isSVG) {
+        GMaps.Overlay._Base = function (imapobject, iid, inOverlayLayer) {
             var that = new google.maps.OverlayView();
 
             that.myMapObject = imapobject;
@@ -543,11 +540,14 @@ define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), DQXSC("lib/St
                 this.myDiv = document.createElement('div');
                 this.myDiv.style.position = 'absolute';
                 this.myDiv.style.overflow = 'visible';
-                //this.myDiv.style.pointerEvents = 'none';
                 var panes = this.getPanes();
-                panes.overlayMouseTarget.appendChild(this.myDiv);
-
-                google.maps.event.addDomListener(this.myDiv, 'mouseover', function () { $(this).css('cursor', 'pointer'); });
+                if (inOverlayLayer) {
+                    panes.overlayLayer.appendChild(this.myDiv);
+                }
+                else {
+                    panes.overlayMouseTarget.appendChild(this.myDiv);
+                    google.maps.event.addDomListener(this.myDiv, 'mouseover', function () { $(that.myDiv).css('cursor', 'pointer'); });
+                }
             }
 
             that.draw = function () {
@@ -637,16 +637,19 @@ define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), DQXSC("lib/St
         //////////////////////////////////////////////////////////////////////////////////////////
 
         GMaps.Overlay.LabelArrow = function (imapobject, iid, icentercoord, ioffsetX, ioffsetY) {
-            var that = GMaps.Overlay._Base(imapobject, iid);
+            var that = GMaps.Overlay._Base(imapobject, iid, true);
             that._centerCoord = icentercoord;
             that._offsetX = ioffsetX;
             that._offsetY = ioffsetY;
 
             that.render = function () {
-                var wd = 3.0;
-                var ps0 = this.convCoordToPixels(this._centerCoord);
+                var ps0 = this.convCoordToPixels(this._centerCoord, 8);
+                var scaleFactor1 = ps0.dist;
+                var scaleFactor2 = Math.sqrt(scaleFactor1);
                 var ps1 = { x: ps0.x + this._offsetX, y: ps0.y + this._offsetY };
                 var bb = {};
+                var wd = Math.max(1, Math.min(4, Math.round(4 * scaleFactor2))); ;
+                var opacity = Math.max(0, Math.min(1, scaleFactor2));
                 bb.x0 = Math.min(ps0.x, ps1.x) - wd;
                 bb.y0 = Math.min(ps0.y, ps1.y) - wd;
                 bb.x1 = Math.max(ps0.x, ps1.x) + wd;
@@ -658,14 +661,15 @@ define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), DQXSC("lib/St
                 var drx = dfx / dst;
                 var dry = dfy / dst;
 
-                var data = '<svg style="">';
-                data += '<polygon points="{x1},{y1},{x2},{y2},{x3},{y3}" style="stroke-width: 2px; stroke: rgb(40,40,40); fill:rgb(40,40,40)"/>'.DQXformat({
+                var data = '<svg width={w} height={h}>'.DQXformat({ w: (bb.x1 - bb.x0), h: (bb.y1 - bb.y0) });
+                data += '<polygon points="{x1},{y1},{x2},{y2},{x3},{y3}" style="stroke-width: 2px; fill:rgb(40,40,40); fill-opacity:{op};"/>'.DQXformat({
                     x1: ps0.x - bb.x0,
                     y1: ps0.y - bb.y0,
                     x2: ps1.x + wd * dry - bb.x0,
                     y2: ps1.y - wd * drx - bb.y0,
                     x3: ps1.x - wd * dry - bb.x0,
-                    y3: ps1.y + wd * drx - bb.y0
+                    y3: ps1.y + wd * drx - bb.y0,
+                    op: opacity.toFixed(3)
                 });
 
                 data += "</svg>";
@@ -681,8 +685,8 @@ define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), DQXSC("lib/St
         // 
         //////////////////////////////////////////////////////////////////////////////////////////
 
-        GMaps.Overlay.Label = function (imapobject, iid, icentercoord, ioffsetX, ioffsetY, itext) {
-            var that = GMaps.Overlay._Base(imapobject, iid);
+        GMaps.Overlay.Label = function (imapobject, iid, icentercoord, ioffsetX, ioffsetY, itext, mouseTargetOnly) {
+            var that = GMaps.Overlay._Base(imapobject, iid, !mouseTargetOnly);
             that._centerCoord = icentercoord;
             that._offsetX = ioffsetX;
             that._offsetY = ioffsetY;
@@ -694,46 +698,64 @@ define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), DQXSC("lib/St
             }
 
             that.render = function () {
-                var ps0 = this.convCoordToPixels(this._centerCoord);
+                var ps0 = this.convCoordToPixels(this._centerCoord, 8);
                 var ps1 = { x: Math.round(ps0.x + this._offsetX), y: Math.round(ps0.y + this._offsetY) };
-                var halfHeight = 9;
 
-                var data = '<svg style="">';
+                var scaleFactor1 = ps0.dist;
+                var scaleFactor2 = Math.sqrt(scaleFactor1);
+                var halfHeight = Math.max(4, Math.min(9, Math.round(9 * scaleFactor2)));
+                var opacity1 = Math.min(1, scaleFactor2);
+                var opacity2 = Math.min(1, scaleFactor2);
+                if (mouseTargetOnly) {
+                    opacity1 = 0;
+                    opacity2 = 0;
+                }
 
-                data += '<defs><linearGradient id="grad1" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:rgb(255,255,80);stop-opacity:1" /><stop offset="100%" style="stop-color:rgb(255,192,0);stop-opacity:1" /></linearGradient></defs>';
-                var txt = DocEl.Create('rect');
-                txt.addAttribute('x', 1);
-                txt.addAttribute('y', 1);
-                txt.addAttribute('width', 90);
-                txt.addAttribute('height', 2 * halfHeight);
-                txt.addStyle("fill", "url(#grad1)");
-                txt.addStyle("stroke-width", "1");
-                txt.addStyle("stroke", "rgb(0,0,0)");
-                txt.addStyle("shape-rendering", "crispEdges");
-                //txt.addStyle("fill-opacity", "0.7");
-                //txt.addStyle("stroke-opacity", "0.7");
-                data += txt.toString();
+                var data = '<svg width={w} height={h}>'.DQXformat({ w: 300, h: 2 * halfHeight + 2 });
+
+                if (!mouseTargetOnly) {
+                    data += '<defs><linearGradient id="grad1" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:rgb(255,255,80);stop-opacity:1" /><stop offset="100%" style="stop-color:rgb(255,192,0);stop-opacity:1" /></linearGradient></defs>';
+                    var txt = DocEl.Create('rect');
+                    txt.addAttribute('x', 1);
+                    txt.addAttribute('y', 1);
+                    txt.addAttribute('width', 90);
+                    txt.addAttribute('height', 2 * halfHeight);
+                    txt.addStyle("fill", "url(#grad1)");
+                    txt.addStyle("stroke-width", "1");
+                    txt.addStyle("stroke", "rgb(0,0,0)");
+                    txt.addStyle("shape-rendering", "crispEdges");
+                    txt.addStyle("fill-opacity", opacity1);
+                    txt.addStyle("stroke-opacity", opacity1);
+                    data += txt.toString();
+                }
+
                 var txt = DocEl.Create('text');
                 txt.addAttribute('x', 5);
-                txt.addAttribute('y', 2 * halfHeight - 4);
-                txt.addAttribute('font-size', '12');
+                txt.addAttribute('y', 1 + 2 * halfHeight - halfHeight / 2);
+                txt.addAttribute('font-size', halfHeight * 1.4);
                 txt.addAttribute('font-weight', 'bold');
                 txt.addAttribute('fill', 'black');
+                txt.addStyle("fill-opacity", opacity2);
                 txt.addElem(this._text);
                 data += txt.toString();
                 data += "</svg>";
                 this.myDiv.innerHTML = data;
 
+
                 var txtElem = this.myDiv.getElementsByTagName('text')[0];
                 var textLen = txtElem.getComputedTextLength();
-
-                var rcElem = this.myDiv.getElementsByTagName('rect')[0];
                 var recW = textLen + 10;
-                rcElem.width.baseVal.value = recW;
+
+                if (!mouseTargetOnly) {
+                    var rcElem = this.myDiv.getElementsByTagName('rect')[0];
+                    rcElem.width.baseVal.value = recW;
+                }
+
+                var svgElem = this.myDiv.getElementsByTagName('svg')[0];
+                svgElem.width.baseVal.value = recW + 2;
 
                 if (this._onClickHandler) {
-                    $(txtElem).click($.proxy(that._onClickHandler, that));
-                    $(rcElem).click($.proxy(that._onClickHandler, that));
+                    $(svgElem).click($.proxy(that._onClickHandler, that));
                 }
 
                 var bb = {};
