@@ -349,11 +349,18 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eff6fc', end
 ******************************************************************************************/
 
 
+
 .DQXDarkFrame
 {
     background-color:rgb(60,60,60);
     color:rgb(210,210,210);
 }
+
+/*.DQXDarkFrame .DQXLarge
+{
+    color:rgb(255,255,210);
+}*/
+
 
 .DQXDarkInfo
 {

@@ -17,11 +17,18 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelPlotter"), DQXSC("Dat
         GenomePlotter.Panel = function (iParentRef, args) {
             var that = ChannelPlotter.Panel(iParentRef, args);
 
+            DQX.assertPresence(args, 'viewID');
+            that.viewID = args.viewID;
 
             that._chromosomes = [];
 
-            DQX.assertPresence(args, 'chromnrfield');
-            that.chromoNrField = args.chromnrfield;
+            if (args.chromoIdField) {
+                that.chromoIdField = args.chromoIdField;
+            }
+            else {
+                DQX.assertPresence(args, 'chromnrfield');
+                that.chromoNrField = args.chromnrfield;
+            }
 
 
             //Create the data fetcher for the gen annotation information
@@ -79,7 +86,12 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelPlotter"), DQXSC("Dat
                     that.getElemJQ("ChromoPicker").val(newchromonr);
 
                 //Defines the restricting query for all channels
-                var chromoquery = SQL.WhereClause.CompareFixed(that.chromoNrField, '=', that.currentChromoNr);
+                if (that.chromoIdField) {
+                    var chromoquery = SQL.WhereClause.CompareFixed(that.chromoIdField, '=', this._chromosomes[this.currentChromoNr - 1].id);
+                }
+                else {
+                    var chromoquery = SQL.WhereClause.CompareFixed(that.chromoNrField, '=', that.currentChromoNr);
+                }
                 for (var fetchnr = 0; fetchnr < this._myDataFetchers.length; fetchnr++) {
                     if ('setUserQuery1' in this._myDataFetchers[fetchnr])
                         this._myDataFetchers[fetchnr].setUserQuery1(chromoquery);
@@ -190,7 +202,7 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelPlotter"), DQXSC("Dat
                         (function dummy(nr) {
                             var theGeneNr = nr;
                             $('#' + "ChromoBrowserFeatureLink_" + genenr).mousedown(function (ev) {
-                                Msg.send({ type: 'JumpgenomeRegion' }, {
+                                Msg.send({ type: 'JumpgenomeRegion' + that.viewID }, {
                                     chromNr: that.getChromoNr(chromidlist[theGeneNr]),
                                     start: startlist[theGeneNr],
                                     end: endlist[theGeneNr]
