@@ -945,5 +945,39 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("DocEl")],
             return DQX._canvas_smooth_scaling_only;
 
         };
+        DQX.vendorPropName = function( style, name ) {
+            name = $.camelCase(name);
+            var cssPrefixes = [ "Webkit", "O", "Moz", "ms" ];
+
+            // shortcut for names that are not vendor prefixed
+            if ( name in style ) {
+                return name.replace(/([A-Z])/g, function($1){return "-"+$1.toLowerCase();});
+            }
+
+            // check for vendor prefixed names
+            var capName = name.charAt(0).toUpperCase() + name.slice(1),
+                origName = name,
+                i = cssPrefixes.length;
+
+            while ( i-- ) {
+                name = cssPrefixes[ i ] + capName;
+                if ( name in style ) {
+                    return name.replace(/([A-Z])/g, function($1){return "-"+$1.toLowerCase();});
+                }
+            }
+            return origName.replace(/([A-Z])/g, function($1){return "-"+$1.toLowerCase();});
+        };
+
+        DQX.transform_name = function () {
+            if (DQX._transform_name == undefined) {
+                var canvas = document.createElement('canvas');
+                DQX._transform_name = DQX.vendorPropName(canvas.style, 'transform');
+            }
+            return DQX._transform_name
+        };
+        DQX.vendor_name = function (tag, style) {
+            var tag = document.createElement(tag);
+            return DQX.vendorPropName(tag.style, style);
+        };
         return DQX;
     });
