@@ -714,13 +714,12 @@ define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), DQXSC("lib/St
                 var data = '<svg width={w} height={h}>'.DQXformat({ w: 300, h: 2 * halfHeight + 2 });
 
                 if (!mouseTargetOnly) {
-                    data += '<defs><linearGradient id="grad1" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:rgb(255,255,80);stop-opacity:1" /><stop offset="100%" style="stop-color:rgb(255,192,0);stop-opacity:1" /></linearGradient></defs>';
                     var txt = DocEl.Create('rect');
                     txt.addAttribute('x', 1);
                     txt.addAttribute('y', 1);
                     txt.addAttribute('width', 90);
                     txt.addAttribute('height', 2 * halfHeight);
-                    txt.addStyle("fill", "url(#grad1)");
+                    txt.addStyle("fill", "rgb(255,240,70)");
                     txt.addStyle("stroke-width", "1");
                     txt.addStyle("stroke", "rgb(0,0,0)");
                     txt.addStyle("shape-rendering", "crispEdges");
