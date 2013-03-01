@@ -129,12 +129,14 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel")],
 
             //Automatically scroll the highlighted item in the visible area
             that.scrollActiveInView = function () {
-                var offset = $('#' + this.myListDivID).children('#' + this._activeItem).position().top;
-                $('#' + this.myListDivID).scrollTop(offset);
+                if (this._activeItem) {
+                    var offset = $('#' + this.myListDivID).children('#' + this._activeItem).position().top;
+                    $('#' + this.myListDivID).scrollTop(offset);
+                }
             }
 
             that._clickItem = function (ev) {
-                var elem=$(this);
+                var elem = $(this);
                 var id = elem.attr('id');
                 that.setActiveItem(id);
             }
