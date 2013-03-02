@@ -918,19 +918,26 @@ define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller"), DQXSC("Documentation")]
             that._vertShift = 0;
             if (args.vertShift)
                 that._vertShift = args.vertShift;
+            that._smartLink = false;
+            if (args.smartLink) {
+                that.myBitmap = DQXBMP('link1.png');
+                that._vertShift = -2;
+            }
 
             that._execRenderHtml = function () {
                 var st = '<a id={id} TITLE="{desc2}" class="DQXHyperlink">'.DQXformat({ id: this.getFullID(''), desc2: that._hint });
+                st += '<span style="white-space:nowrap;">'; //this trick is used to prevent a line break between the image and the text
                 if (this.myBitmap) {
-                    var s = '<IMG SRC="' + this.myBitmap + '" border=0 class="DQXBitmapLink" ALT="{desc1}" TITLE="{desc2}">';
+                    var s = '<IMG SRC="' + this.myBitmap + '" border=0 class="DQXBitmapLink" ALT="{desc1}" TITLE="{desc2}" style="position:relative;top:{shift}px"/>';
                     s = s.DQXformat(
                         { desc1: that.description, desc2: that._hint, shift: (-this._vertShift) });
                     st = st + s;
                 }
                 if (this.text) {
-                    if (this.myBitmap) st += ' ';
-                    st += this.text;
+                    if (this.myBitmap) st += '&thinsp;';
+                    st += '<span style="white-space:normal;">' + this.text + '</span>';
                 }
+                st += '</span>';
                 st += '</a>';
                 return st;
             }
