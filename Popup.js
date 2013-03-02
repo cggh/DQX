@@ -62,10 +62,12 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls
             var boxW = 0;
             var boxH = 0;
             var dragOnMouseMove = function (ev) {
-                var newPosX = Math.max(10, ev.pageX + dragOffsetX);
-                var newPosY = Math.max(10, ev.pageY + dragOffsetY);
+                var newPosX = ev.pageX + dragOffsetX;
+                var newPosY = ev.pageY + dragOffsetY;
                 newPosX = Math.min(newPosX, DQX.getWindowClientW() - boxW - 10);
                 newPosY = Math.min(newPosY, DQX.getWindowClientH() - 40);
+                var newPosX = Math.max(10, newPosX);
+                var newPosY = Math.max(10, newPosY);
                 dragElem.css({ left: newPosX, top: newPosY });
                 return false;
             }
@@ -182,6 +184,7 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls
         //Creates a new popup box, providing a title and html content
         //The function returns a unique identifier for this popup
         Popup.create = function (title, content) {
+
             var wasSet = false;
             var popupID = '';
             $(".DQXFloatBox").each(function (index, Element) {
@@ -217,6 +220,10 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls
 
                 var thebody = DocEl.Div({ parent: thebox });
                 thebody.setCssClass("DQXFloatBoxContent");
+                thebody.addStyle("max-width", (DQX.getWindowClientW() - 100) + 'px');
+                thebody.addStyle("max-height", (DQX.getWindowClientH() - 100) + 'px');
+                thebody.addStyle("overflow-x", "hidden");
+                thebody.addStyle("overflow-y", "auto");
                 thebody.addElem(content);
 
                 var thecloser = DocEl.JavaScriptBitmaplink(DQXBMP("close2.png"), "Close", "DQX.ClosePopup('" + ID + "')");
