@@ -289,7 +289,7 @@ define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller"), DQXSC("Documentation")]
 
         Controls.Label = function (icontent) {
             var that = {};
-            that._content = icontent;
+            that._content = DQX.interpolate(icontent);
 
             that.getID = function () { return ''; }
 
@@ -609,13 +609,13 @@ define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller"), DQXSC("Documentation")]
             that.content = '<No content>';
             var description = '';
             if (args.description)
-                description = args.description;
+                description = DQX.interpolate(args.description);
             if (args.content)
-                that.content = args.content;
+                that.content = DQX.interpolate(args.content);
             if (args.bitmap) {
                 that.content = '<IMG SRC="' + args.bitmap + '" border=0 ALT="' + description + '" TITLE="' + description + '" style="padding-left:5px; padding-right:5px; padding-top:1px; padding-bottom:1px;float:left">';
                 if (args.content)
-                    that.content += args.content;
+                    that.content += DQX.interpolate(args.content);
             }
             if (args.hint)
                 that._hint = args.hint;

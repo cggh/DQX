@@ -548,6 +548,30 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("DocEl")],
 
         DQX.Init = function () {
 
+            //Fetch interpolation strings
+            DQX.interpolationStrings = {}
+            var origSet = [];
+            $('#InterpolationSnippets').children('span').each(function () {
+                var id = $(this).attr('id');
+                origSet.push(id);
+                DQX.interpolationStrings[id] = $(this).text();
+            });
+            //Create tokens for plurals and start of sentence
+            $.each(origSet, function (idx, origID) {
+                var origText = DQX.interpolationStrings[origID];
+                var idCap = origID.charAt(0).toUpperCase() + origID.slice(1);
+                var idPlural = origID + 's';
+                var idPluralCap = idCap + 's';
+                if (!DQX.interpolationStrings[idCap])
+                    DQX.interpolationStrings[idCap] = origText.charAt(0).toUpperCase() + origText.slice(1);
+                if (!DQX.interpolationStrings[idPlural])
+                    DQX.interpolationStrings[idPlural] = origText + 's';
+                if (!DQX.interpolationStrings[idPluralCap]) {
+                    var pluralText = DQX.interpolationStrings[idPlural];
+                    DQX.interpolationStrings[idPluralCap] = pluralText.charAt(0).toUpperCase() + pluralText.slice(1);
+                }
+            });
+
             DQX.scrollBarWidth = getScrollBarWidth();
 
             jQuery.support.cors = true;
@@ -577,6 +601,29 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("DocEl")],
             return span.toString();
         }
 
+        //Replaces tokens of the style [@stringid] with strings fetched from spans in a div with id 'InterpolationSnippets' on the app html page
+        //Note: since interpolation snippets may contain other interpolation tokens, we repeat this until there is nothing more replaces
+        DQX.interpolate = function (str) {
+            for (; true; ) {
+                var replaced = false;
+                var matchList = str.match(/\[\@.*\]/g);
+                if (matchList) {
+                    $.each(matchList, function (idx, match) {
+                        var id = match.substring(2, match.length - 1);
+                        if (!DQX.interpolationStrings[id]) {
+                            if (_debug_)
+                                DQX.reportError('Interpolation identifier not found: ' + id);
+                        }
+                        else {
+                            str = str.replace(match, DQX.interpolationStrings[id]);
+                            replaced = true;
+                        }
+                    });
+                }
+                if (!replaced)
+                    return str;
+            }
+        }
 
         /////////////////////////////////////////////////////////////////////////////////////
         //This function should be called *after* the creation of all initial dynamic html
@@ -893,7 +940,7 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("DocEl")],
         DQX.ratelimit = function (fn, delay) {
             var last = (new Date()).getTime();
             var timer = null;
-            return (function(arg) {
+            return (function (arg) {
                 var now = (new Date()).getTime();
                 if (now - last > delay) {
                     last = now;
@@ -904,11 +951,11 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("DocEl")],
                     clearTimeout(timer);
                     timer = setTimeout(function () {
                         fn(arg);
-                    }, delay+(delay *.15));
+                    }, delay + (delay * .15));
                 }
             });
         };
-        DQX.canvas_disable_smoothing = function(ctx) {
+        DQX.canvas_disable_smoothing = function (ctx) {
             ctx.webkitImageSmoothingEnabled = false;
             ctx.mozImageSmoothingEnabled = false;
             ctx.imageSmoothingEnabled = false;
@@ -922,36 +969,36 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("DocEl")],
                 var ctx = buffer1.getContext('2d');
                 var imageData = ctx.createImageData(buffer1.width, buffer1.height);
                 var data = imageData.data;
-                [255,255,255,255,0,0,0,255].forEach( function(val,i) {
+                [255, 255, 255, 255, 0, 0, 0, 255].forEach(function (val, i) {
                     data[i] = val;
                 });
-                ctx.putImageData(imageData,0,0);
+                ctx.putImageData(imageData, 0, 0);
                 //Now draw those two pixels stretched onto 3...
                 var buffer2 = document.createElement('canvas');
                 buffer2.width = 3;
                 buffer2.height = 1;
                 ctx = buffer2.getContext('2d');
                 //Set the transform matrix to stretch
-                ctx.setTransform(buffer2.width/buffer1.width, 0, 0, 1, 0, 0);
+                ctx.setTransform(buffer2.width / buffer1.width, 0, 0, 1, 0, 0);
                 //Do our best to turn off smoothing
                 DQX.canvas_disable_smoothing(ctx);
                 //Draw the two pixels streched
-                ctx.drawImage(buffer1,0,0);
-                data = ctx.getImageData(0,0,buffer2.width,buffer2.height).data;
+                ctx.drawImage(buffer1, 0, 0);
+                data = ctx.getImageData(0, 0, buffer2.width, buffer2.height).data;
                 //Pixel must not be grey!
-                var pixel = data[5]+data[6]+data[7];
-                DQX._canvas_smooth_scaling_only = !(pixel == 255*3 || pixel == 0);
+                var pixel = data[5] + data[6] + data[7];
+                DQX._canvas_smooth_scaling_only = !(pixel == 255 * 3 || pixel == 0);
             }
             return DQX._canvas_smooth_scaling_only;
 
         };
-        DQX.vendorPropName = function( style, name ) {
+        DQX.vendorPropName = function (style, name) {
             name = $.camelCase(name);
-            var cssPrefixes = [ "Webkit", "O", "Moz", "ms" ];
+            var cssPrefixes = ["Webkit", "O", "Moz", "ms"];
 
             // shortcut for names that are not vendor prefixed
-            if ( name in style ) {
-                return name.replace(/([A-Z])/g, function($1){return "-"+$1.toLowerCase();});
+            if (name in style) {
+                return name.replace(/([A-Z])/g, function ($1) { return "-" + $1.toLowerCase(); });
             }
 
             // check for vendor prefixed names
@@ -959,13 +1006,13 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("DocEl")],
                 origName = name,
                 i = cssPrefixes.length;
 
-            while ( i-- ) {
-                name = cssPrefixes[ i ] + capName;
-                if ( name in style ) {
-                    return name.replace(/([A-Z])/g, function($1){return "-"+$1.toLowerCase();});
+            while (i--) {
+                name = cssPrefixes[i] + capName;
+                if (name in style) {
+                    return name.replace(/([A-Z])/g, function ($1) { return "-" + $1.toLowerCase(); });
                 }
             }
-            return origName.replace(/([A-Z])/g, function($1){return "-"+$1.toLowerCase();});
+            return origName.replace(/([A-Z])/g, function ($1) { return "-" + $1.toLowerCase(); });
         };
 
         DQX.transform_name = function () {

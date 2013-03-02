@@ -287,14 +287,14 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
             //Set the title that will be visible for this frame
             that.setDisplayTitle = function (ttle) {
                 DQX.checkIsString(ttle);
-                this.myDisplayTitle = ttle;
+                this.myDisplayTitle = DQX.interpolate(ttle);
                 return this;
             }
 
             //Set a second title that will be visible right aligned in the frame title bar
             that.setDisplayTitle2 = function (ttle) {
                 DQX.checkIsString(ttle);
-                this._displayTitle2 = ttle;
+                this._displayTitle2 = DQX.interpolate(ttle);
                 return this;
             }
 
