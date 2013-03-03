@@ -216,7 +216,7 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls
 
                 var theheader = DocEl.Div({ id: ID + 'Handler', parent: thebox });
                 theheader.setCssClass("DQXFloatBoxHeader DQXDragHeader");
-                theheader.addElem(title);
+                theheader.addElem(DQX.interpolate(title));
 
                 var thebody = DocEl.Div({ parent: thebox });
                 thebody.setCssClass("DQXFloatBoxContent");
@@ -224,7 +224,7 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls
                 thebody.addStyle("max-height", (DQX.getWindowClientH() - 100) + 'px');
                 thebody.addStyle("overflow-x", "hidden");
                 thebody.addStyle("overflow-y", "auto");
-                thebody.addElem(content);
+                thebody.addElem(DQX.interpolate(content));
 
                 var thecloser = DocEl.JavaScriptBitmaplink(DQXBMP("close2.png"), "Close", "DQX.ClosePopup('" + ID + "')");
                 thebox.addElem(thecloser);

@@ -69,10 +69,10 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Scroller")],
             that.getAutoFillHeight = function () { return this._autoFillHeight; }
 
             that.setTitle = function (ititle) {
-                this._title = ititle;
+                this._title = DQX.interpolate(ititle);
             }
             that.setSubTitle = function (isubtitle) {
-                this._subTitle = isubtitle;
+                this._subTitle = DQX.interpolate(isubtitle);
             }
 
             that.getTitle = function () {

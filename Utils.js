@@ -548,29 +548,6 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("DocEl")],
 
         DQX.Init = function () {
 
-            //Fetch interpolation strings
-            DQX.interpolationStrings = {}
-            var origSet = [];
-            $('#InterpolationSnippets').children('span').each(function () {
-                var id = $(this).attr('id');
-                origSet.push(id);
-                DQX.interpolationStrings[id] = $(this).text();
-            });
-            //Create tokens for plurals and start of sentence
-            $.each(origSet, function (idx, origID) {
-                var origText = DQX.interpolationStrings[origID];
-                var idCap = origID.charAt(0).toUpperCase() + origID.slice(1);
-                var idPlural = origID + 's';
-                var idPluralCap = idCap + 's';
-                if (!DQX.interpolationStrings[idCap])
-                    DQX.interpolationStrings[idCap] = origText.charAt(0).toUpperCase() + origText.slice(1);
-                if (!DQX.interpolationStrings[idPlural])
-                    DQX.interpolationStrings[idPlural] = origText + 's';
-                if (!DQX.interpolationStrings[idPluralCap]) {
-                    var pluralText = DQX.interpolationStrings[idPlural];
-                    DQX.interpolationStrings[idPluralCap] = pluralText.charAt(0).toUpperCase() + pluralText.slice(1);
-                }
-            });
 
             DQX.scrollBarWidth = getScrollBarWidth();
 
@@ -601,12 +578,42 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("DocEl")],
             return span.toString();
         }
 
+        DQX._initInterpolation = function () {
+            if (DQX._interpolationInitialised) return;
+            //Fetch interpolation strings
+            DQX.interpolationStrings = {}
+            var origSet = [];
+            $('#InterpolationSnippets').children('span').each(function () {
+                var id = $(this).attr('id');
+                origSet.push(id);
+                DQX.interpolationStrings[id] = $(this).html();
+            });
+            //Create tokens for plurals and start of sentence
+            $.each(origSet, function (idx, origID) {
+                var origText = DQX.interpolationStrings[origID];
+                var idCap = origID.charAt(0).toUpperCase() + origID.slice(1);
+                var idPlural = origID + 's';
+                var idPluralCap = idCap + 's';
+                if (!DQX.interpolationStrings[idCap])
+                    DQX.interpolationStrings[idCap] = origText.charAt(0).toUpperCase() + origText.slice(1);
+                if (!DQX.interpolationStrings[idPlural])
+                    DQX.interpolationStrings[idPlural] = origText + 's';
+                if (!DQX.interpolationStrings[idPluralCap]) {
+                    var pluralText = DQX.interpolationStrings[idPlural];
+                    DQX.interpolationStrings[idPluralCap] = pluralText.charAt(0).toUpperCase() + pluralText.slice(1);
+                }
+            });
+            DQX._interpolationInitialised = true;
+        }
+
         //Replaces tokens of the style [@stringid] with strings fetched from spans in a div with id 'InterpolationSnippets' on the app html page
         //Note: since interpolation snippets may contain other interpolation tokens, we repeat this until there is nothing more replaces
         DQX.interpolate = function (str) {
+            DQX.checkIsString(str);
+            DQX._initInterpolation();
             for (; true; ) {
                 var replaced = false;
-                var matchList = str.match(/\[\@.*\]/g);
+                var matchList = str.match(/\[\@.*?\]/g);
                 if (matchList) {
                     $.each(matchList, function (idx, match) {
                         var id = match.substring(2, match.length - 1);

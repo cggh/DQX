@@ -461,7 +461,7 @@ define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller"), DQXSC("Documentation")]
 
         Controls.Static = function (content) {
             var that = Controls.Control(null);
-            that.myContent = content;
+            that.myContent = DQX.interpolate(content);
             that._isComment = false;
 
             that.makeComment = function () { this._isComment = true; return this; }
@@ -534,13 +534,13 @@ define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller"), DQXSC("Documentation")]
         Controls.Check = function (iid, args) {
             var that = Controls.Control(iid);
             DQX.requireMember(args, 'label');
-            that.myLabel = args.label;
+            that.myLabel = DQX.interpolate(args.label);
             that.isChecked = false;
             if (args.value)
                 that.isChecked = args.value;
             that._hint = false;
             if (args.hint)
-                that._hint = args.hint;
+                that._hint = DQX.interpolate(args.hint);
 
 
             that._execRenderHtml = function () {

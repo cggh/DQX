@@ -53,7 +53,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel")],
 
         //Internal
         TreeCtrl._objectBranch.prototype.renderHtml = function () {
-            return this.content.toString();
+            return DQX.interpolate(this.content.toString());
         }
 
         //Internal

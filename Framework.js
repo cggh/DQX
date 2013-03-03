@@ -1085,7 +1085,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
             that.setContentStaticDiv = function (divid) {
                 this.checkFinalPanel();
                 var content = $('#' + divid).html();
-                $('#' + this.getClientDivID()).html(content);
+                $('#' + this.getClientDivID()).html(DQX.interpolate(content));
             }
 
 

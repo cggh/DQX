@@ -143,7 +143,7 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Popup")]
             $.get(url, {})
             .done(function (data) {
                 DQX.stopProcessing();
-                $('#DocuBoxContent').html($('<div/>').append(data).find('.DQXHelpContent').html());
+                $('#DocuBoxContent').html($('<div/>').append(DQX.interpolate(data)).find('.DQXHelpContent').html());
             })
             .fail(function () {
                 DQX.stopProcessing();
