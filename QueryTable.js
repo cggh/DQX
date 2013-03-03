@@ -108,7 +108,7 @@
         //Tablepart can be 0 or 1 to define the left or right part
         QueryTable.Column = function (iName, iCompID, iTablePart) {
             var that = {};
-            that.myName = iName;
+            that.myName = DQX.interpolate(iName);
             that.myCompID = iCompID;
             that.myComment = '';
             that.minWidth = 10;

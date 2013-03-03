@@ -21,7 +21,7 @@
 
             //Sets the title of the wizard
             that.setTitle = function (title) {
-                that._title = title;
+                that._title = DQX.interpolate(title);
             }
 
             //Adds a page to the wizard. 'page' should be an object containing:

@@ -20,7 +20,7 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("DocEl")],
         }
 
         DQX.reportError = function (txt) {
-            alert("ERROR: " + txt);
+            alert("ERROR: " + DQX.interpolate(txt));
             throw txt;
         }
 
@@ -68,7 +68,7 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("DocEl")],
             var elem = $('#Snippets').children('#' + snippetID);
             if (elem.length == 0)
                 DQX.reportError('Invalid snippet ID ' + snippetID);
-            return elem.html();
+            return DQX.interpolate(elem.html());
         }
 
         //determines if an object has a specific member

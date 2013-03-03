@@ -68,7 +68,7 @@ define([DQXSCJQ(), DQXSC("SQL"), DQXSC("Utils"), DQXSC("DataDecoders"), DQXSC("D
             //sets the list of sequence ID's that should be fetched
             this.setFetchSequenceIDList = function (lst) {
                 if (!this._sequenceIDListOriginal)
-                    DQX.reportError('SNP fetcher not initialised');
+                    DQX.reportError('[@Snp] fetcher not initialised');
                 this._sequenceIDList = [];
                 var self = this;
                 $.each(lst, function (idx, ID) {
@@ -106,7 +106,7 @@ define([DQXSCJQ(), DQXSC("SQL"), DQXSC("Utils"), DQXSC("DataDecoders"), DQXSC("D
                     self._sequenceIDListOriginal.push(ID);
                 });
                 if (!this._listSnpPositionInfo)
-                    DQX.reportError("SNP position info is missing");
+                    DQX.reportError("[@Snp] position info is missing");
                 this.mySeqs = {};
                 for (var i = 0; i < this._sequenceIDList.length; i++) {
                     this.mySeqs[this._sequenceIDList[i]] = DataFetcherSnp.SnpSequence(this._sequenceIDList[i]);
@@ -535,7 +535,7 @@ define([DQXSCJQ(), DQXSC("SQL"), DQXSC("Utils"), DQXSC("DataDecoders"), DQXSC("D
                 rs._fetcher = this;
                 rs.getSnpInfo = function (id) {
                     var channel = this.SnpPosInfo[this._fetcher.mapSnpPositionInfoNr[id]];
-                    if (!channel) DQX.reportError('Invalid SNP position property ' + id);
+                    if (!channel) DQX.reportError('Invalid [@snp] position property ' + id);
                     return channel;
                 }
 
