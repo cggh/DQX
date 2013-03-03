@@ -64,11 +64,15 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("DocEl")],
         //A namespace for drawing helper utilities
         DQX.DrawUtil = {};
 
-        DQX.Text = function (snippetID) {
+        DQX.TextOrig = function (snippetID) {
             var elem = $('#Snippets').children('#' + snippetID);
             if (elem.length == 0)
                 DQX.reportError('Invalid snippet ID ' + snippetID);
-            return DQX.interpolate(elem.html());
+            return elem.html();
+        }
+
+        DQX.Text = function (snippetID) {
+            return DQX.interpolate(DQX.TextOrig(snippetID));
         }
 
         //determines if an object has a specific member
