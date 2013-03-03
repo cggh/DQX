@@ -635,6 +635,7 @@ define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller"), DQXSC("Documentation")]
                 if (this._hint)
                     bt.addHint(this._hint);
                 bt.addStyle('display', 'inline-block');
+                bt.addStyle('vertical-align', 'top');
                 bt.setCssClass(this._buttonClass);
                 bt.addElem(that.content);
                 if (this._width)
