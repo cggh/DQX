@@ -966,10 +966,10 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("DocEl")],
                 }
             });
         };
-        DQX.canvas_disable_smoothing = function (ctx) {
-            ctx.webkitImageSmoothingEnabled = false;
-            ctx.mozImageSmoothingEnabled = false;
-            ctx.imageSmoothingEnabled = false;
+        DQX.canvas_smoothing = function(ctx, state) {
+            ctx.webkitImageSmoothingEnabled = state;
+            ctx.mozImageSmoothingEnabled = state;
+            ctx.imageSmoothingEnabled = state;
         };
         DQX.canvas_smooth_scaling_only = function () {
             if (DQX._canvas_smooth_scaling_only == undefined) {
@@ -992,7 +992,7 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("DocEl")],
                 //Set the transform matrix to stretch
                 ctx.setTransform(buffer2.width / buffer1.width, 0, 0, 1, 0, 0);
                 //Do our best to turn off smoothing
-                DQX.canvas_disable_smoothing(ctx);
+                DQX.canvas_smoothing(ctx, false);
                 //Draw the two pixels streched
                 ctx.drawImage(buffer1, 0, 0);
                 data = ctx.getImageData(0, 0, buffer2.width, buffer2.height).data;

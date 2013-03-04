@@ -228,23 +228,30 @@ define([DQXSC("Utils")],
             }
 
         };
-        SVG.fast_style_tween = function(transition, name, target) {
-            transition.tween('style.'+name, function () {
-                if (this['val_'+name] == undefined) {
-                    this.style.setProperty(name, target);
-                    this['val_'+name] = target;
-                    return null;
-                }
-                if (this['val_'+name] == target) {
-                    return null;
-                }
-                var target_i = d3.interpolate(this['val_'+name], target);
-                return function(t) {
-                    this.style.setProperty(name, target_i(t));
-                    this['val_'+name] = target_i(t);
-                };
-            })
-
+        SVG.fast_style_tween = function(transition, name, target, start) {
+            if(transition.tween) {
+                transition.tween('style.'+name, function () {
+                    if (this['val_'+name] == undefined && start == undefined) {
+                        this.style.setProperty(name, target);
+                        this['val_'+name] = target;
+                        return null;
+                    }
+                    if (this['val_'+name] == target && start == undefined) {
+                        return null;
+                    }
+                    var target_i;
+                    if (start == undefined)
+                        target_i = d3.interpolate(this['val_'+name], target);
+                    else
+                        target_i = d3.interpolate(start, target);
+                    return function(t) {
+                        this.style.setProperty(name, target_i(t));
+                        this['val_'+name] = target_i(t);
+                    };
+                })
+            }
+            else
+                transition.style(name, target);
         };
         return SVG;
     });
