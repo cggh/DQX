@@ -17,8 +17,9 @@ define([DQXSCJQ(), DQXSC("SQL"), DQXSC("Utils"), DQXSC("DataDecoders")],
         //////////////////////////////////////////////////////////////////////////////////////
         // A wrapper around DataFetchers.Curve, making it suitable for paged querying of table data
 
-        DataFetchers.Table = function (iserverurl, itablename) {
-            var that = new DataFetchers.Curve(iserverurl, itablename, 'LIMIT');
+        DataFetchers.Table = function (iserverurl, idatabase, itablename) {
+            DQX.checkIsString(iserverurl); DQX.checkIsString(idatabase); DQX.checkIsString(itablename);
+            var that = new DataFetchers.Curve(iserverurl, idatabase, itablename, 'LIMIT');
 
             //Sets the sort column(s), provided as a SQL.TableSort object, and the sort order
             that.setSortOption = function (sortInfo, sortReverse) {
@@ -34,10 +35,13 @@ define([DQXSCJQ(), DQXSC("SQL"), DQXSC("Utils"), DQXSC("DataDecoders")],
         //  Class DataFetchers.Curve
         //////////////////////////////////////////////////////////////////////////////////////
 
-        DataFetchers.Curve = function (iserverurl, itablename, ipositionfield) {
+        DataFetchers.Curve = function (iserverurl, idatabase, itablename, ipositionfield) {
             if (!(this instanceof arguments.callee)) DQX.reportError("Should be called as constructor!");
+            DQX.checkIsString(iserverurl); DQX.checkIsString(idatabase); DQX.checkIsString(itablename); DQX.checkIsString(ipositionfield);
+
 
             this.serverurl = iserverurl; //The server url to contact for this
+            this.database = idatabase; //The name of the database to fetch from
             this.tablename = itablename; //The name of the table to fetch from
             this._requestNr = 0;
             if (!itablename)
@@ -254,6 +258,7 @@ define([DQXSCJQ(), DQXSC("SQL"), DQXSC("Utils"), DQXSC("DataDecoders")],
                     //prepare the url
                     var myurl = DQX.Url(this.serverurl);
                     myurl.addUrlQueryItem("datatype", qrytype);
+                    myurl.addUrlQueryItem('database', this.database);
                     myurl.addUrlQueryItem('requestnr', this._requestNr);
                     myurl.addUrlQueryItem("qry", SQL.WhereClause.encode(qry));
                     myurl.addUrlQueryItem("tbname", this.tablename);
@@ -375,6 +380,7 @@ define([DQXSCJQ(), DQXSC("SQL"), DQXSC("Utils"), DQXSC("DataDecoders")],
                 //prepare the url
                 var myurl = DQX.Url(this.serverurl);
                 myurl.addUrlQueryItem("datatype", 'recordinfo');
+                myurl.addUrlQueryItem('database', this.database);
                 myurl.addUrlQueryItem("qry", SQL.WhereClause.encode(whereclause));
                 myurl.addUrlQueryItem("tbname", this.tablename); //tablename to fetch from
                 var _ajaxResponse_FetchPoint = function (resp) {
@@ -437,9 +443,11 @@ define([DQXSCJQ(), DQXSC("SQL"), DQXSC("Utils"), DQXSC("DataDecoders")],
         //////////////////////////////////////////////////////////////////////////////////////
 
 
-        DataFetchers.RecordsetFetcher = function (iserverUrl, itableName) {
+        DataFetchers.RecordsetFetcher = function (iserverUrl, idatabase, itableName) {
             var that = {};
+            DQX.checkIsString(iserverUrl); DQX.checkIsString(idatabase); DQX.checkIsString(itableName);
             that.serverUrl = iserverUrl; //The server url to contact for this
+            that.database = idatabase; //database to fetch from
             that.tableName = itableName; //The name of the table to fetch from
             that.columns = [];
             that._maxResultCount = 100000;
@@ -493,6 +501,7 @@ define([DQXSCJQ(), DQXSC("SQL"), DQXSC("Utils"), DQXSC("DataDecoders")],
                 //prepare the url
                 var myurl = DQX.Url(this.serverUrl);
                 myurl.addUrlQueryItem("datatype", "pageqry");
+                myurl.addUrlQueryItem('database', this.database);
                 myurl.addUrlQueryItem("qry", SQL.WhereClause.encode(query));
                 myurl.addUrlQueryItem("tbname", this.tableName);
                 myurl.addUrlQueryItem("collist", this._createActiveColumnListString());
