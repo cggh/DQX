@@ -16,7 +16,7 @@ define([DQXSCJQ(), DQXSC("SQL"), DQXSC("Utils"), DQXSC("DataDecoders"), DQXSC("D
             that.minAvgCoverage = 0;
             that.minAvgPurity = 0;
             that.minPresence = 0;
-            that.minSnpCoverage = 1;
+            that.minSnpCoverage = 0;
             that.minSnpPurity = 0;
             this.requireParentsPresent = false;
             return that;
@@ -76,6 +76,10 @@ define([DQXSCJQ(), DQXSC("SQL"), DQXSC("Utils"), DQXSC("DataDecoders"), DQXSC("D
                         DQX.reportError('Invalid sequence ID');
                     self._sequenceIDList.push(ID);
                 });
+                this.mySeqs = {};
+                for (var i = 0; i < this._sequenceIDList.length; i++) {
+                    this.mySeqs[this._sequenceIDList[i]] = DataFetcherSnp.SnpSequence(this._sequenceIDList[i]);
+                }
             }
 
             this._onFetchMetaInfo = function (content) {
@@ -177,7 +181,7 @@ define([DQXSCJQ(), DQXSC("SQL"), DQXSC("Utils"), DQXSC("DataDecoders"), DQXSC("D
             }
 
             //internal
-            this._ajaxResponse_FetchRange = function (resp) {
+            this._ajaxResponse_FetchRange = function (resp, callback) {
                 if (!this._isFetching) return;
                 this.hasFetchFailed = false;
                 this._isFetching = false;
@@ -264,7 +268,10 @@ define([DQXSCJQ(), DQXSC("SQL"), DQXSC("Utils"), DQXSC("DataDecoders"), DQXSC("D
 
 
                 //tell the consumer of this that the data are ready
-                this.myDataConsumer.notifyDataReady();
+                if (this.myDataConsumer)
+                    this.myDataConsumer.notifyDataReady();
+                else
+                    callback();
             }
 
             //internal
@@ -279,7 +286,7 @@ define([DQXSCJQ(), DQXSC("SQL"), DQXSC("Utils"), DQXSC("DataDecoders"), DQXSC("D
             }
 
             //internal: initiates the ajax data fetching call
-            this._fetchRange = function (rangemin, rangemax) {
+            this._fetchRange = function (rangemin, rangemax, callback) {
 
                 if (!this._isFetching) {
                     //create some buffer around the requested range. This reduces the number of requests and gives the user a smoother experience when scrolling or zooming out
@@ -321,7 +328,7 @@ define([DQXSCJQ(), DQXSC("SQL"), DQXSC("Utils"), DQXSC("DataDecoders"), DQXSC("D
                     var thethis = this;
                     $.ajax({
                         url: urlString,
-                        success: function (resp) { thethis._ajaxResponse_FetchRange(resp) },
+                        success: function (resp) { thethis._ajaxResponse_FetchRange(resp, callback) },
                         error: function (resp) { thethis._ajaxFailure_FetchRange(resp) }
                     });
                 }
