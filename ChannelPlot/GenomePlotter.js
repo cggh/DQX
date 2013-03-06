@@ -232,6 +232,7 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelPlotter"), DQXSC("Dat
                     var myurl = DQX.Url(this._annotationFetcher.config.serverURL);
                     myurl.addUrlQueryItem('datatype', 'findgene');
                     myurl.addUrlQueryItem('pattern', pattern);
+                    myurl.addUrlQueryItem('database', this._annotationFetcher.database);
                     myurl.addUrlQueryItem('table', this._annotationFetcher.annotTableName);
                     myurl.addUrlQueryItem('chromnrfield', this.chromoNrField);
                     /*                    myurl.addUrlQueryItem('startfield', this.config.annotstartfield);

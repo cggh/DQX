@@ -334,7 +334,7 @@
 
                 if (!this._pagerCreated) {
                     var rs_pager = "";
-                    rs_pager += '<span style="position:relative;bottom:-7px;">';
+                    rs_pager += '<span style="position:relative;bottom:-2px;">';
                     var navButtonControls = [];
                     navButtonControls.push(Controls.Button(that.myBaseID + '_goFirst', { bitmap: DQXBMP('first.png'), description: 'First page', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onFirst, that)));
                     navButtonControls.push(Controls.Button(that.myBaseID + '_goPrevious', { bitmap: DQXBMP('previous.png'), description: 'Previous page', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onBack, that)));
@@ -343,7 +343,7 @@
                     this.navButtonControls = navButtonControls;
                     $.each(navButtonControls, function (idx, bt) { rs_pager += bt.renderHtml(); });
                     rs_pager += '</span>';
-                    rs_pager += '<span id="{id}"></span>'.DQXformat({ id: that.myBaseID + '_status' });
+                    rs_pager += '<span id="{id}" style="display:inline-block; vertical-align:middle"></span>'.DQXformat({ id: that.myBaseID + '_status' });
 
                     var rightgroup = DocEl.Span({ id: that.myBaseID + '_right' });
                     rightgroup.addStyle('float', 'right');
@@ -433,7 +433,7 @@
 
 
 
-                if ((this._dataValid) && (!datacomplete)) $('#' + that.myBaseID + '_status').html('<span style="background-color:rgb(255,0,0);font-weight:bold">FETCHING...</span>');
+                if ((this._dataValid) && (!datacomplete)) $('#' + that.myBaseID + '_status').html('<span style="background-color:rgb(255,0,0);font-weight:bold;">FETCHING...</span>');
                 if (this.hasFetchFailed) $('#' + that.myBaseID + '_status').html('<span style="background-color:rgb(255,0,0);font-weight:bold;">FETCH FAILED !!!</span>');
 
                 for (var rownr0 = 0; rownr0 < this.myPageSize; rownr0++) {

@@ -15,8 +15,10 @@ define([DQXSCJQ(), DQXSC("SQL"), DQXSC("Utils"), DQXSC("DataDecoders")],
 
             this.config = iconfig;
             DQX.assertPresence(this.config, 'serverURL');
+            DQX.assertPresence(this.config, 'database');
             DQX.assertPresence(this.config, 'annotTableName');
 
+            this.database = iconfig.database;
             this.annotTableName = iconfig.annotTableName;
             this.fetchSubFeatures = true;
             this.ftype = 'gene';
@@ -119,6 +121,7 @@ define([DQXSCJQ(), DQXSC("SQL"), DQXSC("Utils"), DQXSC("DataDecoders")],
                     this._requestNr++;
                     var myurl = DQX.Url(this.config.serverURL);
                     myurl.addUrlQueryItem('datatype', 'annot');
+                    myurl.addUrlQueryItem('database', this.database);
                     myurl.addUrlQueryItem('requestnr', this._requestNr);
                     myurl.addUrlQueryItem('chrom', this.translateChromoId(this._myChromoID));
                     myurl.addUrlQueryItem('start', rangemin);
@@ -193,6 +196,7 @@ define([DQXSCJQ(), DQXSC("SQL"), DQXSC("Utils"), DQXSC("DataDecoders")],
 
                 var myurl = DQX.Url(this.config.serverURL);
                 myurl.addUrlQueryItem('datatype', 'fullannotinfo');
+                myurl.addUrlQueryItem('database', this.database);
                 myurl.addUrlQueryItem('table', this.annotTableName);
                 //myurl.addUrlQueryItem('idfield', this.config.annotidfield);
                 myurl.addUrlQueryItem('id', id);

@@ -495,7 +495,7 @@ define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller"), DQXSC("Documentation")]
         Controls.Html = function (iid, content, css_class) {
             DQX.checkIsString(content);
             var that = Controls.Control(iid);
-            that.myContent = content;
+            that.myContent = DQX.interpolate(content);
 
             that._execRenderHtml = function () {
                 var lb = DocEl.Div({ id: this.getFullID('') });
@@ -518,8 +518,8 @@ define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller"), DQXSC("Documentation")]
 
             //modify the content of the control
             that.modifyValue = function (newContent) {
-                that.myContent = newContent;
-                this.getJQElement('').html(newContent);
+                that.myContent = DQX.interpolate(newContent);
+                this.getJQElement('').html(that.myContent);
                 Controls.ExecPostCreateHtml();
             }
 
