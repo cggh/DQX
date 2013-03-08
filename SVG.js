@@ -187,7 +187,7 @@ define([DQXSC("Utils")],
                 if (alt_color) {
                     hue = Math.round(118 - ((alt / tot) * 65));
                 } else {
-                    hue = Math.round(231 + ((alt / tot) * 121));
+                    hue = Math.round(240 + ((alt / tot) * 120));
                 }
             } else {
                 hue = 0;
