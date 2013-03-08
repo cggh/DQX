@@ -16,7 +16,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelCanva
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        ChannelSequence.Channel = function (serverurl,iFolder, iConfig) {
+        ChannelSequence.Channel = function (serverurl, iFolder, iConfig) {
             var that = ChannelCanvas.Base("Sequence");
             that._height = 17;
             that.myFolder = iFolder;
@@ -24,6 +24,8 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelCanva
             //that.canHide = false;
             that.setTitle('Sequence');
 
+            that.baseList = ['a', 't', 'c', 'g'];
+            that.colors = { a: 'rgb(255,50,50)', t: 'rgb(255,170,0)', c: 'rgb(0,128,192)', g: 'rgb(0,192,120)' }
 
             that.myfetcher = new DataFetcherSummary.Fetcher(serverurl, 1, 800);
             //that.myfetcher.maxBlockSize = 1;
@@ -32,6 +34,26 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelCanva
 
             that.setPlotter = function (thePlotter) {
                 thePlotter.addDataFetcher(this.myfetcher);
+            }
+
+            that.drawTitle = function (drawInfo) {
+                drawInfo.leftContext.save();
+                drawInfo.leftContext.translate(2, drawInfo.sizeY / 2 - 3);
+                drawInfo.leftContext.textAlign = "left";
+                drawInfo.leftContext.textBaseline = 'baseline';
+                drawInfo.leftContext.font = '11px sans-serif';
+
+                var xp = 5;
+                for (var basenr = 0; basenr < 4; basenr++) {
+                    var base = this.baseList[basenr];
+                    drawInfo.leftContext.fillStyle = this.colors[base];
+                    drawInfo.leftContext.fillRect(xp, -2, 5, 9);
+                    drawInfo.leftContext.fillStyle = "black";
+                    drawInfo.leftContext.fillText(base, xp + 7, 5);
+                    xp += 20;
+                }
+
+                drawInfo.leftContext.restore();
             }
 
             that.draw = function (drawInfo, args) {
@@ -53,12 +75,6 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelCanva
 
                 var blockwidth = (xvals[xvals.length - 1] - xvals[0]) * drawInfo.zoomFactX / (xvals.length);
 
-                var colors = {
-                    a: 'rgb(255,50,50)',
-                    t: 'rgb(255,170,0)',
-                    c: 'rgb(0,128,192)',
-                    g: 'rgb(0,192,120)'
-                }
 
                 if (xvals.length > 3000)
                     return;
@@ -76,8 +92,8 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelCanva
                 drawInfo.centerContext.globalAlpha = 0.75;
                 if (blockwidth <= 2) {
                     for (var basenr = 0; basenr < 4; basenr++) {
-                        var base = ['a', 'c', 'g', 't'][basenr];
-                        drawInfo.centerContext.strokeStyle = colors[base];
+                        var base = this.baseList[basenr];
+                        drawInfo.centerContext.strokeStyle = this.colors[base];
                         drawInfo.centerContext.beginPath();
                         for (i = 0; i < xvals.length - 1; i++) {
                             if (yvals[i] == base) {
@@ -100,7 +116,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelCanva
                         var psx1 = Math.round(xvals[i] * drawInfo.zoomFactX - drawInfo.offsetX);
                         var psx2 = Math.round(xvals[i + 1] * drawInfo.zoomFactX - drawInfo.offsetX);
                         var ofs = 0;
-                        drawInfo.centerContext.fillStyle = colors[base];
+                        drawInfo.centerContext.fillStyle = this.colors[base];
                         drawInfo.centerContext.fillRect(psx1, 0, psx2 - psx1 + 1, h);
                     }
                 }
@@ -112,7 +128,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelCanva
                     drawInfo.centerContext.font = '25px sans-serif';
                     drawInfo.centerContext.textBaseline = 'bottom';
                     drawInfo.centerContext.textAlign = 'center';
-                    drawInfo.centerContext.fillText("Fetching data...", drawInfo.sizeCenterX / 2,5);
+                    drawInfo.centerContext.fillText("Fetching data...", drawInfo.sizeCenterX / 2, 5);
                 }
                 if (fetcherror) {
                     drawInfo.centerContext.fillStyle = "rgb(255,0,0)";
