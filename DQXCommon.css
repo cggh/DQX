@@ -827,7 +827,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7f7f7', end
 
 .DQXFormComment 
 {
-    color:rgb(128,128,128);
+    color:rgb(40,40,40);
+    font-style:italic;
 }
 
 .DQXFormFieldSet  
