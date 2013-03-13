@@ -163,7 +163,7 @@
                 //Help button
                 var boxButtonHelp = DocEl.Div({ id: 'WizBoxButtonHelp', parent: boxFooter });
                 boxButtonHelp.addStyle('padding-left', '8px');
-                var helpButtonContent = '<IMG SRC="' + DQXBMP('info3.png') + '" border=0 ALT="" align="middle" style="margin-right:3px;margin-left:3px;margin-top:-3px"></IMG>Help';
+                var helpButtonContent = '<IMG SRC="' + DQXBMP('info4.png') + '" border=0 ALT=""style="float:left;margin-right:5px;margin-left:3px;"></IMG>Help';
                 helpButtonControl = Controls.Button('WizBoxButtonHelp', { content: helpButtonContent, buttonClass: 'DQXWizardButton', fastTouch: true });
                 helpButtonControl.setOnChanged($.proxy(that._onHelp, that));
                 boxButtonHelp.addElem(helpButtonControl.renderHtml());
