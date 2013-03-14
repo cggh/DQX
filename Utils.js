@@ -58,6 +58,13 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("DocEl")],
             return str;
         }
 
+        DQX.isStandaloneApp = function () {
+            if ('navigator' in window)
+                if ('standalone' in window.navigator)
+                    return window.navigator.standalone;
+            return false;
+        }
+
         DQX.timeoutRetry = 10000;
         DQX.timeoutAjax = 15000;
 
@@ -966,7 +973,7 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("DocEl")],
                 }
             });
         };
-        DQX.canvas_smoothing = function(ctx, state) {
+        DQX.canvas_smoothing = function (ctx, state) {
             ctx.webkitImageSmoothingEnabled = state;
             ctx.mozImageSmoothingEnabled = state;
             ctx.imageSmoothingEnabled = state;
