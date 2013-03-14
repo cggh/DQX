@@ -343,7 +343,7 @@
                     this.navButtonControls = navButtonControls;
                     $.each(navButtonControls, function (idx, bt) { rs_pager += bt.renderHtml(); });
                     rs_pager += '</span>';
-                    rs_pager += '<span id="{id}" style="display:inline-block; vertical-align:middle"></span>'.DQXformat({ id: that.myBaseID + '_status' });
+                    rs_pager += '<span id="{id}" style="display:inline-block; padding-top:10px"></span>'.DQXformat({ id: that.myBaseID + '_status' });
 
                     var rightgroup = DocEl.Span({ id: that.myBaseID + '_right' });
                     rightgroup.addStyle('float', 'right');
@@ -384,7 +384,7 @@
                 if (datacomplete && this._dataValid) {
                     var downloadlink = this.myDataFetcher.createDownloadUrl();
                     var downloadHtml = '<a href=' + downloadlink + '><IMG class="DQXBitmapLink" SRC=' + DQXBMP('download.png') + ' border=0 title="Download this data as TAB-delimited file" ALT="Download"></a>';
-                    var downloadHtml = '<a href=' + downloadlink + '><span class="DQXHyperlink">Download<br>table</span></a>';
+                    //var downloadHtml = '<a href=' + downloadlink + '><span class="DQXHyperlink">Download<br>table</span></a>';
                     $('#' + that.myBaseID + '_right').html(downloadHtml);
                 }
                 else
