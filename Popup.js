@@ -223,7 +223,7 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls
                 thebody.addStyle("max-width", (DQX.getWindowClientW() - 100) + 'px');
                 thebody.addStyle("max-height", (DQX.getWindowClientH() - 100) + 'px');
                 thebody.addStyle("overflow-x", "hidden");
-                thebody.addStyle("overflow-y", "auto");
+                thebody.makeAutoVerticalScroller();
                 thebody.addElem(DQX.interpolate(content));
 
                 var thecloser = DocEl.JavaScriptBitmaplink(DQXBMP("close2.png"), "Close", "DQX.ClosePopup('" + ID + "')");

@@ -519,11 +519,11 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
 
                 if (this.isFinalPanel()) {
                     if (this.allowYScrollbar)
-                        theclientdiv.addStyle('overflow-y', 'auto');
+                        theclientdiv.makeAutoVerticalScroller();
                     else
                         theclientdiv.addStyle('overflow-y', 'hidden');
                     if (this.allowXScrollbar)
-                        theclientdiv.addStyle('overflow-x', 'auto');
+                        theclientdiv.makeAutoHorizontalScroller();
                     else
                         theclientdiv.addStyle('overflow-x', 'hidden');
                     theclientdiv.setCssClass('DQXClient');

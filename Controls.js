@@ -944,7 +944,7 @@ define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller"), DQXSC("Documentation")]
             }
 
             that._execPostCreateHtml = function () {
-                var target = 'mousedown.controlevent';
+                var target = 'click.controlevent';
                 this.getJQElement('').unbind(target).bind(target, $.proxy(that._onClick, that));
             }
 
@@ -1160,7 +1160,7 @@ define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller"), DQXSC("Documentation")]
             that._execRenderHtml = function () {
                 var dv = DocEl.Div({ id: this.getFullID('') });
                 dv.setCssClass('DQXFormControl');
-                dv.addStyle('overflow-y', 'auto');
+                dv.makeAutoVerticalScroller(true);
                 if (this._width > 0)
                     dv.setWidthPx(this._width);
                 else

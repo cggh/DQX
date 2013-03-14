@@ -35,7 +35,7 @@
                 div1.makeFloatLeft().addStyle('overflow', 'auto');
                 div1.addStyle('max-width', (args.leftfraction || 50).toString() + '%');
                 var tablebody1 = DocEl.Div({ parent: div1, id: that.getSubId("Body1") });
-                tablebody1.addStyle("overflow-x", "scroll").addStyle("overflow-y", "hidden");
+                tablebody1.makeVisibleHorizontalScroller(false).addStyle("overflow-y", "hidden");
                 tablebody1.addStyle("border-width", '0px');
                 tablebody1.addStyle("border-right-width", '2px');
                 tablebody1.addStyle("border-style", 'solid');
@@ -43,7 +43,7 @@
                 var div2 = DocEl.Div({ parent: holder, id: that.getSubId("BodyContainer") });
                 div2.addStyle('overflow', 'auto'); //.setWidthPc(95);
                 var tablebody2 = DocEl.Div({ parent: div2, id: that.getSubId("Body2") });
-                tablebody2.addStyle("overflow-x", "scroll").addStyle("overflow-y", "hidden");
+                tablebody2.makeVisibleHorizontalScroller(true).addStyle("overflow-y", "hidden");
                 tablebody2.setBackgroundColor(DQX.Color(0.7, 0.7, 0.7));
                 html += holder;
             }

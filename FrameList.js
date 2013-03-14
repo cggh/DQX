@@ -65,7 +65,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel")],
                         htmlContent += editDiv.toString();
                     }
                     var divList = DocEl.Div({ id: this.myListDivID });
-                    divList.addStyle('overflow-y', 'auto');
+                    divList.makeAutoVerticalScroller(true);
                     divList.addStyle('position', 'absolute');
                     if (this._hasFilter)
                         divList.addStyle('top', '30px');

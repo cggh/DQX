@@ -72,6 +72,28 @@ define(
             return this;
         }
 
+        DocEl._Element.prototype.makeVisibleHorizontalScroller = function (allowTouchScroll) {
+            this.addStyle('overflow-x', 'scroll');
+            if (allowTouchScroll)
+                this.addStyle('-webkit-overflow-scrolling', 'touch'); //!!!warning: this property seems to be a bit buggy on iPad devices
+            return this;
+        }
+
+        DocEl._Element.prototype.makeAutoHorizontalScroller = function (allowTouchScroll) {
+            this.addStyle('overflow-x', 'auto');
+            if (allowTouchScroll)
+                this.addStyle('-webkit-overflow-scrolling', 'touch');//!!!warning: this property seems to be a bit buggy on iPad devices
+            return this;
+        }
+
+        DocEl._Element.prototype.makeAutoVerticalScroller = function (allowTouchScroll) {
+            this.addStyle('overflow-y', 'auto');
+            if (allowTouchScroll)
+                this.addStyle('-webkit-overflow-scrolling', 'touch'); //!!!warning: this property seems to be a bit buggy on iPad devices
+            return this;
+        }
+
+
         DocEl._Element.prototype.setBackgroundColor = function (icol) {
             this.addStyle('background-color', icol.toString());
             return this;

@@ -432,6 +432,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eff6fc', end
 .DQXBitmapLink
 {
 	cursor:pointer;
+    outline: 0;
 }
 
 .DQXBitmapLinkTransparent
@@ -1091,6 +1092,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f3f9ac', end
 .DQXBitmapButton 
 {
     margin:0px;
+/*    background: none;*/
 }
 
 .DQXBitmapButton:hover, .DQXBitmapButtonHighlight
