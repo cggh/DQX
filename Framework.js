@@ -518,8 +518,27 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
                     thediv.setCssClass(this.frameClass);
 
                 if (this.isFinalPanel()) {
-                    if (this.allowYScrollbar)
+                    if (this.allowYScrollbar) {
                         theclientdiv.makeAutoVerticalScroller();
+                        /*partial implementation of scroll need feedback
+                        var scrollUpIndicator = DocEl.Div({ parent: thescrollerdiv });
+                        scrollUpIndicator.setCssClass("FrameListScrollUpIndicator");
+                        scrollUpIndicator.addStyle("position", "absolute");
+                        scrollUpIndicator.addStyle("left", "0px");
+                        scrollUpIndicator.addStyle("top", "0px");
+                        scrollUpIndicator.addStyle("top", "1px");
+                        scrollUpIndicator.addStyle("width", "100%");
+                        scrollUpIndicator.addElem('<center><img src="' + DQXBMP("scrollup.png") + '" /></center>');
+
+                        var scrollDownIndicator = DocEl.Div({ parent: thescrollerdiv });
+                        scrollDownIndicator.setCssClass("FrameListScrollDownIndicator");
+                        scrollDownIndicator.addStyle("position", "absolute");
+                        scrollDownIndicator.addStyle("left", "0px");
+                        scrollDownIndicator.addStyle("bottom", "1px");
+                        scrollDownIndicator.addStyle("width", "100%");
+                        scrollDownIndicator.addElem('<center><img src="' + DQXBMP("scrolldown.png") + '" /></center>');
+                        */
+                    }
                     else
                         theclientdiv.addStyle('overflow-y', 'hidden');
                     if (this.allowXScrollbar)
@@ -688,11 +707,34 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
 
             }
 
+            /*partial implementation of scroll need feedback
+            that._adjustScrollFeedback = function () {
+                var scrollOffset = $('#' + that.getClientDivID()).scrollTop();
+                if (scrollOffset > 0)
+                    $('#' + that.myID).find('.FrameListScrollUpIndicator').show();
+                else
+                    $('#' + that.myID).find('.FrameListScrollUpIndicator').hide();
+                var hh = $('#' + that.getClientDivID())[0].scrollHeight;
+                var hh2 = $('#' + that.getClientDivID()).height();
+                if (hh - scrollOffset > hh2)
+                    $('#' + that.myID).find('.FrameListScrollDownIndicator').show();
+                else
+                    $('#' + that.myID).find('.FrameListScrollDownIndicator').hide();
+            }*/
 
             that._postCreateHTML = function () {
                 var clientel = $('#' + this.getClientDivID());
                 clientel.mousedown($.proxy(this._handleOnMouseDown, this));
                 clientel.mousemove($.proxy(this._handleOnMouseMove, this));
+
+                /*partial implementation of scroll need feedback
+                if (this.isFinalPanel()) {
+                    if (this.allowYScrollbar) {
+                        that._adjustScrollFeedback();
+                        $('#' + this.getClientDivID()).scroll(that._adjustScrollFeedback);
+                    }
+                }*/
+
                 for (var fnr = 0; fnr < this.memberFrames.length; fnr++) {
                     if (fnr < this.memberFrames.length - 1) {
                         if (this.isSplitter()) {
