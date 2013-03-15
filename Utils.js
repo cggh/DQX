@@ -52,7 +52,7 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("DocEl")],
         }
 
         DQX.pluralise = function (str, number) {
-            if (number > 1) {
+            if (number != 1) {
                 return str + 's';
             }
             return str;
