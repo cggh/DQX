@@ -225,7 +225,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel")],
                     this._itemList[i].postCreateHtml();
 
                 $('#' + this.getDivID()).find('.DQXTreeButton').click($.proxy(that._clickTreeButton, that));
-                $('#' + this.getDivID()).find('.DQXTreeItem').mousedown(that._clickTreeItem);
+                $('#' + this.getDivID()).find('.DQXTreeItem').click(that._clickTreeItem);
             }
 
             // Specify the new highlighted item in the try, by its identifier

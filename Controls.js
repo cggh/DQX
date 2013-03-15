@@ -646,7 +646,7 @@ define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller"), DQXSC("Documentation")]
             }
 
             that._execPostCreateHtml = function () {
-                this.getJQElement('').mousedown($.proxy(that._onChange, that));
+                this.getJQElement('').click($.proxy(that._onChange, that));
                 if (that._fastTouch) {
                     var element = document.getElementById(this.getFullID(''));
                     element.addEventListener("touchstart", that._onTouchStart, false);
@@ -711,7 +711,7 @@ define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller"), DQXSC("Documentation")]
             }
 
             that._execPostCreateHtml = function () {
-                this.getJQElement('').mousedown($.proxy(that._onChange, that));
+                this.getJQElement('').click($.proxy(that._onChange, that));
             }
 
             that._onChange = function () {

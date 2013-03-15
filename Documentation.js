@@ -116,7 +116,7 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Popup")]
 
             for (var buttonNr = 0; buttonNr < buttons.length; buttonNr++) {
                 var button = buttons[buttonNr];
-                $('#' + button.id).mousedown($.proxy(button.handler, this));
+                $('#' + button.id).click($.proxy(button.handler, this));
             }
 
             DQX.registerGlobalKeyDownReceiver(function (ev) {
