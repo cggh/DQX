@@ -302,6 +302,7 @@ define([DQXSCJQ(), DQXSC("SQL"), DQXSC("Utils"), DQXSC("DataDecoders")],
                     thequery = this._userQuery1;
                 var myurl = DQX.Url(this.serverurl);
                 myurl.addUrlQueryItem("datatype", "downloadtable");
+                myurl.addUrlQueryItem("database", this.database);
                 myurl.addUrlQueryItem("qry", SQL.WhereClause.encode(thequery));
                 myurl.addUrlQueryItem("tbname", this.tablename);
                 myurl.addUrlQueryItem("collist", collist);
