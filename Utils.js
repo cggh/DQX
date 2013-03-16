@@ -380,9 +380,9 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("DocEl")],
             scrollUpIndicator.addStyle("position", "absolute");
             scrollUpIndicator.addStyle("left", "0px");
             scrollUpIndicator.addStyle("top", "0px");
-            scrollUpIndicator.addStyle("opacity", "0.4");
+            scrollUpIndicator.addStyle("opacity", "0.6");
             scrollUpIndicator.addStyle("pointer-events", "none");
-            scrollUpIndicator.addElem('<img src="' + DQXBMP("scrollup2.png") + '" />&nbsp;<img src="' + DQXBMP("scrollup2.png") + '" />');
+            scrollUpIndicator.addElem('<img src="' + DQXBMP("scrollup3.png") + '" />');
             htmlContent += scrollUpIndicator.toString();
 
             var scrollDownIndicator = DocEl.Div();
@@ -390,9 +390,9 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("DocEl")],
             scrollDownIndicator.addStyle("position", "absolute");
             scrollDownIndicator.addStyle("left", "0px");
             scrollDownIndicator.addStyle("bottom", "1px");
-            scrollDownIndicator.addStyle("opacity", "0.4");
+            scrollDownIndicator.addStyle("opacity", "0.6");
             scrollDownIndicator.addStyle("pointer-events", "none");
-            scrollDownIndicator.addElem('<img src="' + DQXBMP("scrolldown2.png") + '" />&nbsp;<img src="' + DQXBMP("scrolldown2.png") + '" />');
+            scrollDownIndicator.addElem('<img src="' + DQXBMP("scrolldown3.png") + '" />');
             htmlContent += scrollDownIndicator.toString();
 
             $(scrollableElement).parent().append(htmlContent);
@@ -417,7 +417,7 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("DocEl")],
                 var scrollElementWidth = $(scrollableElement).width();
                 var scrollElementHeight = $(scrollableElement).height();
                 $(scrollableElement).parent().find('.ScrollUpIndicator').css("top", (scrollElementPos.top) + "px");
-                $(scrollableElement).parent().find('.ScrollDownIndicator').css("top", (scrollElementPos.top + scrollElementHeight-12) + "px");
+                $(scrollableElement).parent().find('.ScrollDownIndicator').css("top", (scrollElementPos.top + scrollElementHeight-16) + "px");
                 $(scrollableElement).parent().find('.ScrollUpIndicator').css("left", (scrollElementPos.left + scrollElementWidth / 2-20) + "px");
                 $(scrollableElement).parent().find('.ScrollDownIndicator').css("left", (scrollElementPos.left + scrollElementWidth / 2 -20) + "px");
             }
