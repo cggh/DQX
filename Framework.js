@@ -157,6 +157,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
             that._handleInitialise = null; //this function will be called the first time this frame goes live
 
             that.allowYScrollbar = true;
+            that.allowYScrollbarSmooth = false;
             that._showVertScrollFeedback = true;
             that.allowXScrollbar = false;
 
@@ -305,6 +306,14 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
                 DQX.checkIsBoolean(allowX); DQX.checkIsBoolean(allowY);
                 this.allowXScrollbar = allowX;
                 this.allowYScrollbar = allowY;
+                return this;
+            }
+
+            that.setAllowSmoothScrollY = function () {
+                this.checkFinalPanel();
+                this.allowXScrollbar = false;
+                this.allowYScrollbar = true;
+                this.allowYScrollbarSmooth = true;
                 return this;
             }
 
@@ -520,7 +529,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
 
                 if (this.isFinalPanel()) {
                     if (this.allowYScrollbar) {
-                        theclientdiv.makeAutoVerticalScroller();
+                        theclientdiv.makeAutoVerticalScroller(this.allowYScrollbarSmooth);
                     }
                     else
                         theclientdiv.addStyle('overflow-y', 'hidden');
