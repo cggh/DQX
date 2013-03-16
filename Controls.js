@@ -1145,6 +1145,8 @@ define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller"), DQXSC("Documentation")]
                 if (typeof activeItem != 'undefined')
                     this._activeItem = activeItem;
                 this.getJQElement('').html(this._renderItems());
+                if (this.scrollHelper)
+                    this.scrollHelper.update();
             }
 
             //returns an item from the list, by id
@@ -1171,6 +1173,9 @@ define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller"), DQXSC("Documentation")]
             }
 
             that._execPostCreateHtml = function () {
+
+                this.scrollHelper = DQX.scrollHelper(this.getJQElement(''));
+
                 var target = 'mousedown.itemevent';
                 this.getJQElement('').unbind(target).bind(target, $.proxy(that._onChange, that));
 

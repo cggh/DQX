@@ -47,28 +47,15 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel")],
                     this._activeItem = newactiveitem;
             }
 
-            that._adjustScrollFeedback = function () {
-                if (!that._isCreated)
-                    return;
-                var scrollOffset = $('#' + that.myListDivID).scrollTop();
-                if (scrollOffset > 0)
-                    $('#' + that.getDivID()).find('.FrameListScrollUpIndicator').show();
-                else
-                    $('#' + that.getDivID()).find('.FrameListScrollUpIndicator').hide();
-                var hh = $('#' + that.myListDivID)[0].scrollHeight;
-                var hh2 = $('#' + that.myListDivID).height();
-                if (hh - scrollOffset > hh2)
-                    $('#' + that.getDivID()).find('.FrameListScrollDownIndicator').show();
-                else
-                    $('#' + that.getDivID()).find('.FrameListScrollDownIndicator').hide();
-            }
 
 
             //Renders to the DOM
             that.render = function () {
                 if (!this._isCreated) {//initialise: render the required elements
                     var htmlContent = '';
+                    var topOffset = 0;
                     if (this._hasFilter) {
+                        topOffset = 30;
                         var editDiv = DocEl.Div({});
                         editDiv.addStyle('padding-left', '30px');
                         editDiv.addStyle('padding-right', '10px');
@@ -85,7 +72,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel")],
                     divList.makeAutoVerticalScroller(true);
                     divList.addStyle('position', 'absolute');
                     if (this._hasFilter)
-                        divList.addStyle('top', '30px');
+                        divList.addStyle('top', topOffset + 'px');
                     else
                         divList.addStyle('top', '0px');
                     divList.addStyle('bottom', '0px');
@@ -94,33 +81,12 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel")],
                     htmlContent += divList.toString();
 
 
-                    var scrollUpIndicator = DocEl.Div();
-                    scrollUpIndicator.setCssClass("FrameListScrollUpIndicator");
-                    scrollUpIndicator.addStyle("position", "absolute");
-                    scrollUpIndicator.addStyle("left", "0px");
-                    scrollUpIndicator.addStyle("top", "0px");
-                    scrollUpIndicator.addStyle("top", "1px");
-                    if (this._hasFilter)
-                        scrollUpIndicator.addStyle("top", "31px");
-                    scrollUpIndicator.addStyle("width", "100%");
-                    scrollUpIndicator.addElem('<center><img src="' + DQXBMP("scrollup.png") + '" /></center>');
-                    htmlContent += scrollUpIndicator.toString();
-
-                    var scrollDownIndicator = DocEl.Div();
-                    scrollDownIndicator.setCssClass("FrameListScrollDownIndicator");
-                    scrollDownIndicator.addStyle("position", "absolute");
-                    scrollDownIndicator.addStyle("left", "0px");
-                    scrollDownIndicator.addStyle("bottom", "1px");
-                    scrollDownIndicator.addStyle("width", "100%");
-                    scrollDownIndicator.addElem('<center><img src="' + DQXBMP("scrolldown.png") + '" /></center>');
-                    htmlContent += scrollDownIndicator.toString();
-
-
                     $('#' + this.getDivID()).html(htmlContent);
                     if (this._hasFilter)
                         $('#' + this.myFilterDivID).bind("propertychange keyup input paste", $.proxy(that._onChangeFilter, that));
                     this._isCreated = true;
-                    $('#' + this.myListDivID).scroll(that._adjustScrollFeedback);
+
+                    this.scrollHelper = DQX.scrollHelper($('#' + this.myListDivID));
                 }
 
                 var lst1 = '';
@@ -149,7 +115,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel")],
                 }
                 $('#' + this.myListDivID).html(lst1 + lst2);
                 $('#' + this.myListDivID).children().click(that._clickItem);
-                that._adjustScrollFeedback();
+                that.scrollHelper.update();
             }
 
             that._onChangeFilter = function () {
@@ -184,7 +150,8 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel")],
             }
 
             that.handleResize = function () {
-                that._adjustScrollFeedback();
+                if (that.scrollHelper)
+                    that.scrollHelper.update();
             }
 
             //Returns the currently highlighted item in the list
