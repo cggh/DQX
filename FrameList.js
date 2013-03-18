@@ -77,7 +77,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel")],
                         editDiv.addStyle('padding-bottom', '5px');
                         editDiv.addStyle('background-color', 'rgb(180,180,180)');
                         editDiv.addElem('<IMG SRC="' + DQXBMP('magnif2.png') + '" border=0 ALT="" TITLE="" style="position:absolute;left:3px;top:2px">');
-                        var edit = DocEl.Edit('', { id: this.myFilterDivID, parent: editDiv });
+                        var edit = DocEl.Edit('', { id: this.myFilterDivID, parent: editDiv, placeHolder: 'Enter search text to filter items' });
                         edit.addStyle('width', '100%');
                         edit.addStyle('height', '18px');
                         htmlContent += editDiv.toString();
