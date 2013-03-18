@@ -194,7 +194,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelCanva
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////
         // Class ChannelYVals.YRangeComp: implements a single component for ChannelYVals.Channel,
-        // drawing a range between a minimum Y value and a maximum Y value
+        // drawing a range between a minimum Y curve value and a maximum Y curve value
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -293,6 +293,65 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelCanva
             return that;
         }
 
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Class ChannelYVals.YColorZone: implements a single component for ChannelYVals.Channel,
+        // drawing a horizontal color bar indication between a constant min and max Y value
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        //NOTE: a channel component is identified by a DataFetcher.Curve, and a column id in this fetcher
+        ChannelYVals.YColorZone = function (iID, iminval, imaxval, iColor) {
+            var that = {};
+            that.ID = iID; // id of this component
+            that.minVal = iminval;
+            that.maxVal = imaxval;
+            that.myColor = iColor;
+            that.isActive = true;
+            //that.myPlotHints = ChannelYVals.PlotHints();
+
+            that.getID = function () { return this.ID; }
+
+            //return the color used to draw this channel
+            //that.getColor = function () {
+            //    return this.myPlotHints.color;
+            //}
+
+            //that.setColor = function (icolor) {
+            //    this.myPlotHints.color = icolor
+            //}
+
+            //modifies the activity status of this component
+            that.modifyComponentActiveStatus = function (newstatus) {
+                if (this.isActive == newstatus)
+                    return;
+                this.isActive = newstatus;
+            }
+
+            that.draw = function (drawInfo, args) {
+                var rangemin = args.rangemin;
+                var rangemax = args.rangemax;
+                var psy_fact = 1.0 / (rangemax - rangemin) * drawInfo.sizeY * 0.8;
+                var psy_offset = drawInfo.sizeY - drawInfo.sizeY * 0.1 + rangemin * psy_fact;
+                var psy1 = Math.round(psy_offset - this.minVal * psy_fact+0.5)-0.5;
+                var psy2 = Math.round(psy_offset - this.maxVal * psy_fact+0.5)-0.5;
+                drawInfo.centerContext.fillStyle=that.myColor.toStringCanvas();
+                drawInfo.centerContext.fillRect(0, psy2, drawInfo.sizeCenterX, psy1 - psy2 + 1);
+                drawInfo.centerContext.strokeStyle = that.myColor.toStringCanvas();
+                drawInfo.centerContext.beginPath();
+                drawInfo.centerContext.moveTo(0, psy1); drawInfo.centerContext.lineTo(drawInfo.sizeCenterX, psy1);
+                drawInfo.centerContext.moveTo(0, psy2); drawInfo.centerContext.lineTo(drawInfo.sizeCenterX, psy2);
+                drawInfo.centerContext.stroke();
+            }
+
+            that.getClosestPoint = function (px, py) {
+                return null;
+            }
+
+
+            return that;
+        }
+
 
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -317,12 +376,12 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelCanva
                 return icomp;
             }
 
-/*            that.getComponentList = function () {
-                return this.myComponents.length; 
+            /*            that.getComponentList = function () {
+            return this.myComponents.length; 
             }
 
             that.getComponent = function (nr) {
-                return this.myComponents[nr];
+            return this.myComponents[nr];
             }*/
 
             //Modifies the activity status of a component inside this channel
@@ -338,12 +397,14 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelCanva
                 for (var compid in this.myComponents) {
                     if (this.myComponents[compid].isActive) {
                         var fetcher = this.myComponents[compid].myfetcher;
-                        var found = false;
-                        for (var i = 0; i < lst.length; i++)
-                            if (fetcher == lst[i])
-                                found = true;
-                        if (!found)
-                            lst.push(fetcher);
+                        if (fetcher) {
+                            var found = false;
+                            for (var i = 0; i < lst.length; i++)
+                                if (fetcher == lst[i])
+                                    found = true;
+                            if (!found)
+                                lst.push(fetcher);
+                        }
                     }
                 }
                 return lst;
@@ -417,7 +478,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelCanva
                     var comp = this.myComponents[compid];
                     if (comp.isActive) {
                         var tryMatch = comp.getClosestPoint(px, py);
-                        if (tryMatch&&(tryMatch.minDistance < bestMatch.minDistance)) {
+                        if (tryMatch && (tryMatch.minDistance < bestMatch.minDistance)) {
                             bestMatch = tryMatch;
                             bestMatch.compID = compid;
                             bestMatch.ID = compid + '_' + bestMatch.closestPointIndex;
