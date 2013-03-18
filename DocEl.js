@@ -229,6 +229,8 @@ define(
             that.addAttribute("type", 'text');
             //that.addAttribute("pattern", "[0-9]*");
             that.addAttribute("value", content);
+            if (args.placeHolder)
+                that.addAttribute("placeholder", args.placeHolder);
             return that;
         }
 
