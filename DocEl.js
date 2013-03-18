@@ -82,7 +82,7 @@ define(
         DocEl._Element.prototype.makeAutoHorizontalScroller = function (allowTouchScroll) {
             this.addStyle('overflow-x', 'auto');
             if (allowTouchScroll)
-                this.addStyle('-webkit-overflow-scrolling', 'touch');//!!!warning: this property seems to be a bit buggy on iPad devices
+                this.addStyle('-webkit-overflow-scrolling', 'touch'); //!!!warning: this property seems to be a bit buggy on iPad devices
             return this;
         }
 
@@ -229,8 +229,10 @@ define(
             that.addAttribute("type", 'text');
             //that.addAttribute("pattern", "[0-9]*");
             that.addAttribute("value", content);
-            if (args.placeHolder)
-                that.addAttribute("placeholder", args.placeHolder);
+            if (args) {
+                if (args.placeHolder)
+                    that.addAttribute("placeholder", args.placeHolder);
+            }
             return that;
         }
 
