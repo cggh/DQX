@@ -402,7 +402,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
                 frame.setInitialiseFunction(function () {
                     var str = '';
                     if (bitmap)
-                        str += '<img src="Bitmaps/' + bitmap + '" alt="info" style="float:left;margin-left:0px;margin-top:5px;margin-right:5px;margin-bottom:5px"/>'
+                        str += '<img src="Bitmaps/' + bitmap + '" alt="info" style="float:left;margin-left:0px;margin-top:5px;margin-right:8px;margin-bottom:5px"/>'
                     str += content;
                     var info = Framework.Form(frame);
                     info.addHtml(str);
