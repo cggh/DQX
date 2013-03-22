@@ -183,7 +183,7 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls
 
         //Creates a new popup box, providing a title and html content
         //The function returns a unique identifier for this popup
-        Popup.create = function (title, content) {
+        Popup.create = function (title, content, helpID) {
 
             var wasSet = false;
             var popupID = '';
@@ -223,7 +223,7 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls
                 thebody.addStyle("max-width", (DQX.getWindowClientW() - 100) + 'px');
                 thebody.addStyle("max-height", (DQX.getWindowClientH() - 100) + 'px');
                 thebody.addStyle("overflow-x", "hidden");
-                thebody.addStyle("overflow-y", "auto");
+                thebody.makeAutoVerticalScroller();
                 thebody.addElem(DQX.interpolate(content));
 
                 var thecloser = DocEl.JavaScriptBitmaplink(DQXBMP("close2.png"), "Close", "DQX.ClosePopup('" + ID + "')");
@@ -233,6 +233,10 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls
                 thecloser.addStyle('top', '-17px');
 
                 thebox.addElem(Popup._createPinBox(ID, false));
+
+                if (helpID) {//Help button
+                    thebox.addElem('<IMG SRC="{bmp}" border=0 class="DQXBitmapLink Helpbutton" ALT="Help" TITLE="Help" style="position:absolute;right:35px;top:0px;">'.DQXformat({ bmp: DQXBMP("info2.png") }));
+                }
 
                 var content = thebox.toString();
                 $('#DQXBackBlocker').append(content);
@@ -246,6 +250,12 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls
                 DQX.registerGlobalKeyDownReceiver(function (ev) {
                     if (ev.isEscape) DQX.ClosePopup(ID);
                 }, ID);
+
+                if (helpID) {
+                    $('#' + ID).find('.Helpbutton').click(function () {
+                        Msg.send({ type: 'ShowHelp' }, helpID);
+                    });
+                }
             }
             Popup.activePopupList.push(ID);
             return ID;

@@ -66,6 +66,10 @@ define([DQXSCJQ(), DQXSC("Msg")],
                     this._callBackChangeState(this.stateKeys);
             },
 
+            back: function() {
+                history.back();
+            },
+
             //Sets a new state
             setState: function (iStateKeys) {
                 this.stateKeys = iStateKeys;

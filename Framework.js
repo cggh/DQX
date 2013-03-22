@@ -157,6 +157,8 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
             that._handleInitialise = null; //this function will be called the first time this frame goes live
 
             that.allowYScrollbar = true;
+            that.allowYScrollbarSmooth = false;
+            that._showVertScrollFeedback = true;
             that.allowXScrollbar = false;
 
             ////////////////// GENERAL GETTERS
@@ -307,6 +309,14 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
                 return this;
             }
 
+            that.setAllowSmoothScrollY = function () {
+                this.checkFinalPanel();
+                this.allowXScrollbar = false;
+                this.allowYScrollbar = true;
+                this.allowYScrollbarSmooth = true;
+                return this;
+            }
+
             //css class of the div that defines the border of this panel
             that.setFrameClass = function (styleClass) {
                 DQX.checkIsString(styleClass);
@@ -392,7 +402,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
                 frame.setInitialiseFunction(function () {
                     var str = '';
                     if (bitmap)
-                        str += '<img src="Bitmaps/' + bitmap + '" alt="info" style="float:left;margin-left:0px;margin-top:5px;margin-right:5px;margin-bottom:5px"/>'
+                        str += '<img src="Bitmaps/' + bitmap + '" alt="info" style="float:left;margin-left:0px;margin-top:5px;margin-right:8px;margin-bottom:5px"/>'
                     str += content;
                     var info = Framework.Form(frame);
                     info.addHtml(str);
@@ -518,12 +528,13 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
                     thediv.setCssClass(this.frameClass);
 
                 if (this.isFinalPanel()) {
-                    if (this.allowYScrollbar)
-                        theclientdiv.addStyle('overflow-y', 'auto');
+                    if (this.allowYScrollbar) {
+                        theclientdiv.makeAutoVerticalScroller(this.allowYScrollbarSmooth);
+                    }
                     else
                         theclientdiv.addStyle('overflow-y', 'hidden');
                     if (this.allowXScrollbar)
-                        theclientdiv.addStyle('overflow-x', 'auto');
+                        theclientdiv.makeAutoHorizontalScroller();
                     else
                         theclientdiv.addStyle('overflow-x', 'hidden');
                     theclientdiv.setCssClass('DQXClient');
@@ -688,11 +699,19 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
 
             }
 
-
             that._postCreateHTML = function () {
                 var clientel = $('#' + this.getClientDivID());
                 clientel.mousedown($.proxy(this._handleOnMouseDown, this));
                 clientel.mousemove($.proxy(this._handleOnMouseMove, this));
+
+                if (this._showVertScrollFeedback) {
+                    if (this.isFinalPanel()) {
+                        if (this.allowYScrollbar) {
+                            that.scrollHelper = DQX.scrollHelper($('#' + this.getClientDivID()));
+                        }
+                    }
+                }
+
                 for (var fnr = 0; fnr < this.memberFrames.length; fnr++) {
                     if (fnr < this.memberFrames.length - 1) {
                         if (this.isSplitter()) {
@@ -988,6 +1007,8 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
                         this._createTabItems();
 
                 if (this.isFinalPanel()) {
+                    if (this.scrollHelper)
+                        this.scrollHelper.update();
                     if (this.myClientObject != null)
                         this.myClientObject.handleResize();
                     else
@@ -1093,6 +1114,11 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
 
             that._onChangeTab = function (newtab) {
                 Msg.broadcast({ type: 'ChangeTab', id: this.myFrameID }, this.getActiveTabFrameID());
+            }
+
+            that.notifyContentChanged = function () {
+                if (that.scrollHelper)
+                    that.scrollHelper.update();
             }
 
 
@@ -1243,6 +1269,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
                 this.content = st;
                 that._content.postCreateHtml();
                 DQX.ExecPostCreateHtml();
+                this.myParentFrame.notifyContentChanged();
                 if (this.myParentFrame.autoSizeY)
                     Framework._handleResize(); //force resizing of the frames if the content was changed
             }

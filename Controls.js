@@ -646,7 +646,7 @@ define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller"), DQXSC("Documentation")]
             }
 
             that._execPostCreateHtml = function () {
-                this.getJQElement('').mousedown($.proxy(that._onChange, that));
+                this.getJQElement('').click($.proxy(that._onChange, that));
                 if (that._fastTouch) {
                     var element = document.getElementById(this.getFullID(''));
                     element.addEventListener("touchstart", that._onTouchStart, false);
@@ -711,7 +711,7 @@ define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller"), DQXSC("Documentation")]
             }
 
             that._execPostCreateHtml = function () {
-                this.getJQElement('').mousedown($.proxy(that._onChange, that));
+                this.getJQElement('').click($.proxy(that._onChange, that));
             }
 
             that._onChange = function () {
@@ -944,7 +944,7 @@ define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller"), DQXSC("Documentation")]
             }
 
             that._execPostCreateHtml = function () {
-                var target = 'mousedown.controlevent';
+                var target = 'click.controlevent';
                 this.getJQElement('').unbind(target).bind(target, $.proxy(that._onClick, that));
             }
 
@@ -1145,6 +1145,8 @@ define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller"), DQXSC("Documentation")]
                 if (typeof activeItem != 'undefined')
                     this._activeItem = activeItem;
                 this.getJQElement('').html(this._renderItems());
+                if (this.scrollHelper)
+                    this.scrollHelper.update();
             }
 
             //returns an item from the list, by id
@@ -1160,7 +1162,7 @@ define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller"), DQXSC("Documentation")]
             that._execRenderHtml = function () {
                 var dv = DocEl.Div({ id: this.getFullID('') });
                 dv.setCssClass('DQXFormControl');
-                dv.addStyle('overflow-y', 'auto');
+                dv.makeAutoVerticalScroller(true);
                 if (this._width > 0)
                     dv.setWidthPx(this._width);
                 else
@@ -1171,6 +1173,9 @@ define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller"), DQXSC("Documentation")]
             }
 
             that._execPostCreateHtml = function () {
+
+                this.scrollHelper = DQX.scrollHelper(this.getJQElement(''));
+
                 var target = 'mousedown.itemevent';
                 this.getJQElement('').unbind(target).bind(target, $.proxy(that._onChange, that));
 

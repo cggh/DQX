@@ -19,17 +19,31 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel")],
             that._filterText = null;
             that._isCreated = false;
             that._hasFilter = false;
+            that._template = null;
+            that._filterTemplateComponentList = [];
+
+            //Call this function to set a template for rendering each list item.
+            //When a template is set, the 'content' property of each list item should be an object with tokens that will be interpolated in the template
+            that.setTemplate = function (itemplate) {
+                that._template = itemplate;
+                return that;
+            }
 
             //Call this function to make the list have a search function that shows string matches
-            that.setHasFilter = function () {
+            //Optionally, for template-based item rendering, a list of template components that should be searched for can be provided
+            that.setHasFilter = function (ifilterTemplateComponentList) {
                 that._hasFilter = true;
+                if (ifilterTemplateComponentList)
+                    that._filterTemplateComponentList = ifilterTemplateComponentList;
                 return that;
             }
 
             //Sets the list items
             // * iItems: list of object with the following properties:
             //       - id :  internal identifier for the item
-            //       - content : displayed text
+            //       - content : 
+            //           . without template: displayed text
+            //           . with template: object with token-value pairs
             //       - icon : bitmap to show next to the list item
             // * newactiveitem (optional) : identifier of the new selected item
             that.setItems = function (iItems, newactiveitem) {
@@ -47,11 +61,15 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel")],
                     this._activeItem = newactiveitem;
             }
 
+
+
             //Renders to the DOM
             that.render = function () {
                 if (!this._isCreated) {//initialise: render the required elements
                     var htmlContent = '';
+                    var topOffset = 0;
                     if (this._hasFilter) {
+                        topOffset = 30;
                         var editDiv = DocEl.Div({});
                         editDiv.addStyle('padding-left', '30px');
                         editDiv.addStyle('padding-right', '10px');
@@ -59,32 +77,35 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel")],
                         editDiv.addStyle('padding-bottom', '5px');
                         editDiv.addStyle('background-color', 'rgb(180,180,180)');
                         editDiv.addElem('<IMG SRC="' + DQXBMP('magnif2.png') + '" border=0 ALT="" TITLE="" style="position:absolute;left:3px;top:2px">');
-                        var edit = DocEl.Edit('', { id: this.myFilterDivID, parent: editDiv });
+                        var edit = DocEl.Edit('', { id: this.myFilterDivID, parent: editDiv, placeHolder: 'Enter search text to filter items' });
                         edit.addStyle('width', '100%');
                         edit.addStyle('height', '18px');
                         htmlContent += editDiv.toString();
                     }
                     var divList = DocEl.Div({ id: this.myListDivID });
-                    divList.addStyle('overflow-y', 'auto');
+                    divList.makeAutoVerticalScroller(true);
                     divList.addStyle('position', 'absolute');
                     if (this._hasFilter)
-                        divList.addStyle('top', '30px');
+                        divList.addStyle('top', topOffset + 'px');
                     else
                         divList.addStyle('top', '0px');
                     divList.addStyle('bottom', '0px');
                     divList.addStyle('left', '0px');
                     divList.addStyle('right', '0px');
                     htmlContent += divList.toString();
+
+
                     $('#' + this.getDivID()).html(htmlContent);
                     if (this._hasFilter)
                         $('#' + this.myFilterDivID).bind("propertychange keyup input paste", $.proxy(that._onChangeFilter, that));
                     this._isCreated = true;
+
+                    this.scrollHelper = DQX.scrollHelper($('#' + this.myListDivID));
                 }
 
                 var lst1 = '';
                 var lst2 = '';
                 for (var i = 0; i < this.items.length; i++) {
-                    var matching = ((!this._filterText) || (this.items[i].content.toUpperCase().indexOf(this._filterText) >= 0));
                     var line = DocEl.Div();
                     line.setID(this.items[i].id);
                     if (this._activeItem == this.items[i].id)
@@ -94,10 +115,27 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel")],
                     if (this.items[i].icon) {
                         line.addElem('<IMG SRC="' + this.items[i].icon + '" border=0 ALT="" TITLE="" style="float:left;padding-right:6px">');
                     }
-                    var content = this.items[i].content;
-                    if (this._filterText)
-                        content = DQX.highlightText(content, this._filterText);
-                    line.addElem(content);
+                    var matching = !this._filterText;
+                    if (!this._template) {//without template
+                        if (this._filterText)
+                            matching = (this.items[i].content.toUpperCase().indexOf(this._filterText) >= 0);
+                        var content = this.items[i].content;
+                        if (this._filterText)
+                            content = DQX.highlightText(content, this._filterText);
+                        line.addElem(content);
+                    }
+                    else {//with template
+                        var theContent = $.extend(true, {}, that.items[i].content);
+                        if (this._filterText) {
+                            $.each(this._filterTemplateComponentList, function (idx, filterComponent) {
+                                if (that.items[i].content[filterComponent].toUpperCase().indexOf(that._filterText) >= 0)
+                                    matching = true;
+                                theContent[filterComponent] = DQX.highlightText(theContent[filterComponent], that._filterText);
+                            })
+                        }
+                        var content = this._template.DQXformat(theContent);
+                        line.addElem(content);
+                    }
                     if (matching)
                         lst1 += line.toString();
                     else {
@@ -106,8 +144,8 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel")],
                     }
                 }
                 $('#' + this.myListDivID).html(lst1 + lst2);
-
                 $('#' + this.myListDivID).children().click(that._clickItem);
+                that.scrollHelper.update();
             }
 
             that._onChangeFilter = function () {
@@ -142,6 +180,8 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel")],
             }
 
             that.handleResize = function () {
+                if (that.scrollHelper)
+                    that.scrollHelper.update();
             }
 
             //Returns the currently highlighted item in the list

@@ -282,7 +282,7 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelPlotter"), DQXSC("Dat
             var footerDiv = DocEl.Div();
             footerDiv.addStyle('padding', '3px');
             footerDiv.addElem('Find feature: ');
-            var featurepicker = DocEl.Edit('', { id: that.getSubID("FeaturePicker"), parent: footerDiv });
+            var featurepicker = DocEl.Edit('', { id: that.getSubID("FeaturePicker"), parent: footerDiv, placeHolder:"Enter search text" });
             footerDiv.addElem(' ');
             footerDiv.addElem(DocEl.Span({ id: that.getSubID("FeatureHits"), parent: footerDiv }));
             that.getElemJQ('Footer').html(footerDiv.toString());

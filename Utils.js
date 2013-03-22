@@ -52,10 +52,17 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("DocEl")],
         }
 
         DQX.pluralise = function (str, number) {
-            if (number > 1) {
+            if (number != 1) {
                 return str + 's';
             }
             return str;
+        }
+
+        DQX.isStandaloneApp = function () {
+            if ('navigator' in window)
+                if ('standalone' in window.navigator)
+                    return window.navigator.standalone;
+            return false;
         }
 
         DQX.timeoutRetry = 10000;
@@ -358,6 +365,70 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("DocEl")],
             "#2e3436"
 
         ];
+
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////
+        // A class that shows visual scroll up / down hints on a scrollable div (makes it easier to see what is scrollable on an iPad)
+        // scrollableElement: a jQuery-style element rendered in the DOM, representing a scrollable div
+        //////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        DQX.scrollHelper = function (scrollableElement) {
+            var that = {};
+            var htmlContent = '';
+            var scrollUpIndicator = DocEl.Div();
+            scrollUpIndicator.setCssClass("ScrollUpIndicator");
+            scrollUpIndicator.addStyle("position", "absolute");
+            scrollUpIndicator.addStyle("left", "0px");
+            scrollUpIndicator.addStyle("top", "0px");
+            scrollUpIndicator.addStyle("opacity", "0.6");
+            scrollUpIndicator.addStyle("pointer-events", "none");
+            scrollUpIndicator.addElem('<img src="' + DQXBMP("scrollup3.png") + '" />');
+            htmlContent += scrollUpIndicator.toString();
+
+            var scrollDownIndicator = DocEl.Div();
+            scrollDownIndicator.setCssClass("ScrollDownIndicator");
+            scrollDownIndicator.addStyle("position", "absolute");
+            scrollDownIndicator.addStyle("left", "0px");
+            scrollDownIndicator.addStyle("bottom", "1px");
+            scrollDownIndicator.addStyle("opacity", "0.6");
+            scrollDownIndicator.addStyle("pointer-events", "none");
+            scrollDownIndicator.addElem('<img src="' + DQXBMP("scrolldown3.png") + '" />');
+            htmlContent += scrollDownIndicator.toString();
+
+            $(scrollableElement).parent().append(htmlContent);
+
+            that._adjustScrollFeedback = function () {
+                var scrollOffset = $(scrollableElement).scrollTop();
+                if (scrollOffset > 0)
+                    $(scrollableElement).parent().find('.ScrollUpIndicator').show();
+                else
+                    $(scrollableElement).parent().find('.ScrollUpIndicator').hide();
+                var hh = $(scrollableElement)[0].scrollHeight;
+                var hh2 = $(scrollableElement).height();
+                if (hh - scrollOffset > hh2)
+                    $(scrollableElement).parent().find('.ScrollDownIndicator').show();
+                else
+                    $(scrollableElement).parent().find('.ScrollDownIndicator').hide();
+            }
+
+            that.update = function () {
+                that._adjustScrollFeedback();
+                var scrollElementPos = $(scrollableElement).position();
+                var scrollElementWidth = $(scrollableElement).width();
+                var scrollElementHeight = $(scrollableElement).height();
+                $(scrollableElement).parent().find('.ScrollUpIndicator').css("top", (scrollElementPos.top) + "px");
+                $(scrollableElement).parent().find('.ScrollDownIndicator').css("top", (scrollElementPos.top + scrollElementHeight-16) + "px");
+                $(scrollableElement).parent().find('.ScrollUpIndicator').css("left", (scrollElementPos.left + scrollElementWidth / 2-20) + "px");
+                $(scrollableElement).parent().find('.ScrollDownIndicator').css("left", (scrollElementPos.left + scrollElementWidth / 2 -20) + "px");
+            }
+
+
+            $(scrollableElement).scroll(that._adjustScrollFeedback);
+            that.update();
+
+            return that;
+        };
+
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////
         // Some helper functions that assist in finding back an object instance using a unique ID
@@ -966,7 +1037,7 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("DocEl")],
                 }
             });
         };
-        DQX.canvas_smoothing = function(ctx, state) {
+        DQX.canvas_smoothing = function (ctx, state) {
             ctx.webkitImageSmoothingEnabled = state;
             ctx.mozImageSmoothingEnabled = state;
             ctx.imageSmoothingEnabled = state;
