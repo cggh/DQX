@@ -164,6 +164,24 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelPlotter"), DQXSC("Dat
                 this.reScale(1.0 / 1.5);
             }
 
+            that._onZoomInVert = function () {
+                $.each(this._channels, function (idx, channel) {
+                    if (channel._variableHeight) {
+                        channel.modifyHeight(Math.round(channel.getHeight() * 1.25));
+                    }
+                });
+                this.handleResize();
+            }
+
+            that._onZoomOutVert = function () {
+                $.each(this._channels, function (idx, channel) {
+                    if (channel._variableHeight) {
+                        channel.modifyHeight(Math.round(channel.getHeight() / 1.25));
+                    }
+                });
+                this.handleResize();
+            }
+
             //internal: request gene list was succesful
             that._ajaxResponse_FindGene = function (resp) {
                 var keylist = DQX.parseResponse(resp); //unpack the response
@@ -268,8 +286,12 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelPlotter"), DQXSC("Dat
             navButtonDiv.addStyle('float', 'left');
 
             navButtonControls = [];
-            navButtonControls.push(Controls.Button(that.getSubID('BtZoomin'), { bitmap: DQXBMP('zoomin1.png'), description: 'Zoom in', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onZoomIn, that)));
-            navButtonControls.push(Controls.Button(that.getSubID('BtZoomout'), { bitmap: DQXBMP('zoomout1.png'), description: 'Zoom out', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onZoomOut, that)));
+            navButtonControls.push(Controls.Button(that.getSubID('BtZoomin'), { bitmap: DQXBMP('zoomin1H.png'), description: 'Zoom in horizontally', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onZoomIn, that)));
+            navButtonControls.push(Controls.Button(that.getSubID('BtZoomout'), { bitmap: DQXBMP('zoomout1H.png'), description: 'Zoom out horizontally', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onZoomOut, that)));
+            if (args.canZoomVert) {
+                navButtonControls.push(Controls.Button(that.getSubID('BtZoominVert'), { bitmap: DQXBMP('zoomin1V.png'), description: 'Zoom in vertically', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onZoomInVert, that)));
+                navButtonControls.push(Controls.Button(that.getSubID('BtZoomoutVert'), { bitmap: DQXBMP('zoomout1V.png'), description: 'Zoom out vertically', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onZoomOutVert, that)));
+            }
             navButtonControls.push(Controls.Button(that.getSubID('BtScrollLeft'), { bitmap: DQXBMP('arrow3left.png'), description: 'Scroll left', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onScrollLeft, that)));
             navButtonControls.push(Controls.Button(that.getSubID('BtScrollRight'), { bitmap: DQXBMP('arrow3right.png'), description: 'Scroll right', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onScrollRight, that)));
             $.each(navButtonControls, function (idx, bt) { navButtonDiv.addElem(bt.renderHtml()); });
@@ -282,7 +304,7 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelPlotter"), DQXSC("Dat
             var footerDiv = DocEl.Div();
             footerDiv.addStyle('padding', '3px');
             footerDiv.addElem('Find feature: ');
-            var featurepicker = DocEl.Edit('', { id: that.getSubID("FeaturePicker"), parent: footerDiv, placeHolder:"Enter search text" });
+            var featurepicker = DocEl.Edit('', { id: that.getSubID("FeaturePicker"), parent: footerDiv, placeHolder: "Enter search text" });
             footerDiv.addElem(' ');
             footerDiv.addElem(DocEl.Span({ id: that.getSubID("FeatureHits"), parent: footerDiv }));
             that.getElemJQ('Footer').html(footerDiv.toString());

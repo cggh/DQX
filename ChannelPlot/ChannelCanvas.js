@@ -23,6 +23,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Scroller")],
             var that = {};
             that._myID = id;
             that._height = 120;
+            that._variableHeight = false;
             that._title = '';
             that._subTitle = '';
             that._toolTipInfo = { ID: null };
@@ -64,7 +65,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Scroller")],
                 return this._myPlotter;
             }
             that.getHeight = function () { return this._height; }
-            that.setHeight = function (vl) { this._height = vl; }
+            that.setHeight = function (vl, isVariable) { this._height = vl; this._variableHeight = (isVariable == true) }
             that.setAutoFillHeight = function () { this._autoFillHeight = true; }
             that.getAutoFillHeight = function () { return this._autoFillHeight; }
 
@@ -143,6 +144,17 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Scroller")],
                 }
 
                 return wrapper.toString();
+            }
+
+            //Modifies the height of the channel after is was created
+            that.modifyHeight = function (newHeight) {
+                this._height = newHeight;
+                $('#' + this.getCanvasID('left')).height(newHeight);
+                $('#' + this.getCanvasID('left')).attr('height', newHeight);
+                $('#' + this.getCanvasID('center')).height(newHeight);
+                $('#' + this.getCanvasID('center')).attr('height', newHeight);
+                $('#' + this.getCanvasID('right')).height(newHeight);
+                $('#' + this.getCanvasID('right')).attr('height', newHeight);
             }
 
             that.postCreateHtml = function () {
