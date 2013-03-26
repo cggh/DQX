@@ -145,8 +145,8 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls
             var thepinner = DocEl.JavaScriptBitmaplink(bmp, "Keep this info box visible", "DQX.SwitchPinned('" + ID + "')");
             thepinner.setCssClass(isPinned ? "DQXPinBoxPinned" : "DQXPinBoxUnpinned");
             thepinner.addStyle('position', 'absolute');
-            thepinner.addStyle('right', '-11px');
-            thepinner.addStyle('top', '-18px');
+            thepinner.addStyle('left', '2px');
+            thepinner.addStyle('top', '-21px');
             return thepinner.toString();
         }
 
@@ -229,13 +229,13 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls
                 var thecloser = DocEl.JavaScriptBitmaplink(DQXBMP("close2.png"), "Close", "DQX.ClosePopup('" + ID + "')");
                 thebox.addElem(thecloser);
                 thecloser.addStyle('position', 'absolute');
-                thecloser.addStyle('left', '-17px');
-                thecloser.addStyle('top', '-17px');
+                thecloser.addStyle('right', '-16px');
+                thecloser.addStyle('top', '-16px');
 
                 thebox.addElem(Popup._createPinBox(ID, false));
 
                 if (helpID) {//Help button
-                    thebox.addElem('<IMG SRC="{bmp}" border=0 class="DQXBitmapLink Helpbutton" ALT="Help" TITLE="Help" style="position:absolute;right:35px;top:0px;">'.DQXformat({ bmp: DQXBMP("info2.png") }));
+                    thebox.addElem('<IMG SRC="{bmp}" border=0 class="DQXBitmapLink Helpbutton" ALT="Help" TITLE="Help" style="opacity:0.70;position:absolute;right:35px;top:0px;">'.DQXformat({ bmp: DQXBMP("info2.png") }));
                 }
 
                 var content = thebox.toString();
