@@ -1091,22 +1091,27 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("DocEl")],
             while (i--) {
                 name = cssPrefixes[i] + capName;
                 if (name in style) {
-                    return name.replace(/([A-Z])/g, function ($1) { return "-" + $1.toLowerCase(); });
+                    var result = name.replace(/([A-Z])/g, function ($1) { return "-" + $1.toLowerCase(); });
+                    if (cssPrefixes[i] == 'ms') {
+                        return '-'+result;
+                    }
+                    else {
+                        return result
+                    }
+
                 }
             }
             return origName.replace(/([A-Z])/g, function ($1) { return "-" + $1.toLowerCase(); });
         };
 
-        DQX.transform_name = function () {
-            if (DQX._transform_name == undefined) {
-                var canvas = document.createElement('canvas');
-                DQX._transform_name = DQX.vendorPropName(canvas.style, 'transform');
-            }
-            return DQX._transform_name
-        };
         DQX.vendor_name = function (tag, style) {
-            var tag = document.createElement(tag);
-            return DQX.vendorPropName(tag.style, style);
+            DQX.vendor_name_cache = DQX.vendor_name_cache || {};
+            if (tag+style in DQX.vendor_name_cache)
+                return DQX.vendor_name_cache[tag+style];
+            else {
+                var elem = document.createElement(tag);
+                return DQX.vendor_name_cache[tag+style] = DQX.vendorPropName(elem.style, style);
+            }
         };
         return DQX;
     });
