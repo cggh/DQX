@@ -545,6 +545,22 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Scroller")],
                     sizeY: this._height
                 };
                 this.draw(locDrawInfo);
+                //Fade-style visual feedback for scroll availability
+                var scrollFadeSize = 18;
+                if (drawInfo.offsetX > 0) {
+                    var backgrad = locDrawInfo.centerContext.createLinearGradient(0, 0, scrollFadeSize, 0);
+                    backgrad.addColorStop(0, "rgba(230,230,230,0.85)");
+                    backgrad.addColorStop(1, "rgba(230,230,230,0.0)");
+                    locDrawInfo.centerContext.fillStyle = backgrad;
+                    locDrawInfo.centerContext.fillRect(0, 1, scrollFadeSize, locDrawInfo.sizeY - 2);
+                }
+                if (drawInfo.rightSideNotComplete) {
+                    var backgrad = locDrawInfo.centerContext.createLinearGradient(locDrawInfo.sizeCenterX - scrollFadeSize, 0, locDrawInfo.sizeCenterX, 0);
+                    backgrad.addColorStop(0, "rgba(230,230,230,0.0)");
+                    backgrad.addColorStop(1, "rgba(230,230,230,0.85)");
+                    locDrawInfo.centerContext.fillStyle = backgrad;
+                    locDrawInfo.centerContext.fillRect(locDrawInfo.sizeCenterX - scrollFadeSize, 1, scrollFadeSize, locDrawInfo.sizeY - 2);
+                }
             }
 
 

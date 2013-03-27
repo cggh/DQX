@@ -234,7 +234,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel"), DQXSC("Scr
                     this.updateNavigator();
                     this.render();
                     this._lastmouseposx = mouseposx;
-                    this.getElemJQ("BodyScroll").scrollTop(this._dragstartoffsetY-(args.pageY-this._dragstarty))
+                    this.getElemJQ("BodyScroll").scrollTop(this._dragstartoffsetY - (args.pageY - this._dragstarty))
                 }
                 if (this._mousemarking) {
                     this._markPos2 = this.screenPos2XVal(mousePressX1);
@@ -266,7 +266,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel"), DQXSC("Scr
 
             that.reScale = function (scaleFactor, centerPosX) {
                 if (!centerPosX) {
-                    centerPosX = this.getElemJQ('').innerHeight()/2.0;
+                    centerPosX = this.getElemJQ('').innerHeight() / 2.0;
                 }
                 dff = Math.min(scaleFactor, this._MaxZoomFactX / this._zoomFactX);
                 this._offsetX = this._offsetX * dff + centerPosX * (dff - 1);
@@ -305,6 +305,8 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel"), DQXSC("Scr
                     mark: { present: this._markPresent, pos1: this._markPos1, pos2: this._markPos2 },
                     HorAxisScaleJumps: DQX.DrawUtil.getScaleJump(20 / this._zoomFactX)
                 };
+                if (this._myNavigator)
+                    drawInfo.rightSideNotComplete = this._myNavigator.canScrollRight();
                 for (var i = 0; i < this._channels.length; i++)
                     this._channels[i].render(drawInfo);
                 this._myNavigator.draw();
