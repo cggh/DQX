@@ -57,6 +57,11 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg")],
                 return Math.log(1 + 100 * zoomfrac) / Math.log(1 + 100);
             }
 
+            //Returns true if the scroller is on the extreme right
+            that.canScrollRight = function () {
+                return (this.scrollPos + this.ScrollSize) < 1.0;
+            }
+
             //Resizes the element to a new x dimension
             that.resize = function (newsizex) {
                 this.sizeX = newsizex;

@@ -23,6 +23,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Scroller")],
             var that = {};
             that._myID = id;
             that._height = 120;
+            that._variableHeight = false;
             that._title = '';
             that._subTitle = '';
             that._toolTipInfo = { ID: null };
@@ -64,7 +65,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Scroller")],
                 return this._myPlotter;
             }
             that.getHeight = function () { return this._height; }
-            that.setHeight = function (vl) { this._height = vl; }
+            that.setHeight = function (vl, isVariable) { this._height = vl; this._variableHeight = (isVariable == true) }
             that.setAutoFillHeight = function () { this._autoFillHeight = true; }
             that.getAutoFillHeight = function () { return this._autoFillHeight; }
 
@@ -143,6 +144,17 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Scroller")],
                 }
 
                 return wrapper.toString();
+            }
+
+            //Modifies the height of the channel after is was created
+            that.modifyHeight = function (newHeight) {
+                this._height = newHeight;
+                $('#' + this.getCanvasID('left')).height(newHeight);
+                $('#' + this.getCanvasID('left')).attr('height', newHeight);
+                $('#' + this.getCanvasID('center')).height(newHeight);
+                $('#' + this.getCanvasID('center')).attr('height', newHeight);
+                $('#' + this.getCanvasID('right')).height(newHeight);
+                $('#' + this.getCanvasID('right')).attr('height', newHeight);
             }
 
             that.postCreateHtml = function () {
@@ -533,6 +545,22 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Scroller")],
                     sizeY: this._height
                 };
                 this.draw(locDrawInfo);
+                //Fade-style visual feedback for scroll availability
+                var scrollFadeSize = 18;
+                if (drawInfo.offsetX > 0) {
+                    var backgrad = locDrawInfo.centerContext.createLinearGradient(0, 0, scrollFadeSize, 0);
+                    backgrad.addColorStop(0, "rgba(230,230,230,0.85)");
+                    backgrad.addColorStop(1, "rgba(230,230,230,0.0)");
+                    locDrawInfo.centerContext.fillStyle = backgrad;
+                    locDrawInfo.centerContext.fillRect(0, 1, scrollFadeSize, locDrawInfo.sizeY - 2);
+                }
+                if (drawInfo.rightSideNotComplete) {
+                    var backgrad = locDrawInfo.centerContext.createLinearGradient(locDrawInfo.sizeCenterX - scrollFadeSize, 0, locDrawInfo.sizeCenterX, 0);
+                    backgrad.addColorStop(0, "rgba(230,230,230,0.0)");
+                    backgrad.addColorStop(1, "rgba(230,230,230,0.85)");
+                    locDrawInfo.centerContext.fillStyle = backgrad;
+                    locDrawInfo.centerContext.fillRect(locDrawInfo.sizeCenterX - scrollFadeSize, 1, scrollFadeSize, locDrawInfo.sizeY - 2);
+                }
             }
 
 
