@@ -317,6 +317,7 @@ define([DQXSCJQ(), DQXSC("SQL"), DQXSC("Utils"), DQXSC("DataDecoders")],
                         });
                     }
                     else {
+                        var q = 0;
                         //todo: somehow update without the need for fetching?
                     }
                 }

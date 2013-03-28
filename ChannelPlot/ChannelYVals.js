@@ -333,11 +333,15 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelCanva
                 var rangemax = args.rangemax;
                 var psy_fact = 1.0 / (rangemax - rangemin) * drawInfo.sizeY * 0.8;
                 var psy_offset = drawInfo.sizeY - drawInfo.sizeY * 0.1 + rangemin * psy_fact;
-                var psy1 = Math.round(psy_offset - this.minVal * psy_fact+0.5)-0.5;
-                var psy2 = Math.round(psy_offset - this.maxVal * psy_fact+0.5)-0.5;
+                var psy1 = Math.round(psy_offset - this.minVal * psy_fact)-0.5;
+                var psy2 = Math.round(psy_offset - this.maxVal * psy_fact)-0.5;
                 drawInfo.centerContext.fillStyle=that.myColor.toStringCanvas();
                 drawInfo.centerContext.fillRect(0, psy2, drawInfo.sizeCenterX, psy1 - psy2 + 1);
                 drawInfo.centerContext.strokeStyle = that.myColor.toStringCanvas();
+                drawInfo.centerContext.beginPath();
+                drawInfo.centerContext.moveTo(0, psy1); drawInfo.centerContext.lineTo(drawInfo.sizeCenterX, psy1);
+                drawInfo.centerContext.moveTo(0, psy2); drawInfo.centerContext.lineTo(drawInfo.sizeCenterX, psy2);
+                drawInfo.centerContext.stroke();
                 drawInfo.centerContext.beginPath();
                 drawInfo.centerContext.moveTo(0, psy1); drawInfo.centerContext.lineTo(drawInfo.sizeCenterX, psy1);
                 drawInfo.centerContext.moveTo(0, psy2); drawInfo.centerContext.lineTo(drawInfo.sizeCenterX, psy2);

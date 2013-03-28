@@ -24,8 +24,8 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelCanva
             //that.canHide = false;
             that.setTitle('Sequence');
 
-            that.baseList = ['a', 't', 'c', 'g'];
-            that.colors = { a: 'rgb(255,50,50)', t: 'rgb(255,170,0)', c: 'rgb(0,128,192)', g: 'rgb(0,192,120)' }
+            that.baseList = ['A', 'T', 'C', 'G'];
+            that.colors = { A: 'rgb(255,50,50)', T: 'rgb(255,170,0)', C: 'rgb(0,128,192)', G: 'rgb(0,192,120)' }
 
             that.myfetcher = new DataFetcherSummary.Fetcher(serverurl, 1, 800);
             //that.myfetcher.maxBlockSize = 1;
