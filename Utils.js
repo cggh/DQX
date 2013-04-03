@@ -975,8 +975,8 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("DocEl")],
             var resp = "<table>";
             for (key in data) {
                 resp += "<tr>";
-                resp += "<td>" + key + "</td>";
-                resp += '<td style="max-width:300px;word-wrap:break-word;">' + data[key] + "</td>";
+                resp += "<td><b>" + key + "</b></td>";
+                resp += '<td style="padding-left:5px;max-width:300px;word-wrap:break-word;">' + data[key] + "</td>";
                 resp += "</tr>";
             }
             resp += "</table>"

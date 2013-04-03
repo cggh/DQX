@@ -123,6 +123,7 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Popup")]
                 if (ev.isEscape) Documentation._onCancel('DocuBox');
             }, 'DocuBox');
 
+            //Documentation.scrollHelper = DQX.scrollHelper($('#DocuBoxContent'));
         }
 
 
@@ -144,10 +145,11 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Popup")]
             .done(function (data) {
                 DQX.stopProcessing();
                 $('#DocuBoxContent').html($('<div/>').append(DQX.interpolate(data)).find('.DQXHelpContent').html());
+                //Documentation.scrollHelper.update();
             })
             .fail(function () {
                 DQX.stopProcessing();
-                alert("Failed to download documentation item '"+url+"'");
+                alert("Failed to download documentation item '" + url + "'");
             });
 
 
