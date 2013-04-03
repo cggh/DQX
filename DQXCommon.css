@@ -623,7 +623,7 @@ a:link, a:visited
 {
     stroke:black; 
     stroke-width:1;
-    fill-opacity: 0.7;
+    fill-opacity: 1.0;
 }
 
 .DQXPage
