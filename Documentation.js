@@ -20,6 +20,10 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Popup")]
             DQX.unRegisterGlobalKeyDownReceiver('DocuBox');
         }
 
+        closeDocumentation = function () {
+            Documentation._onCancel();
+        }
+
         Documentation._onPrevious = function () {
             if (Documentation.topicStackPointer > 0) {
                 Documentation.topicStackPointer--;
@@ -79,7 +83,14 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Popup")]
             box.addStyle("top", 50 + 'px');
             box.addStyle('width', boxSizeX + 'px');
             box.setCssClass("DQXDocuBox");
-            box.addStyle("overflow", "hidden");
+            //box.addStyle("overflow", "hidden");
+
+            var thecloser = DocEl.JavaScriptBitmaplink(DQXBMP("close2.png"), "Close", "closeDocumentation();");
+            box.addElem(thecloser);
+            thecloser.addStyle('position', 'absolute');
+            thecloser.addStyle('right', '-16px');
+            thecloser.addStyle('top', '-16px');
+
 
             var boxHeader = DocEl.Div({ id: 'DocuBoxHeader', parent: box });
             boxHeader.setCssClass("DQXDocuBoxHeader DQXDragHeader");
@@ -90,7 +101,7 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Popup")]
             var boxButtons = DocEl.Div({ id: 'DocuBoxButtons', parent: boxFooter });
 
             var buttons = [
-                    { id: 'DocuBoxButtonCancel', name: '', bitmap: DQXBMP('cancel.png'), handler: Documentation._onCancel },
+//                    { id: 'DocuBoxButtonCancel', name: '', bitmap: DQXBMP('cancel.png'), handler: Documentation._onCancel },
                     { id: 'DocuBoxButtonPrevious', name: '', bitmap: DQXBMP('arrow5left.png'), handler: Documentation._onPrevious },
                     { id: 'DocuBoxButtonNext', name: '', bitmap: DQXBMP('arrow5right.png'), handler: Documentation._onNext },
                 ];

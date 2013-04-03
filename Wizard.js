@@ -10,6 +10,11 @@
         //  -> use 'run' to execute the wizard
         /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+        closeWizard = function () {
+            if (dqxCurrentWizard)
+                dqxCurrentWizard._onCancel();
+        }
+
         //Creates a wizard, providing a unique identifier
         Wizard.Create = function (iID) {
             var that = {};
@@ -86,6 +91,7 @@
             //Executes the wizard
             //onFinishFunction will be called when the wizard is completed
             that.run = function (onFinishFunction) {
+                dqxCurrentWizard = that;
                 DQX.checkIsFunction(onFinishFunction);
                 this._checkNotRunning();
                 this._onFinishFunction = onFinishFunction;
@@ -144,6 +150,13 @@
                 boxButtons.addStyle("position", "absolute");
                 boxButtons.addStyle("top", "0px");
                 boxButtons.addStyle("right", "0px");
+
+                var thecloser = DocEl.JavaScriptBitmaplink(DQXBMP("close2.png"), "Close", "closeWizard();");
+                box.addElem(thecloser);
+                thecloser.addStyle('position', 'absolute');
+                thecloser.addStyle('right', '-16px');
+                thecloser.addStyle('top', '-16px');
+
 
                 var buttons = [
                     { id: 'WizBoxButtonCancel', name: 'Cancel', bitmap: DQXBMP('cancel.png'), floatPos: 'left', handler: that._onCancel },
@@ -223,6 +236,7 @@
 
             //Internal: stops the execution of the wizard
             that._stopRunning = function () {
+                dqxCurrentWizard = null;
                 DQX.unRegisterGlobalKeyDownReceiver(this._keyDownReceiverID);
                 $('#WizBackGround').remove();
                 this._isRunning = false;
