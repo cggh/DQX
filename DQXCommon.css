@@ -626,6 +626,14 @@ a:link, a:visited
     fill-opacity: 1.0;
 }
 
+.pieshadow
+{
+    fill:black; 
+    fill-opacity: 0.5;
+    -webkit-filter: drop-shadow(12px 12px 7px rgba(0,0,0,0.5));
+}
+
+
 .DQXPage
 {
     background-color: white;

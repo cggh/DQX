@@ -27,6 +27,8 @@ define([DQXSC("Utils")],
                 var sumpart = 0;
                 var data = '<g>';
 
+                data += '<circle class="pieshadow" cx="{cx}" cy="{cy}" r="{rd}"/>'.DQXformat({ cx: x0+3, cy: y0+3, rd: rd-1 });
+
                 for (var i = 0; i < this.myParts.length; i++) {
                     var sumpart2 = sumpart + this.myParts[i].frac;
                     if (this.myParts[i].frac > 0) {

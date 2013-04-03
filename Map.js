@@ -594,8 +594,8 @@ define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), DQXSC("lib/St
                 var bb = {};
                 bb.x0 = Math.min(ps0.x, ps.x - ps.dist);
                 bb.y0 = Math.min(ps0.y, ps.y - ps.dist);
-                bb.x1 = Math.max(ps0.x, ps.x + ps.dist);
-                bb.y1 = Math.max(ps0.y, ps.y + ps.dist);
+                bb.x1 = Math.max(ps0.x, ps.x + ps.dist)+3;
+                bb.y1 = Math.max(ps0.y, ps.y + ps.dist)+3;
                 var data = '<svg width={w} height={h} style="overflow:visible">'.DQXformat({ w: (bb.x1 - bb.x0), h: (bb.y1 - bb.y0) });
                 //data += '<filter id="dropshadow" height="130%"><feGaussianBlur in="SourceAlpha" stdDeviation="3"/> <!-- stdDeviation is how much to blur --><feOffset dx="2" dy="2" result="offsetblur"/> <!-- how much to offset --><feMerge><feMergeNode/> <!-- this contains the offset blurred image --><feMergeNode in="SourceGraphic"/> <!-- this contains the element that the filter is applied to --></feMerge></filter>';
                 data += this.myChart.render(ps.x - bb.x0, ps.y - bb.y0, ps.dist);
