@@ -83,7 +83,7 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Popup")]
 
             var boxHeader = DocEl.Div({ id: 'DocuBoxHeader', parent: box });
             boxHeader.setCssClass("DQXDocuBoxHeader DQXDragHeader");
-            boxHeader.addElem('Help');
+            //boxHeader.addElem('Help');
 
             var boxFooter = DocEl.Div({ id: 'DocuBoxFooter', parent: box });
             boxFooter.setCssClass("DQXDocuBoxFooter");
