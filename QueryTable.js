@@ -316,6 +316,7 @@
                     this._highlightRowNr = -1;
                     this._dataValid = false;
                     this.render();
+                    $('#' + this.myBaseID + '_status').html('<span style="background-color:rgb(255,0,0);font-weight:bold;">Query results are not up-to-date</span>');
                 }
             }
 
