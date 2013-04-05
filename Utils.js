@@ -374,6 +374,10 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("DocEl")],
 
         DQX.scrollHelper = function (scrollableElement) {
             var that = {};
+            if (DQX.scrollBarWidth > 2) {//don't need in this case
+                that.update = function () { };
+                return that;
+            }
             var htmlContent = '';
             var scrollUpIndicator = DocEl.Div();
             scrollUpIndicator.setCssClass("ScrollUpIndicator");
@@ -412,14 +416,15 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("DocEl")],
             }
 
             that.update = function () {
+                if (DQX.scrollBarWidth > 2) return; //don't need in this case
                 that._adjustScrollFeedback();
                 var scrollElementPos = $(scrollableElement).position();
                 var scrollElementWidth = $(scrollableElement).width();
                 var scrollElementHeight = $(scrollableElement).height();
                 $(scrollableElement).parent().find('.ScrollUpIndicator').css("top", (scrollElementPos.top) + "px");
-                $(scrollableElement).parent().find('.ScrollDownIndicator').css("top", (scrollElementPos.top + scrollElementHeight-16) + "px");
-                $(scrollableElement).parent().find('.ScrollUpIndicator').css("left", (scrollElementPos.left + scrollElementWidth / 2-20) + "px");
-                $(scrollableElement).parent().find('.ScrollDownIndicator').css("left", (scrollElementPos.left + scrollElementWidth / 2 -20) + "px");
+                $(scrollableElement).parent().find('.ScrollDownIndicator').css("top", (scrollElementPos.top + scrollElementHeight - 16) + "px");
+                $(scrollableElement).parent().find('.ScrollUpIndicator').css("left", (scrollElementPos.left + scrollElementWidth / 2 - 20) + "px");
+                $(scrollableElement).parent().find('.ScrollDownIndicator').css("left", (scrollElementPos.left + scrollElementWidth / 2 - 20) + "px");
             }
 
 
@@ -1093,7 +1098,7 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("DocEl")],
                 if (name in style) {
                     var result = name.replace(/([A-Z])/g, function ($1) { return "-" + $1.toLowerCase(); });
                     if (cssPrefixes[i] == 'ms') {
-                        return '-'+result;
+                        return '-' + result;
                     }
                     else {
                         return result
@@ -1106,11 +1111,11 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("DocEl")],
 
         DQX.vendor_name = function (tag, style) {
             DQX.vendor_name_cache = DQX.vendor_name_cache || {};
-            if (tag+style in DQX.vendor_name_cache)
-                return DQX.vendor_name_cache[tag+style];
+            if (tag + style in DQX.vendor_name_cache)
+                return DQX.vendor_name_cache[tag + style];
             else {
                 var elem = document.createElement(tag);
-                return DQX.vendor_name_cache[tag+style] = DQX.vendorPropName(elem.style, style);
+                return DQX.vendor_name_cache[tag + style] = DQX.vendorPropName(elem.style, style);
             }
         };
         return DQX;
