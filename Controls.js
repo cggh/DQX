@@ -610,12 +610,20 @@ define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller"), DQXSC("Documentation")]
             var description = '';
             if (args.description)
                 description = DQX.interpolate(args.description);
-            if (args.content)
-                that.content = DQX.interpolate(args.content);
-            if (args.bitmap) {
-                that.content = '<IMG SRC="' + args.bitmap + '" border=0 ALT="' + description + '" TITLE="' + description + '" style="padding-left:5px; padding-right:5px; padding-top:1px; padding-bottom:1px;float:left">';
-                if (args.content)
-                    that.content += DQX.interpolate(args.content);
+            if (args.content && (!args.bitmap)) {
+                that.content = '<span class="_DQXButtonText" style="position:relative;top:0px;">' + DQX.interpolate(args.content) + '</span>';
+                if (args.height)
+                    that._vAlignText = true;
+            }
+            if (args.bitmap && (!args.content)) {
+                that.content = '<IMG SRC="' + args.bitmap + '" border=0 ALT="' + description + '" TITLE="' + description + '" style="padding-right:5px;float:left">';
+            }
+            if (args.bitmap && args.content) {
+                that.content = '<IMG SRC="' + args.bitmap + '" border=0 ALT="' + description + '" TITLE="' + description + '" style="padding-right:7px;float:left">';
+                if (args.content) {
+                    that.content += '<span class="_DQXButtonText" style="position:relative;top:0px;">' + DQX.interpolate(args.content) + '</span>';
+                    that._vAlignText = true;
+                }
             }
             if (args.hint)
                 that._hint = args.hint;
@@ -650,6 +658,14 @@ define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller"), DQXSC("Documentation")]
                 if (that._fastTouch) {
                     var element = document.getElementById(this.getFullID(''));
                     element.addEventListener("touchstart", that._onTouchStart, false);
+                }
+
+                if (this._vAlignText) {
+                    var buttonH = this.getJQElement('').height();
+                    var textH = this.getJQElement('').find('._DQXButtonText').height();
+                    var shift = (buttonH - textH) / 2 - 2;
+                    if (shift > 0)
+                        this.getJQElement('').find('._DQXButtonText').css('top', shift + 'px');
                 }
             }
 

@@ -892,8 +892,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7f7f7', end
     cursor:pointer;
     border:2px solid black;
     box-shadow: 2px 2px 6px rgba(0,0,0,0.55); 
-    padding-top:4px;
-    padding-bottom:4px;
+    padding-top:5px;
+    padding-bottom:6px;
     padding-left:6px;
     padding-right:6px;
     border-radius: 5px;
