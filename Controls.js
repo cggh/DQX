@@ -661,11 +661,15 @@ define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller"), DQXSC("Documentation")]
                 }
 
                 if (this._vAlignText) {
-                    var buttonH = this.getJQElement('').height();
-                    var textH = this.getJQElement('').find('._DQXButtonText').height();
-                    var shift = (buttonH - textH) / 2 - 2;
-                    if (shift > 0)
-                        this.getJQElement('').find('._DQXButtonText').css('top', shift + 'px');
+                    setTimeout(function () {
+                        var buttonH = that.getJQElement('').height();
+                        var textH = that.getJQElement('').find('._DQXButtonText').height();
+                        var shift = (buttonH - textH) / 2 - 2;
+                        if (shift > 0) {
+                            that.getJQElement('').find('._DQXButtonText').css('top', shift + 'px');
+                            //console.log('{id} ButtonH={bh} TextH={th} shift={s}'.DQXformat({id:iid,bh:buttonH,th:textH,s:shift}));
+                        }
+                    }, 50);
                 }
             }
 
