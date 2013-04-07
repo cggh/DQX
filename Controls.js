@@ -611,19 +611,19 @@ define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller"), DQXSC("Documentation")]
             if (args.description)
                 description = DQX.interpolate(args.description);
             if (args.content && (!args.bitmap)) {
-                that.content = '<span class="_DQXButtonText" style="position:relative;top:0px;">' + DQX.interpolate(args.content) + '</span>';
-                if (args.height)
-                    that._vAlignText = true;
+                that.content = '<span class="_DQXButtonText">' + DQX.interpolate(args.content) + '</span>';
             }
             if (args.bitmap && (!args.content)) {
                 that.content = '<IMG SRC="' + args.bitmap + '" border=0 ALT="' + description + '" TITLE="' + description + '" style="padding-right:5px;float:left">';
             }
             if (args.bitmap && args.content) {
-                that.content = '<IMG SRC="' + args.bitmap + '" border=0 ALT="' + description + '" TITLE="' + description + '" style="padding-right:7px;float:left">';
-                if (args.content) {
-                    that.content += '<span class="_DQXButtonText" style="position:relative;top:0px;">' + DQX.interpolate(args.content) + '</span>';
-                    that._vAlignText = true;
-                }
+                var textWidth = '100%';
+                if (args.width && args.height)
+                    textWidth = (args.width - args.height - 12) + 'px';
+                that.content = '';
+                that.content += '<div style="display:inline-block;vertical-align:middle;width:1px;height:100%"></div>';
+                that.content += '<div class="_DQXButtonImage" style="display:inline-block;vertical-align:middle"><IMG SRC="' + args.bitmap + '" border=0 ALT="' + description + '" TITLE="' + description + '" style="padding-right:7px;"></div>';
+                that.content += '<div class="_DQXButtonText" style="display:inline-block;width:{textw};vertical-align:middle">'.DQXformat({ textw: textWidth }) + DQX.interpolate(args.content) + '</div>';
             }
             if (args.hint)
                 that._hint = args.hint;
@@ -658,18 +658,6 @@ define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller"), DQXSC("Documentation")]
                 if (that._fastTouch) {
                     var element = document.getElementById(this.getFullID(''));
                     element.addEventListener("touchstart", that._onTouchStart, false);
-                }
-
-                if (this._vAlignText) {
-                    setTimeout(function () {
-                        var buttonH = that.getJQElement('').height();
-                        var textH = that.getJQElement('').find('._DQXButtonText').height();
-                        var shift = (buttonH - textH) / 2 - 2;
-                        if (shift > 0) {
-                            that.getJQElement('').find('._DQXButtonText').css('top', shift + 'px');
-                            //console.log('{id} ButtonH={bh} TextH={th} shift={s}'.DQXformat({id:iid,bh:buttonH,th:textH,s:shift}));
-                        }
-                    }, 50);
                 }
             }
 
