@@ -341,9 +341,11 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelCanva
                 drawInfo.centerContext.beginPath();
                 drawInfo.centerContext.moveTo(0, psy1); drawInfo.centerContext.lineTo(drawInfo.sizeCenterX, psy1);
                 drawInfo.centerContext.moveTo(0, psy2); drawInfo.centerContext.lineTo(drawInfo.sizeCenterX, psy2);
+                drawInfo.centerContext.moveTo(0, psy2); drawInfo.centerContext.lineTo(drawInfo.sizeCenterX, psy2);
                 drawInfo.centerContext.stroke();
                 drawInfo.centerContext.beginPath();
                 drawInfo.centerContext.moveTo(0, psy1); drawInfo.centerContext.lineTo(drawInfo.sizeCenterX, psy1);
+                drawInfo.centerContext.moveTo(0, psy2); drawInfo.centerContext.lineTo(drawInfo.sizeCenterX, psy2);
                 drawInfo.centerContext.moveTo(0, psy2); drawInfo.centerContext.lineTo(drawInfo.sizeCenterX, psy2);
                 drawInfo.centerContext.stroke();
             }

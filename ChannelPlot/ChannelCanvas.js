@@ -348,11 +348,13 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Scroller")],
             that.drawStandardGradientCenter = function (drawInfo, fc) {
                 var backgrad = drawInfo.centerContext.createLinearGradient(0, 0, 0, drawInfo.sizeY);
                 backgrad.addColorStop(0, DQX.Color(fc, fc, fc));
-                backgrad.addColorStop(1, DQX.Color(0.8 * fc, 0.8 * fc, 0.8 * fc));
+                backgrad.addColorStop(1, DQX.Color(0.85 * fc, 0.85 * fc, 0.85 * fc));
                 drawInfo.centerContext.fillStyle = backgrad;
                 drawInfo.centerContext.fillRect(0, 0, drawInfo.sizeCenterX, drawInfo.sizeY);
-                drawInfo.centerContext.fillStyle = DQX.Color(0.5 * fc, 0.5 * fc, 0.5 * fc).toString();
+                drawInfo.centerContext.fillStyle = DQX.Color(0.4 * fc, 0.4 * fc, 0.4 * fc).toString();
                 drawInfo.centerContext.fillRect(0, drawInfo.sizeY - 1, drawInfo.sizeCenterX, 1);
+                drawInfo.centerContext.fillStyle = DQX.Color(0.6 * fc, 0.6 * fc, 0.6 * fc).toString();
+                drawInfo.centerContext.fillRect(0, drawInfo.sizeY - 2, drawInfo.sizeCenterX, 1);
             }
 
             that.drawStandardGradientLeft = function (drawInfo, fc) {
@@ -361,8 +363,10 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Scroller")],
                 backgrad.addColorStop(1, DQX.Color(0.7 * fc, 0.7 * fc, 0.7 * fc));
                 drawInfo.leftContext.fillStyle = backgrad;
                 drawInfo.leftContext.fillRect(0, 0, drawInfo.sizeLeftX, drawInfo.sizeY);
-                drawInfo.leftContext.fillStyle = DQX.Color(0.4 * fc, 0.4 * fc, 0.4 * fc).toString();
+                drawInfo.leftContext.fillStyle = DQX.Color(0.3 * fc, 0.3 * fc, 0.3 * fc).toString();
                 drawInfo.leftContext.fillRect(0, drawInfo.sizeY - 1, drawInfo.sizeLeftX, 1);
+                drawInfo.leftContext.fillStyle = DQX.Color(0.5 * fc, 0.5 * fc, 0.5 * fc).toString();
+                drawInfo.leftContext.fillRect(0, drawInfo.sizeY - 2, drawInfo.sizeLeftX, 1);
             }
 
             that.drawStandardGradientRight = function (drawInfo, fc) {
@@ -479,16 +483,31 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Scroller")],
 
             that.drawMark = function (drawInfo, showText) {
                 if (drawInfo.mark.present) {
-                    var psx1 = Math.round((drawInfo.mark.pos1) * drawInfo.zoomFactX - drawInfo.offsetX) - 1;
-                    var psx2 = Math.round((drawInfo.mark.pos2) * drawInfo.zoomFactX - drawInfo.offsetX) + 1;
+                    var psx1 = Math.round((drawInfo.mark.pos1) * drawInfo.zoomFactX - drawInfo.offsetX) - 0.5;
+                    var psx2 = Math.round((drawInfo.mark.pos2) * drawInfo.zoomFactX - drawInfo.offsetX) + 0.5;
                     if (psx2 < psx1) { var psxtmp = psx1; psx1 = psx2; psx2 = psxtmp; }
                     if (psx2 - psx1 < 5) {
                         psx1--;
                         psx2++;
                     }
-                    drawInfo.centerContext.globalAlpha = 0.15;
-                    drawInfo.centerContext.fillStyle = "rgb(255,0,0)";
+                    //                    drawInfo.centerContext.globalAlpha = 0.1;
+                    //                    drawInfo.centerContext.fillStyle = "rgb(255,0,0)";
+
+                    var markgrad = drawInfo.centerContext.createLinearGradient(psx1, 0, psx2, 0);
+                    var markWidth = Math.max(1, psx2 - psx1);
+                    markgrad.addColorStop(0, "rgba(255,0,0,0.2)");
+                    markgrad.addColorStop(Math.min(0.45, 30 / markWidth), "rgba(255,0,0,0.05)");
+                    markgrad.addColorStop(Math.max(0.55, 1 - 30 / markWidth), "rgba(255,0,0,0.05)");
+                    markgrad.addColorStop(1, "rgba(255,0,0,0.2)");
+                    drawInfo.centerContext.fillStyle = markgrad;
                     drawInfo.centerContext.fillRect(psx1, 0, psx2 - psx1, drawInfo.sizeY);
+
+                    drawInfo.centerContext.globalAlpha = 0.4;
+                    drawInfo.centerContext.strokeStyle = "rgb(255,0,0)";
+                    drawInfo.centerContext.beginPath();
+                    drawInfo.centerContext.moveTo(psx1, 0); drawInfo.centerContext.lineTo(psx1, drawInfo.sizeY);
+                    drawInfo.centerContext.moveTo(psx2, 0); drawInfo.centerContext.lineTo(psx2, drawInfo.sizeY);
+                    drawInfo.centerContext.stroke();
                     drawInfo.centerContext.globalAlpha = 1;
 
                     if (showText) {
