@@ -511,14 +511,26 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Scroller")],
                     drawInfo.centerContext.globalAlpha = 1;
 
                     if (showText) {
+                        drawInfo.centerContext.shadowColor = "rgb(255,255,255)";
+                        drawInfo.centerContext.shadowBlur = 6;
+                        drawInfo.centerContext.shadowOffsetX = 0;
+                        drawInfo.centerContext.shadowOffsetY = 0;
                         drawInfo.centerContext.fillStyle = "rgb(255,0,0)";
-                        drawInfo.centerContext.font = 'bold 11px sans-serif';
+                        drawInfo.centerContext.font = 'bold 12px sans-serif';
                         drawInfo.centerContext.textBaseline = 'top';
                         drawInfo.centerContext.textAlign = 'right';
-                        drawInfo.centerContext.fillText(Math.min(drawInfo.mark.pos1, drawInfo.mark.pos2).toFixed(0), psx1, 11);
+                        //drawInfo.centerContext.lineWidth = 3;
+                        drawInfo.centerContext.strokeStyle = 'rgb(192,192,192)';
+                        var txt = Math.min(drawInfo.mark.pos1, drawInfo.mark.pos2).toFixed(0);
+                        drawInfo.centerContext.strokeText(txt, psx1 - 1, 10);
+                        drawInfo.centerContext.fillText(txt, psx1 - 1, 10);
                         drawInfo.centerContext.textAlign = 'left';
                         var size = Math.abs(drawInfo.mark.pos2 - drawInfo.mark.pos1);
-                        drawInfo.centerContext.fillText(size.toFixed(0) + 'bp', psx2, 11);
+                        txt = size.toFixed(0) + 'bp';
+                        drawInfo.centerContext.strokeText(txt, psx2, 10);
+                        drawInfo.centerContext.fillText(txt, psx2, 10);
+                        drawInfo.centerContext.shadowBlur = 0;
+                        drawInfo.centerContext.shadowColor = "transparent";
                     }
                 }
             }
