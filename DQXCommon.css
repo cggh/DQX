@@ -1105,6 +1105,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f3f9ac', end
 .DQXBitmapButton 
 {
     margin:0px;
+    margin-left:3px;
+    margin-right:3px;
 /*    background: none;*/
 }
 
