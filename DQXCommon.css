@@ -330,10 +330,11 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eff6fc', end
 ******************************************************************************************/
 
 
+/*Used for separators*/
 .DQXLightFrame, .DQXTabBody, .DQXTabActive
 {
-    background-color:rgb(60,60,60);
-    color:rgb(210,210,210);
+    background-color:rgb(150,150,150);
+    color:rgb(255,255,255);
 }
 
 
@@ -353,8 +354,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eff6fc', end
 
 .DQXDarkFrame
 {
-    background-color:rgb(60,60,60);
-    color:rgb(210,210,210);
+    background-color:rgb(200,200,200);
+    color:rgb(0,0,0);
 }
 
 /*.DQXDarkFrame .DQXLarge
@@ -652,7 +653,7 @@ a:link, a:visited
 .DQXClient
 {
     color:Black;
-    background-color: rgb(230,230,230);
+    background-color: rgb(255,255,255);
     border-width:0px;
 }
 
@@ -663,10 +664,11 @@ a:link, a:visited
     border-width:0px;
 }
 
+/*Text intro boxes in top left of each panel*/
 .DQXIntroInfo
 {
-    color:rgb(160,250,160);
-    background-color: rgb(120,120,120);
+    color:rgb(0,0,0);
+    background-color: rgb(240,240,240);
     border-width:0px;
     border-radius: 7px;
 
@@ -679,14 +681,15 @@ a:link, a:visited
     color:Black;
     padding:4px;
     padding-bottom:8px;
-background: rgb(232,232,232); /* Old browsers */
-background: -moz-linear-gradient(top, rgba(232,232,232,1) 0%, rgba(198,198,198,1) 100%); /* FF3.6+ */
-background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(232,232,232,1)), color-stop(100%,rgba(198,198,198,1))); /* Chrome,Safari4+ */
-background: -webkit-linear-gradient(top, rgba(232,232,232,1) 0%,rgba(198,198,198,1) 100%); /* Chrome10+,Safari5.1+ */
-background: -o-linear-gradient(top, rgba(232,232,232,1) 0%,rgba(198,198,198,1) 100%); /* Opera 11.10+ */
-background: -ms-linear-gradient(top, rgba(232,232,232,1) 0%,rgba(198,198,198,1) 100%); /* IE10+ */
-background: linear-gradient(to bottom, rgba(232,232,232,1) 0%,rgba(198,198,198,1) 100%); /* W3C */
-filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e8e8e8', endColorstr='#c6c6c6',GradientType=0 ); /* IE6-9 */
+background: rgb(242,242,242);
+background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2YyZjJmMiIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNkNmQ2ZDYiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+background: -moz-linear-gradient(top, rgb(242,242,242) 0%, rgb(214,214,214) 100%);
+background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgb(242,242,242)), color-stop(100%,rgb(214,214,214)));
+background: -webkit-linear-gradient(top, rgb(242,242,242) 0%,rgb(214,214,214) 100%);
+background: -o-linear-gradient(top, rgb(242,242,242) 0%,rgb(214,214,214) 100%);
+background: -ms-linear-gradient(top, rgb(242,242,242) 0%,rgb(214,214,214) 100%);
+background: linear-gradient(to bottom, rgb(242,242,242) 0%,rgb(214,214,214) 100%);
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f2f2f2', endColorstr='#d6d6d6',GradientType=0 );
 	/*font-size:8pt;*/
 
     cursor:pointer;
@@ -803,7 +806,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7f7f7', end
     color:rgb(255,230,180);
     line-height:28px;
     background: rgb(80,80,80);
-	background-image:url(Bitmaps/barback1a.png);
+	background-image:url(Bitmaps/TitleBarBack.png);
 	background-repeat:repeat-x;
 }
 
@@ -811,7 +814,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7f7f7', end
 {
    font-size:20px;
    font-variant:small-caps;
-   color:rgb(255,250,170);
+   color:rgb(255,255,255);
  }
 
 .DQXTitleBarRounded
@@ -845,7 +848,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7f7f7', end
 {
     border:1px solid rgb(128,128,128);
     box-shadow: 2px 2px 6px rgba(0,0,0,0.35); 
-    background-color:rgb(240,240,240);
+    /*background-color:rgb(240,240,240);*/
     padding:15px;
     margin-right:6px;
     margin-top:12px;

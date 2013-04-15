@@ -51,8 +51,8 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
         Framework.frameCounter = 0;
 
         Framework.frameTitleBarH = 33;
-        Framework.sepSizeLarge = 14;
-        Framework.sepSizeSmall = 6;
+        Framework.sepSizeLarge = 6;
+        Framework.sepSizeSmall = 3;
 
         //Enumerates the possible types of frames
         Framework.FrameTypes = {
@@ -151,7 +151,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
             that.memberFrames = [];
             that.myClientObject = null;
             that.myID = '_';
-            that._separatorSize = 10;
+            that._separatorSize = 6;
             that.frameClass = ''; //css class of the div that makes the border of this panel
             that.frameClassClient = ''; //css class of the div that makes the client area this panel
             that._handleInitialise = null; //this function will be called the first time this frame goes live
