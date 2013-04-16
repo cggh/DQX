@@ -4,10 +4,14 @@
 
 
 
-        ChannelAnnotation.Channel = function (id, annotationFetcher) {
+        ChannelAnnotation.Channel = function (id, annotationFetcher, args) {
             var that = ChannelCanvas.Base(id);
             that._annotationFetcher = annotationFetcher;
             that.setHeight(55);
+            if (args) {
+                if (args.annotationChannelHeight)
+                    that.setHeight(args.annotationChannelHeight);
+            }
             that._minDrawZoomFactX = 1 / 300.0;
             that._clickInfo = []; //will hold info about clickable areas
             that.darkenFactor = 1.0;

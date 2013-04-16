@@ -38,10 +38,15 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelPlotter"), DQXSC("Dat
             that._MaxZoomFactX = 1.0 / 0.2;
             that.getNavigator.minScrollSize = 0.0001;
 
-            that.annotationChannel = ChannelAnnotation.Channel("_Annotation", that._annotationFetcher);
+            var annotationChannelArgs = {};
+            if (args.annotationChannelHeight)
+                annotationChannelArgs.annotationChannelHeight = args.annotationChannelHeight;
+
+            that.annotationChannel = ChannelAnnotation.Channel("_Annotation", that._annotationFetcher, annotationChannelArgs);
             that.annotationChannel.setTitle('Genes');
             that.annotationChannel.darkenFactor = 0.85;
             that.addChannel(that.annotationChannel, true);
+
 
             that.getAnnotationFetcher = function () {
                 return this._annotationFetcher;
