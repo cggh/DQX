@@ -50,7 +50,6 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
 
         Framework.frameCounter = 0;
 
-        Framework.frameTitleBarH = 33;
         Framework.sepSizeLarge = 6;
         Framework.sepSizeSmall = 3;
 
@@ -161,6 +160,8 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
             that._showVertScrollFeedback = true;
             that.allowXScrollbar = false;
 
+            that.frameTitleBarH = 33;
+
             ////////////////// GENERAL GETTERS
 
             that.getFramework = function () { return Framework; }
@@ -204,7 +205,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
             }
             that.getTitleBarHeight = function () {//returns the height of the title bar (0 if none)
                 if (this.hasTitleBar())
-                    return Framework.frameTitleBarH;
+                    return that.frameTitleBarH;
                 else
                     return 0;
             }
@@ -213,7 +214,6 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
                 if (!this._parentFrame) return false;
                 return this._parentFrame.isStacker();
             }
-
 
             ///////////////// TO BE CALLED CREATION TIME
 
@@ -404,19 +404,21 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
                     if (bitmap)
                         str += '<img src="Bitmaps/' + bitmap + '" alt="info" style="float:left;margin-left:0px;margin-top:5px;margin-right:8px;margin-bottom:5px"/>'
                     str += content;
+                    if (helpDocID) {
+                        var helpButton = DocEl.Span({ id: helpDocID });
+                        helpButton.setCssClass('DQXHelpLink DQXIntroBoxHelpLink');
+                        helpButton.addAttribute('href', helpDocID);
+                        helpButton.addElem('<IMG SRC="' + DQXBMP('info4.png') + '" border=0  ALT="" align="middle" style="margin-right:2px;vertical-align:middle">More information...')
+                        $('#' + frame.myID).append(helpButton.toString());
+                        /*$('#' + frame.myID).mousedown(function () {
+                        Msg.send({ type: 'ShowHelp' }, helpButton.getID());
+                        return false;
+                        });*/
+                        str += helpButton;
+                    }
                     var info = Framework.Form(frame);
                     info.addHtml(str);
                     info.render();
-                    if (helpDocID) {
-                        var helpButton = DocEl.Div({ id: helpDocID });
-                        helpButton.setCssClass('DQXHelpLink DQXIntroBoxHelpLink');
-                        helpButton.addElem('<IMG SRC="' + DQXBMP('info4.png') + '" border=0  ALT="" style="float:left;margin-right:2px">More information...')
-                        $('#' + frame.myID).append(helpButton.toString());
-                        $('#' + frame.myID).mousedown(function () {
-                            Msg.send({ type: 'ShowHelp' }, helpButton.getID());
-                            return false;
-                        });
-                    }
 
                 });
                 return frame;
@@ -464,7 +466,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
                 }
                 var minsize = Math.max(subminsize, this.sizeRange[dim]._getMinSize());
                 if ((dim == Framework.dimY) && this.hasTitleBar())
-                    minsize += Framework.frameTitleBarH;
+                    minsize += that.frameTitleBarH;
                 return minsize;
             }
 
@@ -485,13 +487,13 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
                 }
                 var maxsize = Math.max(submaxsize, this.sizeRange[dim]._getMaxSize());
                 if ((dim == Framework.dimY) && this.hasTitleBar())
-                    maxsize += Framework.frameTitleBarH;
+                    maxsize += that.frameTitleBarH;
                 return maxsize;
             }
 
             //Returns the total margin at the top, including the header area
             that._getMarginTop = function () {
-                return this.marginTop + (this.hasTitleBar() ? Framework.frameTitleBarH : 0);
+                return this.marginTop + (this.hasTitleBar() ? that.frameTitleBarH : 0);
             }
 
             //Returns true if the frame has a fixed size in a specified dimension
@@ -513,6 +515,14 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
             }
 
             that._createElements = function (level) {
+
+                if (that.isStackMember()) {
+                    that.frameTitleBarH = 33;
+                }
+                else {
+                    that.frameTitleBarH = 25;
+                }
+
                 if (this.myID.length == 0) DQX.reportError("Frame without ID");
                 var thediv = DocEl.Div({ id: this.myID });
 
@@ -542,7 +552,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
 
                 if (this.hasTitleBar()) {
                     var titlediv = DocEl.Div({ parent: thediv, id: this.getVisibleTitleDivID() });
-                    titlediv.setHeightPx(Framework.frameTitleBarH);
+                    titlediv.setHeightPx(that.frameTitleBarH);
                     if (!this.isStackMember())
                         titlediv.setCssClass('DQXTitleBarRounded');
                     else
@@ -1239,10 +1249,15 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
         Framework.Form = function (iid, iParentRef) {
             var that = FramePanel(iid, iParentRef);
             that._content = Controls.CompoundHor([]);
+            that._padding = 0;
 
             //Resets the content of the form
             that.clear = function () {
                 that._content.clear();
+            }
+
+            that.setPadding = function (padding) {
+                this._padding = padding;
             }
 
             //Adds a new control to the form, derived from Control.Control
@@ -1264,7 +1279,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
             //renders the form to the DOM
             that.render = function () {
                 var st = that._content.renderHtml();
-                st = '<div id="' + this._getInnerDivID() + '">' + st + '</div>';
+                st = '<div id="' + this._getInnerDivID() + '" style="padding:' + this._padding + 'px">' + st + '</div>';
                 $('#' + this.getDivID()).html(st);
                 this.content = st;
                 that._content.postCreateHtml();

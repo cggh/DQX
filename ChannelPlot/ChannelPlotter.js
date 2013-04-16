@@ -76,7 +76,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel"), DQXSC("Scr
                 var header = DocEl.Div({ id: that.getSubID("Header") });
                 header.addStyle("white-space", "nowrap").addStyle("overflow", "hidden");
                 header.setWidthFull();
-                header.setCssClass('DQXLight');
+                header.setCssClass('DQXLight2');
                 header.addStyle('overflow', 'hidden');
                 html += header;
             }
@@ -109,7 +109,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel"), DQXSC("Scr
             {//Create footer
                 var footer = DocEl.Div({ id: that.getSubID("Footer") });
                 footer.setWidthFull();
-                footer.setCssClass('DQXLight');
+                footer.setCssClass('DQXLight2');
                 footer.addStyle('overflow', 'hidden');
                 html += footer;
             }

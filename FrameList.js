@@ -83,6 +83,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel")],
                         htmlContent += editDiv.toString();
                     }
                     var divList = DocEl.Div({ id: this.myListDivID });
+                    divList.setCssClass('DQXLargeList');
                     divList.makeAutoVerticalScroller(true);
                     divList.addStyle('position', 'absolute');
                     if (this._hasFilter)

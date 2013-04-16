@@ -214,7 +214,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel")],
             //Render the panel to the DOM tree
             that.render = function () {
                 var dv = DocEl.Div({ id: 'tree' });
-                //dv.setBackgroundColor(DQX.Color(1, 0, 0));
+                dv.setCssClass('DQXTree');
                 dv.addStyle('padding', '1px');
                 var subItems = this.root.getItems();
                 for (var i = 0; i < subItems.length; i++)
@@ -275,6 +275,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel")],
             that.handleResize = function () {
             }
 
+            $('#' + that.getDivID()).addClass('DQXTree');
 
             return that;
         }

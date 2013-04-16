@@ -89,14 +89,14 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg")],
                 var centercontext = obj.getContext("2d");
 
                 var backgrad1 = centercontext.createLinearGradient(0, 0, 0, this.sizeY);
-                backgrad1.addColorStop(0, "rgb(60,60,60)");
-                backgrad1.addColorStop(0.4, "rgb(160,160,160)");
-                backgrad1.addColorStop(1, "rgb(20,20,20)");
+                backgrad1.addColorStop(0, "rgb(120,120,120)");
+                backgrad1.addColorStop(0.35, "rgb(220,220,220)");
+                backgrad1.addColorStop(1, "rgb(80,80,80)");
 
                 var backgrad2 = centercontext.createLinearGradient(0, 0, 0, this.sizeY);
-                backgrad2.addColorStop(0, "rgb(20,20,20)");
-                backgrad2.addColorStop(0.4, "rgb(130,130,130)");
-                backgrad2.addColorStop(1, "rgb(0,0,0)");
+                backgrad2.addColorStop(0, "rgb(80,80,80)");
+                backgrad2.addColorStop(0.35, "rgb(190,190,190)");
+                backgrad2.addColorStop(1, "rgb(60,60,60)");
 
                 centercontext.fillStyle = backgrad1;
                 centercontext.fillRect(0, 0, this.sizeX, this.sizeY);
@@ -112,24 +112,24 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg")],
                 px2 = Math.min(px2, this.ZoomAreaStartX + this.ZoomAreaSizeX);
                 centercontext.globalAlpha = 0.55;
                 var backgrad = centercontext.createLinearGradient(0, 5, 0, this.sizeY - 5);
-                backgrad.addColorStop(0, "rgb(0,192,0)");
-                backgrad.addColorStop(0.3, "rgb(192,255,128)");
-                backgrad.addColorStop(1, "rgb(0,192,0)");
+                backgrad.addColorStop(0, "rgb(0,0,192)");
+                backgrad.addColorStop(0.3, "rgb(192,192,255)");
+                backgrad.addColorStop(1, "rgb(0,0,192)");
                 centercontext.fillStyle = backgrad;
                 centercontext.fillRect(px1, 6, px2 - px1, this.sizeY - 12);
                 //arrow
-                centercontext.fillStyle = "rgb(128,255,128)";
+                centercontext.fillStyle = "rgb(128,128,255)";
                 this._drawTriangle(centercontext, px2 + 3, 1);
-                centercontext.fillStyle = "rgb(40,100,40)";
+                centercontext.fillStyle = "rgb(40,40,100)";
                 this._drawTriangle(centercontext, px2 - 3, -1);
 
                 //text
                 var txt = "Zoom: " + (1.0 / that.ScrollSize).toFixed(that.ScrollSize > 0.1 ? 1 : 0) + "x";
                 centercontext.globalAlpha = 1;
-                centercontext.fillStyle = "rgb(255,255,200)";
+                centercontext.fillStyle = "black";
                 centercontext.font = '13px sans-serif';
                 centercontext.textBaseline = 'middle';
-                centercontext.shadowColor = "black";
+                centercontext.shadowColor = "white";
                 centercontext.shadowBlur = 3;
                 if (px2 + 15 + centercontext.measureText(txt).width < this.ZoomAreaStartX + this.ZoomAreaSizeX) {
                     centercontext.textAlign = 'left';
@@ -152,11 +152,11 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg")],
 
                 //scroll bar position indicators
                 centercontext.globalAlpha = 1;
-                centercontext.fillStyle = "rgb(255,255,200)";
+                centercontext.fillStyle = "black";
                 centercontext.font = '11px sans-serif';
                 centercontext.textBaseline = 'top';
                 centercontext.textAlign = 'center';
-                centercontext.shadowColor = "black";
+                centercontext.shadowColor = "white";
                 centercontext.shadowBlur = 3;
                 var scalejumps = DQX.DrawUtil.getScaleJump(20 / this.sizeX * (this.rangeMax - this.rangeMin));
                 var i2 = ((this.rangeMax - this.rangeMin)) / scalejumps.Jump1;
@@ -172,17 +172,17 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg")],
                 centercontext.shadowColor = "transparent";
 
                 //scroll bar bar
-                centercontext.globalAlpha = 0.55;
+                //centercontext.globalAlpha = 0.55;
                 var backgrad = centercontext.createLinearGradient(px1, 0, px2, 0);
-                backgrad.addColorStop(0, "rgb(160,255,160)");
-                backgrad.addColorStop(0.25, "rgb(0,192,0)");
-                backgrad.addColorStop(0.75, "rgb(0,192,0)");
-                backgrad.addColorStop(1, "rgb(160,255,160)");
+                backgrad.addColorStop(0, "rgba(50,50,200,0.65)");
+                backgrad.addColorStop(0.25, "rgba(160,160,255,0.3)");
+                backgrad.addColorStop(0.75, "rgba(160,160,255,0.3)");
+                backgrad.addColorStop(1, "rgba(50,50,200,0.65)");
                 centercontext.fillStyle = backgrad;
                 centercontext.fillRect(px1, 2, px2 - px1, this.sizeY - 4);
                 //scroll bar arrows
-                centercontext.globalAlpha = 0.75;
-                centercontext.fillStyle = "rgb(80,255,80)";
+                centercontext.globalAlpha = 0.65;
+                centercontext.fillStyle = "rgb(80,80,255)";
                 this._drawTriangle(centercontext, px2 + 3, 1);
                 this._drawTriangle(centercontext, px1 - 3, -1);
 

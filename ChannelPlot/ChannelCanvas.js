@@ -431,7 +431,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Scroller")],
                 drawInfo.leftContext.strokeStyle = "black";
                 drawInfo.centerContext.strokeStyle = "black";
                 drawInfo.leftContext.globalAlpha = 0.6;
-                drawInfo.centerContext.globalAlpha = 0.15;
+                drawInfo.centerContext.globalAlpha = 0.05;
                 for (j = Math.ceil(minvl / jumps.Jump1); j <= Math.floor(maxvl / jumps.Jump1); j++) {
                     vl = j * jumps.Jump1;
                     yp = Math.round(drawInfo.sizeY - drawInfo.sizeY * 0.1 - (vl - minvl) / (maxvl - minvl) * drawInfo.sizeY * 0.8) - 0.5;
@@ -544,7 +544,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Scroller")],
                     var value = i * drawInfo.HorAxisScaleJumps.Jump1;
                     var psx = Math.round((value) * drawInfo.zoomFactX - drawInfo.offsetX) + 0.5;
                     if ((psx >= -50) && (psx <= drawInfo.sizeCenterX + 50)) {
-                        drawInfo.centerContext.globalAlpha = 0.075;
+                        drawInfo.centerContext.globalAlpha = 0.05;
                         if (i % drawInfo.HorAxisScaleJumps.JumpReduc == 0)
                             drawInfo.centerContext.globalAlpha = 0.15;
                         drawInfo.centerContext.beginPath();
