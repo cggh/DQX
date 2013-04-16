@@ -124,8 +124,8 @@
 
             //Overridable. Returns the background color of a cell, given its content
             that.CellToColor = function (content) { return "white"; }
-            if (that.TablePart == 0)
-                that.CellToColor = function (content) { return "rgb(240,240,240)"; }
+/*            if (that.TablePart == 0)
+                that.CellToColor = function (content) { return "rgb(240,240,240)"; }*/
 
             //Use this function to convert a column cell into a hyperlink.
             //A message will be sent when the user clicks the link (see Msg for further details about messageScope)
@@ -316,7 +316,7 @@
                     this._highlightRowNr = -1;
                     this._dataValid = false;
                     this.render();
-                    $('#' + this.myBaseID + '_status').html('<span style="background-color:rgb(255,0,0);font-weight:bold;">Query results are not up-to-date</span>');
+                    $('#' + this.myBaseID + '_status').html('<span class="DQXImportantMessage">Query results are not up-to-date</span>');
                 }
             }
 
@@ -373,7 +373,7 @@
                     this.totalRecordCount = this.myDataFetcher.totalRecordCount;
 
                 if (this.totalRecordCount == 0) {
-                    st = '<span style="background-color:rgb(255,128,128)"><b>This result set does not contain any data</b><span>';
+                    st = '<span class="DQXImportantMessage">This result set does not contain any data<span>';
                 }
                 else {
                     var st = "&nbsp;&nbsp;&nbsp;Current: " + (this.myTableOffset + 1) + "-" + (this.myTableOffset + this.myPageSize);
@@ -434,8 +434,8 @@
 
 
 
-                if ((this._dataValid) && (!datacomplete)) $('#' + that.myBaseID + '_status').html('<span style="background-color:rgb(255,0,0);font-weight:bold;">FETCHING...</span>');
-                if (this.hasFetchFailed) $('#' + that.myBaseID + '_status').html('<span style="background-color:rgb(255,0,0);font-weight:bold;">FETCH FAILED !!!</span>');
+                if ((this._dataValid) && (!datacomplete)) $('#' + that.myBaseID + '_status').html('<span class="DQXImportantMessage">FETCHING...</span>');
+                if (this.hasFetchFailed) $('#' + that.myBaseID + '_status').html('<span class="DQXImportantMessage">FETCH FAILED !!!</span>');
 
                 for (var rownr0 = 0; rownr0 < this.myPageSize; rownr0++) {
                     var rownr = this.myTableOffset + rownr0;

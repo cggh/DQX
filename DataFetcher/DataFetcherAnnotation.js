@@ -41,7 +41,7 @@ define([DQXSCJQ(), DQXSC("SQL"), DQXSC("Utils"), DQXSC("DataDecoders")],
             this.hasFetchFailed = false;
             this._requestNr = 0;
 
-            this.translateChromoId = function (id) { return 'chr'+id; }
+            this.translateChromoId = function (id) { return id; }
 
             this.setFeatureType = function (fTypeName, fSubTypeName) {
                 this.ftype = fTypeName;

@@ -398,6 +398,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
                 frame.setFrameClassClient('DQXIntroInfo').setFrameClass('DQXIntroInfo').setMargins(12).setAllowScrollBars(false, false);
                 frame.setAutoSize();
                 frame._parentFrame.setSeparatorSize(6);
+                frame._parentFrame.marginTop = 3;
                 frame.setMinSize(Framework.dimY, 80);
                 frame.setInitialiseFunction(function () {
                     var str = '';
@@ -557,15 +558,17 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
                         titlediv.setCssClass('DQXTitleBarRounded');
                     else
                         titlediv.setCssClass('DQXTitleBar');
-                    var leftTitle = DocEl.Span({ parent: titlediv });
-                    leftTitle.setCssClass("DQXTitleLeftPart");
-                    leftTitle.addElem(this.myDisplayTitle);
+
                     if (this._displayTitle2) {
                         var rightTitle = DocEl.Span({ parent: titlediv });
                         rightTitle.setCssClass("DQXTitleBarRightInfo");
-                        rightTitle.addStyle("float", "right");
-                        rightTitle.addElem(this._displayTitle2);
+                        //rightTitle.addStyle("float", "right");
+                        rightTitle.addElem(this._displayTitle2 + '&nbsp;&nbsp;&#8212;&nbsp;&nbsp;');
                     }
+
+                    var leftTitle = DocEl.Span({ parent: titlediv });
+                    leftTitle.setCssClass("DQXTitleLeftPart");
+                    leftTitle.addElem(this.myDisplayTitle);
                 }
 
                 if (this.isSplitter()) {
@@ -643,7 +646,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
                     background.addStyle("top", y0 + 'px');
                     background.addStyle('width', lx + 'px');
                     background.addStyle('height', ly + 'px');
-                    background.addStyle('background-color', 'rgb(60,60,60)');
+                    background.addStyle('background-color', 'rgb(255,255,255)');
                     background.addStyle('opacity', transientOpacity);
                     background.addStyle('z-index', '2000');
                     $('#DQXUtilContainer').append(background.toString());

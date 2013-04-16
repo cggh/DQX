@@ -204,6 +204,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#c3c3c3', end
     text-align: left; 
     height:28px;
     font-size:8pt;
+    font-weight:normal;
 /*    width: 180px !important; */
     white-space:nowrap;
     padding: 4px;
@@ -338,7 +339,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eff6fc', end
 .DQXLightFrame, .DQXTabBody, .DQXTabActive
 {
     background-color:rgb(160,160,160);
-    color:rgb(0,0,150);
+    color:rgb(0,0,0);
 }
 
 
@@ -536,7 +537,13 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eff6fc', end
 ** DQX Misc controls
 ******************************************************************************************/
 
-
+.DQXImportantMessage
+{
+    background-color:rgb(255,192,0);
+    padding:2px;
+    font-weight:bold;
+    border:1px solid black;
+}
 
 a:link, a:visited
 {
@@ -830,7 +837,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7f7f7', end
 .DQXTitleBar
 {
    color:rgb(0,0,180);
-   font-size:20px;
+   font-size:18px;
    font-variant:small-caps;
     line-height:28px;
     background: rgb(80,80,80);
@@ -840,7 +847,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7f7f7', end
 
 .DQXTitleBarRounded
 {
-   color:rgb(0,0,200);
+   color:rgb(0,0,0);
 	border-top-left-radius:8px;
 	border-top-right-radius:8px;
     line-height:22px;
@@ -853,7 +860,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7f7f7', end
 {
     padding-left:7px;
     font-weight:normal;
-    font-size:12px;
+    font-size:14px;
     font-variant:normal;
 }
 
