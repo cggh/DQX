@@ -593,7 +593,10 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
                     if (!this.hasTabs())
                         tabheader.addStyle('display', 'none');
                     var tabbody = DocEl.Div({ parent: theclientdiv, id: this.getClientDivID() + '_tabbody' });
-                    tabbody.setCssClass("DQXTabBody");
+                    if (this.hasTabs())
+                        tabbody.setCssClass("DQXTabBody DQXTabBodyStyled");
+                    else
+                        tabbody.setCssClass("DQXTabBody DQXLightFrame");
                     for (var fnr = 0; fnr < this.memberFrames.length; fnr++) {
                         var tabid = this.getClientDivID() + '_tab_' + fnr;
                         var tabcontent = DocEl.Div({ parent: tabbody, id: 'C' + tabid });
