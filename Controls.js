@@ -65,7 +65,7 @@ define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller"), DQXSC("Documentation")]
             $.each(Controls._postCreateWaitList, function (key, ctrl) {
                 DQX.reportError('Post Html creation not executed for control ' + key);
             });
-            setTimeout(Controls._surveillance, 2000);
+            setTimeout(Controls._surveillance, 6000);
         }
         if (_debug_) Controls._surveillance();
 

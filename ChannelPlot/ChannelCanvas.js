@@ -128,6 +128,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Scroller")],
                 elemCenter.setCssClass('DQXChannelPlotChannelCenter');
                 elemCenter.addAttribute("height", that._height);
                 elemCenter.addStyle('display', 'inline-block');
+                //elemCenter.addStyle('image-rendering', '-webkit-optimize-contrast');<--gives poor results on iPad
                 elemCenter.setWidthPx(10).setHeightPx(that._height);
                 var elemRight = DocEl.Create('canvas', { id: this.getCanvasID('right'), parent: wrapper });
                 elemRight.addAttribute("width", this.getMyPlotter().getRightWidth());
