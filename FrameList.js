@@ -72,14 +72,15 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel")],
                         topOffset = 30;
                         var editDiv = DocEl.Div({});
                         editDiv.addStyle('padding-left', '30px');
-                        editDiv.addStyle('padding-right', '10px');
-                        editDiv.addStyle('padding-top', '2px');
+                        editDiv.addStyle('padding-right', '12px');
+                        editDiv.addStyle('padding-top', '3px');
                         editDiv.addStyle('padding-bottom', '5px');
                         editDiv.addStyle('background-color', 'rgb(210,210,210)');
                         editDiv.addElem('<IMG SRC="' + DQXBMP('magnif2.png') + '" border=0 ALT="" TITLE="" style="position:absolute;left:3px;top:2px">');
                         var edit = DocEl.Edit('', { id: this.myFilterDivID, parent: editDiv, placeHolder: 'Enter search text to filter items' });
                         edit.addStyle('width', '100%');
                         edit.addStyle('height', '18px');
+                        edit.addStyle('border', '1px solid rgb(170,170,170)');
                         htmlContent += editDiv.toString();
                     }
                     var divList = DocEl.Div({ id: this.myListDivID });

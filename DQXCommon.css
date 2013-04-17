@@ -198,7 +198,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#c3c3c3', end
     
     border-width: 1px;
     border-style: solid;
-    border-color: #000000;
+    border-color: rgb(140,140,140);
     
     color:rgb(0,0,0);
     text-align: left; 
@@ -675,10 +675,11 @@ a:link, a:visited
 /*Text intro boxes in top left of each panel*/
 .DQXIntroInfo
 {
+	font-size:10pt;
     color:rgb(0,0,0);
     background-color: rgb(240,240,240);
     border-width:0px;
-    border-radius: 7px;
+    /*border-radius-bottom-right: 7px;*/
 
 }
 
@@ -831,7 +832,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7f7f7', end
 
 .DQXTitleBar
 {
-   color:rgb(0,0,180);
+   color:rgb(0,0,135);
    font-size:18px;
    font-variant:small-caps;
     line-height:28px;
@@ -924,8 +925,11 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7f7f7', end
     margin-bottom:10px;
     margin-right:10px;
     cursor:pointer;
-    border:1px solid rgb(70,70,70);
-    box-shadow: 2px 2px 6px rgba(0,0,0,0.55); 
+    border-left:1px solid rgb(170,170,170);
+    border-top:1px solid rgb(170,170,170);
+    border-right:1px solid rgb(140,140,140);
+    border-bottom:1px solid rgb(140,140,140);
+    box-shadow: 2px 2px 6px rgba(0,0,0,0.35); 
     padding-top:5px;
     padding-bottom:6px;
     padding-left:6px;
@@ -1147,12 +1151,13 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f3f9ac', end
 {
     /*outline: 2px dotted;
     outline-color: rgba(255,150,100,0.7);*/
-    background: #f3f9ac; /* Old browsers */
-    background: -moz-linear-gradient(top, #f3f9ac 0%, #ffe36b 100%); /* FF3.6+ */
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f3f9ac), color-stop(100%,#ffe36b)); /* Chrome,Safari4+ */
-    background: -webkit-linear-gradient(top, #f3f9ac 0%,#ffe36b 100%); /* Chrome10+,Safari5.1+ */
-    background: -o-linear-gradient(top, #f3f9ac 0%,#ffe36b 100%); /* Opera 11.10+ */
-    background: -ms-linear-gradient(top, #f3f9ac 0%,#ffe36b 100%); /* IE10+ */
-    background: linear-gradient(to bottom, #f3f9ac 0%,#ffe36b 100%); /* W3C */
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f3f9ac', endColorstr='#ffe36b',GradientType=0 ); /* IE6-9 */
+background: rgb(255,220,80);
+background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2ZmZGM1MCIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNmZjk2MDAiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+background: -moz-linear-gradient(top, rgb(255,220,80) 0%, rgb(255,150,0) 100%);
+background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgb(255,220,80)), color-stop(100%,rgb(255,150,0)));
+background: -webkit-linear-gradient(top, rgb(255,220,80) 0%,rgb(255,150,0) 100%);
+background: -o-linear-gradient(top, rgb(255,220,80) 0%,rgb(255,150,0) 100%);
+background: -ms-linear-gradient(top, rgb(255,220,80) 0%,rgb(255,150,0) 100%);
+background: linear-gradient(to bottom, rgb(255,220,80) 0%,rgb(255,150,0) 100%);
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffdc50', endColorstr='#ff9600',GradientType=0 );
 }

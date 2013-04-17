@@ -44,7 +44,7 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelPlotter"), DQXSC("Dat
 
             that.annotationChannel = ChannelAnnotation.Channel("_Annotation", that._annotationFetcher, annotationChannelArgs);
             that.annotationChannel.setTitle('Genes');
-            that.annotationChannel.darkenFactor = 0.85;
+            that.annotationChannel.darkenFactor = 0.95;
             that.addChannel(that.annotationChannel, true);
 
 

@@ -69,7 +69,7 @@
                         clickpt.StartPs = annot.myStartList[i];
                         clickpt.Len = len;
 
-                        drawInfo.centerContext.fillStyle = "rgb(180,160,100)";
+                        drawInfo.centerContext.fillStyle = "rgb(220,160,100)";
                         drawInfo.centerContext.strokeStyle = "rgb(128,128,128)";
                         drawInfo.centerContext.beginPath();
                         drawInfo.centerContext.rect(Math.round(psx1) + 0.5, Math.round(clickpt.y0) + 0.5, Math.round(psx2 - psx1), 8);
@@ -77,7 +77,7 @@
                         drawInfo.centerContext.stroke();
 
                         if (imax - imin < 2000000) {//draw exons
-                            drawInfo.centerContext.fillStyle = "rgb(220,200,100)";
+                            drawInfo.centerContext.fillStyle = "rgb(255,170,30)";
                             drawInfo.centerContext.strokeStyle = "rgb(0,0,0)";
                             var exstartlist = annot.myExonStarts[i];
                             var exstoplist = annot.myExonStops[i];

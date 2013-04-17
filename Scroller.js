@@ -89,14 +89,14 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg")],
                 var centercontext = obj.getContext("2d");
 
                 var backgrad1 = centercontext.createLinearGradient(0, 0, 0, this.sizeY);
-                backgrad1.addColorStop(0, "rgb(120,120,120)");
-                backgrad1.addColorStop(0.35, "rgb(220,220,220)");
-                backgrad1.addColorStop(1, "rgb(80,80,80)");
+                backgrad1.addColorStop(0, "rgb(170,170,170)");
+                backgrad1.addColorStop(0.35, "rgb(250,250,250)");
+                backgrad1.addColorStop(1, "rgb(130,130,130)");
 
                 var backgrad2 = centercontext.createLinearGradient(0, 0, 0, this.sizeY);
-                backgrad2.addColorStop(0, "rgb(80,80,80)");
-                backgrad2.addColorStop(0.35, "rgb(190,190,190)");
-                backgrad2.addColorStop(1, "rgb(60,60,60)");
+                backgrad2.addColorStop(0, "rgb(140,140,140)");
+                backgrad2.addColorStop(0.35, "rgb(230,230,230)");
+                backgrad2.addColorStop(1, "rgb(100,100,100)");
 
                 centercontext.fillStyle = backgrad1;
                 centercontext.fillRect(0, 0, this.sizeX, this.sizeY);
@@ -174,10 +174,10 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg")],
                 //scroll bar bar
                 //centercontext.globalAlpha = 0.55;
                 var backgrad = centercontext.createLinearGradient(px1, 0, px2, 0);
-                backgrad.addColorStop(0, "rgba(50,50,200,0.65)");
+                backgrad.addColorStop(0, "rgba(50,50,240,0.65)");
                 backgrad.addColorStop(0.25, "rgba(160,160,255,0.3)");
                 backgrad.addColorStop(0.75, "rgba(160,160,255,0.3)");
-                backgrad.addColorStop(1, "rgba(50,50,200,0.65)");
+                backgrad.addColorStop(1, "rgba(50,50,240,0.65)");
                 centercontext.fillStyle = backgrad;
                 centercontext.fillRect(px1, 2, px2 - px1, this.sizeY - 4);
                 //scroll bar arrows

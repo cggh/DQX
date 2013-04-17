@@ -398,7 +398,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
                 frame.setFrameClassClient('DQXIntroInfo').setFrameClass('DQXIntroInfo').setMargins(12).setAllowScrollBars(false, false);
                 frame.setAutoSize();
                 frame._parentFrame.setSeparatorSize(6);
-                frame._parentFrame.marginTop = 3;
+                //frame._parentFrame.marginTop = 3;
                 frame.setMinSize(Framework.dimY, 80);
                 frame.setInitialiseFunction(function () {
                     var str = '';

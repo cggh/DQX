@@ -360,7 +360,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Scroller")],
             that.drawStandardGradientLeft = function (drawInfo, fc) {
                 var backgrad = drawInfo.leftContext.createLinearGradient(0, 0, 0, drawInfo.sizeY);
                 backgrad.addColorStop(0, DQX.Color(0.95 * fc, 0.95 * fc, 0.95 * fc));
-                backgrad.addColorStop(1, DQX.Color(0.8 * fc, 0.8 * fc, 0.8 * fc));
+                backgrad.addColorStop(1, DQX.Color(0.85 * fc, 0.85 * fc, 0.85 * fc));
                 drawInfo.leftContext.fillStyle = backgrad;
                 drawInfo.leftContext.fillRect(0, 0, drawInfo.sizeLeftX, drawInfo.sizeY);
                 drawInfo.leftContext.fillStyle = DQX.Color(0.3 * fc, 0.3 * fc, 0.3 * fc).toString();
@@ -495,15 +495,15 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Scroller")],
 
                     var markgrad = drawInfo.centerContext.createLinearGradient(psx1, 0, psx2, 0);
                     var markWidth = Math.max(1, psx2 - psx1);
-                    markgrad.addColorStop(0, "rgba(255,0,0,0.2)");
-                    markgrad.addColorStop(Math.min(0.45, 30 / markWidth), "rgba(255,0,0,0.05)");
-                    markgrad.addColorStop(Math.max(0.55, 1 - 30 / markWidth), "rgba(255,0,0,0.05)");
-                    markgrad.addColorStop(1, "rgba(255,0,0,0.2)");
+                    markgrad.addColorStop(0, "rgba(255,50,0,0.2)");
+                    markgrad.addColorStop(Math.min(0.45, 30 / markWidth), "rgba(255,50,0,0.05)");
+                    markgrad.addColorStop(Math.max(0.55, 1 - 30 / markWidth), "rgba(255,50,0,0.05)");
+                    markgrad.addColorStop(1, "rgba(255,50,0,0.2)");
                     drawInfo.centerContext.fillStyle = markgrad;
                     drawInfo.centerContext.fillRect(psx1, 0, psx2 - psx1, drawInfo.sizeY);
 
                     drawInfo.centerContext.globalAlpha = 0.4;
-                    drawInfo.centerContext.strokeStyle = "rgb(255,0,0)";
+                    drawInfo.centerContext.strokeStyle = "rgb(255,50,0)";
                     drawInfo.centerContext.beginPath();
                     drawInfo.centerContext.moveTo(psx1, 0); drawInfo.centerContext.lineTo(psx1, drawInfo.sizeY);
                     drawInfo.centerContext.moveTo(psx2, 0); drawInfo.centerContext.lineTo(psx2, drawInfo.sizeY);
@@ -515,7 +515,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Scroller")],
                         drawInfo.centerContext.shadowBlur = 6;
                         drawInfo.centerContext.shadowOffsetX = 0;
                         drawInfo.centerContext.shadowOffsetY = 0;
-                        drawInfo.centerContext.fillStyle = "rgb(255,0,0)";
+                        drawInfo.centerContext.fillStyle = "rgb(255,50,0)";
                         drawInfo.centerContext.font = 'bold 12px sans-serif';
                         drawInfo.centerContext.textBaseline = 'top';
                         drawInfo.centerContext.textAlign = 'right';
@@ -612,9 +612,9 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Scroller")],
             that._height = 25;
 
             that.draw = function (drawInfo) {
-                this.drawStandardGradientCenter(drawInfo, 0.74);
-                this.drawStandardGradientLeft(drawInfo, 0.74);
-                this.drawStandardGradientRight(drawInfo, 0.74);
+                this.drawStandardGradientCenter(drawInfo, 0.84);
+                this.drawStandardGradientLeft(drawInfo, 0.84);
+                this.drawStandardGradientRight(drawInfo, 0.84);
 
                 drawInfo.centerContext.fillStyle = DQX.Color(0.3, 0.3, 0.3).toString();
                 drawInfo.centerContext.font = '11px sans-serif';
