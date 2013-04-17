@@ -719,7 +719,7 @@ define([DQXSCJQ(), DQXSC("data/countries"), DQXSC("lib/geo_json"), DQXSC("lib/St
                     txt.addAttribute('y', 1);
                     txt.addAttribute('width', 90);
                     txt.addAttribute('height', 2 * halfHeight);
-                    txt.addStyle("fill", "rgb(255,240,70)");
+                    txt.addStyle("fill", "rgb(255,220,30)");
                     txt.addStyle("stroke-width", "1");
                     txt.addStyle("stroke", "rgb(0,0,0)");
                     txt.addStyle("shape-rendering", "crispEdges");

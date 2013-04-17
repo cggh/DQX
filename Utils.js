@@ -384,7 +384,7 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("DocEl")],
             scrollUpIndicator.addStyle("position", "absolute");
             scrollUpIndicator.addStyle("left", "0px");
             scrollUpIndicator.addStyle("top", "0px");
-            scrollUpIndicator.addStyle("opacity", "0.6");
+            scrollUpIndicator.addStyle("opacity", "0.4");
             scrollUpIndicator.addStyle("pointer-events", "none");
             scrollUpIndicator.addElem('<img src="' + DQXBMP("scrollup3.png") + '" />');
             htmlContent += scrollUpIndicator.toString();
@@ -394,7 +394,7 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("DocEl")],
             scrollDownIndicator.addStyle("position", "absolute");
             scrollDownIndicator.addStyle("left", "0px");
             scrollDownIndicator.addStyle("bottom", "1px");
-            scrollDownIndicator.addStyle("opacity", "0.6");
+            scrollDownIndicator.addStyle("opacity", "0.4");
             scrollDownIndicator.addStyle("pointer-events", "none");
             scrollDownIndicator.addElem('<img src="' + DQXBMP("scrolldown3.png") + '" />');
             htmlContent += scrollDownIndicator.toString();

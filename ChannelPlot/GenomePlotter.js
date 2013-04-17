@@ -284,7 +284,9 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelPlotter"), DQXSC("Dat
             var chromPickerDiv = DocEl.Div({ parent: headerDiv });
             chromPickerDiv.addStyle('float', 'left');
             chromPickerDiv.addElem('Chromosome: ');
-            chromPickerDiv.addStyle('padding', '5px');
+            chromPickerDiv.addStyle('padding-left', '5px');
+            chromPickerDiv.addStyle('padding-top', '2px');
+            chromPickerDiv.addStyle('padding-right', '15px');
             var chromopicker = DocEl.Select([], '', { id: that.getSubID("ChromoPicker"), parent: chromPickerDiv });
 
             var navButtonDiv = DocEl.Div({ parent: headerDiv });

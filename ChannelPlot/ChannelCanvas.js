@@ -351,9 +351,9 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Scroller")],
                 backgrad.addColorStop(1, DQX.Color(0.9 * fc, 0.9 * fc, 0.9 * fc));
                 drawInfo.centerContext.fillStyle = backgrad;
                 drawInfo.centerContext.fillRect(0, 0, drawInfo.sizeCenterX, drawInfo.sizeY);
-                drawInfo.centerContext.fillStyle = DQX.Color(0.4 * fc, 0.4 * fc, 0.4 * fc).toString();
+                drawInfo.centerContext.fillStyle = DQX.Color(0.5 * fc, 0.5 * fc, 0.5 * fc).toString();
                 drawInfo.centerContext.fillRect(0, drawInfo.sizeY - 1, drawInfo.sizeCenterX, 1);
-                drawInfo.centerContext.fillStyle = DQX.Color(0.6 * fc, 0.6 * fc, 0.6 * fc).toString();
+                drawInfo.centerContext.fillStyle = DQX.Color(0.7 * fc, 0.7 * fc, 0.7 * fc).toString();
                 drawInfo.centerContext.fillRect(0, drawInfo.sizeY - 2, drawInfo.sizeCenterX, 1);
             }
 
@@ -363,9 +363,9 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Scroller")],
                 backgrad.addColorStop(1, DQX.Color(0.85 * fc, 0.85 * fc, 0.85 * fc));
                 drawInfo.leftContext.fillStyle = backgrad;
                 drawInfo.leftContext.fillRect(0, 0, drawInfo.sizeLeftX, drawInfo.sizeY);
-                drawInfo.leftContext.fillStyle = DQX.Color(0.3 * fc, 0.3 * fc, 0.3 * fc).toString();
+                drawInfo.leftContext.fillStyle = DQX.Color(0.4 * fc, 0.4 * fc, 0.4 * fc).toString();
                 drawInfo.leftContext.fillRect(0, drawInfo.sizeY - 1, drawInfo.sizeLeftX, 1);
-                drawInfo.leftContext.fillStyle = DQX.Color(0.5 * fc, 0.5 * fc, 0.5 * fc).toString();
+                drawInfo.leftContext.fillStyle = DQX.Color(0.6 * fc, 0.6 * fc, 0.6 * fc).toString();
                 drawInfo.leftContext.fillRect(0, drawInfo.sizeY - 2, drawInfo.sizeLeftX, 1);
             }
 

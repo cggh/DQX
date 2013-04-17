@@ -935,10 +935,10 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7f7f7', end
     margin-bottom:10px;
     margin-right:10px;
     cursor:pointer;
-    border-left:1px solid rgb(170,170,170);
-    border-top:1px solid rgb(170,170,170);
-    border-right:1px solid rgb(140,140,140);
-    border-bottom:1px solid rgb(140,140,140);
+    border-left:1px solid rgb(150,150,150);
+    border-top:1px solid rgb(150,150,150);
+    border-right:1px solid rgb(120,120,120);
+    border-bottom:1px solid rgb(120,120,120);
     box-shadow: 2px 2px 6px rgba(0,0,0,0.35); 
     padding-top:5px;
     padding-bottom:6px;

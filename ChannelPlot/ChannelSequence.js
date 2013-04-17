@@ -81,8 +81,8 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelCanva
 
                 var h = 16;
                 if (('extraInfo' in points) && (points.extraInfo.blockSize > 1)) {
-                    drawInfo.centerContext.fillStyle = 'rgb(128,128,128)';
-                    drawInfo.centerContext.fillRect(0, 10, drawInfo.sizeCenterX, 6);
+                    //drawInfo.centerContext.fillStyle = 'rgb(192,192,192)';
+                    //drawInfo.centerContext.fillRect(0, 10, drawInfo.sizeCenterX, 6);
                     h = 10;
                 }
 
