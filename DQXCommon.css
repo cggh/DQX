@@ -1216,3 +1216,9 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffdc50', end
 /*    outline: 1px dotted;
     outline-color: rgb(255,170,0);*/
 }
+
+/* Necessary to get touch events for IE10*/
+canvas, .DQXDragHeader
+{
+    -ms-touch-action:none;
+}
