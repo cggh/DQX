@@ -411,7 +411,6 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
                         helpButton.setCssClass('DQXHelpLink DQXIntroBoxHelpLink');
                         helpButton.addAttribute('href', helpDocID);
                         helpButton.addElem('<IMG SRC="' + DQXBMP('info2.png') + '" border=0  ALT="Help">');
-                        //$('#' + frame.myID).append(helpButton.toString());
                         str += helpButton;
                     }
 
@@ -422,11 +421,6 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
                         helpButton.setCssClass('DQXHelpLink');
                         helpButton.addAttribute('href', helpDocID);
                         helpButton.addElem(' More information...')
-                        //$('#' + frame.myID).append(helpButton.toString());
-                        /*$('#' + frame.myID).mousedown(function () {
-                        Msg.send({ type: 'ShowHelp' }, helpButton.getID());
-                        return false;
-                        });*/
                         str += helpButton;
 
 
@@ -1306,7 +1300,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
                 DQX.ExecPostCreateHtml();
                 this.myParentFrame.notifyContentChanged();
                 if (this.myParentFrame.autoSizeY)
-                    Framework._handleResize(); //force resizing of the frames if the content was changed
+                    setTimeout(Framework._handleResize,500); //force resizing of the frames if the content was changed
             }
 
             //Returns the natural vertical size of the form

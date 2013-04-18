@@ -580,6 +580,11 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("DocEl")],
                     that.handleGestureEnd(ev);
             }
 
+            //var _onMSGestureChange = function (ev) {
+            //    that._onGestureChange(ev);
+            //}
+
+            var msPointer = window.navigator.msPointerEnabled;
 
             var element = document.getElementById(elemID);
             if (!element)
@@ -594,6 +599,9 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("DocEl")],
                 element.addEventListener("gesturestart", _onGestureStart, false);
                 element.addEventListener("gesturechange", _onGestureChange, false);
                 element.addEventListener("gestureend", _onGestureEnd, false);
+                //if (msPointer) {
+                //    element.addEventListener("MSGestureChange", _onMSGestureChange, false);
+                //}
             }
         }
 
