@@ -104,8 +104,8 @@ ul li
 {
     float:left;
     z-index:5;
-    padding-right:4px;
-    padding-bottom:8px;
+    margin-right:4px;
+    margin-bottom:8px;
     position:relative;
     left:-8px;
     

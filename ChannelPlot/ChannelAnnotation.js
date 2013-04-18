@@ -114,12 +114,23 @@
             }
 
             that.getClickInfoAtPoint = function (xp, yp) {
+                var minDst = 5;
+                var closest = null;
                 for (var clicknr = 0; clicknr < this._clickInfo.length; clicknr++) {
                     var clickpt = this._clickInfo[clicknr];
-                    if ((xp >= clickpt.x0) && (xp <= clickpt.X1) && (yp >= clickpt.y0) && (yp <= clickpt.Y1))
-                        return clickpt;
+                    var dstX = 0;
+                    var dstY = 0;
+                    if (xp < clickpt.x0) dstX = clickpt.x0 - xp;
+                    if (xp > clickpt.X1) dstX = xp - clickpt.X1;
+                    if (yp < clickpt.y0) dstY = clickpt.y0 - yp;
+                    if (yp > clickpt.Y1) dstY = yp - clickpt.Y1;
+                    var dst = Math.max(dstX, dstY);
+                    if (dst <= minDst) {
+                        minDst = dst;
+                        closest = clickpt;
+                    }
                 }
-                return null;
+                return closest;
             }
 
             that.getToolTipInfo = function (px, py) {
