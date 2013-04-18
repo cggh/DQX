@@ -24,7 +24,7 @@
             var html = '';
             {//Create header
                 var header = DocEl.Div();
-                header.setCssClass("DQXLight2");
+                header.setCssClass("DQXButtonBar");
                 header.addStyle('padding-bottom', '5px');
                 var pager_txt = DocEl.Span({ parent: header, id: that.getSubId("Pager") });
                 html += header;

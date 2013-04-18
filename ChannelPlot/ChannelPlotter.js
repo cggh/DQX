@@ -19,7 +19,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel"), DQXSC("Scr
             that._rightWidth = 0; //size of the right side panel
             that._rightOffset = 0; //size of the right offset, including e.g. area for vertical scroll bars
             that._headerHeight = 35;
-            that._footerHeight = 30;
+            that._footerHeight = 32;
             that._navigatorHeight = 30;
             that._channels = [];
             that._idChannelMap = {};
@@ -76,7 +76,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel"), DQXSC("Scr
                 var header = DocEl.Div({ id: that.getSubID("Header") });
                 header.addStyle("white-space", "nowrap").addStyle("overflow", "hidden");
                 header.setWidthFull();
-                header.setCssClass('DQXLight2');
+                header.setCssClass('DQXButtonBar');
                 header.addStyle('overflow', 'hidden');
                 html += header;
             }

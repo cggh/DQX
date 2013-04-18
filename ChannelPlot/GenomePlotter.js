@@ -310,8 +310,9 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelPlotter"), DQXSC("Dat
 
             var footerDiv = DocEl.Div();
             footerDiv.addStyle('padding', '3px');
+            footerDiv.setCssClass('DQXButtonBarDarker');
             footerDiv.addStyle('border-top', '1px solid rgb(150,150,150)');
-            footerDiv.addElem('Find feature: ');
+            footerDiv.addElem('<b>Find feature:</b> ');
             var featurepicker = DocEl.Edit('', { id: that.getSubID("FeaturePicker"), parent: footerDiv, placeHolder: "Enter search text" });
             footerDiv.addElem(' ');
             footerDiv.addElem(DocEl.Span({ id: that.getSubID("FeatureHits"), parent: footerDiv }));

@@ -395,27 +395,41 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
             //Inserts an info box frame at the top of an existing frame
             that.InsertIntroBox = function (bitmap, content, helpDocID) {
                 var frame = this.InsertFrameTop(Framework.FrameFinal('', 0.01));
-                frame.setFrameClassClient('DQXIntroInfo').setFrameClass('DQXIntroInfo').setMargins(12).setAllowScrollBars(false, false);
+                frame.setFrameClassClient('DQXIntroInfo').setFrameClass('DQXIntroInfo').setMargins(8).setAllowScrollBars(false, false);
                 frame.setAutoSize();
                 frame._parentFrame.setSeparatorSize(6);
                 //frame._parentFrame.marginTop = 3;
                 frame.setMinSize(Framework.dimY, 80);
                 frame.setInitialiseFunction(function () {
                     var str = '';
+
                     if (bitmap)
                         str += '<img src="Bitmaps/' + bitmap + '" alt="info" style="float:left;margin-left:0px;margin-top:5px;margin-right:8px;margin-bottom:5px"/>'
-                    str += content;
+
                     if (helpDocID) {
                         var helpButton = DocEl.Span({ id: helpDocID });
-                        helpButton.setCssClass('DQXHelpLink DQXIntroBoxHelpLink');
+                        helpButton.setCssClass('DQXIntroBoxHelpLink DQXHelpLink');
                         helpButton.addAttribute('href', helpDocID);
-                        helpButton.addElem('<IMG SRC="' + DQXBMP('info4.png') + '" border=0  ALT="" align="middle" style="margin-right:2px;vertical-align:middle">More information...')
-                        $('#' + frame.myID).append(helpButton.toString());
+                        helpButton.addElem('<IMG SRC="' + DQXBMP('info2.png') + '" border=0  ALT="Help">');
+                        //$('#' + frame.myID).append(helpButton.toString());
+                        str += helpButton;
+                    }
+
+                    str += content;
+
+                    if (helpDocID) {
+                        var helpButton = DocEl.Span({ id: helpDocID });
+                        helpButton.setCssClass('DQXHelpLink');
+                        helpButton.addAttribute('href', helpDocID);
+                        helpButton.addElem(' More information...')
+                        //$('#' + frame.myID).append(helpButton.toString());
                         /*$('#' + frame.myID).mousedown(function () {
                         Msg.send({ type: 'ShowHelp' }, helpButton.getID());
                         return false;
                         });*/
                         str += helpButton;
+
+
                     }
                     var info = Framework.Form(frame);
                     info.addHtml(str);
