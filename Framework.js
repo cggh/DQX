@@ -408,7 +408,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
 
                     if (helpDocID) {
                         var helpButton = DocEl.Span({ id: helpDocID });
-                        helpButton.setCssClass('DQXIntroBoxHelpLink DQXHelpLink');
+                        helpButton.setCssClass('DQXHelpLink DQXIntroBoxHelpLink');
                         helpButton.addAttribute('href', helpDocID);
                         helpButton.addElem('<IMG SRC="' + DQXBMP('info2.png') + '" border=0  ALT="Help">');
                         //$('#' + frame.myID).append(helpButton.toString());
