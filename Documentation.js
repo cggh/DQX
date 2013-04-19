@@ -27,14 +27,14 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Popup")]
         Documentation._onPrevious = function () {
             if (Documentation.topicStackPointer > 0) {
                 Documentation.topicStackPointer--;
-                Documentation._displayHelp(Documentation.topicStack[Documentation.topicStackPointer]);
+                Documentation._displayHelp(Documentation.topicStack[Documentation.topicStackPointer].url, Documentation.topicStack[Documentation.topicStackPointer].scrollPos);
             }
         }
 
         Documentation._onNext = function () {
             if (Documentation.topicStackPointer < Documentation.topicStack.length - 1) {
                 Documentation.topicStackPointer++;
-                Documentation._displayHelp(Documentation.topicStack[Documentation.topicStackPointer]);
+                Documentation._displayHelp(Documentation.topicStack[Documentation.topicStackPointer].url, Documentation.topicStack[Documentation.topicStackPointer].scrollPos);
             }
         }
 
@@ -101,8 +101,8 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Popup")]
             var boxButtons = DocEl.Div({ id: 'DocuBoxButtons', parent: boxFooter });
 
             var buttons = [
-//                    { id: 'DocuBoxButtonCancel', name: '', bitmap: DQXBMP('cancel.png'), handler: Documentation._onCancel },
-                    { id: 'DocuBoxButtonPrevious', name: '', bitmap: DQXBMP('arrow5left.png'), handler: Documentation._onPrevious },
+            //                    { id: 'DocuBoxButtonCancel', name: '', bitmap: DQXBMP('cancel.png'), handler: Documentation._onCancel },
+                    {id: 'DocuBoxButtonPrevious', name: '', bitmap: DQXBMP('arrow5left.png'), handler: Documentation._onPrevious },
                     { id: 'DocuBoxButtonNext', name: '', bitmap: DQXBMP('arrow5right.png'), handler: Documentation._onNext },
                 ];
 
@@ -140,14 +140,16 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Popup")]
 
         //Show a help box corresponding to a help id item in the DOM
         Documentation.showHelp = function (url) {
+            if (Documentation.topicStackPointer >= 0)
+                Documentation.topicStack[Documentation.topicStackPointer].scrollPos = $('#DocuBoxContent').scrollTop();
             Documentation._createBox();
             Documentation.topicStack = Documentation.topicStack.slice(0, Documentation.topicStackPointer + 1);
-            Documentation.topicStack.push(url);
+            Documentation.topicStack.push({ url: url, scrollPos: 0 });
             Documentation.topicStackPointer = Documentation.topicStack.length - 1;
-            Documentation._displayHelp(url);
+            Documentation._displayHelp(url,0);
         }
 
-        Documentation._displayHelp = function (url) {
+        Documentation._displayHelp = function (url, scrollPos) {
             $('#DocuBoxButtonPrevious').css('opacity', (Documentation.topicStackPointer > 0) ? 1 : 0.3);
             $('#DocuBoxButtonNext').css('opacity', (Documentation.topicStackPointer < Documentation.topicStack.length - 1) ? 1 : 0.3);
 
@@ -156,6 +158,10 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Popup")]
             .done(function (data) {
                 DQX.stopProcessing();
                 $('#DocuBoxContent').html($('<div/>').append(DQX.interpolate(data)).find('.DQXHelpContent').html());
+                if (scrollPos)
+                    $('#DocuBoxContent').scrollTop(scrollPos);
+                else
+                    $('#DocuBoxContent').scrollTop(0);
                 //Documentation.scrollHelper.update();
             })
             .fail(function () {
