@@ -193,6 +193,119 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelCanva
 
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Class ChannelYVals.YValsCompFilled: implements a single component for ChannelYVals.Channel; zith a filled background
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        //NOTE: a channel component is identified by a DataFetcher.Curve, and a column id in this fetcher
+        ChannelYVals.CompFilled = function (iID, imyDataFetcher, iValueID) {
+            var that = {};
+            that.myfetcher = imyDataFetcher; //DataFetcher.Curve used
+            that.ID = iID; // id of this component
+            that.valueID = iValueID; // id of the component in the datafetched
+            that.isActive = false;
+            that.myPlotHints = ChannelYVals.PlotHints();
+
+            that.getID = function () { return this.ID; }
+
+            //return the color used to draw this channel
+            that.getColor = function () {
+                return this.myPlotHints.color;
+            }
+
+            that.setColor = function (icolor) {
+                this.myPlotHints.color = icolor
+            }
+
+            //modifies the activity status of this component
+            that.modifyComponentActiveStatus = function (newstatus) {
+                if (this.isActive == newstatus)
+                    return;
+                this.isActive = newstatus;
+                if (newstatus)
+                    this.myfetcher.activateFetchColumn(this.valueID);
+                else
+                    this.myfetcher.deactivateFetchColumn(this.valueID);
+            }
+
+
+            that.draw = function (drawInfo, args) {
+                var rangemin = args.rangemin;
+                var rangemax = args.rangemax;
+                var points = this.myfetcher.getColumnPoints(args.PosMin, args.PosMax, this.valueID);
+                var xvals = points.xVals;
+                var yvals = points.YVals;
+                var psz = 3;
+                if (xvals.length > 10000) psz = 2;
+                var plothints = this.myPlotHints;
+                var hasYFunction = "YFunction" in this;
+                this._pointsX = []; this._pointsY = []; this._pointsIndex = [];
+                var pointsX = this._pointsX;
+                var pointsY = this._pointsY;
+                var pointsIndex = this._pointsIndex;
+
+                var psy_fact = 1.0 / (rangemax - rangemin) * drawInfo.sizeY * 0.8;
+                var psy_offset = drawInfo.sizeY - drawInfo.sizeY * 0.1 + rangemin * psy_fact;
+
+                var closePath = function () {
+                    if (!thefirst)
+                        drawInfo.centerContext.lineTo(psx, psy_offset);
+                        drawInfo.centerContext.globalAlpha = 0.2;
+                        drawInfo.centerContext.fill();
+                        drawInfo.centerContext.globalAlpha = 0.4;
+                        drawInfo.centerContext.stroke();
+                    }
+                var startPath = function () {
+                    thefirst = true;
+                    if (thefirst) {
+                        drawInfo.centerContext.beginPath();
+                        drawInfo.centerContext.moveTo(psx, psy_offset);
+                    }
+                }
+
+                drawInfo.centerContext.fillStyle = plothints.color.toStringCanvas();
+                drawInfo.centerContext.strokeStyle = plothints.color.toStringCanvas();
+                var thefirst = true;
+                var maxlinedist = plothints.maxLineDist;
+                for (i = 0; i < xvals.length; i++) {
+                    if (yvals[i] != null) {
+                        var x = xvals[i];
+                        var y = yvals[i];
+                        if (hasYFunction)
+                            y = this.YFunction(y);
+                        var psx = x * drawInfo.zoomFactX - drawInfo.offsetX;
+                        var psy = psy_offset - y * psy_fact;
+                        if ((!thefirst) && (x - xlast > maxlinedist)) {
+                            closePath();
+                            thefirst = true;
+                        }
+                        if (thefirst) startPath();
+                        drawInfo.centerContext.lineTo(psx, psy);
+                        thefirst = false;
+                        var xlast = x;
+                    }
+                    else {
+                        if ((!thefirst) && (plothints.interruptLineAtAbsent)) {
+                            closePath();
+                            thefirst = true;
+                        }
+                    }
+                }
+                closePath();
+
+            }
+
+            that.getClosestPoint = function (px, py) {
+                return null;
+            }
+
+            return that;
+        }
+
+
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////
         // Class ChannelYVals.YRangeComp: implements a single component for ChannelYVals.Channel,
         // drawing a range between a minimum Y curve value and a maximum Y curve value
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -333,9 +446,9 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelCanva
                 var rangemax = args.rangemax;
                 var psy_fact = 1.0 / (rangemax - rangemin) * drawInfo.sizeY * 0.8;
                 var psy_offset = drawInfo.sizeY - drawInfo.sizeY * 0.1 + rangemin * psy_fact;
-                var psy1 = Math.round(psy_offset - this.minVal * psy_fact)-0.5;
-                var psy2 = Math.round(psy_offset - this.maxVal * psy_fact)-0.5;
-                drawInfo.centerContext.fillStyle=that.myColor.toStringCanvas();
+                var psy1 = Math.round(psy_offset - this.minVal * psy_fact) - 0.5;
+                var psy2 = Math.round(psy_offset - this.maxVal * psy_fact) - 0.5;
+                drawInfo.centerContext.fillStyle = that.myColor.toStringCanvas();
                 drawInfo.centerContext.fillRect(0, psy2, drawInfo.sizeCenterX, psy1 - psy2 + 1);
                 drawInfo.centerContext.strokeStyle = that.myColor.toStringCanvas();
                 drawInfo.centerContext.beginPath();
