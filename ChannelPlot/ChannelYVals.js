@@ -248,15 +248,16 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelCanva
                 var psy_offset = drawInfo.sizeY - drawInfo.sizeY * 0.1 + rangemin * psy_fact;
 
                 var closePath = function () {
-                    if (!thefirst)
+                    if (!thefirst) {
                         drawInfo.centerContext.lineTo(psx, psy_offset);
                         drawInfo.centerContext.globalAlpha = 0.2;
                         drawInfo.centerContext.fill();
                         drawInfo.centerContext.globalAlpha = 0.4;
                         drawInfo.centerContext.stroke();
+                        theFirst = true;
                     }
+                }
                 var startPath = function () {
-                    thefirst = true;
                     if (thefirst) {
                         drawInfo.centerContext.beginPath();
                         drawInfo.centerContext.moveTo(psx, psy_offset);
