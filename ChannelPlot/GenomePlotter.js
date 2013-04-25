@@ -61,6 +61,9 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelPlotter"), DQXSC("Dat
                 for (var chromnr = 0; chromnr < this._chromosomes.length; chromnr++)
                     if (this._chromosomes[chromnr].id == chromoid)
                         return chromnr + 1;
+                for (var chromnr = 0; chromnr < this._chromosomes.length; chromnr++)
+                    if (this._annotationFetcher.translateChromoId(this._chromosomes[chromnr].id) == chromoid)
+                        return chromnr + 1;
                 return null;
             }
 
