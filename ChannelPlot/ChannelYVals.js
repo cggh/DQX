@@ -205,6 +205,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelCanva
             that.valueID = iValueID; // id of the component in the datafetched
             that.isActive = false;
             that.myPlotHints = ChannelYVals.PlotHints();
+            that.myPlotHints.opacity = 0.5;
 
             that.getID = function () { return this.ID; }
 
@@ -213,8 +214,10 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelCanva
                 return this.myPlotHints.color;
             }
 
-            that.setColor = function (icolor) {
-                this.myPlotHints.color = icolor
+            that.setColor = function (icolor, opacity) {
+                this.myPlotHints.color = icolor;
+                if (opacity)
+                    that.myPlotHints.opacity = opacity;
             }
 
             //modifies the activity status of this component
@@ -250,10 +253,11 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelCanva
                 var closePath = function () {
                     if (!thefirst) {
                         drawInfo.centerContext.lineTo(psx, psy_offset);
-                        drawInfo.centerContext.globalAlpha = 0.2;
+                        drawInfo.centerContext.globalAlpha = 0.5 * that.myPlotHints.opacity;
                         drawInfo.centerContext.fill();
-                        drawInfo.centerContext.globalAlpha = 0.4;
+                        drawInfo.centerContext.globalAlpha = that.myPlotHints.opacity;
                         drawInfo.centerContext.stroke();
+                        drawInfo.centerContext.globalAlpha = 1.0;
                         theFirst = true;
                     }
                 }
@@ -503,6 +507,12 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelCanva
             that.getComponent = function (nr) {
             return this.myComponents[nr];
             }*/
+
+            that.findComponent = function (cmpid) {
+                if (!(cmpid in this.myComponents))
+                    DQX.reportError('Invalid component ' + cmpid);
+                return this.myComponents[cmpid];
+            }
 
             //Modifies the activity status of a component inside this channel
             that.modifyComponentActiveStatus = function (cmpid, newstatus, redraw) {
