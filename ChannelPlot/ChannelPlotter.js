@@ -141,11 +141,17 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel"), DQXSC("Scr
             // Some internally used functions
             ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
+            that._notifyZoomChanged = function () {
+                Msg.broadcast({ type: 'ZoomFactorXChanged', id: that.myID });
+            }
+
             //sets the position and width
             that.setPosition = function (centerpos, width) {
                 var viewPortWidth = this.getViewPortWidth();
                 if (viewPortWidth > 0) {
+                    var oldZoomFactor = this.zoomFactX;
                     this._zoomFactX = viewPortWidth / width;
+                    if (Math.abs(this._zoomFactX - oldZoomFactor) > 1E-6 * this._zoomFactX) this._notifyZoomChanged();
                     this._offsetX = (centerpos - 0.5 * width) * this._zoomFactX;
                     this.render();
                     this.updateNavigator();
@@ -180,7 +186,9 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel"), DQXSC("Scr
             //responds to a navigator notification
             that.zoomScrollTo = function (scrollPosFraction, scrollSizeFraction) {
                 if (!this._sizeCenterX) return; //not yet initialised
+                var oldZoomFactor = this._zoomFactX;
                 this._zoomFactX = this._sizeCenterX / ((this._fullRangeMax - this._fullRangeMin) * scrollSizeFraction);
+                if (Math.abs(this._zoomFactX - oldZoomFactor) > 1E-6 * this._zoomFactX) this._notifyZoomChanged();
                 var psx = this._fullRangeMin + scrollPosFraction * (this._fullRangeMax - this._fullRangeMin);
                 this._offsetX = psx * this._zoomFactX;
                 this.render();
@@ -270,8 +278,10 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel"), DQXSC("Scr
                 }
                 dff = Math.min(scaleFactor, this._MaxZoomFactX / this._zoomFactX);
                 this._offsetX = this._offsetX * dff + centerPosX * (dff - 1);
+                var oldZoomFactor = this._zoomFactX;
                 this._zoomFactX *= dff;
                 this.clipViewRange();
+                if (Math.abs(this._zoomFactX - oldZoomFactor) > 1E-6 * this._zoomFactX) this._notifyZoomChanged();
                 this.updateNavigator();
                 this.render();
             }
@@ -314,6 +324,10 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel"), DQXSC("Scr
 
             that.getViewPortWidth = function () {
                 return this._sizeX;
+            }
+
+            that.getZoomFactorX = function () {
+                return this._zoomFactX;
             }
 
             that.handleResize = function () {
