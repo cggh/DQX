@@ -165,6 +165,8 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Scroller")],
                 $('#' + this.getCanvasID('center')).mouseenter($.proxy(that._onMouseEnter, that));
                 $('#' + this.getCanvasID('center')).mouseleave($.proxy(that._onMouseLeave, that));
 
+
+
                 DQX.augmentTouchEvents(this, this.getCanvasID('center'), true, true);
 
                 if (this.needVScrollbar()) {
@@ -267,6 +269,8 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Scroller")],
                 ev.returnValue = false;
                 return false;
             }
+
+
 
 
             //Returns the position X coordinate of an event, relative to the center canvas element

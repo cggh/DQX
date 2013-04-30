@@ -501,7 +501,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelCanva
             }
 
             that.getComponentList = function () {
-                return this.myComponents; 
+                return this.myComponents;
             }
 
             that.findComponent = function (cmpid) {
@@ -515,6 +515,11 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelCanva
                 this.myComponents[cmpid].modifyComponentActiveStatus(newstatus);
                 if (redraw)
                     this.myPlot.render();
+            }
+
+            that.setChangeYScale = function (canChangeMinVal, canChangeMaxVal) {
+                that._canChangeYScaleBottom = canChangeMinVal;
+                that._canChangeYScaleTop = canChangeMaxVal;
             }
 
             //returns a list of all fetchers that are currently active in this plot (i.e. correspond to active components)
@@ -535,6 +540,78 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelCanva
                 }
                 return lst;
             }
+
+            var parent_postCreateHtml = $.proxy(that.postCreateHtml, that);
+            that.postCreateHtml = function () {
+                parent_postCreateHtml();
+
+                $('#' + this.getCanvasID('left')).mousedown($.proxy(that._onMouseDownLeft, that));
+                $('#' + this.getCanvasID('left')).mousemove($.proxy(that._onMouseMoveLeft, that));
+                $('#' + this.getCanvasID('left')).mouseenter($.proxy(that._onMouseEnterLeft, that));
+                $('#' + this.getCanvasID('left')).mouseleave($.proxy(that._onMouseLeaveLeft, that));
+            }
+
+
+            /////////////////// Event handlers for left panel ///////////////////////////
+
+
+            that._onMouseMoveLeft = function (ev) {
+                var px = this.getEventPosX(ev);
+                var py = this.getEventPosY(ev);
+                if ((this._canChangeYScaleTop) || (this._canChangeYScaleBottom)) {
+                    if (px > -30)
+                        $('#' + this.getCanvasID('left')).css('cursor', 'row-resize');
+                    else
+                        $('#' + this.getCanvasID('left')).css('cursor', 'auto');
+
+                }
+            }
+
+            that._onMouseDownLeft = function (ev) {
+                $(document).bind("mouseup.ChannelCanvasLeft", $.proxy(that._onMouseDragUpLeft, that));
+                $(document).bind("mousemove.ChannelCanvasLeft", $.proxy(that._onMouseDragMoveLeft, that));
+                var px = this.getEventPosX(ev);
+                var py = this.getEventPosY(ev);
+                var channelH = $('#' + this.getCanvasID('left')).height();
+                this._draggingYScaleTop = false;
+                this._draggingYScaleBottom = false;
+                this._draggingYScaleTop = ((this._canChangeYScaleTop) && (px > -30));
+                if ((this._canChangeYScaleBottom) && (px > -30) && (py >= channelH / 2)) {
+                    this._draggingYScaleTop = false;
+                    this._draggingYScaleBottom = true;
+                }
+                this._draggingY0 = py;
+                this.draggingMinVal0 = this._minVal;
+                this.draggingMaxVal0 = this._maxVal;
+                ev.returnValue = false;
+                return false;
+            }
+
+            that._onMouseDragUpLeft = function (ev) {
+                $(document).unbind("mouseup.ChannelCanvasLeft");
+                $(document).unbind("mousemove.ChannelCanvasLeft");
+                ev.returnValue = false;
+                return false;
+            }
+
+            that._onMouseDragMoveLeft = function (ev) {
+                var px = this.getEventPosX(ev);
+                var py = this.getEventPosY(ev);
+                if (this._draggingYScaleTop) {
+                    this._maxVal = this.draggingMinVal0 + (this.draggingMaxVal0 - this.draggingMinVal0) * Math.exp((py - this._draggingY0) / 70);
+                    this.getMyPlotter().render();
+                }
+                if (this._draggingYScaleBottom) {
+                    this._minVal = this.draggingMaxVal0 - (this.draggingMaxVal0 - this.draggingMinVal0) * Math.exp(-(py - this._draggingY0) / 70);
+                    this.getMyPlotter().render();
+                }
+                ev.returnValue = false;
+                return false;
+            }
+
+
+
+
 
             that.draw = function (drawInfo) {
                 this.drawStandardGradientCenter(drawInfo, 1);
