@@ -43,6 +43,7 @@ define([DQXSCJQ(), DQXSC("SQL"), DQXSC("Utils"), DQXSC("DataDecoders")],
             this.serverurl = iserverurl; //The server url to contact for this
             this.database = idatabase; //The name of the database to fetch from
             this.tablename = itablename; //The name of the table to fetch from
+            this.rangeExtension = 1.5;//Left & right buffer that is automatically fetched along with the range request
             this._requestNr = 0;
             if (!itablename)
                 DQX.reportError('Invalid table name');
@@ -212,8 +213,8 @@ define([DQXSCJQ(), DQXSC("SQL"), DQXSC("Utils"), DQXSC("DataDecoders")],
                     this.hasFetchFailed = false;
                     this._isFetching = false;
                     range = rangemax - rangemin;
-                    rangemin = Math.round(rangemin - 1.5 * range);
-                    rangemax = Math.round(rangemax + 1.5 * range);
+                    rangemin = Math.round(rangemin - this.rangeExtension * range);
+                    rangemax = Math.round(rangemax + this.rangeExtension * range);
                     this._currentRangeMin = rangemin;
                     this._currentRangeMax = rangemax;
                     this.myDownloadPointsX = [];
@@ -228,8 +229,8 @@ define([DQXSCJQ(), DQXSC("SQL"), DQXSC("Utils"), DQXSC("DataDecoders")],
                     var collist = this._createActiveColumnListString();
                     //create some buffer around the requested range. This reduces the number of requests and gives the user a smoother experience when scrolling or zooming out
                     range = rangemax - rangemin;
-                    rangemin -= 1.5 * range;
-                    rangemax += 1.5 * range;
+                    rangemin -= this.rangeExtension * range;
+                    rangemax += this.rangeExtension * range;
 
                     var qry = SQL.WhereClause.Trivial();
                     if (!this.useLimit) {
