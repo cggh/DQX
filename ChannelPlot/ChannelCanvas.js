@@ -577,6 +577,8 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Scroller")],
                     sizeY: this._height
                 };
                 this.draw(locDrawInfo);
+                if ('postDraw' in this)
+                    this.postDraw(locDrawInfo);
                 //Fade-style visual feedback for scroll availability
                 var scrollFadeSize = 18;
                 if (drawInfo.offsetX > 0) {

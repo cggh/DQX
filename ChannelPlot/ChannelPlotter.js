@@ -149,7 +149,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel"), DQXSC("Scr
             that.setPosition = function (centerpos, width) {
                 var viewPortWidth = this.getViewPortWidth();
                 if (viewPortWidth > 0) {
-                    var oldZoomFactor = this.zoomFactX;
+                    var oldZoomFactor = this._zoomFactX;
                     this._zoomFactX = viewPortWidth / width;
                     if (Math.abs(this._zoomFactX - oldZoomFactor) > 1E-6 * this._zoomFactX) this._notifyZoomChanged();
                     this._offsetX = (centerpos - 0.5 * width) * this._zoomFactX;

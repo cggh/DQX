@@ -500,13 +500,9 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelCanva
                 return icomp;
             }
 
-            /*            that.getComponentList = function () {
-            return this.myComponents.length; 
+            that.getComponentList = function () {
+                return this.myComponents; 
             }
-
-            that.getComponent = function (nr) {
-            return this.myComponents[nr];
-            }*/
 
             that.findComponent = function (cmpid) {
                 if (!(cmpid in this.myComponents))
@@ -598,7 +594,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelCanva
             that.handleMouseClicked = function (px, py) {
                 var tooltipInfo = that.getToolTipInfo(px, py);
                 if (tooltipInfo) {
-                    this.handlePointClicked(tooltipInfo.compID, tooltipInfo.closestPointIndex);
+                    that.handlePointClicked(tooltipInfo.compID, tooltipInfo.closestPointIndex);
                 }
             }
 
@@ -633,7 +629,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelCanva
             }
 
             //Reacts on a click event on a point. This function can be overridden to implement a specific behaviour
-            this.handlePointClicked = function (compID, pointIndex) {
+            that.handlePointClicked = function (compID, pointIndex) {
             }
 
 
