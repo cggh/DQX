@@ -39,11 +39,12 @@ define([DQXSCJQ(), DQXSC("Msg")],
 
             //Internal: actualise the application status
             updateState: function () {
-                if ((!$.isEmptyObject(this.stateKeys)) && (!this.started)) {//do something sensible when the reload was hit on a page different from the start page
+                //NOTE: the code below is not needed anymore, as a page reload can now automatically show the right view
+/*                if ((!$.isEmptyObject(this.stateKeys)) && (!this.started)) {//do something sensible when the reload was hit on a page different from the start page
                     this.started = true;
                     this.setState({});
                     return;
-                }
+                }*/
                 if ((!this.stateKeys) || ($.isEmptyObject(this.stateKeys))) {//do something sensible when no state is provided
                     if (!this.viewsMap['start']) {
                         return;
