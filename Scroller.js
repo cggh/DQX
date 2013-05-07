@@ -22,6 +22,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg")],
             that.scrollPos = 0.0; //scroll position, as fraction
             that.ScrollSize = 0.05; //size, as fraction
             that.minScrollSize = 0.0005; //this determines the maximum zoom factor for the zoom slider
+            that.units = '';
             that.myConsumer = null;
 
             that.zoomareafraction = 0.3;
@@ -34,6 +35,10 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg")],
 
             that.setMinScrollSize = function (fr) {
                 this.minScrollSize = fr;
+            }
+
+            that.setUnits = function (units) {
+                this.units = units;
             }
 
             //Sets the scroll position & size
@@ -165,7 +170,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg")],
                     var psx = this.ScrollAreaStartX + Math.round((x - this.rangeMin) / (this.rangeMax - this.rangeMin) * this.ScrollAreaSizeX);
                     if ((psx > this.ScrollAreaStartX + 10) && (psx < this.ScrollAreaStartX + this.ScrollAreaSizeX - 10)) {
                         if (i % scalejumps.JumpReduc == 0) {
-                            centercontext.fillText(x.toFixed(scalejumps.textDecimalCount), psx, this.sizeY / 2 - 7);
+                            centercontext.fillText(x.toFixed(scalejumps.textDecimalCount) + that.units, psx, this.sizeY / 2 - 7);
                         }
                     }
                 }
