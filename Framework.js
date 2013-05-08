@@ -154,6 +154,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
             that.frameClass = ''; //css class of the div that makes the border of this panel
             that.frameClassClient = ''; //css class of the div that makes the client area this panel
             that._handleInitialise = null; //this function will be called the first time this frame goes live
+            that._frameContainer = null;
 
             that.allowYScrollbar = true;
             that.allowYScrollbarSmooth = false;
@@ -164,7 +165,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
 
             ////////////////// GENERAL GETTERS
 
-            that.getFramework = function () { return Framework; }
+            that.getFrameContainer = function () { return this._frameContainer; }
 
             //Internal: get some div identifiers
             that.getVisibleTitleDivID = function () { return this.myID + '_DisplayTitle'; }
@@ -343,6 +344,9 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
             that.addMemberFrame = function (iframe) {
                 DQX.requireMemberFunction(iframe, 'setInitialiseFunction');
                 if (this.isFinalPanel()) DQX.reportError("Can't add frames to a final panel");
+                if (!this._frameContainer)
+                    DQX.reportError("Can't add frames to an unitialised panel");
+                iframe._frameContainer = this._frameContainer;
                 iframe.myID = "Frame" + Framework.frameCounter;
                 Framework.frameCounter++;
                 this.memberFrames.push(iframe);
@@ -356,6 +360,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
                 if (!parent)
                     DQX.reportError("Unable to insert at root frame");
                 var intermediate = Framework.FrameGroupVert('', 0.5);
+                intermediate._frameContainer = parent._frameContainer;
                 intermediate._setParentFrame(parent);
                 intermediate.myID = this.myID;
                 intermediate.mySizeWeight = this.mySizeWeight;
@@ -1158,41 +1163,49 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
         // Some general framework functions
-
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+        Framework.FrameFullWindow = function (iframeRoot) {
+            var that = {};
+            that.frameRoot = iframeRoot;
+            that.frameRoot._frameContainer = that;
 
-        Framework._handleResize = function () {
-            var myparent = $('#' + Framework.frameRoot.myID).parent();
-            var v1 = myparent.attr('id');
-            var v2 = myparent.get(0).tagName;
-            var sx = myparent.innerWidth();
-            var sy = myparent.innerHeight();
-            Framework.frameRoot._executeInitialisers();
-            Framework.frameRoot._setPosition(0, 0, sx, sy, false, false);
-            Framework.frameRoot._executePostInitialisers();
-        }
+            that.getFrameRoot = function () { return this.frameRoot; }
 
-        //This function is called periodically the monitor the required size updates of panels in frames
-        Framework._updateSize = function () {
-            if (Framework.frameRoot)
-                Framework.frameRoot._updateSize();
-            setTimeout(Framework._updateSize, 100);
-        }
-        Framework._updateSize();
+            that._handleResize = function () {
+                var myparent = $('#' + that.frameRoot.myID).parent();
+                var v1 = myparent.attr('id');
+                var v2 = myparent.get(0).tagName;
+                var sx = myparent.innerWidth();
+                var sy = myparent.innerHeight();
+                that.frameRoot._executeInitialisers();
+                that.frameRoot._setPosition(0, 0, sx, sy, false, false);
+                that.frameRoot._executePostInitialisers();
+            }
+
+            //This function is called periodically the monitor the required size updates of panels in frames
+            that._updateSize = function () {
+                if (that.frameRoot)
+                    that.frameRoot._updateSize();
+                setTimeout(that._updateSize, 100);
+            }
+            that._updateSize();
 
 
-        //Renders the framework to the html page, in a div
-        Framework.render = function (frameRoot, divid) {
-            Framework.frameRoot = frameRoot;
-            var html = frameRoot._createElements(1).toString();
-            $('#' + divid).html(html);
-            frameRoot._postCreateHTML();
-            $(window).resize(Framework._handleResize)
-            Framework._handleResize();
-        }
+            //Renders the framework to the html page, in a div
+            that.render = function (divid) {
+                var html = that.frameRoot._createElements(1).toString();
+                if ($('#' + divid).length == 0)
+                    DQX.reportError('Invalid element ' + divid);
+                $('#' + divid).html(html);
+                that.frameRoot._postCreateHTML();
+                $(window).resize(that._handleResize)
+                that._handleResize();
+            }
+
+            return that;
+        };
 
 
 
@@ -1300,7 +1313,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
                 DQX.ExecPostCreateHtml();
                 this.myParentFrame.notifyContentChanged();
                 if (this.myParentFrame.autoSizeY)
-                    setTimeout(Framework._handleResize,500); //force resizing of the frames if the content was changed
+                    setTimeout(that.myParentFrame.getFrameContainer()._handleResize, 500); //force resizing of the frames if the content was changed
             }
 
             //Returns the natural vertical size of the form

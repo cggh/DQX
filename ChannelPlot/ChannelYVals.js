@@ -559,7 +559,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelCanva
                 var px = this.getEventPosX(ev);
                 var py = this.getEventPosY(ev);
                 if ((this._canChangeYScaleTop) || (this._canChangeYScaleBottom)) {
-                    if (px > -30)
+                    if (px > -50)
                         $('#' + this.getCanvasID('left')).css('cursor', 'row-resize');
                     else
                         $('#' + this.getCanvasID('left')).css('cursor', 'auto');
@@ -575,8 +575,8 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelCanva
                 var channelH = $('#' + this.getCanvasID('left')).height();
                 this._draggingYScaleTop = false;
                 this._draggingYScaleBottom = false;
-                this._draggingYScaleTop = ((this._canChangeYScaleTop) && (px > -30));
-                if ((this._canChangeYScaleBottom) && (px > -30) && (py >= channelH / 2)) {
+                this._draggingYScaleTop = ((this._canChangeYScaleTop) && (px > -50));
+                if ((this._canChangeYScaleBottom) && (px > -50) && (py >= channelH / 2)) {
                     this._draggingYScaleTop = false;
                     this._draggingYScaleBottom = true;
                 }
