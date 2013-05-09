@@ -149,7 +149,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
             that.marginBottom = 0;
             that.memberFrames = [];
             that.myClientObject = null;
-            that.myID = '_';
+            that.myID = "RootFrame" + Framework.frameCounter; Framework.frameCounter++;
             that._separatorSize = 6;
             that.frameClass = ''; //css class of the div that makes the border of this panel
             that.frameClassClient = ''; //css class of the div that makes the client area this panel

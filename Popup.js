@@ -24,7 +24,7 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls
         //Closes a popup, providing the unique identifier that was returned by Popup.create
         DQX.ClosePopup = function (index) {
             var posit = Popup.activePopupList.indexOf(index);
-            if ((posit < 0) && (_debg_)) DQX.reportError('Unable to find popup');
+            if ((posit < 0) && (_debug_)) DQX.reportError('Unable to find popup');
             Popup.activePopupList.splice(posit, 1);
             $("#" + index).remove();
             DQX.unRegisterGlobalKeyDownReceiver(index);
