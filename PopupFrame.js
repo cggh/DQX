@@ -5,7 +5,7 @@
 *************************************************************************************************************************************
 *************************************************************************************************************************************/
 
-define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FrameWork"), DQXSC("Popup")],
+define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Framework"), DQXSC("Popup")],
     function ($, DQX, DocEl, Msg, FrameWork, Popup) {
         var PopupFrame = {};
 
