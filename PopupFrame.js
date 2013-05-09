@@ -10,14 +10,16 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FrameWor
         var PopupFrame = {};
 
 
-        PopupFrame.PopupFrame = function (iframeRoot) {
+        PopupFrame.PopupFrame = function (iframeRoot, settings) {
             var that = {};
 
             that.frameRoot = iframeRoot;
             that.frameRoot._frameContainer = that;
             that.getFrameRoot = function () { return this.frameRoot; }
 
-            that._title = 'title';
+            that._title = 'Frame'; if (settings.title) that._title = settings.title;
+            that._sizeX = 800; if (settings.sizeX) that._sizeX = settings.sizeX;
+            that._sizeY = 600; if (settings.sizeY) that._sizeY = settings.sizeY;
             DQX._popupIndex++;
             that.ID = 'DXPopup' + DQX._popupIndex;
 
@@ -26,8 +28,8 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FrameWor
                 var thebox = DocEl.Div({ id: that.ID });
                 thebox.setCssClass("DQXFloatBox");
                 thebox.addStyle("position", "absolute");
-                thebox.addStyle("left", '100px');
-                thebox.addStyle("top", '100px');
+                thebox.addStyle("left", 70 + Math.round(Math.random() * 50) + 'px');
+                thebox.addStyle("top", 70 + Math.round(Math.random() * 50) + 'px');
 
                 var theheader = DocEl.Div({ id: that.ID + 'Handler', parent: thebox });
                 theheader.setCssClass("DQXFloatBoxHeader DQXDragHeader");
@@ -35,11 +37,15 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FrameWor
 
                 var thebody = DocEl.Div({ id: that.ID + 'Body', parent: thebox });
                 thebody.setCssClass("DQXFloatBoxContent");
-                thebody.addStyle("width", '800px');
-                thebody.addStyle("height", '600px');
+                thebody.addStyle("width", that._sizeX + 'px');
+                thebody.addStyle("height", that._sizeY + 'px');
                 thebody.addStyle("position", 'relative');
                 thebody.addStyle("overflow", "hidden");
                 thebody.makeAutoVerticalScroller();
+
+                Popup._floatBoxMaxIndex++;
+                thebody.addStyle('z-index', Popup._floatBoxMaxIndex);
+
                 var html = that.frameRoot._createElements(1).toString();
                 thebody.addElem(html);
 
