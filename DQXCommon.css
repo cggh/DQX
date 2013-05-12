@@ -347,6 +347,72 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eff6fc', end
 }
 
 
+
+/******************************************************************************************
+** DQX PopupFrames
+******************************************************************************************/
+
+
+
+.DQXPopupFrame
+{ 
+    border-width:8px;
+    border-style:solid;
+    border-color:rgb(0,0,120);
+    position:absolute; 
+    left:850px; 
+    top:100px; 
+    box-shadow: 4px 4px 20px 3px rgba(0,0,0,0.95); 
+ 	z-index:999;
+}
+.DQXPopupFrameHeader
+{ 
+    background-color:rgb(20,20,120); 
+    padding:8px;
+    padding-left:12px;
+    cursor:move; 
+    font-size:10pt;
+    font-weight:bold;
+    color:rgb(255,230,200);
+    background-image:url(Bitmaps/barback_blue.png);
+    height:19px;
+}
+
+.DQXPopupFrameContent
+{
+}
+
+.DQXPopupFrameResizer1, .DQXPopupFrameResizer2
+{    
+    background-color:rgb(80,80,230);
+    cursor:nw-resize;
+    position:absolute;
+}
+
+.DQXPopupFrameResizer1
+{
+    right:-12px;
+    bottom:-12px;
+    width:24px;
+    height:5px;
+    border-top:1px solid black;
+    /*border-left:1px solid black;*/
+    border-bottom:1px solid black;
+}
+
+
+.DQXPopupFrameResizer2
+{
+    right:-12px;
+    bottom:-12px;
+    width:5px;
+    height:24px;
+    /*border-top:1px solid black;*/
+    border-right:1px solid black;
+    border-bottom:1px solid black;
+}
+
+
 /******************************************************************************************
 ** DQX Light frame styling elements
 ******************************************************************************************/
@@ -1216,6 +1282,9 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffdc50', end
 /*    outline: 1px dotted;
     outline-color: rgb(255,170,0);*/
 }
+
+
+
 
 /* Necessary to get touch events for IE10*/
 canvas, .DQXDragHeader

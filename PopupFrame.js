@@ -20,23 +20,27 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Framewor
             that._title = 'Frame'; if (settings.title) that._title = settings.title;
             that._sizeX = 800; if (settings.sizeX) that._sizeX = settings.sizeX;
             that._sizeY = 600; if (settings.sizeY) that._sizeY = settings.sizeY;
+            that._sizeX = Math.min(that._sizeX, DQX.getWindowClientW() - 50);
+            that._sizeY = Math.min(that._sizeY, DQX.getWindowClientH() - 70);
+            that._minSizeX = 180; if (settings.minSizeX) that._minSizeX = settings.minSizeX;
+            that._minSizeY = 180; if (settings.minSizeY) that._minSizeY = settings.minSizeY;
             DQX._popupIndex++;
             that.ID = 'DXPopup' + DQX._popupIndex;
 
 
             that.render = function () {
                 var thebox = DocEl.Div({ id: that.ID });
-                thebox.setCssClass("DQXFloatBox");
+                thebox.setCssClass("DQXPopupFrame");
                 thebox.addStyle("position", "absolute");
                 thebox.addStyle("left", 70 + Math.round(Math.random() * 50) + 'px');
                 thebox.addStyle("top", 70 + Math.round(Math.random() * 50) + 'px');
 
                 var theheader = DocEl.Div({ id: that.ID + 'Handler', parent: thebox });
-                theheader.setCssClass("DQXFloatBoxHeader DQXDragHeader");
+                theheader.setCssClass("DQXPopupFrameHeader DQXDragHeader");
                 theheader.addElem(DQX.interpolate(this._title));
 
                 var thebody = DocEl.Div({ id: that.ID + 'Body', parent: thebox });
-                thebody.setCssClass("DQXFloatBoxContent");
+                thebody.setCssClass("DQXPopupFrameContent");
                 thebody.addStyle("width", that._sizeX + 'px');
                 thebody.addStyle("height", that._sizeY + 'px');
                 thebody.addStyle("position", 'relative');
@@ -44,7 +48,7 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Framewor
                 thebody.makeAutoVerticalScroller();
 
                 Popup._floatBoxMaxIndex++;
-                thebody.addStyle('z-index', Popup._floatBoxMaxIndex);
+                thebox.addStyle('z-index', Popup._floatBoxMaxIndex);
 
                 var html = that.frameRoot._createElements(1).toString();
                 thebody.addElem(html);
@@ -57,10 +61,17 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Framewor
                 thecloser.addStyle('right', '-16px');
                 thecloser.addStyle('top', '-16px');
 
+                var resizer = DocEl.Div({ parent: thebox });
+                resizer.setCssClass('DQXPopupFrameResizer DQXPopupFrameResizer1');
+                var resizer = DocEl.Div({ parent: thebox });
+                resizer.setCssClass('DQXPopupFrameResizer DQXPopupFrameResizer2');
+
                 var content = thebox.toString();
                 $('#DQXUtilContainer').append(content);
 
                 $('#' + that.ID + 'closeButton').click($.proxy(that.close, that));
+
+                $('#' + that.ID).find('.DQXPopupFrameResizer').mousedown($.proxy(that._onResizeMouseDown, that))
 
 
                 that.frameRoot._postCreateHTML();
@@ -82,6 +93,40 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Framewor
                 $("#" + that.ID).remove();
                 //!!!todo: all necessary actions to make sure this object gets garbage collected
             }
+
+            that._onResizeMouseDown = function (ev) {
+                $(document).bind("mouseup.PopupFrameResize", $.proxy(that._onResizeMouseUp, that));
+                $(document).bind("mousemove.PopupFrameResize", $.proxy(that._onResizeMouseMove, that));
+                this._resizeX0 = ev.pageX;
+                this._resizeY0 = ev.pageY;
+                this._resizeW0 = $('#' + this.ID + 'Body').width();
+                this._resizeH0 = $('#' + this.ID + 'Body').height();
+                this._oldBoxShadow = $('#' + this.ID).css('box-shadow');
+                $('#' + this.ID).css('box-shadow', 'none');
+                return false;
+            }
+
+            that._onResizeMouseUp = function (ev) {
+                $(document).unbind("mouseup.PopupFrameResize");
+                $(document).unbind("mousemove.PopupFrameResize");
+                $('#' + this.ID).css('box-shadow', this._oldBoxShadow);
+                return false;
+            }
+
+            that._onResizeMouseMove = function (ev) {
+                var newSizeX = this._resizeW0 + ev.pageX - this._resizeX0;
+                var newSizeY = this._resizeH0 + ev.pageY - this._resizeY0;
+                newSizeX = Math.max(newSizeX, this._minSizeX);
+                newSizeY = Math.max(newSizeY, this._minSizeY);
+                newSizeX = Math.min(newSizeX, DQX.getWindowClientW() - 50);
+                newSizeY = Math.min(newSizeY, DQX.getWindowClientH() - 50);
+                $('#' + this.ID + 'Body').width(newSizeX);
+                $('#' + this.ID + 'Body').height(newSizeY);
+                this._handleResize();
+                return false;
+            }
+
+
 
             that._handleResize = function () {
                 var myparent = $('#' + that.ID + 'Body');
