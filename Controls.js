@@ -69,6 +69,48 @@ define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller"), DQXSC("Documentation")]
         }
         if (_debug_) Controls._surveillance();
 
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        // This control can be used to show or hide another control
+        ////////////////////////////////////////////////////////////////////////////////////////////
+
+        Controls.ShowHide = function (icontrol) {
+            var that = {};
+            that._control = icontrol;
+            that.myID = Controls._getNextControlID();
+            that._visible = true;
+
+
+            that.getID = function () {
+                return myID;
+            }
+
+            that.setVisible = function (newStatus) {
+                if (newStatus != that._visible) {
+                    that._visible = newStatus;
+                    if (newStatus)
+                        $('#' + that.myID).show();
+                    else
+                        $('#' + that.myID).hide();
+                }
+                return this;
+            }
+
+
+            that.renderHtml = function () {
+                var el = DocEl.Div({ id: this.myID });
+                el.addElem(this._control.renderHtml());
+                return el.toString();
+            }
+
+            that.postCreateHtml = function () {
+                if (!that._visible)
+                    $('#' + that.myID).hide();
+            }
+
+            return that;
+        }
+
+
 
         ////////////////////////////////////////////////////////////////////////////////////////////
         //Base class for a compound control grouping a list of controls
@@ -81,6 +123,8 @@ define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller"), DQXSC("Documentation")]
             that._legend = '';
             that._controls = [];
             that._margin = 3;
+            that.myID = Controls._getNextControlID();
+            that._visible = true;
 
             //Clears the list of member controls
             that.clear = function () { that._controls = []; }
