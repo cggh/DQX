@@ -9,10 +9,16 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Framewor
     function ($, DQX, DocEl, Msg, FrameWork, Popup) {
         var PopupFrame = {};
 
+        PopupFrame._settingsHistory = {}; //settings history for each type of PopupFrame, identified by its ID
 
-        PopupFrame.PopupFrame = function (iframeRoot, settings) {
+
+        PopupFrame.PopupFrame = function (itypeID, iframeRoot, settings) {
+            DQX.checkIsString(itypeID);
+            DQX.requireMember(settings, 'title');
+            DQX.requireMemberFunction(iframeRoot, 'getTitle');
+
             var that = {};
-
+            that.typeID = itypeID;
             that.frameRoot = iframeRoot;
             that.frameRoot._frameContainer = that;
             that.getFrameRoot = function () { return this.frameRoot; }
@@ -20,10 +26,22 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Framewor
             that._title = 'Frame'; if (settings.title) that._title = settings.title;
             that._sizeX = 800; if (settings.sizeX) that._sizeX = settings.sizeX;
             that._sizeY = 600; if (settings.sizeY) that._sizeY = settings.sizeY;
+            if (that.typeID in PopupFrame._settingsHistory) {
+                var settingHist = PopupFrame._settingsHistory[that.typeID];
+                that._sizeX = settingHist.sizeX;
+                that._sizeY = settingHist.sizeY;
+            }
+            else {
+                var settingHist = {};
+                PopupFrame._settingsHistory[that.typeID] = settingHist;
+            }
             that._sizeX = Math.min(that._sizeX, DQX.getWindowClientW() - 50);
             that._sizeY = Math.min(that._sizeY, DQX.getWindowClientH() - 70);
             that._minSizeX = 180; if (settings.minSizeX) that._minSizeX = settings.minSizeX;
             that._minSizeY = 180; if (settings.minSizeY) that._minSizeY = settings.minSizeY;
+            settingHist.sizeX = that._sizeX;
+            settingHist.sizeY = that._sizeY;
+
             DQX._popupIndex++;
             that.ID = 'DXPopup' + DQX._popupIndex;
 
@@ -75,15 +93,8 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Framewor
 
 
                 that.frameRoot._postCreateHTML();
-                //$(window).resize(that._handleResize);
                 that._handleResize();
 
-                /*                Popup.makeDraggable(ID);
-                var w = $('#' + ID).width();
-                var h = $('#' + ID).height();
-                var pageSizeX = $(window).width();
-                var pageSizeY = $(window).height();
-                $('#' + ID).offset({ left: (pageSizeX - w) / 2, top: (pageSizeY - h) / 2 });*/
                 DQX.ExecPostCreateHtml();
 
                 Popup.makeDraggable(that.ID);
@@ -122,6 +133,11 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Framewor
                 newSizeY = Math.min(newSizeY, DQX.getWindowClientH() - 50);
                 $('#' + this.ID + 'Body').width(newSizeX);
                 $('#' + this.ID + 'Body').height(newSizeY);
+                this._sizeX = newSizeX;
+                this._sizeY = newSizeY;
+                var settingHist = PopupFrame._settingsHistory[this.typeID];
+                settingHist.sizeX = this._sizeX;
+                settingHist.sizeY = this._sizeY;
                 this._handleResize();
                 return false;
             }

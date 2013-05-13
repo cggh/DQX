@@ -356,9 +356,9 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eff6fc', end
 
 .DQXPopupFrame
 { 
-    border-width:8px;
+    border-width:4px;
     border-style:solid;
-    border-color:rgb(0,0,120);
+    border-color:rgb(60,60,60);
     position:absolute; 
     left:850px; 
     top:100px; 
@@ -368,14 +368,14 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eff6fc', end
 .DQXPopupFrameHeader
 { 
     background-color:rgb(20,20,120); 
-    padding:8px;
+    padding:7px;
     padding-left:12px;
     cursor:move; 
     font-size:10pt;
     font-weight:bold;
     color:rgb(255,230,200);
-    background-image:url(Bitmaps/barback_blue.png);
-    height:19px;
+    background-image:url(Bitmaps/barback1a.png);
+    height:16px;
 }
 
 .DQXPopupFrameContent
@@ -384,28 +384,29 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eff6fc', end
 
 .DQXPopupFrameResizer1, .DQXPopupFrameResizer2
 {    
-    background-color:rgb(80,80,230);
+    background-color:rgb(140,140,230);
     cursor:nw-resize;
     position:absolute;
 }
 
 .DQXPopupFrameResizer1
 {
-    right:-12px;
-    bottom:-12px;
+    right:-9px;
+    bottom:-9px;
     width:24px;
-    height:5px;
-    border-top:1px solid black;
+    height:4px;
+    /*border-top:1px solid black;*/
     /*border-left:1px solid black;*/
     border-bottom:1px solid black;
+    border-right:1px solid black;
 }
 
 
 .DQXPopupFrameResizer2
 {
-    right:-12px;
-    bottom:-12px;
-    width:5px;
+    right:-9px;
+    bottom:-9px;
+    width:4px;
     height:24px;
     /*border-top:1px solid black;*/
     border-right:1px solid black;
