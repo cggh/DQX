@@ -81,8 +81,6 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Framewor
                 thebody.addStyle("width", that._sizeX + 'px');
                 thebody.addStyle("height", that._sizeY + 'px');
                 thebody.addStyle("position", 'relative');
-                thebody.addStyle("overflow", "hidden");
-                thebody.makeAutoVerticalScroller();
 
                 Popup._floatBoxMaxIndex++;
                 thebox.addStyle('z-index', Popup._floatBoxMaxIndex);

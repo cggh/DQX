@@ -199,8 +199,9 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
             }
             that.getTitle = function () {//return the display title
                 if (this.myDisplayTitle.length > 0) return this.myDisplayTitle;
-                DQX.reportError("Frame does not have a title");
-                return this.myFrameID;
+                /*DQX.reportError("Frame does not have a title");*/
+                return '';
+                //return this.myFrameID;
             }
             that.hasTitleBar = function () {//returns true of the frame has a visible title bar
                 return (this.myDisplayTitle) && ((!this._parentFrame) || (!this._parentFrame.hasTabs()));
