@@ -391,8 +391,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eff6fc', end
 
 .DQXPopupFrameResizer1
 {
-    right:-9px;
-    bottom:-9px;
+    right:-8px;
+    bottom:-8px;
     width:24px;
     height:4px;
     /*border-top:1px solid black;*/
@@ -404,8 +404,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eff6fc', end
 
 .DQXPopupFrameResizer2
 {
-    right:-9px;
-    bottom:-9px;
+    right:-8px;
+    bottom:-8px;
     width:4px;
     height:24px;
     /*border-top:1px solid black;*/

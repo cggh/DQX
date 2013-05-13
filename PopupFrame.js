@@ -42,6 +42,7 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Framewor
             settingHist.sizeX = that._sizeX;
             settingHist.sizeY = that._sizeY;
 
+
             DQX._popupIndex++;
             that.ID = 'DXPopup' + DQX._popupIndex;
 
@@ -50,7 +51,7 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Framewor
             if ('posX' in settingHist) that.posX = settingHist.posX;
             if ('posY' in settingHist) that.posY = settingHist.posY;
             $('.DQXPopupFrame').each(function (a, b) {
-                if ((that.posX == $(this).position().left)&&(that.posY == $(this).position().top)) {
+                if ((that.posX == $(this).position().left) && (that.posY == $(this).position().top)) {
                     that.posX += 25;
                     that.posY += 25;
                 }
@@ -60,6 +61,11 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Framewor
 
 
             that.render = function () {
+
+                if ('frameSettings' in settingHist) {
+                    that.frameRoot.settingsStreamIn(settingHist.frameSettings);
+                }
+
                 var thebox = DocEl.Div({ id: that.ID });
                 thebox.setCssClass("DQXPopupFrame");
                 thebox.addStyle("position", "absolute");
@@ -113,10 +119,15 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Framewor
                 Popup.makeDraggable(that.ID);
             }
 
+            that.notifyLayoutChanged = function () {
+                PopupFrame._settingsHistory[that.typeID].frameSettings = this.frameRoot.settingsStreamOut();
+            }
+
             that.close = function () {
                 var settingHist = PopupFrame._settingsHistory[that.typeID];
                 settingHist.posX = $("#" + that.ID).position().left;
                 settingHist.posY = $("#" + that.ID).position().top;
+                settingHist.frameSettings = this.frameRoot.settingsStreamOut();
                 $("#" + that.ID).remove();
                 //!!!todo: all necessary actions to make sure this object gets garbage collected
             }

@@ -141,6 +141,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
             that._displayTitle2 = '';
             that.myType = itype;
             that.mySizeWeight = isizeweight;
+            that.activeTabNr = 0;
             that.autoSizeY = false;
             that.sizeRange = [Framework.SizeRange(), Framework.SizeRange()]; //allowed frame size range in X and Y dir
             that.marginLeft = 0;
@@ -215,6 +216,23 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
                 if (!this._parentFrame) return false;
                 return this._parentFrame.isStacker();
             }
+
+            that.settingsStreamOut = function () {
+                var settingsMemberFrames = [];
+                $.each(this.memberFrames, function (idx, fr) { settingsMemberFrames.push(fr.settingsStreamOut()); });
+                var stt = { sizeWeight: this.mySizeWeight, activeTabNr: this.activeTabNr, memberFrames: settingsMemberFrames };
+                return stt;
+            }
+
+            that.settingsStreamIn = function (stt) {
+                this.mySizeWeight = stt.sizeWeight;
+                this.activeTabNr = stt.activeTabNr;
+                $.each(this.memberFrames, function (idx, fr) {
+                    if (idx < stt.memberFrames.length)
+                        fr.settingsStreamIn(stt.memberFrames[idx]);
+                });
+            }
+
 
             ///////////////// TO BE CALLED CREATION TIME
 
@@ -526,6 +544,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
                 }
                 this._setSubFramesPosition();
                 this._onChangeTab(this.memberFrames[this.activeTabNr].myFrameID);
+                this.getFrameContainer().notifyLayoutChanged();
             }
 
             that._createElements = function (level) {
@@ -599,7 +618,6 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
                 }
 
                 if (this.isStacker()) {
-                    this.activeTabNr = 0;
                     theclientdiv.setCssClass("DQXTabSet");
                     var tabheader = DocEl.Div({ parent: theclientdiv, id: this.getClientDivID() + '_tabheader' });
                     tabheader.setCssClass("DQXTabs");
@@ -826,6 +844,8 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
 
             that._handleOnMouseUp = function (ev) {
                 $(document).unbind('mouseup', that._handleOnMouseUp);
+                if (that.dragSep)
+                    that.getFrameContainer().notifyLayoutChanged();
                 that.dragSep = false;
             }
 
@@ -1182,6 +1202,10 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
                 that.frameRoot._executeInitialisers();
                 that.frameRoot._setPosition(0, 0, sx, sy, false, false);
                 that.frameRoot._executePostInitialisers();
+            }
+
+            //This funtion is called if the panel layout was modified by the user
+            that.notifyLayoutChanged = function () {
             }
 
             //This function is called periodically the monitor the required size updates of panels in frames
