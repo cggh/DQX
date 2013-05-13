@@ -45,13 +45,26 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Framewor
             DQX._popupIndex++;
             that.ID = 'DXPopup' + DQX._popupIndex;
 
+            that.posX = 70;
+            that.posY = 70;
+            if ('posX' in settingHist) that.posX = settingHist.posX;
+            if ('posY' in settingHist) that.posY = settingHist.posY;
+            $('.DQXPopupFrame').each(function (a, b) {
+                if ((that.posX == $(this).position().left)&&(that.posY == $(this).position().top)) {
+                    that.posX += 25;
+                    that.posY += 25;
+                }
+            });
+            that.posX = Math.min(that.posX, DQX.getWindowClientW() - that._sizeX - 10);
+            that.posY = Math.min(that.posY, DQX.getWindowClientH() - 40);
+
 
             that.render = function () {
                 var thebox = DocEl.Div({ id: that.ID });
                 thebox.setCssClass("DQXPopupFrame");
                 thebox.addStyle("position", "absolute");
-                thebox.addStyle("left", 70 + Math.round(Math.random() * 50) + 'px');
-                thebox.addStyle("top", 70 + Math.round(Math.random() * 50) + 'px');
+                thebox.addStyle("left", this.posX + 'px');
+                thebox.addStyle("top", this.posY + 'px');
 
                 var theheader = DocEl.Div({ id: that.ID + 'Handler', parent: thebox });
                 theheader.setCssClass("DQXPopupFrameHeader DQXDragHeader");
@@ -101,6 +114,9 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Framewor
             }
 
             that.close = function () {
+                var settingHist = PopupFrame._settingsHistory[that.typeID];
+                settingHist.posX = $("#" + that.ID).position().left;
+                settingHist.posY = $("#" + that.ID).position().top;
                 $("#" + that.ID).remove();
                 //!!!todo: all necessary actions to make sure this object gets garbage collected
             }
