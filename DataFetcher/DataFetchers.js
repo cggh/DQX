@@ -43,7 +43,7 @@ define([DQXSCJQ(), DQXSC("SQL"), DQXSC("Utils"), DQXSC("DataDecoders")],
             this.serverurl = iserverurl; //The server url to contact for this
             this.database = idatabase; //The name of the database to fetch from
             this.tablename = itablename; //The name of the table to fetch from
-            this.rangeExtension = 1.5;//Left & right buffer that is automatically fetched along with the range request
+            this.rangeExtension = 1.5; //Left & right buffer that is automatically fetched along with the range request
             this._requestNr = 0;
             if (!itablename)
                 DQX.reportError('Invalid table name');
@@ -114,6 +114,8 @@ define([DQXSCJQ(), DQXSC("SQL"), DQXSC("Utils"), DQXSC("DataDecoders")],
 
             //call this function to request the presence of a column
             this.activateFetchColumn = function (cid) {
+                if (!(cid in this.myColumns))
+                    DQX.reportError("Unable to activate column {cid}: it is not present in the datafetcher".DQXformat({cid: cid}));
                 if (this.myColumns[cid].myActiveCount == 0)
                     this.clearData();
                 this.myColumns[cid].myActiveCount++;
@@ -121,7 +123,8 @@ define([DQXSCJQ(), DQXSC("SQL"), DQXSC("Utils"), DQXSC("DataDecoders")],
 
             //call this function to stop requesting the presence of a column
             this.deactivateFetchColumn = function (cid) {
-                this.myColumns[cid].myActiveCount--;
+                if (cid in this.myColumns)
+                    this.myColumns[cid].myActiveCount--;
             }
 
             //internal

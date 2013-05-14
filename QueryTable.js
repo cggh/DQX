@@ -124,8 +124,8 @@
 
             //Overridable. Returns the background color of a cell, given its content
             that.CellToColor = function (content) { return "white"; }
-/*            if (that.TablePart == 0)
-                that.CellToColor = function (content) { return "rgb(240,240,240)"; }*/
+            /*            if (that.TablePart == 0)
+            that.CellToColor = function (content) { return "rgb(240,240,240)"; }*/
 
             //Use this function to convert a column cell into a hyperlink.
             //A message will be sent when the user clicks the link (see Msg for further details about messageScope)
@@ -204,6 +204,14 @@
                 this.myDataFetcher.activateFetchColumn(iCol.myCompID);
                 this.myColumns.push(iCol);
                 return iCol;
+            }
+
+            //Removes all the columns in the table (note: they will still be present in the datafetcher!)
+            that.clearTableColumns = function () {
+                $.each(this.myColumns, function (idx, col) {
+                    that.myDataFetcher.deactivateFetchColumn(col.myCompID);
+                });
+                this.myColumns = [];
             }
 
             //finds and returns a column definition, providing the column identifier. returns null if not found
