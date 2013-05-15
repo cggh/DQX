@@ -621,8 +621,9 @@ define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller"), DQXSC("Documentation")]
             }
 
             //Modify the status of the check box
+            //Returns whether the value has been modified
             that.modifyValue = function (newstate, preventNotify) {
-                if (newstate == this.getValue()) return;
+                if (newstate == this.getValue()) return false;
                 this.isChecked = newstate;
                 if (this.isChecked)
                     this.getJQElement('').attr('checked', 'checked');
@@ -630,6 +631,7 @@ define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller"), DQXSC("Documentation")]
                     this.getJQElement('').removeAttr('checked');
                 if (!preventNotify)
                     this._notifyChanged();
+                return true;
             }
 
             return that;
