@@ -912,13 +912,16 @@ define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller"), DQXSC("Documentation")]
             }
 
             that._execRenderHtml = function () {
-                var cmb = DocEl.Create('select', { id: this.getFullID('') });
+                var wrapper = DocEl.Div();
+                wrapper.addStyle('display', 'inline-block');
+                wrapper.setCssClass('DQXSelectWrapper');
+                var cmb = DocEl.Create('select', { id: this.getFullID(''), parent: wrapper });
                 if (this._hint)
                     cmb.addHint(this._hint);
                 cmb.addElem(this._buildSelectContent());
                 var label = DocEl.Label({ target: this.getFullID('Label') });
                 label.addElem(this.myLabel);
-                return label.toString() + ' ' + cmb.toString();
+                return label.toString() + ' ' + wrapper.toString();
             }
 
             that._execPostCreateHtml = function () {

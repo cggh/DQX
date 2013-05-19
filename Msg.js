@@ -53,7 +53,9 @@ define(
         //callbackFunction: handler function, receiving the message scope and message context
         Msg.listen = function (eventid, scopeFilter, callbackFunction, context) {
             if (typeof (eventid) != 'string')
-                throw ('Listener event id not provided');
+                DQX.reportError('Listener event id not provided');
+            if (!callbackFunction)
+                DQX.reportError('No callback function provided for event listener');
             if ((eventid != '') && (eventid in Msg._listeneridmap)) {
                 var idx = Msg._listeneridmap[eventid];
                 Msg._listeners[idx].scopeFilter = scopeFilter;

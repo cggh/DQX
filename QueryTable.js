@@ -589,7 +589,8 @@
             that._onClickLinkHeader = function (ev) {
                 var tokens = ev.target.id.split('~');
                 var column = this.findColumn(tokens[0]);
-                Msg.broadcast(column._hyperlinkHeaderMessageScope, tokens[0]);
+                if (column._hyperlinkHeaderMessageScope)
+                    Msg.broadcast(column._hyperlinkHeaderMessageScope, tokens[0]);
                 return false;
             }
 

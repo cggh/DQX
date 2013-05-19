@@ -140,6 +140,15 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls
             });
         }
 
+        //Automatically pins all unpinned (=blocking) popups
+        Popup.pinUnPinnedPopups = function () {
+            $.each(Popup.activePopupList, function (idx, popupID) {
+            if (!Popup.isPinned(popupID))
+                DQX.SwitchPinned(popupID);
+            });
+        }
+
+
         Popup._createPinBox = function (ID, isPinned) {
             var bmp = isPinned ? DQXBMP('pin3.png') : DQXBMP('pin4.png');
             var thepinner = DocEl.JavaScriptBitmaplink(bmp, "Keep this info box visible", "DQX.SwitchPinned('" + ID + "')");
