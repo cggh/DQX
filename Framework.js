@@ -1324,6 +1324,10 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
                 that._content.addControl(Controls.Label(content));
             }
 
+            that.addTemplate = function (template, context) {
+                that.addHtml(DQX.renderTemplate(template, context));
+            };
+
             that._getInnerDivID = function () {
                 return this.getDivID() + 'Inner';
             }
