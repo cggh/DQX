@@ -7,8 +7,8 @@
 *************************************************************************************************************************************/
 
 
-define([DQXSCJQ(), DQXSC("Msg"), DQXSC("DocEl")],
-    function ($, Msg, DocEl) {
+define([DQXSCJQ(), DQXSC("Msg"), DQXSC("DocEl"), 'handlebars'],
+    function ($, Msg, DocEl, Handlebars) {
         //Inject DQX into the global namespace so that click handlers can find it
         DQX = {};
 
@@ -70,6 +70,15 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("DocEl")],
 
         //A namespace for drawing helper utilities
         DQX.DrawUtil = {};
+
+        //Handlebars related funcs
+        DQX.renderTemplate = function(template, context) {
+            return Handlebars.compile(template)(context);
+        }
+        Handlebars.registerHelper("control", function(control_factory, callback) {
+            //Return safe string so that HTML is escaped
+            return new Handlebars.SafeString(control_factory(callback).renderHtml());
+        });
 
         DQX.TextOrig = function (snippetID) {
             var elem = $('#Snippets').children('#' + snippetID);
