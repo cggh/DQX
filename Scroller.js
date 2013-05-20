@@ -362,14 +362,14 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg")],
                 var centercontext = this.getMyCanvasElement().getContext("2d");
 
                 var backgrad1 = centercontext.createLinearGradient(0, 0, this.sizeX, 0);
-                backgrad1.addColorStop(0, "rgb(60,60,60)");
-                backgrad1.addColorStop(0.4, "rgb(160,160,160)");
-                backgrad1.addColorStop(1, "rgb(20,20,20)");
+                backgrad1.addColorStop(0, "rgb(170,170,170)");
+                backgrad1.addColorStop(0.35, "rgb(250,250,250)");
+                backgrad1.addColorStop(1, "rgb(130,130,130)");
 
                 var backgrad2 = centercontext.createLinearGradient(0, 0, this.sizeX, 0);
-                backgrad2.addColorStop(0, "rgb(20,20,20)");
-                backgrad2.addColorStop(0.4, "rgb(130,130,130)");
-                backgrad2.addColorStop(1, "rgb(0,0,0)");
+                backgrad2.addColorStop(0, "rgb(140,140,140)");
+                backgrad2.addColorStop(0.35, "rgb(230,230,230)");
+                backgrad2.addColorStop(1, "rgb(100,100,100)");
 
                 centercontext.fillStyle = backgrad1;
                 centercontext.fillRect(0, 0, this.sizeX, this.sizeY);
@@ -389,12 +389,12 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg")],
 
 
                 //scroll bar bar
-                centercontext.globalAlpha = 0.55;
+                //centercontext.globalAlpha = 0.55;
                 var backgrad = centercontext.createLinearGradient(0, py1, 0, py2);
-                backgrad.addColorStop(0, "rgb(160,255,160)");
-                backgrad.addColorStop(0.25, "rgb(0,192,0)");
-                backgrad.addColorStop(0.75, "rgb(0,192,0)");
-                backgrad.addColorStop(1, "rgb(160,255,160)");
+                backgrad.addColorStop(0, "rgba(50,50,240,0.65)");
+                backgrad.addColorStop(0.25, "rgba(160,160,255,0.3)");
+                backgrad.addColorStop(0.75, "rgba(160,160,255,0.3)");
+                backgrad.addColorStop(1, "rgba(50,50,240,0.65)");
                 centercontext.fillStyle = backgrad;
                 centercontext.fillRect(2, py1, this.sizeX - 4, py2 - py1);
                 //scroll bar arrows
