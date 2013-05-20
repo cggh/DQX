@@ -24,7 +24,7 @@
 
             that.myDataFetcher = new DataFetcherSnp.Fetcher(serverUrl);
             that.colorByParent = false;
-            that.covRange = 10;
+            that.covRange = 0;
             that.useMagnifyingGlass = false;
             that.allowSmallBlocks = false;
             that.fillBlocks = false;

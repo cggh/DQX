@@ -348,6 +348,31 @@ define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller"), DQXSC("Documentation")]
             return that;
         }
 
+        //////////////////////////////////////////////////////////////////////////////////////////////
+        //A static label control
+        ////////////////////////////////////////////////////////////////////////////////////////////
+
+        Controls.VerticalSeparator = function (isize) {
+            var that = {};
+            that._size = isize;
+
+            that.getID = function () { return ''; }
+
+            that.setContextID = function (id) { }
+
+            that.modifyEnabled = function (newstate) { }
+
+            that.renderHtml = function () {
+                return '<div style="height:{sz}px;width:100%"></div>'.DQXformat({sz:this._size});
+            }
+
+            that.postCreateHtml = function () { }
+
+            return that;
+        }
+
+
+
 
 
         ////////////////////////////////////////////////////////////////////////////////////////////

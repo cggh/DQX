@@ -16,7 +16,7 @@ define([DQXSCJQ(), DQXSC("SQL"), DQXSC("Utils"), DQXSC("DataDecoders"), DQXSC("D
             that.minAvgCoverage = 0;
             that.minAvgPurity = 0;
             that.minPresence = 0;
-            that.minSnpCoverage = 0;
+            that.minSnpCoverage = 1;
             that.minSnpPurity = 0;
             this.requireParentsPresent = false;
             return that;
@@ -101,6 +101,11 @@ define([DQXSCJQ(), DQXSC("SQL"), DQXSC("Utils"), DQXSC("DataDecoders"), DQXSC("D
                         }
                         if (token == 'Filters') {
                             this._filters = content.split('\t');
+                            this._activeFilterMap = {};
+                            var self = this;
+                            $.each(this._filters, function (idx, filter) {
+                                self._activeFilterMap[filter] = false;
+                            });
                         }
                     }
                 }
@@ -176,6 +181,8 @@ define([DQXSCJQ(), DQXSC("SQL"), DQXSC("Utils"), DQXSC("DataDecoders"), DQXSC("D
             }
 
             this.setFilterActive = function (filterid, newStatus) {
+                if (!(filterid in this._activeFilterMap))
+                    DQX.reportError("Invalid Snp filter " + filterid);
                 this._activeFilterMap[filterid] = newStatus;
                 this.clearData();
             }
@@ -340,7 +347,7 @@ define([DQXSCJQ(), DQXSC("SQL"), DQXSC("Utils"), DQXSC("DataDecoders"), DQXSC("D
 
                 if (!this.dataid) return true; //don't fetch anything if the data source is not provided
 
-                if (!this._metaInfoPresent) return true;//don't fetch anything if the metainfo is not provided
+                if (!this._metaInfoPresent) return true; //don't fetch anything if the metainfo is not provided
 
                 if ((rangemin >= this._currentRangeMin) && (rangemax <= this._currentRangeMax)) {
                     var buffer = (rangemax - rangemin) / 2;
