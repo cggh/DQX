@@ -74,10 +74,13 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("DocEl"), 'handlebars'],
         //Handlebars related funcs
         DQX.renderTemplate = function(template, context) {
             return Handlebars.compile(template)(context);
-        }
+        };
         Handlebars.registerHelper("control", function(control_factory, callback) {
             //Return safe string so that HTML is escaped
             return new Handlebars.SafeString(control_factory(callback).renderHtml());
+        });
+        Handlebars.registerHelper("pluralise", function(token, degree) {
+            return DQX.pluralise(token, degree);
         });
 
         DQX.TextOrig = function (snippetID) {
