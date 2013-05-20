@@ -15,11 +15,15 @@ function setupRequireJS() {
     require.config({
         paths: {
             jquery: "DQX/Externals/jquery",
-            d3: "DQX/Externals/d3"
+            d3: "DQX/Externals/d3",
+            handlebars: "DQX/Externals/handlebars"
         },
         shim: {
             d3: {
                 exports: 'd3'
+            },
+            handlebars: {
+                exports: 'Handlebars'
             }
         },
         waitSeconds: 15,
