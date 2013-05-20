@@ -16,6 +16,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel"), DQXSC("Scr
         ChannelPlotter.Panel = function (iParentRef, args) {
             var that = FramePanel(iParentRef);
             that._leftWidth = 120;
+            if ('leftWidth' in args) that._leftWidth = args.leftWidth;
             that._rightWidth = 0; //size of the right side panel
             that._rightOffset = 0; //size of the right offset, including e.g. area for vertical scroll bars
             that._headerHeight = 35;

@@ -35,6 +35,8 @@
             that.rowHeight = 14; //height of a row containing a single sequence
             that.seqOffset = 0; //start nr of the top sequence in the view
 
+            that.showHoverSnpInfo = false; //set to true to show a right bar with hover info
+
 
             that.setDataSource = function (dataid) {//call this to attach to a data source on the server
                 this.myDataFetcher.setDataSource(dataid, function () {
@@ -57,10 +59,16 @@
                 thePlotter.addDataFetcher(this.myDataFetcher);
             }
 
-            that.getRequiredRightWidth = function () { return 80; }
+            that.getRequiredRightWidth = function () {
+                if (this.showHoverSnpInfo) return 80;
+                else return 0;
+            }
 
             that.needVScrollbar = function () { return true; }
 
+            that.getSequenceDisplayName = function(seqID) {//can be overriden
+                return seqID.replace(/__/g, " / ");
+            }
 
             that.draw = function (drawInfo, args) {
                 this.drawStandardGradientCenter(drawInfo, 1.1);
@@ -346,9 +354,9 @@
                         drawInfo.centerContext.globalAlpha = 1;
 
                         //show snp name on the left
-                        drawInfo.leftContext.fillText(this.mySeqIDs[seqnr], 0, py + ly + 1);
+                        drawInfo.leftContext.fillText(this.getSequenceDisplayName(this.mySeqIDs[seqnr]), 0, py + ly + 1);
 
-                        if (this.hoverSnp >= 0) {//show snp values on the right
+                        if ((this.showHoverSnpInfo) && (this.hoverSnp >= 0)) {//show snp values on the right
                             drawInfo.rightContext.fillText(cov1[this.hoverSnp], 35, py + ly + 1);
                             drawInfo.rightContext.fillText(cov2[this.hoverSnp], 75, py + ly + 1);
                         }
@@ -401,7 +409,7 @@
 
 
                 //show snp ref+alt allele states
-                if (this.hoverSnp >= 0) {
+                if (((this.showHoverSnpInfo)) && (this.hoverSnp >= 0)) {
                     drawInfo.rightContext.fillText(data.SnpRefBase[this.hoverSnp], 35, topSizeY - 5);
                     drawInfo.rightContext.fillText(data.SnpAltBase[this.hoverSnp], 75, topSizeY - 5);
                     drawInfo.rightContext.globalAlpha = 0.28;
@@ -432,7 +440,7 @@
                 }
 
 
-                if (this.hoverSnp >= 0) {//draw the outline for the hover snp in a higher contrast
+                if (/*(this.showHoverSnpInfo) &&*/(this.hoverSnp >= 0)) {//draw the outline for the hover snp in a higher contrast
                     drawInfo.centerContext.strokeStyle = "rgb(0,0,0)";
                     drawInfo.centerContext.beginPath();
                     drawInfo.centerContext.moveTo(positXCorrLeft[this.hoverSnp] + 0.5, topSizeY);
