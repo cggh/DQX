@@ -1324,10 +1324,6 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
                 that._content.addControl(Controls.Label(content));
             }
 
-            that.addTemplate = function (template, context) {
-                that.addHtml(DQX.renderTemplate(template, context));
-            };
-
             that._getInnerDivID = function () {
                 return this.getDivID() + 'Inner';
             }
@@ -1361,7 +1357,29 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
             return that;
         }
 
+        ////////////////////////////////////////////////////////////////////////////////////////
+        //Frame that holds a handlebars template
+        Framework.TemplateFrame = function(iid, iParentRef) {
+            var that = FramePanel(iid, iParentRef);
+            that.template = "NO TEMPLATE SET";
 
+            //renders the form to the DOM
+            that.render = function (context) {
+                DQX.renderTemplate(that.template, context || {}, function(rendered_template) {
+                    $('#' + that.getDivID()).html(rendered_template);
+                    DQX.ExecPostCreateHtml();
+                    that.myParentFrame.notifyContentChanged();
+                    if (that.myParentFrame.autoSizeY)
+                        setTimeout(that.myParentFrame.getFrameContainer()._handleResize, 500); //force resizing of the frames if the content was changed
+                });
+            };
+
+            //Called by the framework, but nothing needs to be done here
+            that.handleResize = function () {
+            };
+
+            return that;
+        };
 
         return Framework;
     });

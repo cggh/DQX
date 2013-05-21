@@ -71,9 +71,17 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("DocEl"), 'handlebars'],
         //A namespace for drawing helper utilities
         DQX.DrawUtil = {};
 
+        DQX.templateCache = {}
         //Handlebars related funcs
-        DQX.renderTemplate = function(template, context) {
-            return Handlebars.compile(template)(context);
+        DQX.renderTemplate = function(template, context, callback) {
+            if (DQX.templateCache[template]) {
+                callback(DQX.interpolate(DQX.templateCache[template](context)));
+            } else {
+                $.get('scripts/Views/Templates/'+template+'.hbs', function(template_text) {
+                    DQX.templateCache[template] = Handlebars.compile(template_text);
+                    callback(DQX.interpolate(DQX.templateCache[template](context)));
+                })
+            }
         };
         Handlebars.registerHelper("control", function(control_factory, callback) {
             //Return safe string so that HTML is escaped
