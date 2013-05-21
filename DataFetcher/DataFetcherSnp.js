@@ -137,8 +137,8 @@ define([DQXSCJQ(), DQXSC("SQL"), DQXSC("Utils"), DQXSC("DataDecoders"), DQXSC("D
                 }
 
                 //add 2 information fields that are calculated locally
-                this._listSnpPositionInfo.push({ ID: "AvCov", Name: "Average coverage", DataType: "Value", Max: 300, Display: true, getFromServer: false });
-                this._listSnpPositionInfo.push({ ID: "AvPurity", Name: "Average purity", DataType: "Value", Max: 1, Display: true, getFromServer: false });
+                this._listSnpPositionInfo.push({ ID: "AvCov", Name: "Average coverage", DataType: "Value", Max: 300, Display: false, getFromServer: false });
+                this._listSnpPositionInfo.push({ ID: "AvPurity", Name: "Average purity", DataType: "Value", Max: 1, Display: false, getFromServer: false });
 
                 //create mapping
                 this.mapSnpPositionInfoNr = [];

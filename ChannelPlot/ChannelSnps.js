@@ -791,7 +791,7 @@
             }
 
             that.setMinSnpCoverage = function (newval) {
-                this.filter.minSnpCoverage = newval;
+                this.filter.minSnpCoverage = Math.round(newval);
                 this.getMyPlotter().render();
             }
 
