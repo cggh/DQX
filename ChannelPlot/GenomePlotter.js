@@ -38,6 +38,8 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelPlotter"), DQXSC("Dat
             that._MaxZoomFactX = 1.0 / 0.2;
             that.getNavigator.minScrollSize = 0.0001;
 
+            that.minZoomWindowSize = 600;//minimum viewport, in bp, that is shown when jumping to a specific position
+
             var annotationChannelArgs = {};
             if (args.annotationChannelHeight)
                 annotationChannelArgs.annotationChannelHeight = args.annotationChannelHeight;
@@ -130,7 +132,7 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelPlotter"), DQXSC("Dat
                 if (size < 1) size = 1;
                 this.setMark(pos - size / 2, pos + size / 2);
                 var winsize = size * 3;
-                if (winsize < 600) winsize = 600;
+                if (winsize < this.minZoomWindowSize) winsize = this.minZoomWindowSize;
                 this.setPosition(pos, winsize);
             }
 
