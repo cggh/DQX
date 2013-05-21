@@ -73,21 +73,24 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("DocEl"), 'handlebars'],
 
         DQX.templateCache = {}
         //Handlebars related funcs
-        DQX.renderTemplate = function(template, context, callback) {
+        DQX.renderTemplate = function (template, context, callback) {
             if (DQX.templateCache[template]) {
                 callback(DQX.interpolate(DQX.templateCache[template](context)));
             } else {
-                $.get('scripts/Views/Templates/'+template+'.hbs', function(template_text) {
+                $.get('scripts/Views/Templates/' + template + '.hbs', function (template_text) {
                     DQX.templateCache[template] = Handlebars.compile(template_text);
                     callback(DQX.interpolate(DQX.templateCache[template](context)));
                 })
+                .fail(function () {
+                    DQX.reportError("Error fetching template resource "+template);
+                });
             }
         };
-        Handlebars.registerHelper("control", function(control_factory, callback) {
+        Handlebars.registerHelper("control", function (control_factory, callback) {
             //Return safe string so that HTML is escaped
             return new Handlebars.SafeString(control_factory(callback).renderHtml());
         });
-        Handlebars.registerHelper("pluralise", function(token, degree) {
+        Handlebars.registerHelper("pluralise", function (token, degree) {
             return DQX.pluralise(token, degree);
         });
 
