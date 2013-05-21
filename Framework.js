@@ -1359,9 +1359,9 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
 
         ////////////////////////////////////////////////////////////////////////////////////////
         //Frame that holds a handlebars template
-        Framework.TemplateFrame = function(iid, iParentRef) {
-            var that = FramePanel(iid, iParentRef);
-            that.template = "NO TEMPLATE SET";
+        Framework.TemplateFrame = function(iParentRef, template) {
+            var that = FramePanel(iParentRef);
+            that.template = template;
 
             //renders the form to the DOM
             that.render = function (context) {
