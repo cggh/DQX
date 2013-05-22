@@ -401,9 +401,9 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Scroller")],
                 drawInfo.centerContext.textBaseline = 'bottom';
                 drawInfo.centerContext.textAlign = 'center';
                 drawInfo.centerContext.globalAlpha = 0.6;
-                drawInfo.centerContext.fillText(txt1, drawInfo.sizeCenterX / 2, drawInfo.sizeY / 2 + 0);
+                drawInfo.centerContext.fillText(txt1, drawInfo.sizeCenterX / 2, drawInfo.sizeY / 2 + 7);
                 if (txt2) {
-                    drawInfo.centerContext.fillText(txt2, drawInfo.sizeCenterX / 2, drawInfo.sizeY / 2 + 27);
+                    drawInfo.centerContext.fillText(txt2, drawInfo.sizeCenterX / 2, drawInfo.sizeY / 2 + 7 + 27);
                 }
                 drawInfo.centerContext.globalAlpha = 1.0;
             }
