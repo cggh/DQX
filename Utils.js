@@ -65,8 +65,8 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("DocEl"), 'handlebars'],
             return false;
         }
 
-        DQX.timeoutRetry = 10000;
-        DQX.timeoutAjax = 15000;
+        DQX.timeoutRetry = 30000;
+        DQX.timeoutAjax = 25000;
 
         //A namespace for drawing helper utilities
         DQX.DrawUtil = {};

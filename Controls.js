@@ -211,9 +211,12 @@ define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller"), DQXSC("Documentation")]
 
         Controls.CompoundVert = function (icontrols) {
             var that = Controls.CompoundGenericList(icontrols);
+            that.treatAsBlock = false;
 
             that.renderHtml = function () {
                 var st = '';
+                if (that.treatAsBlock)
+                    st += '<div style="display:inline-block">';
                 if (this._legend.length > 0) {
                     st += '<fieldset class="DQXFormFieldSet">';
                     st += '<legend>' + this._legend + '</legend>';
@@ -228,6 +231,8 @@ define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller"), DQXSC("Documentation")]
                 if (this._legend.length > 0) {
                     st += '</fieldset>';
                 }
+                if (that.treatAsBlock)
+                    st += '</div>';
                 return st;
             }
 
@@ -348,26 +353,39 @@ define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller"), DQXSC("Documentation")]
             return that;
         }
 
+
         //////////////////////////////////////////////////////////////////////////////////////////////
-        //A static label control
+        //A 
+        ////////////////////////////////////////////////////////////////////////////////////////////
+
+        Controls.HorizontalSeparator = function (isize) {
+            var that = {};
+            that._size = isize;
+            that.getID = function () { return ''; }
+            that.setContextID = function (id) { }
+            that.modifyEnabled = function (newstate) { }
+            that.renderHtml = function () {
+                return '<div style="width:{sz}px;display:inline-block"></div>'.DQXformat({ sz: this._size });
+            }
+            that.postCreateHtml = function () { }
+            return that;
+        }
+
+
+        //////////////////////////////////////////////////////////////////////////////////////////////
+        //A 
         ////////////////////////////////////////////////////////////////////////////////////////////
 
         Controls.VerticalSeparator = function (isize) {
             var that = {};
             that._size = isize;
-
             that.getID = function () { return ''; }
-
             that.setContextID = function (id) { }
-
             that.modifyEnabled = function (newstate) { }
-
             that.renderHtml = function () {
-                return '<div style="height:{sz}px;width:100%"></div>'.DQXformat({sz:this._size});
+                return '<div style="height:{sz}px;width:100%"></div>'.DQXformat({ sz: this._size });
             }
-
             that.postCreateHtml = function () { }
-
             return that;
         }
 
@@ -988,7 +1006,7 @@ define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller"), DQXSC("Documentation")]
             that.modifyValue = function (newstate) {
                 if (newstate == this.getValue()) return;
                 if (!this.isState(newstate))
-                    DQX.reportError('Invalid combo box state');
+                    DQX.reportError('Invalid combo box state: '+newstate);
                 this._selectedState = newstate;
                 this.getJQElement('').val(this._selectedState);
                 this._notifyChanged();
