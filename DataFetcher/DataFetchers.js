@@ -280,12 +280,13 @@ define([DQXSCJQ(), DQXSC("SQL"), DQXSC("Utils"), DQXSC("DataDecoders")],
                         myurl.addUrlQueryItem("limit", rangemin + "~" + rangemax);
 
                     if (collist.length > 0) {//launch the ajax request
+                        var urlString = myurl.toString()
                         this._isFetching = true;
                         var thethis = this;
                         if (this.showDownload)
                             DQX.setProcessing("Downloading...");
                         $.ajax({
-                            url: myurl.toString(),
+                            url: urlString,
                             success: function (resp) { thethis._ajaxResponse_FetchRange(resp) },
                             error: function (resp) { thethis._ajaxFailure_FetchRange(resp) }
                         });
