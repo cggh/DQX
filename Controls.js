@@ -659,6 +659,23 @@ define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller"), DQXSC("Documentation")]
                 return true;
             }
 
+            that.modifyEnabled = function (newstate) {
+                this._enabled = newstate;
+                for (var i = 0; i < this._controlExtensionList.length; i++) {
+                    if (this._enabled) {
+                        var ele = this.getJQElement(this._controlExtensionList[i]);
+                        ele.removeAttr('disabled');
+                        ele.next().css('opacity', 1.0);
+                    }
+                    else {
+                        var ele = this.getJQElement(this._controlExtensionList[i]);
+                        ele.attr("disabled", "disabled");
+                        ele.next().css('opacity', 0.4);
+                    }
+                }
+            }
+
+
             return that;
         }
 
