@@ -989,7 +989,7 @@ define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller"), DQXSC("Documentation")]
             that.modifyValue = function (newstate) {
                 if (newstate == this.getValue()) return;
                 if (!this.isState(newstate))
-                    DQX.reportError('Invalid combo box state');
+                    DQX.reportError('Invalid combo box state: '+newstate);
                 this._selectedState = newstate;
                 this.getJQElement('').val(this._selectedState);
                 this._notifyChanged();
