@@ -538,6 +538,15 @@ define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller"), DQXSC("Documentation")]
                 this.getJQElement('').css('background-color', this._backgroundColorString);
             }
 
+            that.bindToModel = function (model, attr) {
+                model.on({change: attr}, function() {
+                    that.modifyValue(model.get(attr), true);
+                });
+                that.setOnChanged(function () {
+                    model.set(attr, that.getValue());
+                });
+            };
+
             return that;
         }
 
