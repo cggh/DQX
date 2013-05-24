@@ -14,14 +14,33 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("Msg")],
             };
 
             that.set = function(attr, value) {
-                if (attr in that.attributes) {
-                    that.attributes[attr] = value;
-                    Msg.broadcast({id: that.id, change:attr});
-                    return true;
+                // Handle both `"key", value` and `{key: value}` -style arguments.
+                var attrs = {};
+                if (typeof attr === 'object') {
+                    attrs = attr;
                 } else {
-                    DQX.reportError("attr " + attr + " not in model");
-                    return false;
+                    (attrs = {})[attr] = value;
                 }
+                //Iterate over the new data, keeping track of which changed.
+                var changed = [];
+                $.each(attrs, function (attr, value) {
+                    if (attr in that.attributes) {
+                        if (that.attributes[attr] != value) {
+                            that.attributes[attr] = value;
+                            changed.push(attr);
+                        }
+                    } else {
+                        DQX.reportError("attr " + attr + " not in model");
+                    }
+                });
+                //For each of the changed attributes fire off an event
+                $.each(changed, function(i, attr) {
+                    Msg.broadcast({id: that.id, change:attr});
+                });
+                //If we have any changed fire off the general change event
+                if (changed.length > 0)
+                    Msg.broadcast({id: that.id, change:true});
+                return (changed.length > 0);
             };
 
             that.on = function(spec, callback) {
