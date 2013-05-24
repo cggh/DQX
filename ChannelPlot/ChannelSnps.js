@@ -668,25 +668,38 @@
 
             }
 
+            that.xyToSnpSeq = function (xp,yp) {
+                var ret = {snp: -1, seq: -1};
+                if (!this._psxcorr1) return ret;
+                for (var i = 0; i < this._psxcorr1.length; i++)
+                    if ((xp >= this._psxcorr1[i]) && (xp <= this._psxcorr2[i]))
+                        ret.snp = i;
+                for (var i = 0; i < this.mySeqIDs.length; i++)
+                    if ((yp >= this.seqPy[i]) && (yp <= this.seqPy[i] + this.seqLy[i]))
+                        ret.seq = i;
+                return ret;
+            }
+
+            that.handleMouseClicked = function (px, py) {
+                var snpseq = this.xyToSnpSeq(px, py);
+                this.hoverSnp = snpseq.snp;
+                this.createSnpInfo();
+                var seq = this.mySeqIDs[snpseq.seq];
+                Msg.broadcast({ type: 'SnpClicked', id: this.getID() }, {seq: seq, snp: this.hoverSnpInfo});
+            }
+
             that.onHoverOverChannel = function (xp, yp) {
                 if (!this._psxcorr1) return;
                 this.hoverCenter = xp;
-                var newhoversnp = -1;
+                var snpseq = this.xyToSnpSeq(xp,yp);
                 var needredraw = false;
-                for (var i = 0; i < this._psxcorr1.length; i++) {
-                    if ((xp >= this._psxcorr1[i]) && (xp <= this._psxcorr2[i]))
-                        newhoversnp = i;
-                }
-                if (newhoversnp != this.hoverSnp) {
-                    this.hoverSnp = newhoversnp;
+
+                if (snpseq.snp != this.hoverSnp) {
+                    this.hoverSnp = snpseq.snp;
                     needredraw = true;
                 }
-                var newhoverseqnr = -1;
-                for (var i = 0; i < this.mySeqIDs.length; i++)
-                    if ((yp >= this.seqPy[i]) && (yp <= this.seqPy[i] + this.seqLy[i]))
-                        newhoverseqnr = i;
-                if (newhoverseqnr != this.hoverSeqNr) {
-                    this.hoverSeqNr = newhoverseqnr;
+                if (snpseq.seq != this.hoverSeqNr) {
+                    this.hoverSeqNr = snpseq.seq;
                     needredraw = true;
                 }
                 if (needredraw) this.createSnpInfo();
@@ -714,9 +727,11 @@
 
             that.createSnpInfo = function () {
                 var infostr = '';
+                var snp_info = {};
                 if (this.hoverSnp >= 0) {
                     infostr = 'SNP info<br/>';
                     infostr += 'Position: ' + this.data.posits[this.hoverSnp] + '<br/>';
+                    snp_info.position = this.data.posits[this.hoverSnp];
                     var self = this;
                     $.each(this.myDataFetcher.getSnPositInfoList(), function (idx, info) {
                         var vl = self.data.getSnpInfo(info.ID)[self.hoverSnp];
@@ -724,6 +739,7 @@
                         infostr += info.Name + '= ';
                         infostr += vl;
                         infostr += '<br/>';
+                        snp_info[info.Name] = vl;
                     });
                     //show filters that were applied to this snp
                     infostr += '<b>Applied filters</b><br/>';
@@ -732,6 +748,7 @@
                         if (flag)
                             infostr += self.myDataFetcher._filters[idx] + '<br>';
                     });
+                    this.hoverSnpInfo = snp_info;
                 }
                 Msg.broadcast({ type: 'SnpInfoChanged', id: this.getID() }, infostr);
             }
