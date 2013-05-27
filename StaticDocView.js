@@ -61,7 +61,7 @@ define([DQXSCRQ(), DQXSC("Framework"), DQXSC("HistoryManager"), DQXSC("Msg"), DQ
                     })
                     .fail(function () {
                         DQX.stopProcessing();
-                        alert("Failed to download documentation item '" + this.activeUrl + "'");
+                        alert("Failed to download documentation item '" + that.activeUrl + "'");
                     });
 
                 }

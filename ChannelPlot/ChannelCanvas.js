@@ -80,6 +80,10 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Scroller")],
                 return this._title;
             }
 
+            that.getSubTitle = function () {
+                return this._subTitle;
+            }
+
             that.getVScroller = function () {
                 if (!this.vScroller)
                     DQX.reportError("No VScroller present");
