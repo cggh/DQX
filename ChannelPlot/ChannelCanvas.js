@@ -64,6 +64,11 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Scroller")],
                 if (!this._myPlotter) DQX.reportError("Channel is not yet associated to a plotter");
                 return this._myPlotter;
             }
+
+            that.getCurrentChromoID = function () {
+                return that.getMyPlotter().getCurrentChromoID();
+            }
+
             that.getHeight = function () { return this._height; }
             that.setHeight = function (vl, isVariable) { this._height = vl; this._variableHeight = (isVariable == true) }
             that.setAutoFillHeight = function () { this._autoFillHeight = true; }
