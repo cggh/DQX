@@ -685,7 +685,7 @@
                 this.hoverSnp = snpseq.snp;
                 this.createSnpInfo();
                 var seq = this.mySeqIDs[snpseq.seq];
-                Msg.broadcast({ type: 'SnpClicked', id: this.getID() }, {seq: seq, snp: this.hoverSnpInfo, chrom: this.getCurrentChromoID()});
+                Msg.broadcast({ type: 'SnpClicked', id: this.getID() }, { seq: seq, snp: this.hoverSnpInfo, chrom: this.getMyPlotter().getCurrentChromoID() });
             }
 
             that.onHoverOverChannel = function (xp, yp) {
