@@ -77,9 +77,13 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("DocEl"), 'handlebars'],
             if (DQX.templateCache[template]) {
                 callback(DQX.interpolate(DQX.templateCache[template](context)));
             } else {
-                $.get('scripts/Views/Templates/'+template+'.handlebars', function(template_text) {
+                $.ajax({
+                    url: 'scripts/Views/Templates/'+template+'.handlebars',
+                    dataType: "text",
+                    success: function(template_text) {
                     DQX.templateCache[template] = Handlebars.compile(template_text);
                     callback(DQX.interpolate(DQX.templateCache[template](context)));
+                    }
                 })
                 .fail(function () {
                     DQX.reportError("Error fetching template resource "+template);
