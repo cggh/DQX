@@ -8,7 +8,7 @@ Base 64 encoding and decoding
 
 define( 
     function () {
-    Base64 = {
+    var Base64 = {
     
         // private property
         //_keyStr: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",

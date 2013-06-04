@@ -1,4 +1,4 @@
-﻿define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel"), DQXSC("Controls")],
+﻿define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Controls"],
     function ($, DQX, DocEl, Msg, FramePanel, Controls) {
 
         var QueryTable = {}
@@ -345,10 +345,10 @@
                     var rs_pager = "";
                     rs_pager += '<span style="position:relative;bottom:-2px;">';
                     var navButtonControls = [];
-                    navButtonControls.push(Controls.Button(that.myBaseID + '_goFirst', { bitmap: DQXBMP('first.png'), description: 'First page', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onFirst, that)));
-                    navButtonControls.push(Controls.Button(that.myBaseID + '_goPrevious', { bitmap: DQXBMP('previous.png'), description: 'Previous page', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onBack, that)));
-                    navButtonControls.push(Controls.Button(that.myBaseID + '_goNext', { bitmap: DQXBMP('next.png'), description: 'Next page', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onForward, that)));
-                    navButtonControls.push(Controls.Button(that.myBaseID + '_goLast', { bitmap: DQXBMP('lastpage.png'), description: 'Last page', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onLast, that)));
+                    navButtonControls.push(Controls.Button(that.myBaseID + '_goFirst', { bitmap: DQX.BMP('first.png'), description: 'First page', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onFirst, that)));
+                    navButtonControls.push(Controls.Button(that.myBaseID + '_goPrevious', { bitmap: DQX.BMP('previous.png'), description: 'Previous page', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onBack, that)));
+                    navButtonControls.push(Controls.Button(that.myBaseID + '_goNext', { bitmap: DQX.BMP('next.png'), description: 'Next page', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onForward, that)));
+                    navButtonControls.push(Controls.Button(that.myBaseID + '_goLast', { bitmap: DQX.BMP('lastpage.png'), description: 'Last page', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onLast, that)));
                     this.navButtonControls = navButtonControls;
                     $.each(navButtonControls, function (idx, bt) { rs_pager += bt.renderHtml(); });
                     rs_pager += '</span>';
@@ -392,7 +392,7 @@
 
                 if (datacomplete && this._dataValid) {
                     var downloadlink = this.myDataFetcher.createDownloadUrl();
-                    var downloadHtml = '<a href=' + downloadlink + '><IMG class="DQXBitmapLink" SRC=' + DQXBMP('download.png') + ' border=0 title="Download this data as TAB-delimited file" ALT="Download"></a>';
+                    var downloadHtml = '<a href=' + downloadlink + '><IMG class="DQXBitmapLink" SRC=' + DQX.BMP('download.png') + ' border=0 title="Download this data as TAB-delimited file" ALT="Download"></a>';
                     //var downloadHtml = '<a href=' + downloadlink + '><span class="DQXHyperlink">Download<br>table</span></a>';
                     $('#' + that.myBaseID + '_right').html(downloadHtml);
                 }
@@ -419,19 +419,19 @@
                         if (thecol.myName.indexOf('<br>') < 0)
                             rs_table[tbnr] += '<br>&nbsp;';
                         if (thecol.sortOption) {
-                            var bitmapname = DQXBMP("arrow5down.png");
+                            var bitmapname = DQX.BMP("arrow5down.png");
                             if (this.myDataFetcher.positionField == thecol.sortOption.toString()) {
                                 if (!this.myDataFetcher.sortReverse)
-                                    bitmapname = DQXBMP("arrow4down.png");
+                                    bitmapname = DQX.BMP("arrow4down.png");
                                 else
-                                    bitmapname = DQXBMP("arrow4up.png");
+                                    bitmapname = DQX.BMP("arrow4up.png");
                             }
                             var st = '<IMG class="DQXQueryTableSortHeader" id="{id}" SRC={bmp} border=0 class="DQXBitmapLink" title="Sort by this column" ALT="Link" style="position:absolute;right:-4px;bottom:-3px">'.
                                 DQXformat({ id: thecol.myCompID + '~sort~' + this.myBaseID, bmp: bitmapname });
                             rs_table[tbnr] += ' ' + st;
                         }
                         if (thecol._hyperlinkHeaderMessageScope) {
-                            var st = '<IMG class="DQXQueryTableLinkHeader" id="{theid}" SRC=' + DQXBMP('link2.png') + ' border=0 class="DQXBitmapLink" ALT="Link" title="{hint}" style="position:absolute;right:-5px;top:-5px">'
+                            var st = '<IMG class="DQXQueryTableLinkHeader" id="{theid}" SRC=' + DQX.BMP('link2.png') + ' border=0 class="DQXBitmapLink" ALT="Link" title="{hint}" style="position:absolute;right:-5px;top:-5px">'
                             st = st.DQXformat({ theid: (thecol.myCompID + '~headerlink~' + this.myBaseID), hint: thecol._hyperlinkHeaderHint });
                             rs_table[tbnr] += ' ' + st;
                         }
@@ -476,7 +476,7 @@
                                     isLink = true;
                                     var linkID = thecol.myCompID + '~' + rownr + '~link~' + this.myBaseID;
                                     rs_table[tbnr] += '<span class="DQXQueryTableLinkCell" id="{id}">'.DQXformat({ id: linkID });
-                                    rs_table[tbnr] += '<IMG SRC="' + DQXBMP('link3.png') + '" border=0  id={id} title="{hint}" ALT="Link"> '.
+                                    rs_table[tbnr] += '<IMG SRC="' + DQX.BMP('link3.png') + '" border=0  id={id} title="{hint}" ALT="Link"> '.
                                         DQXformat({ hint: thecol._hyperlinkCellHint, id: linkID });
                                 }
                                 rs_table[tbnr] += cell_content;

@@ -6,7 +6,7 @@
 *************************************************************************************************************************************
 *************************************************************************************************************************************/
 
-define([DQXSCJQ(), DQXSC("SQL"), DQXSC("Utils"), DQXSC("DataDecoders")],
+define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
     function ($, SQL, DQX, DataDecoders) {
         var DataFetchers = {}
 
@@ -477,7 +477,7 @@ define([DQXSCJQ(), DQXSC("SQL"), DQXSC("Utils"), DQXSC("DataDecoders")],
                     return;
                 }
                 var data = {};
-                var DataDecoders = require(DQXSC("DataDecoders"));
+                var DataDecoders = require("DQX/DataDecoders");
                 var b64codec = DataDecoders.B64();
                 var vallistdecoder = DataDecoders.ValueListDecoder();
                 for (var i = 0; i < this.columns.length; i++)

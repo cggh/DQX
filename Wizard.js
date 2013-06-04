@@ -1,4 +1,4 @@
-﻿define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Utils"), DQXSC("Framework"), DQXSC("Controls"), DQXSC("Popup")],
+﻿define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Utils", "DQX/Framework", "DQX/Controls", "DQX/Popup"],
     function ($, DocEl, Msg, DQX, Framework, Controls, Popup) {
         var Wizard = {};
 
@@ -151,7 +151,7 @@
                 boxButtons.addStyle("top", "0px");
                 boxButtons.addStyle("right", "0px");
 
-                var thecloser = DocEl.JavaScriptBitmaplink(DQXBMP("close2.png"), "Close", "closeWizard();");
+                var thecloser = DocEl.JavaScriptBitmaplink(DQX.BMP("close2.png"), "Close", "closeWizard();");
                 box.addElem(thecloser);
                 thecloser.addStyle('position', 'absolute');
                 thecloser.addStyle('right', '-16px');
@@ -159,10 +159,10 @@
 
 
                 var buttons = [
-                    { id: 'WizBoxButtonCancel', name: 'Cancel', bitmap: DQXBMP('cancel.png'), floatPos: 'left', handler: that._onCancel },
-                    { id: 'WizBoxButtonPrevious', name: 'Previous', bitmap: DQXBMP('arrow5left.png'), floatPos: 'left', handler: that._onPrevious },
-                    { id: 'WizBoxButtonNext', name: 'Next', bitmap: DQXBMP('arrow5right.png'), floatPos: 'right', handler: that._onNext },
-                    { id: 'WizBoxButtonFinish', name: 'Finish', bitmap: DQXBMP('ok.png'), floatPos: 'left', handler: that._onFinish }
+                    { id: 'WizBoxButtonCancel', name: 'Cancel', bitmap: DQX.BMP('cancel.png'), floatPos: 'left', handler: that._onCancel },
+                    { id: 'WizBoxButtonPrevious', name: 'Previous', bitmap: DQX.BMP('arrow5left.png'), floatPos: 'left', handler: that._onPrevious },
+                    { id: 'WizBoxButtonNext', name: 'Next', bitmap: DQX.BMP('arrow5right.png'), floatPos: 'right', handler: that._onNext },
+                    { id: 'WizBoxButtonFinish', name: 'Finish', bitmap: DQX.BMP('ok.png'), floatPos: 'left', handler: that._onFinish }
                 ];
 
                 for (var buttonNr = 0; buttonNr < buttons.length; buttonNr++) {
@@ -176,7 +176,7 @@
                 //Help button
                 var boxButtonHelp = DocEl.Div({ id: 'WizBoxButtonHelp', parent: boxFooter });
                 boxButtonHelp.addStyle('padding-left', '8px');
-                var helpButtonContent = '<IMG SRC="' + DQXBMP('info4.png') + '" border=0 ALT=""style="float:left;margin-right:5px;margin-left:3px;"></IMG>Help';
+                var helpButtonContent = '<IMG SRC="' + DQX.BMP('info4.png') + '" border=0 ALT=""style="float:left;margin-right:5px;margin-left:3px;"></IMG>Help';
                 helpButtonControl = Controls.Button('WizBoxButtonHelp', { content: helpButtonContent, buttonClass: 'DQXWizardButton', fastTouch: true });
                 helpButtonControl.setOnChanged($.proxy(that._onHelp, that));
                 boxButtonHelp.addElem(helpButtonControl.renderHtml());

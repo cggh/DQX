@@ -6,7 +6,7 @@
 *************************************************************************************************************************************
 *************************************************************************************************************************************/
 
-define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelCanvas"), DQXSC("DataFetcher/DataFetcherSummary")],
+define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/ChannelPlot/ChannelCanvas", "DQX/DataFetcher/DataFetcherSummary"],
     function ($, DocEl, Msg, ChannelCanvas, DataFetcherSummary) {
         var ChannelSequence = {};
 

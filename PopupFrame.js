@@ -5,7 +5,7 @@
 *************************************************************************************************************************************
 *************************************************************************************************************************************/
 
-define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Framework"), DQXSC("Popup")],
+define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Popup"],
     function ($, DQX, DocEl, Msg, FrameWork, Popup) {
         var PopupFrame = {};
 
@@ -88,7 +88,7 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Framewor
                 var html = that.frameRoot._createElements(1).toString();
                 thebody.addElem(html);
 
-                var thecloser = DocEl.JavaScriptBitmaplink(DQXBMP("close2.png"), "Close", "");
+                var thecloser = DocEl.JavaScriptBitmaplink(DQX.BMP("close2.png"), "Close", "");
                 thecloser.addAttribute("id", that.ID + 'closeButton');
 
                 thebox.addElem(thecloser);

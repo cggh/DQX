@@ -8,7 +8,7 @@ Use Documentation.showHelp to show a help topic
 *************************************************************************************************************************************
 *************************************************************************************************************************************/
 
-define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Popup")],
+define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Popup"],
     function ($, DQX, DocEl, Msg, Popup) {
         var Documentation = {};
 
@@ -85,7 +85,7 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Popup")]
             box.setCssClass("DQXDocuBox");
             //box.addStyle("overflow", "hidden");
 
-            var thecloser = DocEl.JavaScriptBitmaplink(DQXBMP("close2.png"), "Close", "closeDocumentation();");
+            var thecloser = DocEl.JavaScriptBitmaplink(DQX.BMP("close2.png"), "Close", "closeDocumentation();");
             box.addElem(thecloser);
             thecloser.addStyle('position', 'absolute');
             thecloser.addStyle('right', '-16px');
@@ -101,9 +101,9 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Popup")]
             var boxButtons = DocEl.Div({ id: 'DocuBoxButtons', parent: boxFooter });
 
             var buttons = [
-            //                    { id: 'DocuBoxButtonCancel', name: '', bitmap: DQXBMP('cancel.png'), handler: Documentation._onCancel },
-                    {id: 'DocuBoxButtonPrevious', name: '', bitmap: DQXBMP('arrow5left.png'), handler: Documentation._onPrevious },
-                    { id: 'DocuBoxButtonNext', name: '', bitmap: DQXBMP('arrow5right.png'), handler: Documentation._onNext },
+            //                    { id: 'DocuBoxButtonCancel', name: '', bitmap: DQX.BMP('cancel.png'), handler: Documentation._onCancel },
+                    {id: 'DocuBoxButtonPrevious', name: '', bitmap: DQX.BMP('arrow5left.png'), handler: Documentation._onPrevious },
+                    { id: 'DocuBoxButtonNext', name: '', bitmap: DQX.BMP('arrow5right.png'), handler: Documentation._onNext },
                 ];
 
             for (var buttonNr = 0; buttonNr < buttons.length; buttonNr++) {

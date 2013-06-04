@@ -8,8 +8,8 @@ The list will broadcast a SelectItem message when a new item in the list was sel
 *************************************************************************************************************************************
 *************************************************************************************************************************************/
 
-define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel")],
-    function ($, DocEl, Msg, FramePanel) {
+define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
+    function ($, DQX, DocEl, Msg, FramePanel) {
         return function (iid, iParentRef) {
             var that = FramePanel(iid, iParentRef);
             that.myFilterDivID = that.getDivID() + '_filter';
@@ -76,7 +76,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel")],
                         editDiv.addStyle('padding-top', '3px');
                         editDiv.addStyle('padding-bottom', '5px');
                         editDiv.addStyle('background-color', 'rgb(210,210,210)');
-                        editDiv.addElem('<IMG SRC="' + DQXBMP('magnif2.png') + '" border=0 ALT="" TITLE="" style="position:absolute;left:3px;top:2px">');
+                        editDiv.addElem('<IMG SRC="' + DQX.BMP('magnif2.png') + '" border=0 ALT="" TITLE="" style="position:absolute;left:3px;top:2px">');
                         var edit = DocEl.Edit('', { id: this.myFilterDivID, parent: editDiv, placeHolder: 'Enter search text to filter items' });
                         edit.addStyle('width', '100%');
                         edit.addStyle('height', '18px');

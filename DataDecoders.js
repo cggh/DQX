@@ -7,7 +7,7 @@ Contains codecs that are used to efficiently communicate with the DQXServer coun
 *************************************************************************************************************************************
 *************************************************************************************************************************************/
 
-define([DQXSCJQ(), DQXSC("Utils")],
+define(["jquery", "DQX/Utils"],
     function ($, DQX) {
 
         var DataDecoders = {}
