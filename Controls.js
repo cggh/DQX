@@ -23,10 +23,9 @@ In this case, Controls.ExecPostCreateHtml must be called explicitely after the h
 *************************************************************************************************************************************
 *************************************************************************************************************************************/
 
-define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller"), DQXSC("Documentation")],
-    function (Msg, DocEl, Scroller, Documentation) {
+define(["DQX/Utils","DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"],
+    function (DQX, Msg, DocEl, Scroller, Documentation) {
         var Controls = {};
-
 
         Controls._currentControlNr = 0;
 
@@ -1048,7 +1047,7 @@ define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller"), DQXSC("Documentation")]
                 that._vertShift = args.vertShift;
             that._smartLink = false;
             if (args.smartLink) {
-                that.myBitmap = DQXBMP('link1.png');
+                that.myBitmap = DQX.BMP('link1.png');
                 that._vertShift = -2;
             }
 
@@ -1096,7 +1095,7 @@ define([DQXSC("Msg"), DQXSC("DocEl"), DQXSC("Scroller"), DQXSC("Documentation")]
         ////////////////////////////////////////////////////////////////////////////////////////////
 
         Controls.HelpButton = function (url, args) {
-            args.bitmap = DQXBMP('info4.png');
+            args.bitmap = DQX.BMP('info4.png');
             var that = Controls.LinkButton(null, args);
 
             that.setOnChanged(function () {

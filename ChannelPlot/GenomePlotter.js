@@ -7,8 +7,8 @@
 *************************************************************************************************************************************/
 
 
-define([DQXSCJQ(), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelPlotter"), DQXSC("DataFetcher/DataFetcherAnnotation"), DQXSC("ChannelPlot/ChannelAnnotation"), DQXSC("SQL"), DQXSC("DocEl"), DQXSC("DataDecoders"), DQXSC("Controls")],
-    function ($, Msg, ChannelPlotter, DataFetcherAnnotation, ChannelAnnotation, SQL, DocEl, DataDecoders, Controls) {
+define(["jquery", "DQX/Utils", "DQX/Msg", "DQX/ChannelPlot/ChannelPlotter", "DQX/DataFetcher/DataFetcherAnnotation", "DQX/ChannelPlot/ChannelAnnotation", "DQX/SQL", "DQX/DocEl", "DQX/DataDecoders", "DQX/Controls"],
+    function ($, DQX, Msg, ChannelPlotter, DataFetcherAnnotation, ChannelAnnotation, SQL, DocEl, DataDecoders, Controls) {
         var GenomePlotter = {};
 
 
@@ -298,14 +298,14 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("ChannelPlot/ChannelPlotter"), DQXSC("Dat
             navButtonDiv.addStyle('float', 'left');
 
             navButtonControls = [];
-            navButtonControls.push(Controls.Button(that.getSubID('BtZoomin'), { bitmap: DQXBMP('zoomin1H.png'), description: 'Zoom in horizontally', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onZoomIn, that)));
-            navButtonControls.push(Controls.Button(that.getSubID('BtZoomout'), { bitmap: DQXBMP('zoomout1H.png'), description: 'Zoom out horizontally', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onZoomOut, that)));
+            navButtonControls.push(Controls.Button(that.getSubID('BtZoomin'), { bitmap: DQX.BMP('zoomin1H.png'), description: 'Zoom in horizontally', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onZoomIn, that)));
+            navButtonControls.push(Controls.Button(that.getSubID('BtZoomout'), { bitmap: DQX.BMP('zoomout1H.png'), description: 'Zoom out horizontally', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onZoomOut, that)));
             if (args.canZoomVert) {
-                navButtonControls.push(Controls.Button(that.getSubID('BtZoominVert'), { bitmap: DQXBMP('zoomin1V.png'), description: 'Zoom in vertically', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onZoomInVert, that)));
-                navButtonControls.push(Controls.Button(that.getSubID('BtZoomoutVert'), { bitmap: DQXBMP('zoomout1V.png'), description: 'Zoom out vertically', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onZoomOutVert, that)));
+                navButtonControls.push(Controls.Button(that.getSubID('BtZoominVert'), { bitmap: DQX.BMP('zoomin1V.png'), description: 'Zoom in vertically', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onZoomInVert, that)));
+                navButtonControls.push(Controls.Button(that.getSubID('BtZoomoutVert'), { bitmap: DQX.BMP('zoomout1V.png'), description: 'Zoom out vertically', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onZoomOutVert, that)));
             }
-            navButtonControls.push(Controls.Button(that.getSubID('BtScrollLeft'), { bitmap: DQXBMP('arrow3left.png'), description: 'Scroll left', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onScrollLeft, that)));
-            navButtonControls.push(Controls.Button(that.getSubID('BtScrollRight'), { bitmap: DQXBMP('arrow3right.png'), description: 'Scroll right', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onScrollRight, that)));
+            navButtonControls.push(Controls.Button(that.getSubID('BtScrollLeft'), { bitmap: DQX.BMP('arrow3left.png'), description: 'Scroll left', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onScrollLeft, that)));
+            navButtonControls.push(Controls.Button(that.getSubID('BtScrollRight'), { bitmap: DQX.BMP('arrow3right.png'), description: 'Scroll right', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onScrollRight, that)));
             $.each(navButtonControls, function (idx, bt) { navButtonDiv.addElem(bt.renderHtml()); });
 
             that.getElemJQ('Header').html(headerDiv.toString());

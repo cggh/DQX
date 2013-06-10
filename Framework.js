@@ -37,8 +37,8 @@ Further notes:
 *************************************************************************************************************************************/
 
 
-define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("FramePanel"), DQXSC("HistoryManager")],
-    function ($, DocEl, Msg, Controls, FramePanel, HistoryManager) {
+define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/FramePanel", "DQX/HistoryManager"],
+    function ($, DQX, DocEl, Msg, Controls, FramePanel, HistoryManager) {
         var Framework = {};
         //two constants defining the X and Y direction
         Framework.dimX = 0;
@@ -409,7 +409,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
                 else
                     frame._parentFrame.setSeparatorSize(6);
                 frame.setInitialiseFunction(function () {
-                    var bmp = '<img src="' + DQXBMP('info2.png') + '" alt="info" style="float:left;margin-right:5px"/>'
+                    var bmp = '<img src="' + DQX.BMP('info2.png') + '" alt="info" style="float:left;margin-right:5px"/>'
                     var info = Framework.Form(frame);
                     info.addHtml(bmp + content);
                     info.render();
@@ -434,7 +434,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls"), DQXSC("Frame
                         var helpButton = DocEl.Span({ id: helpDocID });
                         helpButton.setCssClass('DQXHelpLink DQXIntroBoxHelpLink');
                         helpButton.addAttribute('href', helpDocID);
-                        helpButton.addElem('<IMG SRC="' + DQXBMP('info2.png') + '" border=0  ALT="Help">');
+                        helpButton.addElem('<IMG SRC="' + DQX.BMP('info2.png') + '" border=0  ALT="Help">');
                         str += helpButton;
                     }
 

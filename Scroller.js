@@ -7,7 +7,7 @@ Defines horizontal and vertical scroll bars, implemented as Canvas elements
 *************************************************************************************************************************************
 *************************************************************************************************************************************/
 
-define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg")],
+define(["jquery", "DQX/DocEl", "DQX/Msg"],
     function ($, DocEl, Msg) {
         var Scroller = {};
 

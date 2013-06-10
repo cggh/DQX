@@ -1,4 +1,4 @@
-define([DQXSCJQ(), DQXSC("Utils"), DQXSC("Msg")],
+define(["jquery", "DQX/Utils", "DQX/Msg"],
     function ($, Utils, Msg) {
         var Model = function(attrs) {
             var that = {};

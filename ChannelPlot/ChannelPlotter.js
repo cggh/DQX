@@ -6,7 +6,7 @@
 *************************************************************************************************************************************
 *************************************************************************************************************************************/
 
-define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel"), DQXSC("Scroller"), DQXSC("ChannelPlot/ChannelCanvas"), DQXSC("ChannelPlot/ChannelYVals")],
+define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Scroller", "DQX/ChannelPlot/ChannelCanvas", "DQX/ChannelPlot/ChannelYVals"],
     function ($, DocEl, Msg, FramePanel, Scroller, ChannelCanvas, ChannelYVals) {
         var ChannelPlotter = {};
 

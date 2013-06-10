@@ -8,7 +8,7 @@ This listens to ShowStaticDoc messages to show a html document
 *************************************************************************************************************************************
 *************************************************************************************************************************************/
 
-define([DQXSCRQ(), DQXSC("Framework"), DQXSC("HistoryManager"), DQXSC("Msg"), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Controls")],
+define(["require", "DQX/Framework", "DQX/HistoryManager", "DQX/Msg", "DQX/Utils", "DQX/DocEl", "DQX/Controls"],
     function (require, Framework, HistoryManager, Msg, DQX, DocEl, Controls) {
         StaticDocViewModule = {
 
