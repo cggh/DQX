@@ -8,7 +8,7 @@ Use Popup.create to create a new popup, and DQX.ClosePopup to close it.
 *************************************************************************************************************************************
 *************************************************************************************************************************************/
 
-define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls")],
+define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Controls"],
     function ($, DQX, DocEl, Msg, Controls) {
         var Popup = {};
 
@@ -150,7 +150,7 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls
 
 
         Popup._createPinBox = function (ID, isPinned) {
-            var bmp = isPinned ? DQXBMP('pin3.png') : DQXBMP('pin4.png');
+            var bmp = isPinned ? DQX.BMP('pin3.png') : DQX.BMP('pin4.png');
             var thepinner = DocEl.JavaScriptBitmaplink(bmp, "Keep this info box visible", "DQX.SwitchPinned('" + ID + "')");
             thepinner.setCssClass(isPinned ? "DQXPinBoxPinned" : "DQXPinBoxUnpinned");
             thepinner.addStyle('position', 'absolute');
@@ -235,7 +235,7 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls
                 thebody.makeAutoVerticalScroller();
                 thebody.addElem(DQX.interpolate(content));
 
-                var thecloser = DocEl.JavaScriptBitmaplink(DQXBMP("close2.png"), "Close", "DQX.ClosePopup('" + ID + "')");
+                var thecloser = DocEl.JavaScriptBitmaplink(DQX.BMP("close2.png"), "Close", "DQX.ClosePopup('" + ID + "')");
                 thebox.addElem(thecloser);
                 thecloser.addStyle('position', 'absolute');
                 thecloser.addStyle('right', '-16px');
@@ -244,7 +244,7 @@ define([DQXSCJQ(), DQXSC("Utils"), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("Controls
                 thebox.addElem(Popup._createPinBox(ID, false));
 
                 if (helpID) {//Help button
-                    thebox.addElem('<IMG SRC="{bmp}" border=0 class="DQXBitmapLink Helpbutton" ALT="Help" TITLE="Help" style="opacity:0.70;position:absolute;right:35px;top:0px;">'.DQXformat({ bmp: DQXBMP("info2.png") }));
+                    thebox.addElem('<IMG SRC="{bmp}" border=0 class="DQXBitmapLink Helpbutton" ALT="Help" TITLE="Help" style="opacity:0.70;position:absolute;right:35px;top:0px;">'.DQXformat({ bmp: DQX.BMP("info2.png") }));
                 }
 
                 var content = thebox.toString();

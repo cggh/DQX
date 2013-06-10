@@ -7,10 +7,14 @@
 *************************************************************************************************************************************/
 
 
-define([DQXSCJQ(), DQXSC("Msg"), DQXSC("DocEl"), 'handlebars'],
-    function ($, Msg, DocEl, Handlebars) {
+define(["require", "jquery", "DQX/Msg", "DQX/DocEl", "handlebars"],
+    function (require, $, Msg, DocEl, Handlebars) {
         //Inject DQX into the global namespace so that click handlers can find it
         DQX = {};
+
+        DQX.BMP = function (name) {
+            return require.toUrl('./Bitmaps/'+name);
+        };
 
         DQX._globalUniqueID = 0;
 
@@ -196,7 +200,7 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("DocEl"), 'handlebars'],
         DQX._updateActivityStatus = function () {
             if (DQX._activityList.length > 0) {
                 if ($('#DQXActivityBox').length == 0) {
-                    var DocEl = require(DQXSC("DocEl"));
+                    var DocEl = require("DQX/DocEl");
                     var box = DocEl.Div({ id: 'DQXActivityBox' });
                     box.addStyle("position", "absolute");
                     box.addStyle("left", '0px');
@@ -235,7 +239,7 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("DocEl"), 'handlebars'],
         //Draws a message on the screen indicating that some processing is being done
         DQX.setProcessing = function (msg) {
             if (DQX._processingRequestCount == 0) {
-                var DocEl = require(DQXSC("DocEl"));
+                var DocEl = require("DQX/DocEl");
                 var background = DocEl.Div({ id: 'InfoBoxProcessing' });
                 background.addStyle("position", "absolute");
                 background.addStyle("left", '0px');
@@ -413,7 +417,7 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("DocEl"), 'handlebars'],
             scrollUpIndicator.addStyle("top", "0px");
             scrollUpIndicator.addStyle("opacity", "0.4");
             scrollUpIndicator.addStyle("pointer-events", "none");
-            scrollUpIndicator.addElem('<img src="' + DQXBMP("scrollup3.png") + '" />');
+            scrollUpIndicator.addElem('<img src="' + DQX.BMP("scrollup3.png") + '" />');
             htmlContent += scrollUpIndicator.toString();
 
             var scrollDownIndicator = DocEl.Div();
@@ -423,7 +427,7 @@ define([DQXSCJQ(), DQXSC("Msg"), DQXSC("DocEl"), 'handlebars'],
             scrollDownIndicator.addStyle("bottom", "1px");
             scrollDownIndicator.addStyle("opacity", "0.4");
             scrollDownIndicator.addStyle("pointer-events", "none");
-            scrollDownIndicator.addElem('<img src="' + DQXBMP("scrolldown3.png") + '" />');
+            scrollDownIndicator.addElem('<img src="' + DQX.BMP("scrolldown3.png") + '" />');
             htmlContent += scrollDownIndicator.toString();
 
             $(scrollableElement).parent().append(htmlContent);

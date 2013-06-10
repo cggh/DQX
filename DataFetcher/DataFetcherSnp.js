@@ -6,7 +6,7 @@
 *************************************************************************************************************************************
 *************************************************************************************************************************************/
 
-define([DQXSCJQ(), DQXSC("SQL"), DQXSC("Utils"), DQXSC("DataDecoders"), DQXSC("DataFetcher/DataFetcherFile")],
+define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders", "DQX/DataFetcher/DataFetcherFile"],
     function ($, SQL, DQX, DataDecoders, DataFetcherFile) {
         var DataFetcherSnp = {}
 

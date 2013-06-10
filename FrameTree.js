@@ -12,8 +12,8 @@ Branches can be added to the root by calling addItem on this root item.
 *************************************************************************************************************************************
 *************************************************************************************************************************************/
 
-define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel")],
-    function ($, DocEl, Msg, FramePanel) {
+define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
+    function ($, DQX, DocEl, Msg, FramePanel) {
         var TreeCtrl = {};
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -161,7 +161,7 @@ define([DQXSCJQ(), DQXSC("DocEl"), DQXSC("Msg"), DQXSC("FramePanel")],
             that._getDivIDItem = function (id) { return this.myID + '_DQXIt_' + id; }
 
             that._createButtonHtml = function (_collapsed) {
-                return '<IMG SRC="' + DQXBMP(_collapsed ? 'morelines.png' : 'lesslines.png') + '" border=0 ALT="" TITLE="" class="DQXTreeButtonImage" style="float:left;padding-right:6px">';
+                return '<IMG SRC="' + DQX.BMP(_collapsed ? 'morelines.png' : 'lesslines.png') + '" border=0 ALT="" TITLE="" class="DQXTreeButtonImage" style="float:left;padding-right:6px">';
             }
 
             that._renderSub = function (parentDiv, item, level) {
