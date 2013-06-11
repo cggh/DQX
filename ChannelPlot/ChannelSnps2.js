@@ -240,6 +240,14 @@
                 drawInfo.leftContext.fillStyle = "rgb(0,0,0)";
                 drawInfo.centerContext.textAlign = 'left';
 
+                var shl = +0.5;
+                var shr = -0.25;
+
+                if (posits.length > 250) {
+                    shl = -0.25;
+                    shr = 0.5;
+                }
+
                 //draw the snps
                 var lastcolornr = -1;
                 for (var seqnr = 0; seqnr < this.mySeqIDs.length; seqnr++) {
@@ -314,7 +322,7 @@
                                         }
                                     }
                                     var h = 2 + Math.round((ly - 3) * Math.min(1.0, covtot / this.covRange));
-                                    drawInfo.centerContext.fillRect(positXCorrLeft[i] + 0.5, py + ly - h, positXCorrLength[i] - 0.25, h);
+                                    drawInfo.centerContext.fillRect(positXCorrLeft[i] + shl, py + ly - h, positXCorrLength[i] + shr, h);
                                 }
 
 
@@ -324,7 +332,7 @@
                                         drawInfo.centerContext.fillStyle = absentcolor;
                                         lastcolornr = colornr;
                                     }
-                                    drawInfo.centerContext.fillRect(positXCorrLeft[i] + 0.5, py + 5, positXCorrLength[i] - 0.25, ly - 9);
+                                    drawInfo.centerContext.fillRect(positXCorrLeft[i] + shl, py + 5, positXCorrLength[i] + shr, ly - 9);
                                 }
                             }
                         }
@@ -487,7 +495,7 @@
 
                 var minsize = 3;
                 if (this.allowSmallBlocks)
-                    minsize = 1
+                    minsize = 0.15;
 
                 for (var i = 0; i < posits.length; i++) {
                     if ((i > 0) && (posits[i] < posits[i - 1]))
@@ -535,13 +543,14 @@
                     }
                 }
                 else {//calculating fixed block size & position
-                    var size = Math.round((positXUnCorr[posits.length - 1] - positXUnCorr[0]) / (posits.length + 1));
+                    var size = /*Math.round*/((positXUnCorr[posits.length - 1] - positXUnCorr[0]) / (posits.length + 1));
                     if (size < minsize) size = minsize;
                     //first pass: use all snps to determine shift
                     var shift = 0;
                     for (var i = 0; i < posits.length; i++)
                         shift += positXUnCorr[i] - i * size;
                     shift = Math.round(shift / posits.length);
+                    shift = 0;
                     for (var i = 0; i < posits.length; i++)
                         positXCorrCent[i] = i * size + shift;
                     //second pass: use what's in view to determine shift
@@ -550,6 +559,7 @@
                         if ((positXCorrCent[i] >= 0) && (positXCorrCent[i] <= sizeX))
                             shift += positXUnCorr[i] - i * size;
                     shift = Math.round(shift / posits.length);
+                    //shift = 0;
                     for (var i = 0; i < posits.length; i++) {
                         positXCorrCent[i] = i * size + shift;
                         positXCorrLeft.push(positXCorrCent[i] - size / 2);
@@ -766,7 +776,7 @@
                         dst2 += Math.abs(seqdata[seqnr][i] - parent2data[i]);
                     }
                     var dst = 1 / (0.1 + dst2) - 1 / (0.1 + dst1);
-                    if (this.mySeqIDs[seqnr] == this.parentIDs[0]) 
+                    if (this.mySeqIDs[seqnr] == this.parentIDs[0])
                         dst = -1.0E99;
                     if (this.mySeqIDs[seqnr] == this.parentIDs[1])
                         dst = +1.0E99;

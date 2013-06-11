@@ -146,12 +146,22 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders", "DQX/DataFetcher/D
             this._parseSampleCallFields = function (content) {
                 this._listSampleCallInfo = JSON.parse(content);
                 this._sampleCallRecordLength = 0;
+                var _map = {}
                 for (var fnr = 0; fnr < this._listSampleCallInfo.length; fnr++) {
                     var fieldInfo = this._listSampleCallInfo[fnr];
                     fieldInfo.decoder = DataDecoders.Encoder.Create(fieldInfo.Encoder);
                     fieldInfo.recordLength = fieldInfo.decoder.getRecordLength();
                     this._sampleCallRecordLength += fieldInfo.recordLength;
                 }
+
+                //create mapping
+                this.mapSampleCallInfoNr = [];
+                for (var fnr = 0; fnr < this._listSampleCallInfo.length; fnr++)
+                    this.mapSampleCallInfoNr[this._listSampleCallInfo[fnr].ID] = fnr;
+
+                this._fieldNrSampleCall_GT = this.mapSampleCallInfoNr['GT'];
+                if (this._fieldNrSampleCall_GT == null)
+                    DQX.reportError('Unable to find required property GT in sample call info');
             }
 
             this.getSnPositInfoList = function () {
@@ -229,8 +239,6 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders", "DQX/DataFetcher/D
                 for (var infonr = 0; infonr < this._listSnpPositionInfo.length; infonr++)
                     this.buffSnpPosInfo.push([]);
                 var snpdata = keylist['snpdata'];
-                //                if (snpdata[0]!='A')
-                //                    var q=0;
                 var posOffset = 0;
                 for (var i = 0; i < datalen; i++) {
                     for (var infonr = 0; infonr < this._listSnpPositionInfo.length; infonr++) {
@@ -420,6 +428,9 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders", "DQX/DataFetcher/D
                     var ct = 0;
                     var totct = 0;
                     for (seqid in this.mySeqs) {
+                        var seq = this.mySeqs[seqid];
+                        if (seq.sampleCallInfo[this._fieldNrSampleCall_GT][i] != null)
+                            ct++;
                         totct++;
                     }
                     buffPresence.push(ct * 1.0 / totct);
@@ -498,7 +509,6 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders", "DQX/DataFetcher/D
 
                 if ((extrafilterstep) && hideFiltered) {
                     globchannels = [rs.posits, rs.isFiltered, rs.SnpRefBase, rs.SnpAltBase];
-                    seqchannelnames = ['cov1', 'cov2', 'pres'];
                     var i2 = 0;
                     for (var i = 0; i < posits.length; i++) {
                         if (!isFiltered[i]) {
@@ -507,8 +517,8 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders", "DQX/DataFetcher/D
                             for (var chnr = 0; chnr < rs.SnpPosInfo.length; chnr++)
                                 rs.SnpPosInfo[chnr][i2] = rs.SnpPosInfo[chnr][i];
                             for (seqid in this.mySeqs) {
-                                for (chnr in seqchannelnames) {
-                                    seqdata[seqid][seqchannelnames[chnr]][i2] = seqdata[seqid][seqchannelnames[chnr]][i];
+                                for (chnr in seqdata[seqid]) {
+                                    seqdata[seqid][chnr][i2] = seqdata[seqid][chnr][i];
                                 }
                             }
                             i2++;
