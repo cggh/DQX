@@ -34,6 +34,8 @@ define(["jquery", "DQX/Utils"],
 
             //Converts a 64bit encoded integer to an integer
             that.B642IntFixed = function (st, offset, len) {
+                if (st[offset] == '~')
+                    return null;
                 rs = 0;
                 for (var i = 0; i < len; i++)
                     rs = (rs << 6) + this.invencode[st.charCodeAt(offset + i)]
