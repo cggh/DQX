@@ -812,22 +812,6 @@
                 this.getMyPlotter().render();
             }
 
-            that.setMinAvgCoverage = function (newval) {
-                this.filter.minAvgCoverage = newval;
-                this.getMyPlotter().render();
-            }
-
-            that.setMinAvgPurity = function (newval) {
-                this.filter.minAvgPurity = newval;
-                this.getMyPlotter().render();
-            }
-
-            that.setMinSnpPurity = function (newval) {
-                this.filter.minSnpPurity = newval;
-                this.getMyPlotter().render();
-            }
-
-
             return that;
         }
 
