@@ -197,7 +197,7 @@
                 }
 
                 //Create the color lut
-                var colors = [' rgb(0,0,255)', 'rgb(220,0,0)', 'rgb(128,150,70)'];
+                var colors = [' rgb(0,0,255)', 'rgb(220,0,0)', 'rgb(0,150,150)'];
                 var absentcolor = 'rgb(180,180,180)';
                 var conformcolor1 = 'rgb(200,150,0)';
                 var conformcolor2 = 'rgb(0,180,0)';
@@ -493,7 +493,7 @@
                 var posits = data.posits;
                 var sizeX = drawInfo.sizeCenterX;
 
-                var minsize = 3;
+                var minsize = 1;
                 if (this.allowSmallBlocks)
                     minsize = 0.15;
 
@@ -543,25 +543,27 @@
                     }
                 }
                 else {//calculating fixed block size & position
-                    var size = /*Math.round*/((positXUnCorr[posits.length - 1] - positXUnCorr[0]) / (posits.length + 1));
+                    var firstPos = 0;
+                    while (positXUnCorr[firstPos] < 0) firstPos += 1;
+                    var lastPos = posits.length-1;
+                    while (positXUnCorr[lastPos] > sizeX) lastPos -= 1;
+                    var size = (positXUnCorr[lastPos - 1] - positXUnCorr[firstPos]) / (lastPos - firstPos);
                     if (size < minsize) size = minsize;
                     //first pass: use all snps to determine shift
                     var shift = 0;
+                    /*                    for (var i = 0; i < posits.length; i++)
+                    shift += positXUnCorr[i] - i * size;
+                    shift = Math.round(shift / posits.length);*/
                     for (var i = 0; i < posits.length; i++)
-                        shift += positXUnCorr[i] - i * size;
-                    shift = Math.round(shift / posits.length);
-                    shift = 0;
-                    for (var i = 0; i < posits.length; i++)
-                        positXCorrCent[i] = i * size + shift;
+                        positXCorrCent[i] = (i - firstPos) * size + shift ;
                     //second pass: use what's in view to determine shift
                     var shift = 0;
-                    for (var i = 0; i < posits.length; i++)
+/*                    for (var i = 0; i < posits.length; i++)
                         if ((positXCorrCent[i] >= 0) && (positXCorrCent[i] <= sizeX))
                             shift += positXUnCorr[i] - i * size;
-                    shift = Math.round(shift / posits.length);
-                    //shift = 0;
+                    shift = Math.round(shift / posits.length);*/
                     for (var i = 0; i < posits.length; i++) {
-                        positXCorrCent[i] = i * size + shift;
+                        positXCorrCent[i] = (i-firstPos) * size + shift+ positXUnCorr[firstPos];
                         positXCorrLeft.push(positXCorrCent[i] - size / 2);
                         positXCorrRight.push(positXCorrCent[i] + size / 2);
                     }
