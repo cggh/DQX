@@ -545,7 +545,7 @@
                 else {//calculating fixed block size & position
                     var firstPos = 0;
                     while (positXUnCorr[firstPos] < 0) firstPos += 1;
-                    var lastPos = posits.length-1;
+                    var lastPos = posits.length - 1;
                     while (positXUnCorr[lastPos] > sizeX) lastPos -= 1;
                     var size = (positXUnCorr[lastPos - 1] - positXUnCorr[firstPos]) / (lastPos - firstPos);
                     if (size < minsize) size = minsize;
@@ -555,15 +555,15 @@
                     shift += positXUnCorr[i] - i * size;
                     shift = Math.round(shift / posits.length);*/
                     for (var i = 0; i < posits.length; i++)
-                        positXCorrCent[i] = (i - firstPos) * size + shift ;
+                        positXCorrCent[i] = (i - firstPos) * size + shift;
                     //second pass: use what's in view to determine shift
                     var shift = 0;
-/*                    for (var i = 0; i < posits.length; i++)
-                        if ((positXCorrCent[i] >= 0) && (positXCorrCent[i] <= sizeX))
-                            shift += positXUnCorr[i] - i * size;
+                    /*                    for (var i = 0; i < posits.length; i++)
+                    if ((positXCorrCent[i] >= 0) && (positXCorrCent[i] <= sizeX))
+                    shift += positXUnCorr[i] - i * size;
                     shift = Math.round(shift / posits.length);*/
                     for (var i = 0; i < posits.length; i++) {
-                        positXCorrCent[i] = (i-firstPos) * size + shift+ positXUnCorr[firstPos];
+                        positXCorrCent[i] = (i - firstPos) * size + shift + positXUnCorr[firstPos];
                         positXCorrLeft.push(positXCorrCent[i] - size / 2);
                         positXCorrRight.push(positXCorrCent[i] + size / 2);
                     }
@@ -740,13 +740,25 @@
                         snp_info[info.Name] = vl;
                     });
                     //show filters that were applied to this snp
-                    infostr += '<b>Applied filters</b><br/>';
+                    infostr += 'Applied filters:';
                     var filterFlagList = self.data.getSnpInfo('FilterFlags')[self.hoverSnp];
                     $.each(filterFlagList, function (idx, flag) {
                         if (flag)
-                            infostr += self.myDataFetcher._filters[idx] + '<br>';
+                            infostr += ' ' + self.myDataFetcher._filters[idx];
                     });
+                    infostr += '<br>';
+
                     this.hoverSnpInfo = snp_info;
+                    if (this.hoverSeqNr >= 0) {
+                        infostr += '<br><b>Call:</b></br>';
+                        infostr += this.getSequenceDisplayName(this.mySeqIDs[this.hoverSeqNr]) + '<br>';
+                        var callInfo = this.data.seqdata[this.mySeqIDs[this.hoverSeqNr]];
+                        $.each(callInfo, function (key, val) {
+                            infostr += key + ': ' + ((val[self.hoverSnp]!=null) ? val[self.hoverSnp].toFixed(0) : '---') + '<br>';
+                        });
+
+                    }
+
                 }
                 Msg.broadcast({ type: 'SnpInfoChanged', id: this.getID() }, infostr);
             }
