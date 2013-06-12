@@ -108,6 +108,25 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders", "DQX/DataFetcher/D
                         }
                     }
                 }
+
+                if (this._parentIDs.length > 0) {//if parents are present, make sure they appear at the top
+                    var sortList = [];
+                    var that = this;
+                    $.each(this._sequenceIDList, function (idx, val) {
+                        var item = { id: val }
+                        item.sortKey = '9' + val;
+                        if (that._parentIDs.indexOf(val) >= 0) {
+                            item.sortKey = that._parentIDs.indexOf(val) + val;
+                        }
+                        sortList.push(item);
+                    });
+                    sortList.sort(DQX.ByProperty('sortKey'));
+                    this._sequenceIDList = [];
+                    $.each(sortList, function (idx, val) {
+                        that._sequenceIDList.push(val.id);
+                    });
+                }
+
                 this._sequenceIDListOriginal = [];
                 var self = this;
                 $.each(this._sequenceIDList, function (idx, ID) {
