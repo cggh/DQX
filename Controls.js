@@ -538,7 +538,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
             }
 
             that.bindToModel = function (model, attr) {
-                that.modifyValue(model.get(attr),true);
+                that.modifyValue(model.get(attr), true);
                 model.on({ change: attr }, function () {
                     that.modifyValue(model.get(attr), true);
                 });
@@ -1423,6 +1423,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
             that._maxval = args.maxval;
             that._value = that._minval; if (args.value) that._value = args.value;
             that.digits = 0; if (args.digits) that.digits = args.digits;
+            that.minIsNone = false; if (args.minIsNone) that.minIsNone = args.minIsNone;
 
             that._controlExtensionList.push('Canvas');
 
@@ -1436,27 +1437,37 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 return st;
             }
 
+            that.showValue = function () {
+                var txt = this._value.toFixed(this.digits);
+                if (this.minIsNone && (this._value == this._minval))
+                    txt = 'None';
+                $('#' + this.getFullID('Value')).text(txt);
+            }
+
             that._execPostCreateHtml = function () {
                 this._scroller = Scroller.HScrollBar(this.getFullID('Canvas'));
                 this._scroller.myConsumer = this;
                 this._scroller.zoomareafraction = 0.001;
                 this._scroller.setRange(this._minval, this._maxval);
                 this._scroller.setValue((this._value - this._minval) / (this._maxval - this._minval), 0.02);
+                this.showValue();
                 this._scroller.draw();
-                $('#' + this.getFullID('Value')).text(this._value.toFixed(this.digits));
             };
 
             //Internal handlers
             that.scrollTo = function () {
                 this._value = (this._scroller.rangeMin + this._scroller.scrollPos * (this._scroller.rangeMax - this._scroller.rangeMin));
-                $('#' + this.getFullID('Value')).text(this._value.toFixed(this.digits));
+                this.showValue();
                 this._notifyChanged();
             };
 
 
             //Returns the current value of the slider
             that.getValue = function () {
-                return this._value;
+                if (this.minIsNone && (this._value == this._minval))
+                    return null;
+                else
+                    return this._value;
             };
 
             //Modifies the current value of the slider

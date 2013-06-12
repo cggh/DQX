@@ -19,6 +19,13 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders", "DQX/DataFetcher/D
             that.showINDELs = true;
             that.hideNonSegregating = true;
             that.requireParentsPresent = true;
+
+            that.customVariantFilters = {};
+
+            that.setCustomVariantFilter = function (filterID, propID, value, onSNP, onINDEL) {
+                that.customVariantFilters[filterID] = { propID: propID, value: value, onSNP: onSNP, onINDEL: onINDEL }
+            }
+
             return that;
         }
 
@@ -432,6 +439,7 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders", "DQX/DataFetcher/D
             }
 
             this.getSnpInfoRange = function (posMin, posMax, filter, hideFiltered) {
+                var that = this;
                 var rs = { Present: true }
 
                 var posits = [];
@@ -495,6 +503,18 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders", "DQX/DataFetcher/D
                                 passed = false;
                         }
                     }
+
+                    $.each(filter.customVariantFilters, function (ID, filter) {
+                        if (filter.propID in that.mapSnpPositionInfoNr) {
+                            if (filter.value != null) {
+                                if (((filter.onSNP) && (!isIndel)) || ((filter.onINDEL) && (isIndel))) {
+                                    if (that.buffSnpPosInfo[that.mapSnpPositionInfoNr[filter.propID]][i] < filter.value)
+                                        passed = false;
+                                }
+                            }
+                        }
+                    });
+
 
                     if (passed || (!hideFiltered)) {
                         idxlist.push(i);
