@@ -174,6 +174,8 @@
                 drawInfo.centerContext.stroke();
                 drawInfo.centerContext.globalAlpha = 1;
 
+                if (!data.seqdata) return;
+
                 if (this.colorByParent && (this.parentIDs.length == 2)) {//determine parent states
                     var parentstates = [];
                     for (var pnr = 0; pnr < 2; pnr++) {
@@ -648,7 +650,7 @@
                         drawInfo.centerContext.fillStyle = DQX.Color(0.4, 0.4, 0.4).toString();
                         for (var i = 0; i < posits.length; i++) {
                             if ((positXCorrRight[i] >= -40) && (positXCorrLeft[i] <= sizeX + 40)) {
-                                var vly = (vals[i]-minval) / (maxval-minval);
+                                var vly = (vals[i] - minval) / (maxval - minval);
                                 if (vly > 1) vly = 1;
                                 if (vly < 0) vly = 0;
                                 vly *= 0.8 * channelSizeY;

@@ -1443,6 +1443,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 this._scroller.setRange(this._minval, this._maxval);
                 this._scroller.setValue((this._value - this._minval) / (this._maxval - this._minval), 0.02);
                 this._scroller.draw();
+                $('#' + this.getFullID('Value')).text(this._value.toFixed(this.digits));
             };
 
             //Internal handlers

@@ -522,23 +522,25 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders", "DQX/DataFetcher/D
                     rs.SnpAltBase.push(buffSnpAltBase[ii]);
                 }
 
-                var seqdata = {};
-                for (seqid in this.mySeqs) {
-                    var seq = this.mySeqs[seqid];
+                if (this._listSampleCallInfo) {
+                    var seqdata = {};
+                    for (seqid in this.mySeqs) {
+                        var seq = this.mySeqs[seqid];
 
-                    var seq_sampleCallInfo = [];
-                    for (var infonr = 0; infonr < this._listSampleCallInfo.length; infonr++)
-                        seq_sampleCallInfo.push([]);
-                    for (var i = 0; i < idxlist.length; i++) {
-                        var ii = idxlist[i];
-                        for (var infonr = 0; infonr < this._listSampleCallInfo.length; infonr++) {
-                            seq_sampleCallInfo[infonr].push(seq.sampleCallInfo[infonr][ii]);
+                        var seq_sampleCallInfo = [];
+                        for (var infonr = 0; infonr < this._listSampleCallInfo.length; infonr++)
+                            seq_sampleCallInfo.push([]);
+                        for (var i = 0; i < idxlist.length; i++) {
+                            var ii = idxlist[i];
+                            for (var infonr = 0; infonr < this._listSampleCallInfo.length; infonr++) {
+                                seq_sampleCallInfo[infonr].push(seq.sampleCallInfo[infonr][ii]);
+                            }
                         }
-                    }
 
-                    seqdata[seqid] = {}
-                    for (var infonr = 0; infonr < this._listSampleCallInfo.length; infonr++) {
-                        seqdata[seqid][this._listSampleCallInfo[infonr].ID] = seq_sampleCallInfo[infonr];
+                        seqdata[seqid] = {}
+                        for (var infonr = 0; infonr < this._listSampleCallInfo.length; infonr++) {
+                            seqdata[seqid][this._listSampleCallInfo[infonr].ID] = seq_sampleCallInfo[infonr];
+                        }
                     }
 
                 }
