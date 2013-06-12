@@ -643,12 +643,14 @@
                         drawInfo.leftContext.fillStyle = backgrad;
                         drawInfo.leftContext.fillRect(0, posY, drawInfo.sizeLeftX, channelSizeY);
                         var vals = self.data.getSnpInfo(info.ID); //!!!todo: make this a generic factory based handler that can handle other data types than vaules
+                        var minval = info.Min;
                         var maxval = info.Max;
                         drawInfo.centerContext.fillStyle = DQX.Color(0.4, 0.4, 0.4).toString();
                         for (var i = 0; i < posits.length; i++) {
                             if ((positXCorrRight[i] >= -40) && (positXCorrLeft[i] <= sizeX + 40)) {
-                                var vly = vals[i] / maxval;
+                                var vly = (vals[i]-minval) / (maxval-minval);
                                 if (vly > 1) vly = 1;
+                                if (vly < 0) vly = 0;
                                 vly *= 0.8 * channelSizeY;
                                 drawInfo.centerContext.fillRect(positXCorrLeft[i] + 0.5, posY + channelSizeY - vly, positXCorrRight[i] - positXCorrLeft[i] - 0.25, vly);
                             }

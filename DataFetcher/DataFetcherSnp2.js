@@ -17,6 +17,7 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders", "DQX/DataFetcher/D
             that.minSnpCoverage = 1;
             that.showSNPs = true;
             that.showINDELs = true;
+            that.hideNonSegregating = true;
             that.requireParentsPresent = false;
             return that;
         }
@@ -468,8 +469,24 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders", "DQX/DataFetcher/D
                     if ((filter.applyVCFFilter) && (!buffSnpFilter[i]))
                         passed = false;
                     var isIndel = (buffSnpRefBase[i] == '+') || (buffSnpAltBase[i] == '+');
-                    if ((!filter.showINDELs)&&(isIndel)) passed=false;
+                    if ((!filter.showINDELs) && (isIndel)) passed = false;
                     if ((!filter.showSNPs) && (!isIndel)) passed = false;
+
+                    if (filter.hideNonSegregating) {
+                        segregating = false;
+                        var call = -99;
+                        for (seqid in this.mySeqs) {
+                            var seq = this.mySeqs[seqid];
+                            if (seq.sampleCallInfo[this._fieldNrSampleCall_GT][i] != call) {
+                                if (call == -99)
+                                    call = seq.sampleCallInfo[this._fieldNrSampleCall_GT][i];
+                                else
+                                    segregating = true;
+                            }
+                        }
+                        if (!segregating) passed = false;
+                    }
+
                     if (passed || (!hideFiltered)) {
                         idxlist.push(i);
                         posits.push(this.buffPosits[i]);
