@@ -18,7 +18,7 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders", "DQX/DataFetcher/D
             that.showSNPs = true;
             that.showINDELs = true;
             that.hideNonSegregating = true;
-            that.requireParentsPresent = false;
+            that.requireParentsPresent = true;
             return that;
         }
 
@@ -487,6 +487,15 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders", "DQX/DataFetcher/D
                         if (!segregating) passed = false;
                     }
 
+                    if (filter.requireParentsPresent) {
+                        if (this._parentIDs.length != 2) DQX.reportError('Missing parent information');
+                        for (var pnr in this._parentIDs) {
+                            var seq = this.mySeqs[this._parentIDs[pnr]];
+                            if (seq.sampleCallInfo[this._fieldNrSampleCall_GT][i] == null)
+                                passed = false;
+                        }
+                    }
+
                     if (passed || (!hideFiltered)) {
                         idxlist.push(i);
                         posits.push(this.buffPosits[i]);
@@ -535,47 +544,49 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders", "DQX/DataFetcher/D
                 }
                 rs.seqdata = seqdata;
 
+                /*
                 var extrafilterstep = false;
                 if (filter.requireParentsPresent && (this._parentIDs.length == 2)) {
-                    extrafilterstep = true;
-                    for (var i = 0; i < posits.length; i++) {
-                        var parentspresent = true;
-                        for (var pnr in this._parentIDs)
-                            if (!seqdata[this._parentIDs[pnr]].pres[i])
-                                parentspresent = false;
-                        if (!parentspresent)
-                            isFiltered[i] = true;
-                    }
+                extrafilterstep = true;
+                for (var i = 0; i < posits.length; i++) {
+                var parentspresent = true;
+                for (var pnr in this._parentIDs)
+                if (seqdata[this._parentIDs[pnr]].GT[i]==null)
+                parentspresent = false;
+                if (!parentspresent)
+                isFiltered[i] = true;
+                }
                 }
 
                 if ((extrafilterstep) && hideFiltered) {
-                    globchannels = [rs.posits, rs.isFiltered, rs.SnpRefBase, rs.SnpAltBase];
-                    var i2 = 0;
-                    for (var i = 0; i < posits.length; i++) {
-                        if (!isFiltered[i]) {
-                            for (var chnr = 0; chnr < globchannels.length; chnr++)
-                                globchannels[chnr][i2] = globchannels[chnr][i];
-                            for (var chnr = 0; chnr < rs.SnpPosInfo.length; chnr++)
-                                rs.SnpPosInfo[chnr][i2] = rs.SnpPosInfo[chnr][i];
-                            for (seqid in this.mySeqs) {
-                                for (chnr in seqdata[seqid]) {
-                                    seqdata[seqid][chnr][i2] = seqdata[seqid][chnr][i];
-                                }
-                            }
-                            i2++;
-                        }
-                    }
-                    for (var chnr in globchannels)
-                        globchannels[chnr].length = i2;
-                    for (var chnr = 0; chnr < rs.SnpPosInfo.length; chnr++)
-                        rs.SnpPosInfo[chnr].length = i2;
-
-                    for (seqid in this.mySeqs) {
-                        for (chnr in seqchannelnames) {
-                            seqdata[seqid][seqchannelnames[chnr]].length = i2;
-                        }
-                    }
+                globchannels = [rs.posits, rs.isFiltered, rs.SnpRefBase, rs.SnpAltBase];
+                var i2 = 0;
+                for (var i = 0; i < posits.length; i++) {
+                if (!isFiltered[i]) {
+                for (var chnr = 0; chnr < globchannels.length; chnr++)
+                globchannels[chnr][i2] = globchannels[chnr][i];
+                for (var chnr = 0; chnr < rs.SnpPosInfo.length; chnr++)
+                rs.SnpPosInfo[chnr][i2] = rs.SnpPosInfo[chnr][i];
+                for (seqid in this.mySeqs) {
+                for (chnr in seqdata[seqid]) {
+                seqdata[seqid][chnr][i2] = seqdata[seqid][chnr][i];
                 }
+                }
+                i2++;
+                }
+                }
+                for (var chnr in globchannels)
+                globchannels[chnr].length = i2;
+                for (var chnr = 0; chnr < rs.SnpPosInfo.length; chnr++)
+                rs.SnpPosInfo[chnr].length = i2;
+
+                for (seqid in this.mySeqs) {
+                for (chnr in seqchannelnames) {
+                seqdata[seqid][seqchannelnames[chnr]].length = i2;
+                }
+                }
+                }
+                */
 
                 //add some utilities
                 rs._fetcher = this;
