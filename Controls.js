@@ -23,7 +23,7 @@ In this case, Controls.ExecPostCreateHtml must be called explicitely after the h
 *************************************************************************************************************************************
 *************************************************************************************************************************************/
 
-define(["DQX/Utils","DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"],
+define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"],
     function (DQX, Msg, DocEl, Scroller, Documentation) {
         var Controls = {};
 
@@ -538,7 +538,8 @@ define(["DQX/Utils","DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"]
             }
 
             that.bindToModel = function (model, attr) {
-                model.on({change: attr}, function() {
+                that.modifyValue(model.get(attr),true);
+                model.on({ change: attr }, function () {
                     that.modifyValue(model.get(attr), true);
                 });
                 that.setOnChanged(function () {
@@ -1014,7 +1015,7 @@ define(["DQX/Utils","DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"]
             that.modifyValue = function (newstate) {
                 if (newstate == this.getValue()) return;
                 if (!this.isState(newstate))
-                    DQX.reportError('Invalid combo box state: '+newstate);
+                    DQX.reportError('Invalid combo box state: ' + newstate);
                 this._selectedState = newstate;
                 this.getJQElement('').val(this._selectedState);
                 this._notifyChanged();

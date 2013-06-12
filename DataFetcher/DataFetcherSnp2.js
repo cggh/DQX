@@ -15,7 +15,9 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders", "DQX/DataFetcher/D
             that.applyVCFFilter = false;
             that.minPresence = 0;
             that.minSnpCoverage = 1;
-            this.requireParentsPresent = false;
+            that.showSNPs = true;
+            that.showINDELs = true;
+            that.requireParentsPresent = false;
             return that;
         }
 
@@ -465,6 +467,9 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders", "DQX/DataFetcher/D
                         passed = false;
                     if ((filter.applyVCFFilter) && (!buffSnpFilter[i]))
                         passed = false;
+                    var isIndel = (buffSnpRefBase[i] == '+') || (buffSnpAltBase[i] == '+');
+                    if ((!filter.showINDELs)&&(isIndel)) passed=false;
+                    if ((!filter.showSNPs) && (!isIndel)) passed = false;
                     if (passed || (!hideFiltered)) {
                         idxlist.push(i);
                         posits.push(this.buffPosits[i]);

@@ -615,8 +615,10 @@
                         if ((refBase != '+') && (altBase == '+')) { showIndication = true; drawInfo.centerContext.fillStyle = DQX.Color(1, 0, 0).toString(); }
                         if ((refBase == '+') && (altBase != '+')) { showIndication = true; drawInfo.centerContext.fillStyle = DQX.Color(0, 0.7, 0).toString(); }
                         if ((refBase == '+') && (altBase == '+')) { showIndication = true; drawInfo.centerContext.fillStyle = DQX.Color(0, 0, 1).toString(); }
-                        if (showIndication)
+                        if (showIndication) {
+                            drawInfo.centerContext.fillStyle = DQX.Color(0.5, 0.5, 0.5).toString();
                             drawInfo.centerContext.fillRect(positXCorrLeft[i] + 0.5, posY + 5, positXCorrRight[i] - positXCorrLeft[i] - 0.25, 10);
+                        }
                     }
                 }
                 drawInfo.centerContext.fillStyle = "rgb(80,80,80)";
@@ -624,7 +626,7 @@
                 drawInfo.leftContext.fillStyle = "rgb(80,80,80)";
                 drawInfo.leftContext.fillRect(0, graphOffsetY, drawInfo.sizeLeftX, 2);
                 drawInfo.leftContext.fillStyle = "black";
-                drawInfo.leftContext.fillText("Variant type", 2, posY + channelSizeY / 2 + 7);
+                drawInfo.leftContext.fillText("INDEL", 2, posY + channelSizeY / 2 + 7);
                 posY += channelSizeY;
 
 
@@ -754,7 +756,7 @@
                         infostr += this.getSequenceDisplayName(this.mySeqIDs[this.hoverSeqNr]) + '<br>';
                         var callInfo = this.data.seqdata[this.mySeqIDs[this.hoverSeqNr]];
                         $.each(callInfo, function (key, val) {
-                            infostr += key + ': ' + ((val[self.hoverSnp]!=null) ? val[self.hoverSnp].toFixed(0) : '---') + '<br>';
+                            infostr += key + ': ' + ((val[self.hoverSnp] != null) ? val[self.hoverSnp].toFixed(0) : '---') + '<br>';
                         });
 
                     }
