@@ -21,9 +21,13 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders", "DQX/DataFetcher/D
             that.requireParentsPresent = true;
 
             that.customVariantFilters = {};
-
             that.setCustomVariantFilter = function (filterID, propID, value, onSNP, onINDEL) {
                 that.customVariantFilters[filterID] = { propID: propID, value: value, onSNP: onSNP, onINDEL: onINDEL }
+            }
+
+            that.customCallFilters = {};
+            that.setCustomCallFilter = function (filterID, propID, value) {
+                that.customCallFilters[filterID] = { propID: propID, value: value }
             }
 
             return that;
@@ -175,7 +179,6 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders", "DQX/DataFetcher/D
             this._parseSampleCallFields = function (content) {
                 this._listSampleCallInfo = JSON.parse(content);
                 this._sampleCallRecordLength = 0;
-                var _map = {}
                 for (var fnr = 0; fnr < this._listSampleCallInfo.length; fnr++) {
                     var fieldInfo = this._listSampleCallInfo[fnr];
                     fieldInfo.decoder = DataDecoders.Encoder.Create(fieldInfo.Encoder);
@@ -542,6 +545,15 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders", "DQX/DataFetcher/D
                     rs.SnpAltBase.push(buffSnpAltBase[ii]);
                 }
 
+                //prepatation: get field nr for all custom call filters
+                $.each(filter.customCallFilters, function (ID, filter) {
+                    if (filter.propID in that.mapSampleCallInfoNr)
+                        filter.fieldNr = that.mapSampleCallInfoNr[filter.propID];
+                    else
+                        filter.fieldNr = null;
+                });
+
+
                 if (this._listSampleCallInfo) {
                     var seqdata = {};
                     for (seqid in this.mySeqs) {
@@ -550,65 +562,35 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders", "DQX/DataFetcher/D
                         var seq_sampleCallInfo = [];
                         for (var infonr = 0; infonr < this._listSampleCallInfo.length; infonr++)
                             seq_sampleCallInfo.push([]);
+                        var customFilter = [];
                         for (var i = 0; i < idxlist.length; i++) {
                             var ii = idxlist[i];
                             for (var infonr = 0; infonr < this._listSampleCallInfo.length; infonr++) {
                                 seq_sampleCallInfo[infonr].push(seq.sampleCallInfo[infonr][ii]);
                             }
+                            //apply the custom per-call filters
+                            var customFiltered = false;
+                            $.each(filter.customCallFilters, function (ID, filter) {
+                                if (filter.fieldNr != null) {
+                                    if (filter.value != null) {
+                                        if (seq_sampleCallInfo[filter.fieldNr][i] < filter.value)
+                                            customFiltered = true;
+                                    }
+                                }
+                            });
+                            customFilter.push(customFiltered);
                         }
 
                         seqdata[seqid] = {}
                         for (var infonr = 0; infonr < this._listSampleCallInfo.length; infonr++) {
                             seqdata[seqid][this._listSampleCallInfo[infonr].ID] = seq_sampleCallInfo[infonr];
                         }
+                        seqdata[seqid].customFilter = customFilter;
                     }
 
                 }
                 rs.seqdata = seqdata;
 
-                /*
-                var extrafilterstep = false;
-                if (filter.requireParentsPresent && (this._parentIDs.length == 2)) {
-                extrafilterstep = true;
-                for (var i = 0; i < posits.length; i++) {
-                var parentspresent = true;
-                for (var pnr in this._parentIDs)
-                if (seqdata[this._parentIDs[pnr]].GT[i]==null)
-                parentspresent = false;
-                if (!parentspresent)
-                isFiltered[i] = true;
-                }
-                }
-
-                if ((extrafilterstep) && hideFiltered) {
-                globchannels = [rs.posits, rs.isFiltered, rs.SnpRefBase, rs.SnpAltBase];
-                var i2 = 0;
-                for (var i = 0; i < posits.length; i++) {
-                if (!isFiltered[i]) {
-                for (var chnr = 0; chnr < globchannels.length; chnr++)
-                globchannels[chnr][i2] = globchannels[chnr][i];
-                for (var chnr = 0; chnr < rs.SnpPosInfo.length; chnr++)
-                rs.SnpPosInfo[chnr][i2] = rs.SnpPosInfo[chnr][i];
-                for (seqid in this.mySeqs) {
-                for (chnr in seqdata[seqid]) {
-                seqdata[seqid][chnr][i2] = seqdata[seqid][chnr][i];
-                }
-                }
-                i2++;
-                }
-                }
-                for (var chnr in globchannels)
-                globchannels[chnr].length = i2;
-                for (var chnr = 0; chnr < rs.SnpPosInfo.length; chnr++)
-                rs.SnpPosInfo[chnr].length = i2;
-
-                for (seqid in this.mySeqs) {
-                for (chnr in seqchannelnames) {
-                seqdata[seqid][seqchannelnames[chnr]].length = i2;
-                }
-                }
-                }
-                */
 
                 //add some utilities
                 rs._fetcher = this;

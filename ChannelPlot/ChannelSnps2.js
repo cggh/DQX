@@ -201,6 +201,7 @@
                 //Create the color lut
                 var colors = [' rgb(0,0,255)', 'rgb(220,0,0)', 'rgb(0,150,150)'];
                 var absentcolor = 'rgb(180,180,180)';
+                var customfiltercolor = 'rgb(255,255,190)';
                 var conformcolor1 = 'rgb(200,150,0)';
                 var conformcolor2 = 'rgb(0,180,0)';
                 var disconformcolor = 'rgb(0,0,0)';
@@ -259,82 +260,93 @@
 
                         var GT = data.seqdata[that.mySeqIDs[seqnr]].GT;
                         var DP = data.seqdata[that.mySeqIDs[seqnr]].DP;
+                        var customFilter = data.seqdata[that.mySeqIDs[seqnr]].customFilter;
                         //var pres = data.seqdata[that.mySeqIDs[seqnr]].pres;
                         for (var i = 0; i < posits.length; i++) {
                             if ((positXCorrCent[i] >= -40) && (positXCorrCent[i] <= sizeX + 40)) {
-                                if (GT[i] != null) {
-                                    var call = GT[i];
-                                    var covtot = DP[i];
+                                if (customFilter[i]) {
+                                    colornr = -1;
+                                    if (colornr != lastcolornr) {
+                                        drawInfo.centerContext.fillStyle = customfiltercolor;
+                                        lastcolornr = colornr;
+                                    }
+                                    drawInfo.centerContext.fillRect(positXCorrLeft[i] + shl, py, positXCorrLength[i] + shr, ly);
+                                }
+                                else {
+                                    if (GT[i] != null) {
+                                        var call = GT[i];
+                                        var covtot = DP[i];
 
-                                    if (this.colorByParent && (this.parentIDs.length == 2)) {//color by parents
-                                        if (!parentpresents[i]) {
-                                            colornr = 99;
-                                            if (colornr != lastcolornr) {
-                                                drawInfo.centerContext.fillStyle = absentcolor;
-                                                lastcolornr = colornr;
-                                            }
-                                        }
-                                        else {
-                                            if (parentconc[i] >= 0) {
-                                                if (call == parentstate0[i]) {
-                                                    if (parentconc[i] == 0) {
-                                                        colornr = 101;
-                                                        //if (colornr != lastcolornr)
-                                                        drawInfo.centerContext.fillStyle = conformcolor1;
-                                                    }
-                                                    else {
-                                                        colornr = 102;
-                                                        //if (colornr != lastcolornr)
-                                                        drawInfo.centerContext.fillStyle = conformcolor2;
-                                                    }
-                                                }
-                                                else {
-                                                    colornr = 97;
-                                                    //if (colornr != lastcolornr)
-                                                    drawInfo.centerContext.fillStyle = disconformcolor;
+                                        if (this.colorByParent && (this.parentIDs.length == 2)) {//color by parents
+                                            if (!parentpresents[i]) {
+                                                colornr = 99;
+                                                if (colornr != lastcolornr) {
+                                                    drawInfo.centerContext.fillStyle = absentcolor;
+                                                    lastcolornr = colornr;
                                                 }
                                             }
                                             else {
-                                                if (call == parentstate0[i]) {
-                                                    colornr = 101;
-                                                    //if (colornr != lastcolornr)
-                                                    drawInfo.centerContext.fillStyle = conformcolorparent1;
-                                                }
-                                                else if (call == parentstate1[i]) {
-                                                    colornr = 102;
-                                                    //if (colornr != lastcolornr)
-                                                    drawInfo.centerContext.fillStyle = conformcolorparent2;
+                                                if (parentconc[i] >= 0) {
+                                                    if (call == parentstate0[i]) {
+                                                        if (parentconc[i] == 0) {
+                                                            colornr = 101;
+                                                            //if (colornr != lastcolornr)
+                                                            drawInfo.centerContext.fillStyle = conformcolor1;
+                                                        }
+                                                        else {
+                                                            colornr = 102;
+                                                            //if (colornr != lastcolornr)
+                                                            drawInfo.centerContext.fillStyle = conformcolor2;
+                                                        }
+                                                    }
+                                                    else {
+                                                        colornr = 97;
+                                                        //if (colornr != lastcolornr)
+                                                        drawInfo.centerContext.fillStyle = disconformcolor;
+                                                    }
                                                 }
                                                 else {
-                                                    colornr = 97;
-                                                    //if (colornr != lastcolornr)
-                                                    drawInfo.centerContext.fillStyle = disconformcolor;
+                                                    if (call == parentstate0[i]) {
+                                                        colornr = 101;
+                                                        //if (colornr != lastcolornr)
+                                                        drawInfo.centerContext.fillStyle = conformcolorparent1;
+                                                    }
+                                                    else if (call == parentstate1[i]) {
+                                                        colornr = 102;
+                                                        //if (colornr != lastcolornr)
+                                                        drawInfo.centerContext.fillStyle = conformcolorparent2;
+                                                    }
+                                                    else {
+                                                        colornr = 97;
+                                                        //if (colornr != lastcolornr)
+                                                        drawInfo.centerContext.fillStyle = disconformcolor;
+                                                    }
                                                 }
                                             }
-                                        }
-                                        lastcolornr = colornr;
-                                    }
-
-
-                                    else {//non-parent coloring
-                                        colornr = GT[i];
-                                        if (colornr != lastcolornr) {
-                                            drawInfo.centerContext.fillStyle = colors[colornr];
                                             lastcolornr = colornr;
                                         }
-                                    }
-                                    var h = 2 + Math.round((ly - 3) * Math.min(1.0, covtot / this.covRange));
-                                    drawInfo.centerContext.fillRect(positXCorrLeft[i] + shl, py + ly - h, positXCorrLength[i] + shr, h);
-                                }
 
 
-                                else {//snp not present
-                                    colornr = 99;
-                                    if (colornr != lastcolornr) {
-                                        drawInfo.centerContext.fillStyle = absentcolor;
-                                        lastcolornr = colornr;
+                                        else {//non-parent coloring
+                                            colornr = GT[i];
+                                            if (colornr != lastcolornr) {
+                                                drawInfo.centerContext.fillStyle = colors[colornr];
+                                                lastcolornr = colornr;
+                                            }
+                                        }
+                                        var h = 2 + Math.round((ly - 3) * Math.min(1.0, covtot / this.covRange));
+                                        drawInfo.centerContext.fillRect(positXCorrLeft[i] + shl, py + ly - h, positXCorrLength[i] + shr, h);
                                     }
-                                    drawInfo.centerContext.fillRect(positXCorrLeft[i] + shl, py + 5, positXCorrLength[i] + shr, ly - 9);
+
+
+                                    else {//snp not present
+                                        colornr = 99;
+                                        if (colornr != lastcolornr) {
+                                            drawInfo.centerContext.fillStyle = absentcolor;
+                                            lastcolornr = colornr;
+                                        }
+                                        drawInfo.centerContext.fillRect(positXCorrLeft[i] + shl, py + 5, positXCorrLength[i] + shr, ly - 9);
+                                    }
                                 }
                             }
                         }
@@ -760,7 +772,8 @@
                         infostr += this.getSequenceDisplayName(this.mySeqIDs[this.hoverSeqNr]) + '<br>';
                         var callInfo = this.data.seqdata[this.mySeqIDs[this.hoverSeqNr]];
                         $.each(callInfo, function (key, val) {
-                            infostr += key + ': ' + ((val[self.hoverSnp] != null) ? val[self.hoverSnp].toFixed(0) : '---') + '<br>';
+                            if (key != 'customFilter')
+                                infostr += key + ': ' + ((val[self.hoverSnp] != null) ? val[self.hoverSnp].toFixed(0) : '---') + '<br>';
                         });
 
                     }
