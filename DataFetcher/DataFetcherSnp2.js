@@ -604,6 +604,38 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders", "DQX/DataFetcher/D
             }
         }
 
+        DataFetcherSnp.FetcherSnpDetails = function (iserverurl) {
+            var that={};
+            that.serverurl = iserverurl; //The server url to contact for this
+
+            that.getSnpInfo = function (filename, chrom, pos, onFinished) {
+                //prepare the url
+                var myurl = DQX.Url(serverUrl);
+                myurl.addUrlQueryItem("datatype", "snpdetailinfo");
+                myurl.addUrlQueryItem("name", filename);
+                myurl.addUrlQueryItem("chrom", chrom);
+                myurl.addUrlQueryItem("pos", pos);
+                var urlstring = myurl.toString();
+                $.ajax({
+                    url: urlstring,
+                    success: function (resp) {
+                        var keylist = DQX.parseResponse(resp);
+                        if ("Error" in keylist) {//!!!todo: some error handling
+                            DQX.stopProcessing();
+                            return;
+                        }
+                        onFinished(keylist.content);
+                    },
+                    error: function (resp) {//!!!todo: some error handling
+                        DQX.stopProcessing();
+                    }
+                });
+            }
+
+            return that;
+        }
+
+
         return DataFetcherSnp;
     });    
     
