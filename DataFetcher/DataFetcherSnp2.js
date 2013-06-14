@@ -609,8 +609,19 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders", "DQX/DataFetcher/D
             that.serverurl = iserverurl; //The server url to contact for this
 
             that.getSnpInfo = function (filename, chrom, pos, onFinished) {
+
+                var tryFinish = function() {
+                    if (that._content&&that._header)
+                        onFinished(that._header,that._content);
+                }
+
+                DataFetcherFile.getFile(that.serverurl, filename+".header", function(content) {
+                    that._header=content;
+                    tryFinish();
+                });
+
                 //prepare the url
-                var myurl = DQX.Url(serverUrl);
+                var myurl = DQX.Url(that.serverurl);
                 myurl.addUrlQueryItem("datatype", "snpdetailinfo");
                 myurl.addUrlQueryItem("name", filename);
                 myurl.addUrlQueryItem("chrom", chrom);
@@ -624,7 +635,8 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders", "DQX/DataFetcher/D
                             DQX.stopProcessing();
                             return;
                         }
-                        onFinished(keylist.content);
+                        that._content=keylist.content;
+                        tryFinish();
                     },
                     error: function (resp) {//!!!todo: some error handling
                         DQX.stopProcessing();

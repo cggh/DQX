@@ -14,6 +14,7 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/base64"],
         DataFetcherFile.getFile = function (serverUrl, filename, handler) {
             //prepare the url
             var myurl = DQX.Url(serverUrl);
+            //filename=filename.replace(/\./g, "_dot_");
             myurl.addUrlQueryItem("datatype", "getfile");
             myurl.addUrlQueryItem("name", filename);
             var urlstring = myurl.toString();
