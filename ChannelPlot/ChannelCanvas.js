@@ -402,7 +402,7 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
                 drawInfo.leftContext.fillRect(0, 0, drawInfo.sizeLeftX, drawInfo.sizeY);
                 drawInfo.leftContext.globalAlpha = 1.0;
                 drawInfo.centerContext.fillStyle = "black";
-                drawInfo.centerContext.font = '15 sans-serif';
+                drawInfo.centerContext.font = 'bold 15px sans-serif';
                 drawInfo.centerContext.textBaseline = 'bottom';
                 drawInfo.centerContext.textAlign = 'center';
                 drawInfo.centerContext.globalAlpha = 0.6;

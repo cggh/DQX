@@ -65,6 +65,10 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders", "DQX/DataFetcher/D
                 this._autoExtendRange = status;
             }
 
+            this.isDataAssigned = function () {
+                return this.dataid;
+            }
+
             this.setDataSource = function (idataid, callOnCompleted) {
                 this.clearData();
                 this.dataid = idataid;

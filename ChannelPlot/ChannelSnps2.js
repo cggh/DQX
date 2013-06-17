@@ -75,6 +75,10 @@
                 this.drawStandardGradientLeft(drawInfo, 1.0);
                 this.drawStandardGradientRight(drawInfo, 1.0);
 
+                if (!this.myDataFetcher.isDataAssigned()) {
+                    this.drawMessage(drawInfo,'Please select a call set from the left');
+                }
+
 
 
                 var sizeX = drawInfo.sizeCenterX;
@@ -698,6 +702,7 @@
 
             that.handleMouseClicked = function (px, py) {
                 var snpseq = this.xyToSnpSeq(px, py);
+                if ((!snpseq)||(snpseq.snp<0)) return;
                 this.hoverSnp = snpseq.snp;
                 this.createSnpInfo();
                 var seq = this.mySeqIDs[snpseq.seq];
