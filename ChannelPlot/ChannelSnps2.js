@@ -745,16 +745,19 @@
                 var infostr = '';
                 var snp_info = {};
                 if (this.hoverSnp >= 0) {
-                    infostr = 'SNP info<br/>';
+                    infostr = '<b>Variant info</b><br/>';
                     infostr += 'Position: ' + this.data.posits[this.hoverSnp] + '<br/>';
                     snp_info.position = this.data.posits[this.hoverSnp];
                     var self = this;
+                    var ignoreTags=['FilterFlags','RefBase', 'AltBase','Filtered'];
                     $.each(this.myDataFetcher.getSnPositInfoList(), function (idx, info) {
                         var vl = self.data.getSnpInfo(info.ID)[self.hoverSnp];
-                        if (info.DataType == 'Value') vl = vl.toFixed(3); //!!!a hack that needs to be resolved
-                        infostr += info.Name + '= ';
-                        infostr += vl;
-                        infostr += '<br/>';
+                        if (ignoreTags.indexOf(info.ID)<0) {
+                            if (info.DataType == 'Value') vl = vl.toFixed(3); //todo !!!a hack that needs to be resolved
+                            infostr+= info.Name + '= ';
+                            infostr+= vl;
+                            infostr+= '<br/>';
+                        }
                         snp_info[info.Name] = vl;
                     });
                     //show filters that were applied to this snp
@@ -768,12 +771,12 @@
 
                     this.hoverSnpInfo = snp_info;
                     if (this.hoverSeqNr >= 0) {
-                        infostr += '<br><b>Call:</b></br>';
-                        infostr += this.getSequenceDisplayName(this.mySeqIDs[this.hoverSeqNr]) + '<br>';
+                        infostr += '<br><b>Variant call</b></br>';
+                        infostr += 'Sample= '+this.getSequenceDisplayName(this.mySeqIDs[this.hoverSeqNr]) + '<br>';
                         var callInfo = this.data.seqdata[this.mySeqIDs[this.hoverSeqNr]];
                         $.each(callInfo, function (key, val) {
                             if (key != 'customFilter')
-                                infostr += key + ': ' + ((val[self.hoverSnp] != null) ? val[self.hoverSnp].toFixed(0) : '---') + '<br>';
+                                infostr += key + '= ' + ((val[self.hoverSnp] != null) ? val[self.hoverSnp].toFixed(0) : '---') + '<br>';
                         });
 
                     }
