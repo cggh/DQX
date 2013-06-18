@@ -12,6 +12,57 @@ define(["require", "jquery", "DQX/Msg", "DQX/DocEl", "handlebars"],
         //Inject DQX into the global namespace so that click handlers can find it
         DQX = {};
 
+DQX.getRGB = function(r, g, b, alpha) {
+		if (r != null && b == null) {
+			alpha = g;
+			b = r&0xFF;
+			g = r>>8&0xFF;
+			r = r>>16&0xFF;
+		}
+        r = Math.round(r);
+        g = Math.round(g);
+        b = Math.round(b);
+		if (alpha == null) {
+			return "rgb("+r+","+g+","+b+")";
+		} else {
+			return "rgba("+r+","+g+","+b+","+alpha+")";
+		}
+	};
+
+DQX.roundedRect = function(ctx, x, y, width, height, radius) {
+  ctx.beginPath();
+  ctx.moveTo(x + radius, y);
+  ctx.lineTo(x + width - radius, y);
+  ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+  ctx.lineTo(x + width, y + height - radius);
+  ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+  ctx.lineTo(x + radius, y + height);
+  ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+  ctx.lineTo(x, y + radius);
+  ctx.quadraticCurveTo(x, y, x + radius, y);
+  ctx.closePath();
+};
+
+DQX.polyStar = function(ctx, x, y, radius, sides, pointSize, angle) {
+        ctx.beginPath();
+		if (pointSize == null) { pointSize = 0; }
+		pointSize = 1-pointSize;
+		if (angle == null) { angle = 0; }
+		else { angle /= 180/Math.PI; }
+		var a = Math.PI/sides;
+		
+		ctx.moveTo(x+Math.cos(angle)*radius, y+Math.sin(angle)*radius);
+		for (var i=0; i<sides; i++) {
+			angle += a;
+			if (pointSize != 1) {
+				ctx.lineTo(x+Math.cos(angle)*radius*pointSize, y+Math.sin(angle)*radius*pointSize);
+			}
+			angle += a;
+			ctx.lineTo(x+Math.cos(angle)*radius, y+Math.sin(angle)*radius);
+		}
+	    ctx.closePath();
+	};
+
         DQX.BMP = function (name) {
             return require.toUrl('./Bitmaps/'+name);
         };
@@ -779,6 +830,7 @@ define(["require", "jquery", "DQX/Msg", "DQX/DocEl", "handlebars"],
                 DQX._globalKeyDownReceiverIndex++;
                 registerID = DQX._globalKeyDownReceiverIndex;
             }
+
             DQX._globalKeyDownReceiverStack.unshift({ id: registerID, handler: handler });
             return registerID;
         }
