@@ -1338,7 +1338,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/Fram
                 DQX.ExecPostCreateHtml();
                 this.myParentFrame.notifyContentChanged();
                 if (this.myParentFrame.autoSizeY)
-                    setTimeout(that.myParentFrame.getFrameContainer()._handleResize, 500); //force resizing of the frames if the content was changed
+                    setTimeout(that.myParentFrame.getFrameContainer()._handleResize, 100); //force resizing of the frames if the content was changed
             }
 
             //Returns the natural vertical size of the form
