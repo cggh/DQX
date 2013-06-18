@@ -1,8 +1,6 @@
 ﻿/************************************************************************************************************************************
 *************************************************************************************************************************************
 
-WARNING
-DEPRECIATED: replaced by DataFetcherSnp2
 
 
 *************************************************************************************************************************************
@@ -15,8 +13,11 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders", "DQX/DataFetcher/D
         DataFetcherSnp.SnpFilterData = function () {
             var that = {};
             that.applyVCFFilter = false;
+            that.minAvgCoverage = 0;
+            that.minAvgPurity = 0;
             that.minPresence = 0;
             that.minSnpCoverage = 1;
+            that.minSnpPurity = 0;
             this.requireParentsPresent = false;
             return that;
         }
@@ -98,9 +99,6 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders", "DQX/DataFetcher/D
                         if (token == 'SnpPositionFields') {
                             this._parseSnpPositionFields(content);
                         }
-                        if (token == 'SampleCallFields') {
-                            this._parseSampleCallFields(content);
-                        }
                         if (token == 'Filters') {
                             this._filters = content.split('\t');
                             this._activeFilterMap = {};
@@ -138,6 +136,10 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders", "DQX/DataFetcher/D
                     this._recordLength += fieldInfo.recordLength;
                 }
 
+                //add 2 information fields that are calculated locally
+                this._listSnpPositionInfo.push({ ID: "AvCov", Name: "Average coverage", DataType: "Value", Max: 300, Display: false, getFromServer: false });
+                this._listSnpPositionInfo.push({ ID: "AvPurity", Name: "Average purity", DataType: "Value", Max: 1, Display: false, getFromServer: false });
+
                 //create mapping
                 this.mapSnpPositionInfoNr = [];
                 for (var fnr = 0; fnr < this._listSnpPositionInfo.length; fnr++) {
@@ -146,26 +148,9 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders", "DQX/DataFetcher/D
                 }
             }
 
-            this._parseSampleCallFields = function (content) {
-                this._listSampleCallInfo = JSON.parse(content);
-                this._sampleCallRecordLength = 0;
-                for (var fnr = 0; fnr < this._listSampleCallInfo.length; fnr++) {
-                    var fieldInfo = this._listSampleCallInfo[fnr];
-                    fieldInfo.getFromServer = true;
-                    fieldInfo.decoder = DataDecoders.Encoder.Create(fieldInfo.Encoder);
-                    fieldInfo.recordLength = fieldInfo.decoder.getRecordLength();
-                    this._sampleCallRecordLength += fieldInfo.recordLength;
-                }
-            }
-
             this.getSnPositInfoList = function () {
                 if (!this._listSnpPositionInfo) return [];
                 return this._listSnpPositionInfo;
-            }
-
-            this.getSampleCallInfoList = function () {
-                if (!this._listSampleCallInfo) return [];
-                return this._listSampleCallInfo;
             }
 
             this.getSequenceIDList = function () {
@@ -246,6 +231,13 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders", "DQX/DataFetcher/D
                     }
                 }
 
+                //Parse SNP info
+                var buffAvgCoverage = [];
+                var buffAvgPurity = [];
+                for (var i = 0; i < datalen; i++) {
+                    buffAvgCoverage.push(0);
+                    buffAvgPurity.push(0);
+                }
 
                 var cov1, cov2, covtot, frq;
                 var seqcount = 0;
@@ -258,11 +250,24 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders", "DQX/DataFetcher/D
                         cov2 = this.b64codec.B642IntFixed(dta, 4 * i + 2, 2);
                         buffCov1.push(cov1);
                         buffCov2.push(cov2);
+                        buffAvgCoverage[i] += cov1 + cov2;
+                        if (cov1 + cov2 > 0)
+                            buffAvgPurity[i] += Math.max(cov1, cov2) * 2.0 / (cov1 + cov2) - 1.0;
+                        else
+                            buffAvgPurity[i] += 1.0;
                     }
                     this.mySeqs[smp].buffCov1 = buffCov1;
                     this.mySeqs[smp].buffCov2 = buffCov2;
                     seqcount++;
                 }
+
+                var fieldNr_AvgCoverage = this.mapSnpPositionInfoNr['AvCov'];
+                var fieldNr_AvgPurity = this.mapSnpPositionInfoNr['AvPurity'];
+                for (var i = 0; i < this.buffPosits.length; i++) {
+                    this.buffSnpPosInfo[fieldNr_AvgCoverage].push(buffAvgCoverage[i] / seqcount)
+                    this.buffSnpPosInfo[fieldNr_AvgPurity].push(buffAvgPurity[i] / seqcount)
+                }
+
 
                 //update the currently downloaded range
                 this._currentRangeMin = parseFloat(keylist["start"]);
@@ -311,9 +316,6 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders", "DQX/DataFetcher/D
                         activeFilterMask += (self._activeFilterMap[filterid]) ? '1' : '0';
                     });
 
-                    if (!this._sampleCallRecordLength)
-                        DQX.reportError('No information on sample call data');
-
                     //prepare the url
                     var myurl = DQX.Url(this.serverurl);
                     myurl.addUrlQueryItem("datatype", "snpinfo");
@@ -324,7 +326,6 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders", "DQX/DataFetcher/D
                     myurl.addUrlQueryItem("chromoid", this._myChromoID);
                     myurl.addUrlQueryItem("folder", this.dataid);
                     myurl.addUrlQueryItem("snpinforeclen", this._recordLength);
-                    myurl.addUrlQueryItem("samplecallinforeclen", this._sampleCallRecordLength);
                     myurl.addUrlQueryItem("filters", activeFilterMask);
                     var urlString = myurl.toString();
                     //                    alert(urlString);
@@ -425,6 +426,10 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders", "DQX/DataFetcher/D
                         var cov1 = seq.buffCov1[i];
                         var cov2 = seq.buffCov2[i];
                         var covtot = cov1 + cov2;
+                        if (covtot >= filter.minSnpCoverage) {
+                            if (Math.max(cov1, cov2) * 2.0 / (cov1 + cov2) - 1.0 >= filter.minSnpPurity)
+                                ct++;
+                        }
                         totct++;
                     }
                     buffPresence.push(ct * 1.0 / totct);
@@ -432,11 +437,17 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders", "DQX/DataFetcher/D
 
                 var buffSnpRefBase = this.buffSnpPosInfo[this.mapSnpPositionInfoNr['RefBase']]
                 var buffSnpAltBase = this.buffSnpPosInfo[this.mapSnpPositionInfoNr['AltBase']]
+                var buffAvgCoverage = this.buffSnpPosInfo[this.mapSnpPositionInfoNr['AvCov']]
+                var buffAvgPurity = this.buffSnpPosInfo[this.mapSnpPositionInfoNr['AvPurity']]
                 var buffSnpFilter = this.buffSnpPosInfo[this.mapSnpPositionInfoNr['Filtered']]
                 var idxlist = [];
                 for (var i = idx1; i <= idx2; i++) {
                     var passed = true;
+                    if (buffAvgCoverage[i] < filter.minAvgCoverage)
+                        passed = false;
                     if (buffPresence[i] < filter.minPresence / 100.0)
+                        passed = false;
+                    if (buffAvgPurity[i] < filter.minAvgPurity)
                         passed = false;
                     if ((filter.applyVCFFilter) && (!buffSnpFilter[i]))
                         passed = false;
@@ -480,6 +491,11 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders", "DQX/DataFetcher/D
                         cov2.push(snpcov2);
                         var covtot = snpcov1 + snpcov2;
                         var present = 1;
+                        if (covtot < filter.minSnpCoverage) present = 0;
+                        else {
+                            if (Math.max(snpcov1, snpcov2) * 2.0 / (snpcov1 + snpcov2) - 1.0 < filter.minSnpPurity)
+                                present = 0;
+                        }
                         pres.push(present);
                     }
                     seqdata[seqid] = { cov1: cov1, cov2: cov2, pres: pres };
