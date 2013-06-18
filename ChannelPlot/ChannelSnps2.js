@@ -660,7 +660,7 @@
                         backgrad.addColorStop(0.0, "rgb(220,220,220)"); backgrad.addColorStop(1.0, "rgb(170,170,170)");
                         drawInfo.leftContext.fillStyle = backgrad;
                         drawInfo.leftContext.fillRect(0, posY, drawInfo.sizeLeftX, channelSizeY);
-                        var vals = self.data.getSnpInfo(info.ID); //!!!todo: make this a generic factory based handler that can handle other data types than vaules
+                        var vals = self.data.getSnpInfo(info.ID); //!!!todo: make this a generic factory based handler that can handle other data types than values
                         var minval = info.Min;
                         var maxval = info.Max;
                         drawInfo.centerContext.fillStyle = DQX.Color(0.4, 0.4, 0.4).toString();
@@ -670,7 +670,7 @@
                                 if (vly > 1) vly = 1;
                                 if (vly < 0) vly = 0;
                                 vly *= 0.8 * channelSizeY;
-                                drawInfo.centerContext.fillRect(positXCorrLeft[i] + 0.5, posY + channelSizeY - vly, positXCorrRight[i] - positXCorrLeft[i] - 0.25, vly);
+                                drawInfo.centerContext.fillRect(positXCorrLeft[i]-0.25, posY + channelSizeY - vly, positXCorrRight[i] - positXCorrLeft[i]+0.25, vly);
                             }
                         }
                         drawInfo.centerContext.fillStyle = "rgb(120,120,120)";
