@@ -472,7 +472,7 @@
                                 }
                                 rs_table[tbnr] += "<td style='background-color:" + cell_color + "'>";
                                 var isLink = false;
-                                if ((thecol._hyperlinkCellMessageScope) && (hascontent)) {
+                                if ((thecol._hyperlinkCellMessageScope) && (hascontent) && (cell_content)) {
                                     isLink = true;
                                     var linkID = thecol.myCompID + '~' + rownr + '~link~' + this.myBaseID;
                                     rs_table[tbnr] += '<span class="DQXQueryTableLinkCell" id="{id}">'.DQXformat({ id: linkID });
