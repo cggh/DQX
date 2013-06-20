@@ -551,11 +551,13 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
             }
 
             that.draw = function () {
-                var bb = this.render();
-                this.myDiv.style.left = bb.x0 + 'px';
-                this.myDiv.style.top = bb.y0 + 'px';
-                this.myDiv.style.width = (bb.x1 - bb.x0 + 1) + 'px';
-                this.myDiv.style.height = (bb.y1 - bb.y0) + 'px';
+                if (this.render) {
+                    var bb = this.render();
+                    this.myDiv.style.left = bb.x0 + 'px';
+                    this.myDiv.style.top = bb.y0 + 'px';
+                    this.myDiv.style.width = (bb.x1 - bb.x0 + 1) + 'px';
+                    this.myDiv.style.height = (bb.y1 - bb.y0) + 'px';
+                }
             }
 
             that.onRemove = function () {
@@ -630,6 +632,99 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
 
             return that;
         }
+
+
+        //////////////////////////////////////////////////////////////////////////////////////////
+        // Class for a rectangular SVG Google Maps overlay
+        //////////////////////////////////////////////////////////////////////////////////////////
+        //icentercoord of type GMaps.Coord
+        //isizex in km
+        //isizey in km
+        //ichart of type DQX.SVG.PieChart
+
+        GMaps.Overlay.RectSVG = function (imapobject, iid, icentercoord, isizex, isizey, content) {
+            var that = GMaps.Overlay._Base(imapobject, iid);
+            that._centerCoordSVG = icentercoord;
+            that._centerCoord = icentercoord;
+            that.mySizeX = isizex;
+            that.mySizeY = isizey;
+            DQX.ObjectMapper.Add(that);
+
+            that.setOrigCoord = function (coord) {
+                that._centerCoord = coord;
+            }
+
+            that.render = function () {
+                var ps = this.convCoordToPixels(this._centerCoordSVG, that.mySizeX/2);
+                var distFactor = ps.dist/(that.mySizeX/2);
+                var diskSize = ps.dist;
+                var ps0 = this.convCoordToPixels(this._centerCoord, 0);
+                var bb = {};
+                bb.x0 = Math.min(ps0.x, ps.x - distFactor*that.mySizeX/2);
+                bb.y0 = Math.min(ps0.y, ps.y - distFactor*that.mySizeY/2);
+                bb.x1 = Math.max(ps0.x, ps.x + distFactor*that.mySizeX/2)+3;
+                bb.y1 = Math.max(ps0.y, ps.y + distFactor*that.mySizeY/2)+3;
+                var data = '<svg width={w} height={h} style="overflow:visible">'.DQXformat({ w: (bb.x1 - bb.x0), h: (bb.y1 - bb.y0) });
+
+                //data += '<filter id="dropshadow" height="130%"><feGaussianBlur in="SourceAlpha" stdDeviation="3"/> <!-- stdDeviation is how much to blur --><feOffset dx="2" dy="2" result="offsetblur"/> <!-- how much to offset --><feMerge><feMergeNode/> <!-- this contains the offset blurred image --><feMergeNode in="SourceGraphic"/> <!-- this contains the element that the filter is applied to --></feMerge></filter>';
+                //data += this.myChart.render(ps.x - bb.x0, ps.y - bb.y0, ps.dist);
+                var dfx = ps0.x - ps.x;
+                var dfy = ps0.y - ps.y;
+                var dst = Math.sqrt(dfx * dfx + dfy * dfy);
+                if (dst > 2) {
+                    var drx = dfx / dst;
+                    var dry = dfy / dst;
+                    var ps2x = ps.x + ps.dist * drx;
+                    var ps2y = ps.y + ps.dist * dry;
+                    var wd = diskSize / 10.0;
+                    data += '<polygon points="{x1},{y1},{x2},{y2},{x3},{y3}" style="stroke-width: 2px; stroke: rgb(40,40,40); fill:rgb(40,40,40)"/>'.DQXformat({
+                        x1: ps0.x - bb.x0,
+                        y1: ps0.y - bb.y0,
+                        x2: ps2x + wd * dry - bb.x0,
+                        y2: ps2y - wd * drx - bb.y0,
+                        x3: ps2x - wd * dry - bb.x0,
+                        y3: ps2y + wd * drx - bb.y0
+                    });
+                }
+
+                data += '<rect x="{x}" y="{y}" width="{w}" height="{h}" style="stroke-width: 0px; stroke: none; fill:rgb(190,190,190)"/>'.DQXformat({
+                    x: ps.x - distFactor*that.mySizeX/2 - bb.x0,
+                    y: ps.y - distFactor*that.mySizeY/2 - bb.y0,
+                    w: distFactor*that.mySizeX,
+                    h: distFactor*that.mySizeY
+                });
+
+                var offs=3;
+                data +='<g transform="translate({tx},{ty}) scale({sx},{sy})">'.DQXformat({
+                    tx: ps.x - distFactor*that.mySizeX/2 - bb.x0+offs,
+                    ty: ps.y - distFactor*that.mySizeY/2 - bb.y0+offs,
+                    sx:distFactor*that.mySizeX-2*offs,
+                    sy:distFactor*that.mySizeY-2*offs
+                });
+                data += content;
+                data +='</g>'
+
+                data += '<rect x="{x}" y="{y}" width="{w}" height="{h}" style="stroke-width: 3px; stroke: rgb(40,40,40); fill:none"/>'.DQXformat({
+                    x: ps.x - distFactor*that.mySizeX/2 - bb.x0,
+                    y: ps.y - distFactor*that.mySizeY/2 - bb.y0,
+                    w: distFactor*that.mySizeX,
+                    h: distFactor*that.mySizeY
+                });
+
+                data += "</svg>";
+                this.myDiv.innerHTML = data;
+                return bb;
+            }
+
+            that.pieClick = function (pienr) {
+                //alert('clicked ' + that.myID + ' ' + pienr);
+                if (that.onClick)
+                    that.onClick(this, pienr);
+            }
+
+            return that;
+        }
+
 
 
         //////////////////////////////////////////////////////////////////////////////////////////
@@ -778,7 +873,7 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
         // Class Encapsulating Google Maps view with overlays
         //////////////////////////////////////////////////////////////////////////////////////////
 
-        GMaps.GMap = function (iParentRef, istartcoord, istartzoomlevel) {
+        GMaps.GMap = function (iParentRef, istartcoord, istartzoomlevel, isSimplified) {
             var that = FramePanel(iParentRef);
 
             that.getRootElem().css('background-color', 'rgb(210,230,255)');
@@ -816,6 +911,18 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
             ]
             }
             ];
+
+            if (isSimplified) {
+                styles.push(
+                {
+                    featureType: "All",
+                        elementType: "All",
+                    stylers: [
+                    { lightness: 40 },
+                    { saturation: 0 }
+                ]
+                });
+            }
 
 
             var styledMap = new google.maps.StyledMapType(styles, { name: "Simple" });
