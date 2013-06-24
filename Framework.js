@@ -190,7 +190,8 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/Fram
                 if (!this.isSplitter()) DQX.reportError("Frame is not a splitter");
             }
             that.checkFinalPanel = function () {//This function throws an error of the frame is not of the final type
-                if (!this.isFinalPanel()) DQX.reportError("Frame is not a final frame (i.e. containing a client panel)");
+                if (!this.isFinalPanel())
+                    DQX.reportError("Frame is not a final frame (i.e. containing a client panel). Type: "+this.myType);
             }
             that.splitterDim = function () {//returns the orientation of the splitter
                 if (this.isHorSplitter()) return 0;
