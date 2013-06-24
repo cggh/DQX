@@ -204,8 +204,8 @@
 
                 //Create the color lut
                 var colors = [' rgb(0,0,255)', 'rgb(220,0,0)', 'rgb(0,150,150)'];
-                var absentcolor = 'rgb(180,180,180)';
-                var customfiltercolor = 'rgb(255,255,190)';
+                var absentcolor = 'rgb(220,220,220)';
+                var customfiltercolor = 'rgb(200,200,200)';
                 var conformcolor1 = 'rgb(200,150,0)';
                 var conformcolor2 = 'rgb(0,180,0)';
                 var disconformcolor = 'rgb(0,0,0)';
@@ -268,7 +268,7 @@
                         //var pres = data.seqdata[that.mySeqIDs[seqnr]].pres;
                         for (var i = 0; i < posits.length; i++) {
                             if ((positXCorrCent[i] >= -40) && (positXCorrCent[i] <= sizeX + 40)) {
-                                if (customFilter[i]) {
+                                if ((customFilter[i])&&(GT[i] != null)) {
                                     colornr = -1;
                                     if (colornr != lastcolornr) {
                                         drawInfo.centerContext.fillStyle = customfiltercolor;
@@ -349,7 +349,7 @@
                                             drawInfo.centerContext.fillStyle = absentcolor;
                                             lastcolornr = colornr;
                                         }
-                                        drawInfo.centerContext.fillRect(positXCorrLeft[i] + shl, py + 5, positXCorrLength[i] + shr, ly - 9);
+                                        drawInfo.centerContext.fillRect(positXCorrLeft[i] + shl, py + 7, positXCorrLength[i] + shr, ly - 13);
                                     }
                                 }
                             }

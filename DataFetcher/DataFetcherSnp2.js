@@ -492,7 +492,7 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders", "DQX/DataFetcher/D
                         var call = -99;
                         for (seqid in this.mySeqs) {
                             var seq = this.mySeqs[seqid];
-                            if (seq.sampleCallInfo[this._fieldNrSampleCall_GT][i] != call) {
+                            if ((seq.sampleCallInfo[this._fieldNrSampleCall_GT][i]!=null) && (seq.sampleCallInfo[this._fieldNrSampleCall_GT][i] != call)) {
                                 if (call == -99)
                                     call = seq.sampleCallInfo[this._fieldNrSampleCall_GT][i];
                                 else
