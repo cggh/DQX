@@ -74,7 +74,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/Fram
 
         //Creates an instance of a frame that groups a set of subframes as a set of tabs
         Framework.FrameGroupTab = function (iid, isizeweight) {
-            return Framework.Frame(iid, 'Tab', isizeweight);
+            return Framework.Frame(iid, 'Tab', isizeweight).setFrameClassClient('DQXForm').setMarginsIndividual(0,5,0,0);
         }
 
         //Creates an instance of a frame that groups a set of subframes as a stack without tabs
@@ -1080,6 +1080,16 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/Fram
             }
 
 
+            that.applyOnPanels = function(func) {
+                for (var fnr = 0; fnr < this.memberFrames.length; fnr++)
+                    this.memberFrames[fnr].applyOnPanels(func);
+                if ((this.isFinalPanel()) && (this.myClientObject != null)) {
+                    func(this.myClientObject);
+                }
+
+            }
+
+
             ///////////// MORE RUNTIME CALLS
 
             //Activates another subframe in a tabbed frame, specified by its ID
@@ -1303,6 +1313,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/Fram
             var that = FramePanel(iid, iParentRef);
             that._content = Controls.CompoundHor([]);
             that._padding = 0;
+            that._panelfirstRendered = false;
 
             //Resets the content of the form
             that.clear = function () {
@@ -1331,6 +1342,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/Fram
 
             //renders the form to the DOM
             that.render = function () {
+                that._panelfirstRendered = true;
                 var st = that._content.renderHtml();
                 st = '<div id="' + this._getInnerDivID() + '" style="padding:' + this._padding + 'px">' + st + '</div>';
                 $('#' + this.getDivID()).html(st);

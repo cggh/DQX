@@ -11,6 +11,13 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/His
 
 
         Application._views=[];
+        Application._viewMap={};
+        Application._addView = function(view) {
+            if (view.getStateID() in Application._viewMap)
+                DQX.reportError('Duplicate view id: ' + view.getStateID());
+            Application._views.push(view);
+            Application._viewMap[view.getStateID()]=view;
+        }
 
 
         Application.customInitFunction = function(proceedFunction) {
@@ -20,10 +27,27 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/His
 
         Application.init=function(ititle) {
             Application.title=ititle;
+
+            //Check the the browser supports the features we need
+            if ((!Modernizr.canvas) || (!Modernizr.canvastext) || (!Modernizr.svg)) {
+                var message=$('#OldBrowser').html();
+                if (!message)
+                    message='<b>Fatal error:</b> This browser is outdated and does not support the features necessary to run this application';
+                $('#Div1').html(message);//If not, set an error message
+                return;
+            }
+
             DQX.Init();
             setTimeout(function() {
                 Application._createFrameWork1();
             })
+        }
+
+        Application.activateView = function(viewID) {
+            if (!(viewID in Application._viewMap))
+                DQX.reportError('Invalid view id: ' + viewID);
+            Application._viewMap[viewID].activateState();
+
         }
 
 
@@ -40,13 +64,15 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/His
             Application.frameBody = Application.frameRoot.addMemberFrame(Framework.FrameGroupStack('info', 1)).setAnimateTransition();
 
             $.each(Application._views,function(idx,view){
-                view._myFrame = Application.frameBody.addMemberFrame(Framework.FrameGeneric('intro', 1))
+                view._myFrame = Application.frameBody.addMemberFrame(Framework.FrameGeneric(view.getStateID(), 1))
                     .setFrameClass('DQXClient')
                     .setDisplayTitle(view._myTitle)
                     .setDisplayTitle2(Application.title)
                     .setMargins(0)
                     .setFrameClass('DQXFrame');/*.setAllowScrollBars(false,false)*/;
                 view.createFrames(view._myFrame);
+                view._myFrame.setInitialiseFunction(view._initialisePanels);
+
             })
 
             Application.customInitFunction(Application._createFramework2);
@@ -56,6 +82,8 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/His
         Application._createFramework2 = function() {
 
             Application.frameWindow.render('Div1');
+            DQX.initPostCreate();
+            HistoryManager.init();
 
         }
 
@@ -68,18 +96,50 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/His
             var that = {};
             that._myID=iid;
             that._myTitle=ititle;
-            that._myFrame = null;//Framework.frame instance, provived by application during initialisation
+            that._myFrame = null;//Framework.frame instance, provided by application during initialisation
 
-            Application._views.push(that);
-            //that.registerView();
 
             that.getStateID = function () { return this._myID; }
 
+            that.getFrame = function() { return that._myFrame; }
+
+            that._initialisePanels = function () {
+                that.createPanels();
+                that._myFrame.applyOnPanels(function(panel) {
+                    if (panel._panelfirstRendered==false)
+                        panel.render();
+                })
+            }
+
+
+            that.getStateKeys = function () {//default implementation, can be overwritten
+                var mp = {};
+                mp[this._myID] = null;
+                return mp;
+            }
+
+
+            //Can be overridden
+            that.activateState = function () {
+                that._myFrame.makeVisible();
+                setTimeout(function() {
+                    that._myFrame.applyOnPanels(function(panel) {
+                        if (panel.handleResize)
+                            panel.handleResize();
+                    })
+                },50);
+            };
+
+
+
             /*********** Overridables ***********/
 
-            that.createFrames = function(rootFrame) {} //override to define the frames of this view
+            that.createFrames = function(rootFrame) { DQX.reportError("Please override createFrames"); } //override to define the frames of this view
+
+            that.createPanels = function() { DQX.reportError("Please override createPanels"); } //override to define the panels of this view
 
 
+            Application._addView(that);
             HistoryManager.addView(that);
 
             return that;
