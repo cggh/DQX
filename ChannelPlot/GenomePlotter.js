@@ -72,10 +72,14 @@ define(["jquery", "DQX/Utils", "DQX/Msg", "DQX/ChannelPlot/ChannelPlotter", "DQX
 
             //converts a chromosome id to a chromosome number
             that.getChromoID = function (chromonr) {
+                if (!chromonr)
+                    DQX.reportError("Invalid chromosome nr");
                 return this._chromosomes[chromonr - 1].id;
             }
 
             that.getCurrentChromoID = function () {
+                if (!this.currentChromoNr)
+                    return null;
                 return this.getChromoID(this.currentChromoNr);
             }
 
@@ -326,6 +330,12 @@ define(["jquery", "DQX/Utils", "DQX/Msg", "DQX/ChannelPlot/ChannelPlotter", "DQX
             var reactfunc = $.proxy(that._onChangeFeaturePicker, that);
             elem.change(reactfunc); elem.keyup(reactfunc); elem.keydown(reactfunc);
             elem.bind('paste', function () { setTimeout(reactfunc, 50) });
+
+            //Make sure that something meaningful is selected after creation
+            that.currentChromoNr=0;
+            that.setPostInitialiseHandler(function() {
+                that.showRegion(that._chromosomes[0].id, 0, that._chromosomes[0].size*1E6/6);
+            });
 
             return that;
         }

@@ -293,6 +293,9 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                     var blockStart = Math.max(0, Math.floor(rangemin / blockSize));
                     var blockCount = Math.ceil((rangemax - rangemin) / blockSize);
 
+                    if (!this._myChromoID)
+                        return;
+
                     //prepare the url
                     var myurl = DQX.Url(this.serverurl);
                     myurl.addUrlQueryItem("datatype", 'summinfo');

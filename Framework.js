@@ -1185,12 +1185,14 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/Fram
 
             ////////////// FINAL INITIALISATION CODE
 
-            if (that.isFinalPanel()) {
+/*            if (that.isFinalPanel()) {
                 that.marginLeft = 5;
                 that.marginRight = 5;
                 that.marginTop = 5;
                 that.marginBottom = 5;
-            }
+            }*/
+
+
             return that;
         }
 
