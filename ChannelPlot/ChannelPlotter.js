@@ -124,7 +124,13 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Scroller", "DQX
             ///////////////////////////////////////////////////////////////////////////////////////////////////////
             //Add a DataFetcher object to the plot
             that.addDataFetcher = function (idatafetcher) {
-                this._myDataFetchers.push(idatafetcher);
+                var isPresent=false;
+                $.each(this._myDataFetchers,function(idx,fetcher) {
+                    if (fetcher===idatafetcher)
+                        isPresent=true;
+                })
+                if (!isPresent)
+                    this._myDataFetchers.push(idatafetcher);
                 idatafetcher.myDataConsumer = this;
             }
 

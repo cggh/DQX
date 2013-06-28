@@ -101,6 +101,14 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                 return this.myColumns[cid];
             }
 
+            this.addFetchColumnValue = function (cid) {
+                return this.addFetchColumn(cid,'Float2');
+            }
+
+            this.hasFetchColumn = function(cid) {
+                return (cid in this.myColumns);
+            }
+
             this.getFetchColumn = function (cid) {
                 var rs = this.myColumns[cid];
                 if (rs == null) DQX.reportError("Invalid fetcher column id " + cid);

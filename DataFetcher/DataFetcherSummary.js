@@ -129,6 +129,10 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                 return this.myColumns[cid];
             }
 
+            this.hasFetchColumn = function(cid) {
+                return cid in this.myColumns;
+            }
+
             //removes a column
             this.delFetchColumn = function (cid) {
                 delete this.myColumns[cid];
