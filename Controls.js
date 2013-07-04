@@ -1485,5 +1485,109 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
 
 
 
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // A file upload control
+        //    args.serverUrl : url where DQXServer is running
+        //
+        // Based on http://blog.new-bamboo.co.uk/2010/07/30/html5-powered-ajax-file-uploads and https://github.com/newbamboo/example-ajax-upload
+        // NOTE: perhaps replace by http://blueimp.github.io/jQuery-File-Upload/ , https://github.com/blueimp/jQuery-File-Upload   ?
+        //
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        Controls.FileUpload = function (iid, args) {
+            var that = Controls.Control(iid);
+            DQX.requireMember(args, 'serverUrl');
+            that._serverUrl = args.serverUrl;
+            that._autoUpload=true;
+            that._uploadedFileId=null;
+
+//            that._controlExtensionList.push('Canvas');
+
+            that._execRenderHtml = function () {
+
+                var bt = DocEl.Div({ id: this.getFullID('') });
+                if (this._hint)
+                    bt.addHint(this._hint);
+                bt.addStyle('display', 'inline-block');
+                bt.addStyle('vertical-align', 'top');
+
+                bt.addElem('<input id="{id}" type="file" name="filedata"/>'.DQXformat( { id:this.getFullID('input') } ));
+                bt.addElem('<br>');
+
+                var status = DocEl.Div({ id: this.getFullID('status'), parent: bt });
+                status.addStyle('width','150px')
+                status.addElem('<span style="color:rgb(150,150,150)">Not uploaded</span>')
+
+/*                status.addStyle('border','1 px solid black');
+                status.addStyle('background-color','rgb(20,200,255)');*/
+
+                var st=bt.toString();
+                return st;
+            }
+
+
+            that._execPostCreateHtml = function () {
+                $('#'+this.getFullID('input')).change(function() {
+                    that._uploadedFileId=null;
+                    if (that._autoUpload) that._uploadFile();
+                })
+            };
+
+            that._uploadFile =function() {
+                that._uploadedFileId=null;
+                var fileInput = document.getElementById(this.getFullID('input'));
+                var file = fileInput.files[0];
+
+                var xhr = new XMLHttpRequest();
+
+                var onprogressHandler = function(evt) {
+                    var percent = evt.loaded/evt.total*99.89;
+                    var status = DocEl.Div({ });
+                    status.addStyle('width','100%');
+                    //status.addStyle('height','100%');
+                    //status.addStyle('border','1px solid rgb(160,160,160)');
+                    status.addStyle('background-color','rgb(220,220,220)');
+
+                    var bar = DocEl.Div({ parent: status });
+                    bar.addStyle('width',percent + '%');
+                    //bar.addStyle('border','1px solid black');
+                    bar.addStyle('background-color','rgb(150,150,255)');
+                    bar.addElem(percent.toFixed(1)+'%');
+
+                    $('#'+that.getFullID('status')).html(status.toString());
+                }
+                xhr.upload.addEventListener('progress', onprogressHandler, false);
+
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState == 4) {
+                        that._uploadedFileId = null;
+                        var resp=xhr.responseText;
+                        if (resp)
+                            if (resp.split('=')[0]='filename')
+                                that._uploadedFileId=resp.split('=')[1];
+                        if (that._uploadedFileId)
+                            $('#'+that.getFullID('status')).html('<span style="color:rgb(0,192,0)"><b>Uploaded</b></span>');
+                        else
+                            $('#'+that.getFullID('status')).html('<span style="color:rgb(255,0,0)"><b>Failed</b></span>');
+                        that._notifyChanged();
+                    }
+                }
+                xhr.open('POST', that._serverUrl+'?datatype=uploadfile', true);
+                xhr.send(file);
+            }
+
+
+            //Returns the current value of the slider
+            that.getValue = function () {
+                return that._uploadedFileId;
+            };
+
+
+            return that;
+        }
+
+
+
         return Controls;
     });
