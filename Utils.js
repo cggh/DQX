@@ -172,8 +172,10 @@ DQX.polyStar = function(ctx, x, y, radius, sides, pointSize, angle) {
 
         //reports an error if an object does not have a specific member
         DQX.requireMember = function (tryobj, membername) {
-            if (typeof (tryobj) != 'object') DQX.reportError('variable cannot have a member because it is not an object');
-            if (!(membername in tryobj)) DQX.reportError('Object should have member "{memb}"'.DQXformat({ memb: membername }));
+            if (typeof (tryobj) != 'object')
+                DQX.reportError('variable cannot have a member because it is not an object');
+            if (!(membername in tryobj))
+                DQX.reportError('Object should have member "{memb}"'.DQXformat({ memb: membername }));
         }
 
         //reports an error if an object does not have a specific function

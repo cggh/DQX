@@ -19,7 +19,7 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         ChannelCanvas.Base = function (id) {
-            if (!id) DQX.reportError("No channel ID provided");
+            if (!id) id='Channel_'+DQX.getNextUniqueID();
             var that = {};
             that._myID = id;
             that._height = 120;

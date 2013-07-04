@@ -44,10 +44,19 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/ChannelPlot/ChannelCanvas"],
         ChannelYVals.Comp = function (iID, imyDataFetcher, iValueID) {
             var that = {};
             that.myfetcher = imyDataFetcher; //DataFetcher.Curve used
+            if (!iID) iID=iValueID;
             that.ID = iID; // id of this component
             that.valueID = iValueID; // id of the component in the datafetched
             that.isActive = false;
             that.myPlotHints = ChannelYVals.PlotHints();
+
+            if ('addFetchColumnValue' in that.myfetcher) {//Convenience function: for fetcher that allow this, add column now if necessary
+                if (!that.myfetcher.hasFetchColumn(that.valueID)) //add column to datafetcher now
+                    var colinfo = that.myfetcher.addFetchColumnValue(that.valueID);
+            }
+
+            if (!that.myfetcher.hasFetchColumn(that.valueID))
+                DQX.reportError("Data fetcher does not have column "+that.valueID);
 
             that.getID = function () { return this.ID; }
 
@@ -201,11 +210,21 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/ChannelPlot/ChannelCanvas"],
         ChannelYVals.CompFilled = function (iID, imyDataFetcher, iValueID) {
             var that = {};
             that.myfetcher = imyDataFetcher; //DataFetcher.Curve used
+            if (!iID) iID=iValueID;
             that.ID = iID; // id of this component
             that.valueID = iValueID; // id of the component in the datafetched
             that.isActive = false;
             that.myPlotHints = ChannelYVals.PlotHints();
             that.myPlotHints.opacity = 0.5;
+
+            if ('addFetchColumnValue' in that.myfetcher) {//Convenience function: for fetcher that allow this, add column now if necessary
+                if (!that.myfetcher.hasFetchColumn(that.valueID)) //add column to datafetcher now
+                    var colinfo = that.myfetcher.addFetchColumnValue(that.valueID);
+            }
+
+            if (!that.myfetcher.hasFetchColumn(that.valueID))
+                DQX.reportError("Data fetcher does not have column "+that.valueID);
+
 
             that.getID = function () { return this.ID; }
 
@@ -320,12 +339,27 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/ChannelPlot/ChannelCanvas"],
         ChannelYVals.YRange = function (iID, imyDataFetcher, iYIDMin, iYIDMax, iColor) {
             var that = {};
             that.myfetcher = imyDataFetcher; //DataFetcher.Curve used
+            if (!iID) iID=iYIDMin;
             that.ID = iID; // id of this component
             that.YIDMin = iYIDMin; //id of the minimum value in the datafetcher
             that.YIDMax = iYIDMax; //id of the maximum value in the datafetcher
             that.myColor = iColor;
             that.isActive = false;
             that.myPlotHints = ChannelYVals.PlotHints();
+
+
+            if ('addFetchColumnValue' in that.myfetcher) {//Convenience function: for fetcher that allow this, add column now if necessary
+                if (!that.myfetcher.hasFetchColumn(that.valueID)) {//add column to datafetcher now
+                    var colinfo = that.myfetcher.addFetchColumnValue(that.YIDMin);
+                    var colinfo = that.myfetcher.addFetchColumnValue(that.YIDMax);
+                }
+            }
+
+            if (!that.myfetcher.hasFetchColumn(that.YIDMin))
+                DQX.reportError("Data fetcher does not have column "+that.YIDMin);
+            if (!that.myfetcher.hasFetchColumn(that.YIDMax))
+                DQX.reportError("Data fetcher does not have column "+that.YIDMax);
+
 
             that.getID = function () { return this.ID; }
 
@@ -418,9 +452,9 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/ChannelPlot/ChannelCanvas"],
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        //NOTE: a channel component is identified by a DataFetcher.Curve, and a column id in this fetcher
         ChannelYVals.YColorZone = function (iID, iminval, imaxval, iColor) {
             var that = {};
+            if (!iID) iID='YValComp'+DQX.getNextUniqueID();
             that.ID = iID; // id of this component
             that.minVal = iminval;
             that.maxVal = imaxval;
@@ -493,10 +527,18 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/ChannelPlot/ChannelCanvas"],
             that.minDrawZoomFactX = 0; //if the zoom factor drops below this point, the channel isn't drawn anymore
 
             //add a nw component to the plot
-            that.addComponent = function (icomp) {
+            that.addComponent = function (icomp, isActive) {
+                if (!that._myPlotter)
+                    DQX.reportError('Channel should be attached to a plotter before adding components');
+                if (icomp.myfetcher)
+                    that._myPlotter.addDataFetcher(icomp.myfetcher);
                 icomp.level = 0;
+                if (icomp.getID() in this.myComponents)
+                    DQX.reportError('YValue channel component already present: '+icomp.getID());
                 this.myComponents[icomp.getID()] = icomp;
                 icomp.myChannel = this;
+                if (isActive)
+                    that.modifyComponentActiveStatus(icomp.getID(),true);
                 return icomp;
             }
 

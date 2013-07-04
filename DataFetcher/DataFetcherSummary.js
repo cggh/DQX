@@ -129,6 +129,10 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                 return this.myColumns[cid];
             }
 
+            this.hasFetchColumn = function(cid) {
+                return cid in this.myColumns;
+            }
+
             //removes a column
             this.delFetchColumn = function (cid) {
                 delete this.myColumns[cid];
@@ -292,6 +296,9 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
 
                     var blockStart = Math.max(0, Math.floor(rangemin / blockSize));
                     var blockCount = Math.ceil((rangemax - rangemin) / blockSize);
+
+                    if (!this._myChromoID)
+                        return;
 
                     //prepare the url
                     var myurl = DQX.Url(this.serverurl);
