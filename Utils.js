@@ -1115,6 +1115,13 @@ DQX.polyStar = function(ctx, x, y, radius, sides, pointSize, angle) {
                 return comparator(a[attr], b[attr]);
             }
         };
+        DQX.attrMap = function (array, attribute) {
+            var out = {};
+            array.forEach(function(entry) {
+                out[entry[attribute]] = entry;
+            });
+            return out;
+        }
         DQX.ratelimit = function (fn, delay) {
             var last = (new Date()).getTime();
             var timer = null;
