@@ -582,7 +582,9 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/Chann
 
 
             that.createVisibilityControl = function() {
-                var chk=Controls.Check(null,{ label:'label', value:true }).setOnChanged(function() {
+                var chk=Controls.Check(null,{ label:that.getTitle(), value:true }).setOnChanged(function() {
+                    //check if any component is still visible
+                    var channelActive=false;
                     for (var compid in that.myComponents)
                         that.modifyComponentActiveStatus(compid,chk.getValue(),false);
                     that._myPlotter.channelModifyVisibility(that.getID(),chk.getValue());
@@ -596,6 +598,7 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/Chann
             that.setChangeYScale = function (canChangeMinVal, canChangeMaxVal) {
                 that._canChangeYScaleBottom = canChangeMinVal;
                 that._canChangeYScaleTop = canChangeMaxVal;
+                return that;
             }
 
             //returns a list of all fetchers that are currently active in this plot (i.e. correspond to active components)
@@ -701,7 +704,7 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/Chann
                     if (this.myComponents[compid].isActive)
                         hasdata = true;
 
-                if (drawInfo.zoomFactX < this.minDrawZoomFactX) {
+                if ( (drawInfo.needZoomIn) || (drawInfo.zoomFactX < this.minDrawZoomFactX) ) {
                     if (!hasdata)
                         this.drawMessage(drawInfo, "");
                     else

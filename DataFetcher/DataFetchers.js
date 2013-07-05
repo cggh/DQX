@@ -37,7 +37,7 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
 
         DataFetchers.Curve = function (iserverurl, idatabase, itablename, ipositionfield) {
             if (!(this instanceof arguments.callee)) DQX.reportError("Should be called as constructor!");
-            DQX.checkIsString(iserverurl); DQX.checkIsString(idatabase); DQX.checkIsString(itablename); DQX.checkIsString(ipositionfield);
+            DQX.checkIsString(iserverurl); DQX.checkIsString(idatabase); DQX.checkIsString(itablename);
 
 
             this.serverurl = iserverurl; //The server url to contact for this
@@ -48,6 +48,7 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
             if (!itablename)
                 DQX.reportError('Invalid table name');
 
+            if (!ipositionfield) ipositionfield='pos;'
             this.positionField = ipositionfield; //The field that contains the position information (use 'LIMIT' for data fetchers that are based on record numbers)
             this.sortReverse = false;
             this.useLimit = (ipositionfield == 'LIMIT'); //if true, position information are record numbers rather than positions in a columnn (used for paged table fetching)

@@ -30,6 +30,7 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
 
             that._isVisible = true;
             that.canHide = true;
+            that._maxViewportSizeX=1.0e9;//info will be hidden if the viewport gets larger than this
 
             that.getID = function () { return that._myID; }
 
@@ -66,15 +67,22 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
             }
 
             that.getHeight = function () { return this._height; }
-            that.setHeight = function (vl, isVariable) { this._height = vl; this._variableHeight = (isVariable == true) }
+            that.setHeight = function (vl, isVariable) { this._height = vl; this._variableHeight = (isVariable == true); return this; }
             that.setAutoFillHeight = function () { this._autoFillHeight = true; }
             that.getAutoFillHeight = function () { return this._autoFillHeight; }
 
+            that.setMaxViewportSizeX = function(maxval) {//defines the maximum viewport X size that can be shown. If the viewport gets larger, the content is replaced by a message
+                this._maxViewportSizeX= maxval;
+                return this;
+            }
+
             that.setTitle = function (ititle) {
                 this._title = DQX.interpolate(ititle);
+                return this;
             }
             that.setSubTitle = function (isubtitle) {
                 this._subTitle = DQX.interpolate(isubtitle);
+                return this;
             }
 
             that.getTitle = function () {
@@ -583,8 +591,14 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
                     sizeCenterX: drawInfo.sizeCenterX,
                     sizeRightX: drawInfo.sizeRightX,
                     mark: drawInfo.mark,
-                    sizeY: this._height
+                    sizeY: this._height,
+                    needZoomIn: false
                 };
+
+                if ( drawInfo.sizeCenterX/drawInfo.zoomFactX > that._maxViewportSizeX ) {
+                    locDrawInfo.needZoomIn= true;
+                }
+
                 this.draw(locDrawInfo);
                 if ('postDraw' in this)
                     this.postDraw(locDrawInfo);

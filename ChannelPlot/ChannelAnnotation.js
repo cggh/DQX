@@ -26,7 +26,7 @@
                 this.drawStandardGradientRight(drawInfo, this.darkenFactor);
                 this._clickInfo = [];
 
-                if (drawInfo.zoomFactX < this._minDrawZoomFactX) {
+                if ((drawInfo.needZoomIn) || (drawInfo.zoomFactX < this._minDrawZoomFactX)) {
                     this.drawMessage(drawInfo, "Zoom in to see " + this._title);
                     return;
                 }
