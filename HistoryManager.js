@@ -83,7 +83,8 @@ define(["jquery", "DQX/Msg"],
                 }
                 this.updateState();
                 window.location.hash = str;
-                _gaq.push(['_trackEvent', 'State', 'set', str]);
+                if (typeof _gaq !== 'undefined')
+                    _gaq.push(['_trackEvent', 'State', 'set', str]);
             },
 
             //Reacts to a change in url hash tag

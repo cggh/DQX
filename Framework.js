@@ -185,6 +185,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/Fram
             that.isVertSplitter = function () { return (this.myType == 'GroupVert'); }
             //Determine if this is a horizontal or a vertical grouper
             that.isSplitter = function () { return (this.isHorSplitter()) || (this.isVertSplitter()); }
+            that.isContainerPanel = function () { return ( this.isSplitter() || this.isStacker() ) ; }
 
             that.checkSplitter = function () {//This function throws an error of the frame is not of the splitter type
                 if (!this.isSplitter()) DQX.reportError("Frame is not a splitter");
@@ -256,6 +257,13 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/Fram
             that.makeGroupHor = function () {
                 if (this.myType != '-') DQX.reportError('Frame is not generic');
                 this.myType = 'GroupHor';
+                return this;
+            }
+
+            //Converts a generic frame into a horizontal splitter
+            that.makeFinal = function () {
+                if (this.myType != '-') DQX.reportError('Frame is not generic');
+                this.myType = 'Final';
                 return this;
             }
 
@@ -363,7 +371,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/Fram
             //Adds a new subframe to an existing container-style frame (= splitter or stacker)
             that.addMemberFrame = function (iframe) {
                 DQX.requireMemberFunction(iframe, 'setInitialiseFunction');
-                if (this.isFinalPanel()) DQX.reportError("Can't add frames to a final panel");
+                if (!this.isContainerPanel()) DQX.reportError("Can't add member frames to a frame that is not a container");
                 if (!this._frameContainer)
                     DQX.reportError("Can't add frames to an unitialised panel");
                 iframe._frameContainer = this._frameContainer;

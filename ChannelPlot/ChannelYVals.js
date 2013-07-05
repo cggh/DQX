@@ -7,8 +7,8 @@
 *************************************************************************************************************************************/
 
 
-define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/ChannelPlot/ChannelCanvas"],
-    function ($, DocEl, Msg, ChannelCanvas) {
+define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/ChannelCanvas"],
+    function ($, DocEl, Msg, Controls, ChannelCanvas) {
         var ChannelYVals = {};
 
 
@@ -68,6 +68,8 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/ChannelPlot/ChannelCanvas"],
             that.setColor = function (icolor) {
                 this.myPlotHints.color = icolor
             }
+
+            that.getActive = function() { return that.isActive; }
 
             //modifies the activity status of this component
             that.modifyComponentActiveStatus = function (newstatus) {
@@ -193,6 +195,7 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/ChannelPlot/ChannelCanvas"],
                 }
                 return { minDistance: mindst, closestPointIndex: closestPointIndex, px: mpx, py: mpy, highlightPoint: true };
             }
+
 
 
             return that;
@@ -556,8 +559,39 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/ChannelPlot/ChannelCanvas"],
             that.modifyComponentActiveStatus = function (cmpid, newstatus, redraw) {
                 this.myComponents[cmpid].modifyComponentActiveStatus(newstatus);
                 if (redraw)
-                    this.myPlot.render();
+                    this._myPlotter.render();
             }
+
+
+            that.createComponentVisibilityControl = function(cmpid, label, showColor) {
+                var theLabel=label;
+                if (showColor)
+                    theLabel='<span style="background-color:{cl}">&nbsp&nbsp&nbsp</span>&nbsp'.DQXformat({cl:that.myComponents[cmpid].myPlotHints.color})+theLabel;
+                var chk=Controls.Check(null,{ label:theLabel, value:true }).setOnChanged(function() {
+                    that.modifyComponentActiveStatus(cmpid,chk.getValue(),false);
+                    //check if any component is still visible
+                    var channelActive=false;
+                    for (var othercompid in that.myComponents)
+                        if (that.myComponents[othercompid].getActive()) channelActive=true;
+                    that._myPlotter.channelModifyVisibility(that.getID(),channelActive);
+
+                    that._myPlotter.render();
+                });
+                return chk;
+            }
+
+
+            that.createVisibilityControl = function() {
+                var chk=Controls.Check(null,{ label:'label', value:true }).setOnChanged(function() {
+                    for (var compid in that.myComponents)
+                        that.modifyComponentActiveStatus(compid,chk.getValue(),false);
+                    that._myPlotter.channelModifyVisibility(that.getID(),chk.getValue());
+                    that._myPlotter.render();
+                });
+                return chk;
+            }
+
+
 
             that.setChangeYScale = function (canChangeMinVal, canChangeMaxVal) {
                 that._canChangeYScaleBottom = canChangeMinVal;
