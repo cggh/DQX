@@ -15,7 +15,7 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/base64"],
             //prepare the url
             var myurl = DQX.Url(serverUrl);
             //filename=filename.replace(/\./g, "_dot_");
-            myurl.("datatype", "getfile");
+            myurl.addUrlQueryItem("datatype", "getfile");
             myurl.addUrlQueryItem("name", filename);
             var urlstring = myurl.toString();
             $.ajax({
