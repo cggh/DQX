@@ -120,6 +120,46 @@ DQX.polyStar = function(ctx, x, y, radius, sides, pointSize, angle) {
             return false;
         }
 
+
+        DQX.serverDataStore = function(serverUrl, content, callback) {
+            $.ajax({
+                url: serverUrl+'?datatype=storedata',
+                type: "post",
+                data: content,
+                success: function (resp) {
+                    var keylist = DQX.parseResponse(resp);
+                    if ("Error" in keylist) {
+                        DQX.reportError('Failed to store server data: '+keylist.Error);
+                        return;
+                    }
+                    var id=keylist.id;
+                    if (callback) callback(id);
+                },
+                error: function (resp) {
+                    DQX.reportError('Failed to store server data');
+                }
+            });
+        }
+
+        DQX.serverDataFetch = function(serverUrl, id, callback) {
+            $.ajax({
+                url: serverUrl+'?datatype=fetchstoredata&id='+id,
+                success: function (resp) {
+                    var keylist = DQX.parseResponse(resp);
+                    if ("Error" in keylist) {
+                        DQX.reportError('Failed to fetch server data: '+keylist.Error);
+                        return;
+                    }
+                    var content=keylist.content;
+                    if (callback) callback(content);
+                },
+                error: function (resp) {
+                    DQX.reportError('Failed to fetch server data');
+                }
+            });
+        }
+
+
         DQX.timeoutRetry = 30000;
         DQX.timeoutAjax = 25000;
 
