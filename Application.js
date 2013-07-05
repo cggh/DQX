@@ -19,6 +19,10 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/His
             Application._viewMap[view.getStateID()]=view;
         }
 
+        //Define the html that will go into the header of the application
+        Application.setHeader = function(html) {
+            Application._headerHtml=html;
+        }
 
         Application.customInitFunction = function(proceedFunction) {
 
@@ -82,6 +86,9 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/His
         Application._createFramework2 = function() {
 
             Application.frameWindow.render('Div1');
+
+            Application.frameHeaderIntro.setContentHtml(Application._headerHtml);
+
             DQX.initPostCreate();
             HistoryManager.init();
 
