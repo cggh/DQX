@@ -1562,10 +1562,8 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 xhr.onreadystatechange = function() {
                     if (xhr.readyState == 4) {
                         that._uploadedFileId = null;
-                        var resp=xhr.responseText;
-                        if (resp)
-                            if (resp.split('=')[0]='filename')
-                                that._uploadedFileId=resp.split('=')[1];
+                        var keylist = JSON.parse(xhr.responseText);
+                        that._uploadedFileId=keylist.filename;
                         if (that._uploadedFileId)
                             $('#'+that.getFullID('status')).html('<span style="color:rgb(0,192,0)"><b>Uploaded</b></span>');
                         else
