@@ -95,11 +95,18 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
 
 
 
-            //adds a column to be fetched, providing a column id and a color
+            //adds a column to be fetched, providing a column id and an encoding identifier
             this.addFetchColumn = function (cid, encoding) {
                 this.myColumns[cid] = DataFetchers.CurveColumn(encoding);
                 this.clearData();
                 return this.myColumns[cid];
+            }
+
+            //same as addFetchColumn, but automatically activates the column
+            this.addFetchColumnActive = function (cid, encoding) {
+                var col = this.addFetchColumn(cid,encoding);
+                this.activateFetchColumn(cid);
+                return col;
             }
 
             this.addFetchColumnValue = function (cid) {
