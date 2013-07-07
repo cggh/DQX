@@ -16,7 +16,12 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/ChannelPlot/ChannelCanvas", "DQX/
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        ChannelSequence.Channel = function (serverurl, iFolder, iConfig, useLowerCase) {
+        ChannelSequence.Channel = function (
+                serverurl,             //location of the DQXServer
+                iFolder,               //Folder containing the summarised sequence data, relative to toe DQXServer base path
+                iConfig,               //Summary configuration name
+                useLowerCase           //True if bases are defined as lower case
+            ) {
             var that = ChannelCanvas.Base("Sequence");
             that._height = 17;
             that.myFolder = iFolder;

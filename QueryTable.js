@@ -1,5 +1,5 @@
-﻿define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Controls"],
-    function ($, DQX, DocEl, Msg, FramePanel, Controls) {
+﻿define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Controls", "DQX/SQL"],
+    function ($, DQX, DocEl, Msg, FramePanel, Controls, SQL) {
 
         var QueryTable = {}
 
@@ -10,7 +10,7 @@
         // argument idatafetcher: of type DataFetchers.Table
         //
         // *** Optional settings **********
-        // args.leftfraction: relative size of the left, nonscrolling component of the table
+        // args.leftfraction: relative size of the left, nonscrolling component of the table (if not specified, this part is not present)
         //
         // NOTE: most of the functionality for managing the querytable should be accessed via
         // the member object returned by getTable, which is of type QueryTable.Table
@@ -110,14 +110,14 @@
             var that = {};
             that.myName = DQX.interpolate(iName);
             that.myCompID = iCompID;
-            that.myComment = '';
             that.minWidth = 10;
             that.TablePart = iTablePart;
             that._visible = true;
             that._hyperlinkCellMessageScope = null;
             that._hyperlinkCellHint = '';
             that._hyperlinkHeaderMessageScope = null;
-            that._hyperlinkHeaderHint = '';
+            that._headerClickHandler = null;
+            that._toolTip = '';
 
             //Overridable. Returns the displayed cell text, given its original content
             that.CellToText = function (content) { return content; }
@@ -142,7 +142,15 @@
             that.makeHyperlinkHeader = function (messageScope, hint) {
                 this._hyperlinkHeaderMessageScope = messageScope;
                 if (hint)
-                    this._hyperlinkHeaderHint = hint;
+                    this.setToolTip(hint);
+            }
+
+            that.setToolTip = function(text) {
+                this._toolTip=text;
+            }
+
+            that.setHeaderClickHandler = function(handler) {
+                this._headerClickHandler=handler;
             }
 
             //Returns the visibility status of a column
@@ -204,6 +212,19 @@
                 this.myDataFetcher.activateFetchColumn(iCol.myCompID);
                 this.myColumns.push(iCol);
                 return iCol;
+            }
+
+            //Adds a new column to the table and automatically adds it to the data fetcher, providing a QueryTable.Column
+            that.createTableColumn = function(
+                iCol,            //A a QueryTable.Column object
+                encodingType,     // Identifier for the encoding type for transfer (see DataFetchers.CurveColumn for list of possibilities)
+                sortable        // If true, this column will be sortable
+            ) {
+                this.myDataFetcher.addFetchColumn(iCol.myCompID, encodingType);
+                var col = this.addTableColumn(iCol);
+                if (sortable)
+                    this.addSortOption(iCol.myName, SQL.TableSort([iCol.myCompID]));
+                return col;
             }
 
             //Removes all the columns in the table (note: they will still be present in the datafetcher!)
@@ -309,6 +330,11 @@
             }
 
 
+            that.queryAll = function() {
+                this.setQuery(SQL.WhereClause.Trivial());
+                this.reLoadTable();
+            }
+
             //Forces a reload of the table information
             that.reLoadTable = function () {
                 this.totalRecordCount = -1; //means not yet determined
@@ -409,12 +435,14 @@
                         rs_table[tbnr] = '<table class="DQXQueryTable DQXQueryTableInvalid">';
 
                 //write headers
+                var rightPartCount = 0;
                 for (var colnr in this.myColumns) {
                     var thecol = this.myColumns[colnr];
                     if (thecol.isVisible()) {
                         var tbnr = thecol.TablePart;
+                        if (tbnr==1) rightPartCount++;
                         rs_table[tbnr] += '<th TITLE="{comment}"><div id="{theid}" class="DQXQueryTableHeaderText" style="position:relative;padding-right:15px;height:100%;min-width:{minw}px">'
-                            .DQXformat({ comment: thecol.myComment, theid: (thecol.myCompID + '~headertext~' + this.myBaseID), minw: thecol.minWidth });
+                            .DQXformat({ comment: thecol._toolTip, theid: (thecol.myCompID + '~headertext~' + this.myBaseID), minw: thecol.minWidth });
                         rs_table[tbnr] += thecol.myName;
                         if (thecol.myName.indexOf('<br>') < 0)
                             rs_table[tbnr] += '<br>&nbsp;';
@@ -430,15 +458,18 @@
                                 DQXformat({ id: thecol.myCompID + '~sort~' + this.myBaseID, bmp: bitmapname });
                             rs_table[tbnr] += ' ' + st;
                         }
-                        if (thecol._hyperlinkHeaderMessageScope) {
+                        if (thecol._hyperlinkHeaderMessageScope || thecol._headerClickHandler ) {
                             var st = '<IMG class="DQXQueryTableLinkHeader" id="{theid}" SRC=' + DQX.BMP('link2.png') + ' border=0 class="DQXBitmapLink" ALT="Link" title="{hint}" style="position:absolute;right:-5px;top:-5px">'
-                            st = st.DQXformat({ theid: (thecol.myCompID + '~headerlink~' + this.myBaseID), hint: thecol._hyperlinkHeaderHint });
+                            st = st.DQXformat({ theid: (thecol.myCompID + '~headerlink~' + this.myBaseID), hint: thecol._toolTip });
                             rs_table[tbnr] += ' ' + st;
                         }
                         rs_table[tbnr] += "</div>";
                         rs_table[tbnr] += "</th>";
                     }
                 }
+
+                if (rightPartCount==0)
+                    DQX.reportError('Right part of the table should contain at least one column');
 
 
 
@@ -505,7 +536,7 @@
                 $('#' + this.myBaseID).find('.DQXQueryTableLinkCell').click($.proxy(that._onClickLinkCell, that));
                 $('#' + this.myBaseID).find('.DQXQueryTableHeaderText').click($.proxy(that._onClickLinkHeader, that));
                 //$('#' + this.myBaseID).find('.DQXQueryTableLinkHeader').click($.proxy(that._onClickLinkHeader, that));
-                //$('#' + this.myBaseID).find('.DQXQueryTableSortHeader').click($.proxy(that._onClickSortHeader, that));
+                $('#' + this.myBaseID).find('.DQXQueryTableSortHeader').click($.proxy(that._onClickSortHeader, that));
                 $('#' + this.myBaseID).find('.DQXTableRow').mouseenter(that._onRowMouseEnter);
                 $('#' + this.myBaseID).find('.DQXTableRow').mouseleave(that._onRowMouseLeave);
                 $('#' + this.myBaseID).find('.DQXTableRow').mousedown(that._onRowMouseDown);
@@ -589,6 +620,8 @@
             that._onClickLinkHeader = function (ev) {
                 var tokens = ev.target.id.split('~');
                 var column = this.findColumn(tokens[0]);
+                if (column._headerClickHandler)
+                    column._headerClickHandler(tokens[0]);
                 if (column._hyperlinkHeaderMessageScope)
                     Msg.broadcast(column._hyperlinkHeaderMessageScope, tokens[0]);
                 return false;

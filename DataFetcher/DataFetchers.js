@@ -440,8 +440,11 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                 "IntDiff": "ID"     //returns exact integers as differences with previous values
             }
 
-            if (!(iEncoding in that.myEncodingList))
-                DQX.reportError("Invalid column encoding " + iEncoding);
+            if (!(iEncoding in that.myEncodingList)) {
+                var myEncodingList2=[];
+                $.each(that.myEncodingList, function(idx,vl) { myEncodingList2.push(idx) })
+                DQX.reportError("Invalid column encoding " + iEncoding + ". Should be one of: "+myEncodingList2.join(', '));
+            }
             that.myEncodingID = that.myEncodingList[iEncoding];
 
             that.myActiveCount = 0; //reference counting to determine if this column data is used
