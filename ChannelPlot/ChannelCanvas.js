@@ -599,9 +599,18 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
                     locDrawInfo.needZoomIn= true;
                 }
 
-                this.draw(locDrawInfo);
+                if (locDrawInfo.needZoomIn) {
+                    var darkenFactor = 0.85;
+                    this.drawStandardGradientCenter(locDrawInfo, darkenFactor);
+                    this.drawStandardGradientLeft(locDrawInfo, darkenFactor);
+                    this.drawStandardGradientRight(locDrawInfo, darkenFactor);
+                    this.drawMessage(locDrawInfo, "Zoom in to see " + this._title);
+                }
+                else
+                    this.draw(locDrawInfo);
                 if ('postDraw' in this)
                     this.postDraw(locDrawInfo);
+
                 //Fade-style visual feedback for scroll availability
                 var scrollFadeSize = 18;
                 if (drawInfo.offsetX > 0) {

@@ -48,7 +48,7 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
             if (!itablename)
                 DQX.reportError('Invalid table name');
 
-            if (!ipositionfield) ipositionfield='pos;'
+            if (!ipositionfield) ipositionfield='pos';
             this.positionField = ipositionfield; //The field that contains the position information (use 'LIMIT' for data fetchers that are based on record numbers)
             this.sortReverse = false;
             this.useLimit = (ipositionfield == 'LIMIT'); //if true, position information are record numbers rather than positions in a columnn (used for paged table fetching)
@@ -97,7 +97,8 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
 
             //adds a column to be fetched, providing a column id and an encoding identifier
             this.addFetchColumn = function (cid, encoding) {
-                this.myColumns[cid] = DataFetchers.CurveColumn(encoding);
+                if (!this.myColumns[cid])
+                    this.myColumns[cid] = DataFetchers.CurveColumn(encoding);
                 this.clearData();
                 return this.myColumns[cid];
             }
