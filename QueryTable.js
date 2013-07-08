@@ -251,12 +251,17 @@
                 return rs;
             }
 
-            //Adds a new sort option to the table
-            //iOption: of type SQL.TableSort
+            // Adds a new sort option to the table
+            // iOption: of type SQL.TableSort
+            // Note: the first sort option added will be activated by default
             that.addSortOption = function (iName, iOption) {
                 DQX.requireMemberFunction(iOption, 'getPrimaryColumnID');
                 this.mySortOptions.push({ name: iName, Option: iOption });
                 this.findColumnRequired(iOption.getPrimaryColumnID()).sortOption = iOption;
+                if (!this.startSortOptionSet) {
+                    this.startSortOptionSet=true;
+                    this.myDataFetcher.setSortOption(iOption,false);
+                }
             }
 
             //This function is called by the datafetcher to inform the table that new data is ready. In reaction, we render the table

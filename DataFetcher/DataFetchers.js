@@ -20,6 +20,7 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
         DataFetchers.Table = function (iserverurl, idatabase, itablename) {
             DQX.checkIsString(iserverurl); DQX.checkIsString(idatabase); DQX.checkIsString(itablename);
             var that = new DataFetchers.Curve(iserverurl, idatabase, itablename, 'LIMIT');
+            that.positionField='';
 
             //Sets the sort column(s), provided as a SQL.TableSort object, and the sort order
             that.setSortOption = function (sortInfo, sortReverse) {
@@ -110,6 +111,12 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                 return col;
             }
 
+            //Creates a int-type fetch column
+            this.addFetchColumnInt = function (cid) {
+                return this.addFetchColumn(cid,'IntB64');
+            }
+
+            //Creates a float-type fetch column
             this.addFetchColumnValue = function (cid) {
                 return this.addFetchColumn(cid,'Float2');
             }
@@ -273,8 +280,12 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                     var qrytype = "qry";
                     if (this.useLimit) qrytype = "pageqry"
 
-                    if (!this.positionField)
-                        DQX.reportError("positionField is missing in DataFetcher");
+                    if (!this.positionField) {
+                        if (!this.useLimit)
+                            DQX.reportError("positionField is missing in DataFetcher");
+                        else
+                        DQX.reportError("No sorting specified for table data fetcher");
+                    }
 
                     //prepare the url
                     var myurl = DQX.Url(this.serverurl);
