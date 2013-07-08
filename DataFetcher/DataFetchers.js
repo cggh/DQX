@@ -112,13 +112,19 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
             }
 
             //Creates a int-type fetch column
-            this.addFetchColumnInt = function (cid) {
-                return this.addFetchColumn(cid,'IntB64');
+            this.addFetchColumnInt = function (cid, activate) {
+                var col = this.addFetchColumn(cid,'IntB64');
+                if (activate)
+                    this.activateFetchColumn(cid);
+                return col;
             }
 
             //Creates a float-type fetch column
-            this.addFetchColumnValue = function (cid) {
-                return this.addFetchColumn(cid,'Float2');
+            this.addFetchColumnValue = function (cid, activate) {
+                var col = this.addFetchColumn(cid,'Float2');
+                if (activate)
+                    this.activateFetchColumn(cid);
+                return col;
             }
 
             this.hasFetchColumn = function(cid) {
@@ -443,6 +449,7 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
         DataFetchers.CurveColumn = function (iEncoding) {
             var that = {};
             that.myEncodingList = {
+                "Generic": "GN",    //returns string data, also works for other data
                 "String": "ST",    //returns string data
                 "Float2": "F2",    //returns floats in 2 base64 bytes
                 "Float3": "F3",     //returns floats in 3 base64 bytes

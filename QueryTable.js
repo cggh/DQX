@@ -117,6 +117,7 @@
             that._hyperlinkCellHint = '';
             that._hyperlinkHeaderMessageScope = null;
             that._headerClickHandler = null;
+            that._cellClickHandler = null;
             that._toolTip = '';
 
             //Overridable. Returns the displayed cell text, given its original content
@@ -151,6 +152,10 @@
 
             that.setHeaderClickHandler = function(handler) {
                 this._headerClickHandler=handler;
+            }
+
+            that.setCellClickHandler = function(handler) {
+                this._cellClickHandler=handler;
             }
 
             //Returns the visibility status of a column
@@ -508,7 +513,7 @@
                                 }
                                 rs_table[tbnr] += "<td style='background-color:" + cell_color + "'>";
                                 var isLink = false;
-                                if ((thecol._hyperlinkCellMessageScope) && (hascontent) && (cell_content)) {
+                                if ((thecol._hyperlinkCellMessageScope || (thecol._cellClickHandler)) && (hascontent) && (cell_content)) {
                                     isLink = true;
                                     var linkID = thecol.myCompID + '~' + rownr + '~link~' + this.myBaseID;
                                     rs_table[tbnr] += '<span class="DQXQueryTableLinkCell" id="{id}">'.DQXformat({ id: linkID });
@@ -619,7 +624,10 @@
             that._onClickLinkCell = function (ev) {
                 var tokens = ev.target.id.split('~');
                 var column = this.findColumn(tokens[0]);
-                Msg.broadcast(column._hyperlinkCellMessageScope, parseInt(tokens[1]));
+                if (column._cellClickHandler)
+                    column._cellClickHandler(that.myDataFetcher,tokens[1]);
+                if (column._hyperlinkCellMessageScope)
+                    Msg.broadcast(column._hyperlinkCellMessageScope, parseInt(tokens[1]));
             }
 
             that._onClickLinkHeader = function (ev) {
