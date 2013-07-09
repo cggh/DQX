@@ -482,6 +482,27 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
             return that;
         }
 
+
+        //Fetches all columns for a single record
+        DataFetchers.fetchSingleRecord = function (iserverUrl, idatabase, itableName, ifieldName, ifieldContent, respHandler, failHandler) {
+            var dataFetcher = new DataFetchers.Curve(iserverUrl,idatabase,itableName);
+            dataFetcher.fetchFullRecordInfo(
+                SQL.WhereClause.CompareFixed(ifieldName, '=', ifieldContent),
+                function (data) {
+                    DQX.stopProcessing();
+                    respHandler(data);
+                },
+                function (msg) {
+                    DQX.stopProcessing();
+                    if (failHandler)
+                        failHandler();
+                }
+            );
+            DQX.setProcessing("Downloading...");
+        }
+
+
+
         //////////////////////////////////////////////////////////////////////////////////////
         //  RecordsetFetcher: fetches a set of records from the server
         /// !!!NOTE: in the server code, a kind of authorisation check will have to be built, validating that the client can have read access to this table
