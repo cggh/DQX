@@ -449,13 +449,13 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
         DataFetchers.CurveColumn = function (iEncoding) {
             var that = {};
             that.myEncodingList = {
-                "Generic": "GN",    //returns string data, also works for other data
-                "String": "ST",    //returns string data
-                "Float2": "F2",    //returns floats in 2 base64 bytes
-                "Float3": "F3",     //returns floats in 3 base64 bytes
-                "Int": "IN",        //returns exact integers
-                "IntB64": "IB",     //returns exact integers, bqse64 encoded
-                "IntDiff": "ID"     //returns exact integers as differences with previous values
+                "Generic": { id:"GN", type:"String" },    //returns string data, also works for other data
+                "String": { id:"ST", type:"String" },    //returns string data
+                "Float2": { id:"F2", type:"Float" },    //returns floats in 2 base64 bytes
+                "Float3": { id:"F3", type:"Float" },     //returns floats in 3 base64 bytes
+                "Int": { id:"IN", type:"Integer" },        //returns exact integers
+                "IntB64": { id:"IB", type:"Integer" },     //returns exact integers, base64 encoded
+                "IntDiff": { id:"ID", type:"Integer" }     //returns exact integers as differences with previous values
             }
 
             if (!(iEncoding in that.myEncodingList)) {
@@ -463,7 +463,8 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                 $.each(that.myEncodingList, function(idx,vl) { myEncodingList2.push(idx) })
                 DQX.reportError("Invalid column encoding " + iEncoding + ". Should be one of: "+myEncodingList2.join(', '));
             }
-            that.myEncodingID = that.myEncodingList[iEncoding];
+            that.myEncodingID = that.myEncodingList[iEncoding].id;
+            that.myEncodingType = that.myEncodingList[iEncoding].type;
 
             that.myActiveCount = 0; //reference counting to determine if this column data is used
             that.myDownloadValues = []; //holds the currently downloaded values of this column

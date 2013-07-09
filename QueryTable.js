@@ -1,5 +1,5 @@
-﻿define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Controls", "DQX/SQL"],
-    function ($, DQX, DocEl, Msg, FramePanel, Controls, SQL) {
+﻿define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Controls", "DQX/SQL", "DQX/QueryBuilder"],
+    function ($, DQX, DocEl, Msg, FramePanel, Controls, SQL, QueryBuilder) {
 
         var QueryTable = {}
 
@@ -98,6 +98,49 @@
                 this.lastAvailabeH = availabeH;
             }
 
+
+            that.invalidateQuery = function() {
+                that.myTable.invalidate();
+            };
+
+
+
+            //Creates an advanced query tool panel for this table, in the frame provided
+            that.createPanelAdvancedQuery = function(iFrame) {
+                this.panelAdvancedQueryBuilder = QueryBuilder.Panel(iFrame);
+                var builder = this.panelAdvancedQueryBuilder;
+                var dataFetcher = this.myTable.myDataFetcher;
+
+                var updateAdvancedQuery = function () {
+                    var thequery = that.panelAdvancedQueryBuilder.getQuery();
+                    that.myTable.setQuery(thequery);
+                    that.myTable.reLoadTable();
+                };
+
+                //Attach message handler that update the query results when requested
+                Msg.listen("",{type:"RequestUpdateQuery",id:builder.myDivID},updateAdvancedQuery);
+                //Attach message handler that invalidates the query results when requested
+                Msg.listen("",{type:"QueryModified",id:builder.myDivID},that.invalidateQuery);
+
+                $.each(that.myTable.myColumns, function(idx,colinfo) {
+                    //var dataType="String";//Float,Integer,MultiChoiceInt
+                    var fetchInfo = dataFetcher.getFetchColumn(colinfo.myCompID);
+                    var dataType = fetchInfo.myEncodingType;
+                    var choiceList = null;
+                    if (colinfo._datatype_MultipleChoiceInt) {
+                        dataType = "MultiChoiceInt";
+                        choiceList = colinfo._datatype_MultipleChoiceInt;
+                    }
+
+                    builder.addTableColumn(SQL.TableColInfo(colinfo.myCompID, colinfo.myName, dataType, choiceList));
+
+                });
+
+                //Initialise the query builder
+                builder._createNewStatement(builder.root);
+                builder.render();
+            }
+
             return that;
         }
 
@@ -170,6 +213,11 @@
 
             that.setMinWidth = function (val) {
                 this.minWidth = val;
+            }
+
+            //Defines the datatype as a multiple choice list with integer id's (useful for automatic creation of query tools)
+            that.setDataType_MultipleChoiceInt = function(choiceList) {
+                this._datatype_MultipleChoiceInt=choiceList;
             }
 
             return that;

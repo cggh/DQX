@@ -166,6 +166,8 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/Fram
 
             ////////////////// GENERAL GETTERS
 
+            that.getFrameID =function () { return that.myFrameID; }
+
             that.getFrameContainer = function () { return this._frameContainer; }
 
             //Internal: get some div identifiers
