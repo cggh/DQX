@@ -5,8 +5,8 @@
  *************************************************************************************************************************************
  *************************************************************************************************************************************/
 
-define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/HistoryManager"],
-    function ($, DQX, DocEl, Msg, Framework, HistoryManager) {
+define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/HistoryManager", "DQX/Controls"],
+    function ($, DQX, DocEl, Msg, Framework, HistoryManager, Controls) {
         var Application = {};
 
 
@@ -17,17 +17,17 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/His
                 DQX.reportError('Duplicate view id: ' + view.getStateID());
             Application._views.push(view);
             Application._viewMap[view.getStateID()]=view;
-        }
+        };
 
         //Define the html that will go into the header of the application
         Application.setHeader = function(html) {
             Application._headerHtml=html;
-        }
+        };
 
         Application.customInitFunction = function(proceedFunction) {
 
             proceedFunction();
-        }//implement this function
+        };//implement this function
 
         Application.init=function(ititle) {
             Application.title=ititle;
@@ -45,14 +45,14 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/His
             setTimeout(function() {
                 Application._createFrameWork1();
             })
-        }
+        };
 
         Application.activateView = function(viewID) {
             if (!(viewID in Application._viewMap))
                 DQX.reportError('Invalid view id: ' + viewID);
             Application._viewMap[viewID].activateState();
 
-        }
+        };
 
 
         Application._createFrameWork1 = function () {
@@ -73,14 +73,14 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/His
                     .setDisplayTitle(view._myTitle)
                     .setDisplayTitle2(Application.title)
                     .setMargins(0)
-                    .setFrameClass('DQXFrame');/*.setAllowScrollBars(false,false)*/;
+                    .setFrameClass('DQXFrame');
                 view.createFrames(view._myFrame);
                 view._myFrame.setInitialiseFunction(view._initialisePanels);
 
-            })
+            });
 
             Application.customInitFunction(Application._createFramework2);
-        }
+        };
 
 
         Application._createFramework2 = function() {
@@ -88,11 +88,37 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/His
             Application.frameWindow.render('Div1');
 
             Application.frameHeaderIntro.setContentHtml(Application._headerHtml);
+            Application.createNavigationSection();
 
             DQX.initPostCreate();
             HistoryManager.init();
 
-        }
+        };
+
+        Application.createNavigationButton = function (id, parentDiv, bitmap, content, styleClass, width, handlerFunction) {
+            var bt = Controls.Button(id, { bitmap: bitmap, content: content, buttonClass: styleClass, width: width, height: 30 });
+            bt.setOnChanged(handlerFunction);
+            parentDiv.addElem(bt.renderHtml());
+        };
+
+
+        Application.createNavigationSection = function () {
+            var navSectionDiv = DocEl.Div();
+            navSectionDiv.addStyle("position", "absolute");
+            navSectionDiv.addStyle("right", "0px");
+            navSectionDiv.addStyle("top", "0px");
+            navSectionDiv.addStyle("padding-top", "3px");
+            navSectionDiv.addStyle("padding-right", "5px");
+            this.createNavigationButton("HeaderPrevious", navSectionDiv, DQX.BMP("/Icons/Small/Back.png"), "Previous<br>view", "DQXToolButton3", 100, function () { Msg.send({ type: 'Back' }) });
+            this.createNavigationButton("HeaderHome", navSectionDiv, DQX.BMP("/Icons/Small/Home.png"), "Intro<br>view", "DQXToolButton3", 100, function () { Msg.send({ type: 'Home' }) });
+            //$('#' + this.myHeaderFrame.getClientDivID()).append(navSectionDiv.toString());
+            $('#Div1').append(navSectionDiv.toString());
+
+            Msg.listen('', { type: 'Home' }, function () { HistoryManager.setState(Application._views[0].getStateKeys()); });
+            Msg.listen('', { type: 'Back' }, function () { HistoryManager.back(); });
+
+        };
+
 
 
 
@@ -106,9 +132,9 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/His
             that._myFrame = null;//Framework.frame instance, provided by application during initialisation
 
 
-            that.getStateID = function () { return this._myID; }
+            that.getStateID = function () { return this._myID; };
 
-            that.getFrame = function() { return that._myFrame; }
+            that.getFrame = function() { return that._myFrame; };
 
             that._initialisePanels = function () {
                 that.createPanels();
@@ -116,14 +142,14 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/His
                     if (panel._panelfirstRendered==false)
                         panel.render();
                 })
-            }
+            };
 
 
             that.getStateKeys = function () {//default implementation, can be overwritten
                 var mp = {};
                 mp[this._myID] = null;
                 return mp;
-            }
+            };
 
 
             //Can be overridden
@@ -141,16 +167,16 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/His
 
             /*********** Overridables ***********/
 
-            that.createFrames = function(rootFrame) { DQX.reportError("Please override createFrames"); } //override to define the frames of this view
+            that.createFrames = function() { DQX.reportError("Please override createFrames"); }; //override to define the frames of this view
 
-            that.createPanels = function() { DQX.reportError("Please override createPanels"); } //override to define the panels of this view
+            that.createPanels = function() { DQX.reportError("Please override createPanels"); }; //override to define the panels of this view
 
 
             Application._addView(that);
             HistoryManager.addView(that);
 
             return that;
-        }
+        };
 
 
 
