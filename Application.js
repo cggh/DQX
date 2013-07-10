@@ -1,6 +1,8 @@
 /************************************************************************************************************************************
  *************************************************************************************************************************************
 
+IMPORTANT NOTE:
+ both require.js and async.js should be present in the project!
 
  *************************************************************************************************************************************
  *************************************************************************************************************************************/
@@ -47,11 +49,16 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/His
             })
         };
 
+        Application.getView = function(viewID) {
+            if (!Application._viewMap[viewID])
+                DQX.reportError('Invalid view '+viewID);
+            return Application._viewMap[viewID];
+        }
+
         Application.activateView = function(viewID) {
             if (!(viewID in Application._viewMap))
                 DQX.reportError('Invalid view id: ' + viewID);
             Application._viewMap[viewID].activateState();
-
         };
 
 
@@ -162,6 +169,15 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/His
                     })
                 },50);
             };
+
+            // Creates & returns a standard button that activates this view zhen clicked
+            that.createActivationButton = function(settings) {
+                var bt = Controls.Button(null, { buttonClass: 'DQXToolButton2', content: settings.content, bitmap:settings.bitmap, width:120, height:50 });
+                bt.setOnChanged(function() {
+                    Application.activateView(that._myID);
+                })
+                return bt;
+            }
 
 
 
