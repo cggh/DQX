@@ -137,7 +137,7 @@
                 });
 
                 //Initialise the query builder
-                builder._createNewStatement(builder.root);
+                //builder._createNewStatement(builder.root);
                 builder.render();
             }
 
