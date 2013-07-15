@@ -588,6 +588,77 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
             return that;
         }
 
+
+
+
+        //////////////////////////////////////////////////////////////////////////////////////
+        //  ServerDataGetter: fetches a group of tables from the server, and executes a callback function when everything is downloaded
+        //////////////////////////////////////////////////////////////////////////////////////
+
+
+        DataFetchers.ServerDataGetter = function() {
+            var that={};
+            that._tables = [];
+            that._tablesMap = {};
+
+            that.addTable = function(iTableName, iColumns, iSortColumn) {
+                var tableInfo = { name: iTableName, columns: iColumns, sortcolumn: iSortColumn };
+                that._tables.push(tableInfo);
+                that._tablesMap[iTableName] = tableInfo;
+            };
+
+            that.getTableRecords = function(tableName) {
+                var tableInfo = that._tablesMap[tableName];
+                if (!tableInfo)
+                    DQX.reportError('Invalid table name '+tableName);
+                return tableInfo.records;
+            }
+
+            that.tryFinalise = function() {
+                var isComplete = true;
+                $.each(that._tables, function(idx, tableInfo) {
+                    if (!tableInfo.data)
+                        isComplete = false;
+                });
+                if (isComplete) {
+                    $.each(that._tables, function(idx, tableInfo) {
+                        var recordCount  = tableInfo.data[tableInfo.columns[0]].length;
+                        tableInfo.records = [];
+                        for (var recnr=0; recnr < recordCount; recnr++) {
+                            var rec = {};
+                            $.each(tableInfo.columns, function (colidx, columnInfo) {
+                                rec[columnInfo] = tableInfo.data[columnInfo][recnr];
+                            });
+                            tableInfo.records.push(rec);
+                        }
+                    });
+                    that._proceedFunction();
+                }
+            }
+
+            that.execute = function(serverUrl, database, proceedFunction) {
+                that._proceedFunction = proceedFunction;
+                $.each(that._tables, function (ID, tableInfo) {
+                    var fetcher = DataFetchers.RecordsetFetcher(serverUrl, database, tableInfo.name);
+                    $.each(tableInfo.columns, function (colidx, columnInfo) {
+                        fetcher.addColumn(columnInfo, 'GN');
+                    });
+                    fetcher.getData(SQL.WhereClause.Trivial(), tableInfo.sortcolumn, function (data) {
+                            tableInfo.data = data;
+                            that.tryFinalise();
+                        },
+                        function (msg) { DQX.reportError(msg + ' data: ' + tableInfo.tableName); }
+                    );
+                    //DQX.setProcessing("Downloading...");
+                });
+
+                //proceedFunction();
+            }
+
+            return that;
+        }
+
+
         return DataFetchers;
     });    
     
