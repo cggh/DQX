@@ -439,7 +439,8 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
 
             //Draws a vertical scale in the left panel of the channel
             that.drawVertScale = function (drawInfo, minvl, maxvl) {
-                var jumps = DQX.DrawUtil.getScaleJump((maxvl - minvl) / 15);
+                var cnt = drawInfo.sizeY*(15.0/120.0);
+                var jumps = DQX.DrawUtil.getScaleJump((maxvl - minvl) / cnt);
 
                 drawInfo.leftContext.fillStyle = "black";
                 drawInfo.leftContext.font = '10px sans-serif';
