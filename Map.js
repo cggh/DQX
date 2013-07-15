@@ -8,7 +8,7 @@ IMPORTANT NOTE: this file needs 'async.js' to be present in the project!
 *************************************************************************************************************************************
 *************************************************************************************************************************************/
 
-define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarker", "DQX/Msg", "DQX/DocEl", "DQX/Utils", "DQX/FramePanel", "async!https://maps.googleapis.com/maps/api/js?libraries=visualization&sensor=false"],
+define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarker", "DQX/Msg", "DQX/DocEl", "DQX/Utils", "DQX/FramePanel"/*, "async!https://maps.googleapis.com/maps/api/js?libraries=visualization&sensor=false"*/],
     function ($, Countries, GeoJSON, StyledMarker, Msg, DocEl, DQX, FramePanel) {
 
         var GMaps = {}
