@@ -760,6 +760,8 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                     bt.addHint(this._hint);
                 bt.addStyle('display', 'inline-block');
                 bt.addStyle('vertical-align', 'top');
+                if (args.floatright)
+                    bt.addStyle('float', 'right');
                 bt.setCssClass(this._buttonClass);
                 bt.addElem(that.content);
                 if (this._width)
@@ -1111,7 +1113,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
         ////////////////////////////////////////////////////////////////////////////////////////////
         // A combo box
         //    agrs.label : text label
-        //    agrs.states : list of radio button items, each state of the type { id:..., name,... }
+        //    agrs.states : list of radio button items, each state of the type { id:..., name,... } (optional: disabled=true)
         //    agrs.value (optional) : initial selected value
         //    agrs.hint (optional) : hover tooltip
         ////////////////////////////////////////////////////////////////////////////////////////////
@@ -1149,13 +1151,15 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 for (var i = 0; i < this.myStates.length; i++) {
                     var stateid = /*this.getFullID('') + '_' + */this.myStates[i].id;
                     st += '<div style="padding:5px">';
-                    st += '<input type="radio" name={controlid} id={id2} value="{id}" {selected}></input>'.DQXformat({
+                    st += '<input type="radio" name={controlid} id={id2} value="{id}" {selected} {disabled}></input>'.DQXformat({
                         controlid: this.getFullID(''),
-                        id: stateid, id2: stateid,
-                        selected: (this.myStates[i].id == this._selectedState) ? 'checked="yes"' : ''
+                        id: stateid,
+                        id2: this.getFullID(stateid),
+                        selected: (this.myStates[i].id == this._selectedState) ? 'checked="yes"' : '',
+                        selected: (this.myStates[i].disabled) ? 'disabled="yes"' : ''
                     });
                     st += '<label for="{id}">{title}</label>'.DQXformat({
-                        id: stateid,
+                        id: this.getFullID(stateid),
                         title: this.myStates[i].name
                     });
                     st += "</div>";
@@ -1191,8 +1195,25 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 if (!this.isState(newstate))
                     DQX.reportError('Invalid combo box state');
                 this._selectedState = newstate;
-                this.getJQElement('').val(this._selectedState);
+                $.each(that.myStates, function(idx,state) {
+                    if (state.id==newstate)
+                        that.getJQElement(state.id).attr('checked','yes');
+                    else
+                        that.getJQElement(state.id).removeAttr('checked');
+                })
                 this._notifyChanged();
+            }
+
+            that.modifyItemEnabled = function(itemID, newState) {
+                $.each(that.myStates, function(idx,state) {
+                    if (state.id==itemID) {
+                        state.enabled=newState;
+                        if (!newState)
+                            that.getJQElement(itemID).attr('disabled','yes');
+                        else
+                            that.getJQElement(itemID).removeAttr('disabled');
+                    }
+                })
             }
 
 
