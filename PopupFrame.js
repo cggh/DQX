@@ -12,16 +12,18 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
         PopupFrame._settingsHistory = {}; //settings history for each type of PopupFrame, identified by its ID
 
 
-        PopupFrame.PopupFrame = function (itypeID, iframeRoot, settings) {
+        PopupFrame.PopupFrame = function (itypeID, settings) {
             DQX.checkIsString(itypeID);
             DQX.requireMember(settings, 'title');
-            DQX.requireMemberFunction(iframeRoot, 'getTitle');
 
             var that = {};
             that.typeID = itypeID;
-            that.frameRoot = iframeRoot;
+            that.frameRoot = FrameWork.FrameGeneric('');
             that.frameRoot._frameContainer = that;
             that.getFrameRoot = function () { return this.frameRoot; }
+
+            that.frameRoot.setFrameClass('DQXLightFrame');
+
 
             that._title = 'Frame'; if (settings.title) that._title = settings.title;
             that._sizeX = 800; if (settings.sizeX) that._sizeX = settings.sizeX;
@@ -58,6 +60,21 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
             });
             that.posX = Math.min(that.posX, DQX.getWindowClientW() - that._sizeX - 10);
             that.posY = Math.min(that.posY, DQX.getWindowClientH() - 40);
+
+
+            that.createFrames = function() { DQX.reportError("Please override createFrames"); }; //override to define the frames of this view
+
+            that.createPanels = function() { DQX.reportError("Please override createPanels"); }; //override to define the panels of this view
+
+            that.create = function() {
+                that.createFrames(that.frameRoot);
+                that.render();
+                that.createPanels();
+                that.getFrameRoot().applyOnPanels(function(panel) {
+                    if (panel._panelfirstRendered==false)
+                        panel.render();
+                })
+            }
 
 
             that.render = function () {

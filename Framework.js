@@ -263,6 +263,15 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/Fram
             }
 
             //Converts a generic frame into a horizontal splitter
+            that.makeGroupTab = function () {
+                if (this.myType != '-') DQX.reportError('Frame is not generic');
+                this.myType = 'Tab';
+                this.setFrameClassClient('DQXForm').setMarginsIndividual(0,5,0,0);
+                return this;
+            }
+
+
+            //Converts a generic frame into a horizontal splitter
             that.makeFinal = function () {
                 if (this.myType != '-') DQX.reportError('Frame is not generic');
                 this.myType = 'Final';
