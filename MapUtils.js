@@ -10,10 +10,15 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Utils", "DQX/Map", "DQX/SVG"],
             that._layoutCalculated = false;
             that._offset = ioffset;
             that._pies = [];
+            that._onClickCallBack = null;
+
+            that.setOnClickCallBack = function(handler) {
+                that._onClickCallBack = handler;
+            }
 
             // position: coordinates of the center position (of type Map.Coord)
             // pieChart: piechart data (of type SVG.PieChart)
-            that.addPieChart = function(position, pieChart, radius, clickHandler) {
+            that.addPieChart = function(position, pieChart, radius) {
                 that._layoutCalculated = false;
 
                 var pie = Map.Overlay.PieChart(that._map, null,
@@ -29,8 +34,8 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Utils", "DQX/Map", "DQX/SVG"],
                 }
 
                 pie.onClick = function(obj,id) {
-                    if (clickHandler!=null)
-                        clickHandler(pieChart,id);
+                    if (that._onClickCallBack!=null)
+                        that._onClickCallBack(pieChart,id);
                 }
 
             }
