@@ -602,7 +602,18 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
             that._tablesMap = {};
 
             that.addTable = function(iTableName, iColumns, iSortColumn) {
-                var tableInfo = { name: iTableName, columns: iColumns, sortcolumn: iSortColumn };
+                var columns = [];
+                $.each(iColumns, function(idx, col) {
+                    if (typeof (col) != 'object') {
+                        columns.push({ id: col, tpe: 'string' });
+                    }
+                    else {
+                        if (['string', 'float', 'int'].indexOf(col.tpe) < 0 )
+                            DQX.reportError('Invalid table column type: property tpe should be string,float or int');
+                        columns.push(col);
+                    }
+                })
+                var tableInfo = { name: iTableName, columns: columns, sortcolumn: iSortColumn };
                 that._tables.push(tableInfo);
                 that._tablesMap[iTableName] = tableInfo;
             };
@@ -622,12 +633,16 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                 });
                 if (isComplete) {
                     $.each(that._tables, function(idx, tableInfo) {
-                        var recordCount  = tableInfo.data[tableInfo.columns[0]].length;
+                        var recordCount  = tableInfo.data[tableInfo.columns[0].id].length;
                         tableInfo.records = [];
                         for (var recnr=0; recnr < recordCount; recnr++) {
                             var rec = {};
                             $.each(tableInfo.columns, function (colidx, columnInfo) {
-                                rec[columnInfo] = tableInfo.data[columnInfo][recnr];
+                                rec[columnInfo.id] = tableInfo.data[columnInfo.id][recnr];
+                                if (columnInfo.tpe=='float')
+                                    rec[columnInfo.id] = parseFloat(rec[columnInfo.id]);
+                                if (columnInfo.tpe=='int')
+                                    rec[columnInfo.id] = parseInt(rec[columnInfo.id]);
                             });
                             tableInfo.records.push(rec);
                         }
@@ -641,7 +656,7 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                 $.each(that._tables, function (ID, tableInfo) {
                     var fetcher = DataFetchers.RecordsetFetcher(serverUrl, database, tableInfo.name);
                     $.each(tableInfo.columns, function (colidx, columnInfo) {
-                        fetcher.addColumn(columnInfo, 'GN');
+                        fetcher.addColumn(columnInfo.id, 'GN');
                     });
                     fetcher.getData(SQL.WhereClause.Trivial(), tableInfo.sortcolumn, function (data) {
                             tableInfo.data = data;

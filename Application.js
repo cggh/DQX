@@ -27,7 +27,6 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/His
         };
 
         Application.customInitFunction = function(proceedFunction) {
-
             proceedFunction();
         };//implement this function
 
