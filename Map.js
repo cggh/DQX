@@ -528,9 +528,9 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                 var overlayProjection = this.getProjection();
                 var pt = overlayProjection.fromLatLngToDivPixel(coord.toGoogleLatLng());
                 if (typeof dist != 'undefined') {
-                    var coord2 = GMaps.Coord(coord.longit, coord.lattit - +(dist / 40000.0 * 360));
+                    var coord2 = GMaps.Coord(coord.longit+(dist / 40000.0 * 360), coord.lattit);
                     var pt2 = overlayProjection.fromLatLngToDivPixel(coord2.toGoogleLatLng());
-                    pt.dist = Math.abs(pt.y - pt2.y);
+                    pt.dist = Math.abs(pt.x - pt2.x);
                 }
                 return pt;
             }
