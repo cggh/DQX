@@ -120,9 +120,14 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/His
             this.createNavigationButton("HeaderHome", navSectionDiv, DQX.BMP("/Icons/Small/Home.png"), "Intro<br>view", "DQXToolButton3", 100, function () { Msg.send({ type: 'Home' }) });
             //$('#' + this.myHeaderFrame.getClientDivID()).append(navSectionDiv.toString());
             $('#Div1').append(navSectionDiv.toString());
+            DQX.ExecPostCreateHtml();
 
-            Msg.listen('', { type: 'Home' }, function () { HistoryManager.setState(Application._views[0].getStateKeys()); });
-            Msg.listen('', { type: 'Back' }, function () { HistoryManager.back(); });
+            Msg.listen('', { type: 'Home' }, function () {
+                HistoryManager.setState(Application._views[0].getStateKeys());
+            });
+            Msg.listen('', { type: 'Back' }, function () {
+                HistoryManager.back();
+            });
 
         };
 

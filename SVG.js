@@ -27,16 +27,18 @@ define(["DQX/Utils"],
                 var sumpart = 0;
                 var data = '<g>';
 
-                data += '<circle class="pieshadow" cx="{cx}" cy="{cy}" r="{rd}"/>'.DQXformat({ cx: x0+3, cy: y0+3, rd: rd-1 });
+                if (rd>1) {
+                    data += '<circle class="pieshadow" cx="{cx}" cy="{cy}" r="{rd}"/>'.DQXformat({ cx: x0+3, cy: y0+3, rd: rd-1 });
 
-                for (var i = 0; i < this.myParts.length; i++) {
-                    var sumpart2 = sumpart + this.myParts[i].frac;
-                    if (this.myParts[i].frac > 0) {
-                        data += this._renderPie(x0, y0,
-                            sumpart / sum * 2 * Math.PI,
-                            sumpart2 / sum * 2 * Math.PI, rd - 1,
-                            this.myParts[i].color, i, this.myParts[i].hint);
-                        sumpart = sumpart2;
+                    for (var i = 0; i < this.myParts.length; i++) {
+                        var sumpart2 = sumpart + this.myParts[i].frac;
+                        if ( (this.myParts[i].frac > 0) && (rd>1) ) {
+                            data += this._renderPie(x0, y0,
+                                sumpart / sum * 2 * Math.PI,
+                                sumpart2 / sum * 2 * Math.PI, rd - 1,
+                                this.myParts[i].color, i, this.myParts[i].hint);
+                            sumpart = sumpart2;
+                        }
                     }
                 }
                 data += '</g>';
@@ -44,6 +46,8 @@ define(["DQX/Utils"],
             }
 
             that._renderPie = function (x0, y0, ang1, ang2, rd, color, id, hint) {
+                if (rd<0)
+                    DQX.reportError('Negative radius');
                 if (ang2 - ang1 >= 2 * Math.PI - 0.0001) {
                     var rs = '<circle class="piepart" cx="{cx}" cy="{cy}" r="{rd}"'.DQXformat({ cx: x0, cy: y0, rd: rd });
                     var elemName = 'circle';

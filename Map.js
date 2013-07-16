@@ -27,11 +27,14 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
         }
 
 
-        GMaps.MapItemLayouter = function (imapobject, iid) {
+        GMaps.MapItemLayouter = function (imapobject, iid, ioffset) {
             var that = {};
             that.mapObject = imapobject;
             that.id = iid;
             that.items = [];
+            that.offset = 0.4;
+            if (ioffset)
+                that.offset = ioffset;
 
             that.addItem = function (longit, lattit, radius) {
                 this.items.push({ longit: longit, lattit: lattit, radius: radius, longit2: longit, lattit2: lattit });
@@ -133,7 +136,7 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                             var dfx = (item2.x0 + item2.dx) - (item1.x0 + item1.dx);
                             var dfy = (item2.y0 + item2.dy) - (item1.y0 + item1.dy);
                             var dst = Math.sqrt(dfx * dfx + dfy * dfy);
-                            var mindst = 1.2 * (item1.radius + item2.radius);
+                            var mindst = (1+that.offset/2) * (item1.radius + item2.radius);
                             if (dst < mindst) {
                                 var shiftsize = (mindst - dst) / dst;
                                 shiftx += -dfx * shiftsize;
@@ -151,7 +154,7 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                                 var dfx = (item2.x0) - (item1.x0 + item1.dx);
                                 var dfy = (item2.y0) - (item1.y0 + item1.dy);
                                 var dst = Math.sqrt(dfx * dfx + dfy * dfy);
-                                var mindst = 1.4 * (item1.radius);
+                                var mindst = (1+that.offset) * (item1.radius);
                                 if (dst < mindst) {
                                     var shiftsize = (mindst - dst) / dst;
                                     shiftx += -dfx * shiftsize;
@@ -586,6 +589,12 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
             that.myChart = ichart;
             that.myChart.myCallbackObject = that;
             DQX.ObjectMapper.Add(that);
+            if (iradius<0)
+                DQX,reportError('Negative pie chart radius');
+
+            that.setCoord = function (coord) {
+                that._centerCoordPieChart = coord;
+            }
 
             that.setOrigCoord = function (coord) {
                 that._centerCoord = coord;
