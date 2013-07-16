@@ -279,12 +279,16 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                 };
             }
 
+            if (!displayOptions.labelScaleFactor)
+                displayOptions.labelScaleFactor = 1;
+
             that.myID = iid;
             that.myMapObject = imapobject;
             that.displayOptions = displayOptions;
             that.minZoomlevel = iminzoomlevel;
             that.myMapObject._addOverlay(that);
             that.myPointSet = [];
+            that._pointClickCallBack = null;
 
             if (bitmapfile.length > 0)
                 that.image = new google.maps.MarkerImage(bitmapfile, null, null, new google.maps.Point(10, 10));
@@ -303,9 +307,14 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                 this.clearPoints();
             }
 
+            that.setPointClickCallBack = function(handler) {
+                that._pointClickCallBack = handler;
+            }
+
             that._handleOnPointClicked = function (pointnr) {
-                //alert('clicked point ' + pointnr);
                 Msg.broadcast({ type: 'ClickMapPoint', id: this.myID }, this.myPointSet[pointnr].id);
+                if (that._pointClickCallBack)
+                    that._pointClickCallBack(this.myPointSet[pointnr].id);
             }
 
             that._updateVisible = function () {
@@ -347,13 +356,15 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                         }
                         var rd = Math.sqrt(dx * dx + dy * dy);
                         dx *= 30 / rd; dy *= 30 / rd;
-                        var labelPointer = GMaps.Overlay.LabelArrow(obj.myMapObject, '', GMaps.Coord(layouter.items[i].longit, layouter.items[i].lattit), dx, -dy);
+                        var labelPointer = GMaps.Overlay.LabelArrow(obj.myMapObject, '', GMaps.Coord(layouter.items[i].longit, layouter.items[i].lattit), dx, -dy, that.displayOptions.labelScaleFactor);
                         //we create two labels, one visible in the overlay layer, and one invisible in the mousetarget layer
-                        var label1 = GMaps.Overlay.Label(obj.myMapObject, '', GMaps.Coord(layouter.items[i].longit, layouter.items[i].lattit), dx, -dy, pointInfo.labelName, false);
-                        var label2 = GMaps.Overlay.Label(obj.myMapObject, '', GMaps.Coord(layouter.items[i].longit, layouter.items[i].lattit), dx, -dy, pointInfo.labelName, true);
+                        var label1 = GMaps.Overlay.Label(obj.myMapObject, '', GMaps.Coord(layouter.items[i].longit, layouter.items[i].lattit), dx, -dy, pointInfo.labelName, false, that.displayOptions.labelScaleFactor);
+                        var label2 = GMaps.Overlay.Label(obj.myMapObject, '', GMaps.Coord(layouter.items[i].longit, layouter.items[i].lattit), dx, -dy, pointInfo.labelName, true, that.displayOptions.labelScaleFactor);
                         label2.pointID = pointInfo.id;
                         label2.setOnClick(function () {
                             Msg.broadcast({ type: 'ClickMapPoint', id: that.myID }, this.pointID);
+                            if (that._pointClickCallBack)
+                                that._pointClickCallBack(this.pointID);
                         });
                         pointInfo.markers.push(labelPointer);
                         pointInfo.markers.push(label1);
@@ -742,15 +753,16 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
         // 
         //////////////////////////////////////////////////////////////////////////////////////////
 
-        GMaps.Overlay.LabelArrow = function (imapobject, iid, icentercoord, ioffsetX, ioffsetY) {
+        GMaps.Overlay.LabelArrow = function (imapobject, iid, icentercoord, ioffsetX, ioffsetY, iscaleFactor) {
             var that = GMaps.Overlay._Base(imapobject, iid, true);
             that._centerCoord = icentercoord;
             that._offsetX = ioffsetX;
             that._offsetY = ioffsetY;
+            that._scaleFactor = iscaleFactor;
 
             that.render = function () {
                 var ps0 = this.convCoordToPixels(this._centerCoord, 8);
-                var scaleFactor1 = 0.75*ps0.dist;
+                var scaleFactor1 = 0.75*ps0.dist*that._scaleFactor;
                 var scaleFactor2 = Math.sqrt(scaleFactor1);
                 var ps1 = { x: ps0.x + this._offsetX, y: ps0.y + this._offsetY };
                 var bb = {};
@@ -791,13 +803,14 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
         // 
         //////////////////////////////////////////////////////////////////////////////////////////
 
-        GMaps.Overlay.Label = function (imapobject, iid, icentercoord, ioffsetX, ioffsetY, itext, mouseTargetOnly) {
+        GMaps.Overlay.Label = function (imapobject, iid, icentercoord, ioffsetX, ioffsetY, itext, mouseTargetOnly, iscaleFactor) {
             var that = GMaps.Overlay._Base(imapobject, iid, !mouseTargetOnly);
             that._centerCoord = icentercoord;
             that._offsetX = ioffsetX;
             that._offsetY = ioffsetY;
             that._text = itext;
             that._onClickHandler = null;
+            that._scaleFactor = iscaleFactor;
 
             that.setOnClick = function (handler) {
                 this._onClickHandler = handler;
@@ -807,7 +820,7 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                 var ps0 = this.convCoordToPixels(this._centerCoord, 8);
                 var ps1 = { x: Math.round(ps0.x + this._offsetX), y: Math.round(ps0.y + this._offsetY) };
 
-                var scaleFactor1 = ps0.dist;
+                var scaleFactor1 = that._scaleFactor * ps0.dist;
                 var scaleFactor2 = Math.sqrt(scaleFactor1);
                 var halfHeight = Math.max(4, Math.min(9, Math.round(9 * scaleFactor2)));
                 var opacity1 = Math.min(1, scaleFactor1);
