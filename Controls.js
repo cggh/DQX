@@ -97,6 +97,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
 
             that.renderHtml = function () {
                 var el = DocEl.Div({ id: this.myID });
+                el.addStyle('display', 'inline-block');
                 el.addElem(this._control.renderHtml());
                 return el.toString();
             }
@@ -1186,7 +1187,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                         id: stateid,
                         id2: this.getFullID(stateid),
                         selected: (this.myStates[i].id == this._selectedState) ? 'checked="yes"' : '',
-                        selected: (this.myStates[i].disabled) ? 'disabled="yes"' : ''
+                        disabled: (this.myStates[i].disabled) ? 'disabled="yes"' : ''
                     });
                     st += '<label for="{id}">{title}</label>'.DQXformat({
                         id: this.getFullID(stateid),
