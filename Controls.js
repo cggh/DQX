@@ -1169,9 +1169,15 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
 
             that._execRenderHtml = function () {
                 var cmb = DocEl.Div({ id: this.getFullID('') });
-                cmb.addElem(this._buildSelectContent());
-                /*                var label = DocEl.Label({ target: this.getFullID('Label') });
-                label.addElem(this.myLabel);*/
+                cmb.addStyle('display', 'inline-block');
+                parentElem=cmb;
+                if (that.myLabel) {
+                    var fs = DocEl.Create('fieldset',{parent:cmb});
+                    fs.setCssClass('DQXFormFieldSet');
+                    fs.addElem('<legend>'+that.myLabel+'</legend>');
+                    parentElem = fs;
+                }
+                parentElem.addElem(this._buildSelectContent());
                 return cmb.toString();
             }
 
