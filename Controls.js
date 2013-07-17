@@ -124,9 +124,13 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
             that._margin = 3;
             that.myID = Controls._getNextControlID();
             that._visible = true;
+            that._autoFillX = true;
 
             //Clears the list of member controls
             that.clear = function () { that._controls = []; }
+
+            //Determines whether or not the control fills the full horizontal space
+            that.setAutoFillX = function(status) { this._autoFillX = status; return this; }
 
             //add a new control to the list
             that.addControl = function (item) {
@@ -188,6 +192,8 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
 
             that.renderHtml = function () {
                 var st = '';
+                if (!that._autoFillX)
+                    st += '<div style="display:inline-block">';
                 if (this._legend.length > 0) {
                     st += '<fieldset class="DQXFormFieldSet">';
                     st += '<legend>' + this._legend + '</legend>';
@@ -197,6 +203,8 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 if (this._legend.length > 0) {
                     st += '</fieldset>';
                 }
+                if (!that._autoFillX)
+                    st += '</div>';
                 return st;
             }
 
@@ -214,7 +222,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
 
             that.renderHtml = function () {
                 var st = '';
-                if (that.treatAsBlock)
+                if (that.treatAsBlock || (!that._autoFillX) )
                     st += '<div style="display:inline-block">';
                 if (this._legend.length > 0) {
                     st += '<fieldset class="DQXFormFieldSet">';
@@ -230,7 +238,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 if (this._legend.length > 0) {
                     st += '</fieldset>';
                 }
-                if (that.treatAsBlock)
+                if (that.treatAsBlock || (!that._autoFillX) )
                     st += '</div>';
                 return st;
             }
@@ -248,11 +256,19 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
             that._controlRows = [];
             that.sepH = 12;
             that.sepV = 5;
+            that._legend = null;
+            that._autoFillX = true;
 
             //Clears the member controls
             that.clear = function () {
                 that._controlRows = [];
             }
+
+            //Sets a header legend for the group
+            that.setLegend = function (txt) { this._legend = txt; return this; }
+
+            //Determines whether or not the control fills the full horizontal space
+            that.setAutoFillX = function(status) { this._autoFillX = status; return this; }
 
             //Adds a member control
             that.setItem = function (rowNr, colNr, item) {
@@ -296,7 +312,15 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
             }
 
             that.renderHtml = function () {
-                var st = '<table style="padding-top:{pt}px;">'.DQXformat({ pt: this.sepV });
+                var st = '';
+                if (!this._autoFillX)
+                    st += '<div style="display:inline-block">';
+                if (this._legend) {
+                    st += '<fieldset class="DQXFormFieldSet">';
+                    st += '<legend>' + this._legend + '</legend>';
+                }
+
+                st += '<table style="padding-top:{pt}px;">'.DQXformat({ pt: this.sepV });
                 for (var rowNr = 0; rowNr < this._controlRows.length; rowNr++) {
                     st += '<tr>';
                     for (var colNr = 0; colNr < this._controlRows[rowNr].length; colNr++) {
@@ -309,6 +333,12 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                     st += '</tr>';
                 }
                 st += '</table>';
+
+                if (this._legend.length > 0) {
+                    st += '</fieldset>';
+                }
+                if (!this._autoFillX)
+                    st += '</div>';
                 return st;
             }
 
