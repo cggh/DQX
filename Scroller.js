@@ -44,7 +44,7 @@ define(["jquery", "DQX/DocEl", "DQX/Msg"],
             //Sets the scroll position & size
             that.setValue = function (iPos, iSize) {
                 this.scrollPos = iPos;
-                if (iSize)
+                if (iSize != null)
                     this.ScrollSize = iSize;
                 this.draw();
             }
@@ -154,6 +154,12 @@ define(["jquery", "DQX/DocEl", "DQX/Msg"],
                 var px2 = this.ScrollAreaStartX + Math.round((this.scrollPos + this.ScrollSize) * this.ScrollAreaSizeX);
                 if (px1 < this.ScrollAreaStartX) px1 = this.ScrollAreaStartX;
                 if (px2 > this.ScrollAreaStartX + this.ScrollAreaSizeX) px2 = this.ScrollAreaStartX + this.ScrollAreaSizeX;
+
+                if (px2 <= px1+3) {
+                    var pxcent = (px1+px2)/2;
+                    px1 = pxcent-1.5;
+                    px2 = pxcent+1.5;
+                }
 
                 //scroll bar position indicators
                 centercontext.globalAlpha = 1;

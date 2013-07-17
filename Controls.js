@@ -1379,7 +1379,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
             that._onChange = function (ev) {
                 var info = this._event2ListItem(ev)
                 var itemID = info.itemID;
-                if (itemID) {
+                if (itemID != null) {
                     if (this._allowSelectItem) {
                         this.modifyValue(itemID);
                     }
@@ -1405,7 +1405,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
 
             //sets the currently active item
             that.modifyValue = function (newvalue) {
-                if (this._activeItem)
+                if (this._activeItem != null)
                     this.getJQElement('').children('#' + this._getLineID(this._activeItem)).addClass('DQXLargeListItem').removeClass('DQXLargeListItemSelected');
                 this.getJQElement('').children('#' + this._getLineID(newvalue)).removeClass('DQXLargeListItem').addClass('DQXLargeListItemSelected');
                 this._activeItem = newvalue;
@@ -1474,9 +1474,9 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
             that._execPostCreateHtml = function () {
                 this._scroller = Scroller.HScrollBar(this.getFullID('Canvas'));
                 this._scroller.myConsumer = this;
-                this._scroller.zoomareafraction = 0.001;
+                this._scroller.zoomareafraction = 0.00001;
                 this._scroller.setRange(this._minval, this._maxval);
-                this._scroller.setValue((this._value - this._minval) / (this._maxval - this._minval), 0.02);
+                this._scroller.setValue((this._value - this._minval) / (this._maxval - this._minval), 0.0);
                 this.showValue();
                 this._scroller.draw();
             };
