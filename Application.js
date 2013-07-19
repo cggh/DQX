@@ -11,7 +11,8 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/His
     function ($, DQX, DocEl, Msg, Framework, HistoryManager, Controls) {
         var Application = {};
 
-
+        Application._initialised = false;
+        Application._customNavigationButtons = [];
         Application._views=[];
         Application._viewMap={};
         Application._addView = function(view) {
@@ -23,8 +24,14 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/His
 
         //Define the html that will go into the header of the application
         Application.setHeader = function(html) {
+            Application._checkNotInitialised();
             Application._headerHtml=html;
         };
+
+        // Add a button to the nagivation section (right part of the app header)
+        Application.addNavigationButton = function(name, bitmap, width, handler) {
+            Application._customNavigationButtons.push({ name: name, bitmap: bitmap, width: width, handler: handler });
+        }
 
         Application.customInitFunction = function(proceedFunction) {
             proceedFunction();
@@ -45,6 +52,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/His
             DQX.Init();
             setTimeout(function() {
                 Application._createFrameWork1();
+                Application._initialised = true;
             })
         };
 
@@ -94,30 +102,41 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/His
             Application.frameWindow.render('Div1');
 
             Application.frameHeaderIntro.setContentHtml(Application._headerHtml);
-            Application.createNavigationSection();
+            Application._createNavigationSection();
 
             DQX.initPostCreate();
             HistoryManager.init();
 
         };
 
-        Application.createNavigationButton = function (id, parentDiv, bitmap, content, styleClass, width, handlerFunction) {
+        Application._checkNotInitialised = function() {
+            if (Application._initialised)
+                DQX.reportError('Application is already initialised');
+        }
+
+
+        Application._createNavigationButton = function (id, parentDiv, bitmap, content, styleClass, width, handlerFunction) {
             var bt = Controls.Button(id, { bitmap: bitmap, content: content, buttonClass: styleClass, width: width, height: 30 });
             bt.setOnChanged(handlerFunction);
             parentDiv.addElem(bt.renderHtml());
         };
 
 
-        Application.createNavigationSection = function () {
+        Application._createNavigationSection = function () {
             var navSectionDiv = DocEl.Div();
             navSectionDiv.addStyle("position", "absolute");
             navSectionDiv.addStyle("right", "0px");
             navSectionDiv.addStyle("top", "0px");
             navSectionDiv.addStyle("padding-top", "3px");
             navSectionDiv.addStyle("padding-right", "5px");
-            this.createNavigationButton("HeaderPrevious", navSectionDiv, DQX.BMP("/Icons/Small/Back.png"), "Previous<br>view", "DQXToolButton3", 100, function () { Msg.send({ type: 'Back' }) });
-            this.createNavigationButton("HeaderHome", navSectionDiv, DQX.BMP("/Icons/Small/Home.png"), "Intro<br>view", "DQXToolButton3", 100, function () { Msg.send({ type: 'Home' }) });
-            //$('#' + this.myHeaderFrame.getClientDivID()).append(navSectionDiv.toString());
+            this._createNavigationButton("HeaderPrevious", navSectionDiv, DQX.BMP("/Icons/Small/Back.png"), "Previous<br>view", "DQXToolButton3", 100, function () { Msg.send({ type: 'Back' }) });
+            this._createNavigationButton("HeaderHome", navSectionDiv, DQX.BMP("/Icons/Small/Home.png"), "Intro<br>view", "DQXToolButton3", 100, function () { Msg.send({ type: 'Home' }) });
+
+            // Create custom navigation buttons
+            $.each(Application._customNavigationButtons, function(idx, buttonInfo) {
+                Application._createNavigationButton("", navSectionDiv, buttonInfo.bitmap, buttonInfo.name, "DQXToolButton1", buttonInfo.width, buttonInfo.handler);
+            });
+
             $('#Div1').append(navSectionDiv.toString());
             DQX.ExecPostCreateHtml();
 
@@ -126,6 +145,11 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/His
             });
             Msg.listen('', { type: 'Back' }, function () {
                 HistoryManager.back();
+            });
+
+            // Create custom navigation buttons
+            $.each(Application._customNavigationButton, function(idx, buttonInfo) {
+                this._createNavigationButton("", navSectionDiv, buttonInfo.bitmap, buttonInfo.name, "DQXToolButton2", 100, buttonInfo.handler);
             });
 
         };
