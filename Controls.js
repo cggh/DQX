@@ -107,6 +107,11 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                     $('#' + that.myID).hide();
             }
 
+            that.applyOnControls = function(fnc) {
+                if ('applyOnControls' in that._control)
+                    that._control.applyOnControls(fnc);
+            };
+
             return that;
         }
 
@@ -180,6 +185,14 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 }
                 return null;
             }
+
+            that.applyOnControls = function(fnc) {
+                $.each(that._controls, function(idx,ctrl) {
+                    if ('applyOnControls' in ctrl)
+                        ctrl.applyOnControls(fnc);
+                });
+            };
+
 
             return that;
         }
@@ -299,6 +312,16 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                             fnc(this._controlRows[rowNr][colNr]);
             }
 
+
+            that.applyOnControls = function(fnc) {
+                for (var rowNr = 0; rowNr < this._controlRows.length; rowNr++)
+                    for (var colNr = 0; colNr < this._controlRows[rowNr].length; colNr++)
+                        if (this._controlRows[rowNr][colNr] != null)
+                            if ('applyOnControls' in this._controlRows[rowNr][colNr])
+                                this._controlRows[rowNr][colNr].applyOnControls(fnc);
+            };
+
+
             that.getID = function () {
                 if (!this.getItem(0, 0)) DQX.reportError('Compound control has no components');
                 return this.getItem(0, 0).getID(id);
@@ -380,6 +403,10 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
 
             that.postCreateHtml = function () { }
 
+            that.applyOnControls = function(fnc) {
+            };
+
+
             return that;
         }
 
@@ -398,6 +425,10 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 return '<div style="width:{sz}px;display:inline-block"></div>'.DQXformat({ sz: this._size });
             }
             that.postCreateHtml = function () { }
+
+            that.applyOnControls = function(fnc) {
+            };
+
             return that;
         }
 
@@ -416,6 +447,10 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 return '<div style="height:{sz}px;width:100%"></div>'.DQXformat({ sz: this._size });
             }
             that.postCreateHtml = function () { }
+
+            that.applyOnControls = function(fnc) {
+            };
+
             return that;
         }
 
@@ -493,6 +528,11 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 this._postCreateHtmlExecuted = false;
                 return this._execRenderHtml();
             }
+
+            that.applyOnControls = function(fnc) {
+                fnc(that);
+            };
+
 
             //Internal
             that.getJQElement = function (extension) {

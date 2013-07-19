@@ -16,13 +16,24 @@
         }
 
         //Creates a wizard, providing a unique identifier
-        Wizard.Create = function (iID) {
+        Wizard.Create = function (iID, settings) {
             var that = {};
 
             that.ID = iID;
             that._title = "Wizard";
             that._pages = [];
             that._pageIndex = {};
+            that._sizeX = 600;
+            that._sizeY = 500;
+
+            if (settings) {
+                if (settings.title)
+                    that._title = settings.title;
+                if (settings.sizeX)
+                    that._sizeX = settings.sizeX;
+                if (settings.sizeY)
+                    that._sizeY = settings.sizeY;
+            }
 
             //Sets the title of the wizard
             that.setTitle = function (title) {
@@ -48,6 +59,11 @@
                     DQX.reportError('Page already present in wizard ' + page.id);
                 this._pageIndex[page.id] = this._pages.length;
                 this._pages.push(page);
+            }
+
+            //After completion of the wizard, this function can be used to obtain values of the controls
+            that.getResultValue= function(controlID) {
+                return that._resultValues[controlID];
             }
 
             //returns the currently active page
@@ -94,6 +110,7 @@
                 dqxCurrentWizard = that;
                 DQX.checkIsFunction(onFinishFunction);
                 this._checkNotRunning();
+                that._resultValues = {};
                 this._onFinishFunction = onFinishFunction;
                 this._isRunning = true;
                 var background = DocEl.Div({ id: 'WizBackGround' });
@@ -125,8 +142,8 @@
                 var pageSizeX = DQX.getWindowClientW();
                 var pageSizeY = DQX.getWindowClientH();
 
-                var boxSizeX = 600;
-                var boxSizeY = 500;
+                var boxSizeX = that._sizeX;
+                var boxSizeY = that._sizeY;
 
                 this._pageTrace = [];
 
@@ -194,12 +211,23 @@
 
                 this._keyDownReceiverID = DQX.registerGlobalKeyDownReceiver($.proxy(that._onKeyDown, that));
 
+                this.pageNr = null;
                 this._setPage(0);
+            }
+
+            that._getPageResultSet = function() {
+                if (this.pageNr != null) {
+                    that._pages[this.pageNr].form.applyOnControls(function(control){
+                        if ('getValue' in control)
+                            that._resultValues[control.getID()] = control.getValue();
+                    });
+                }
             }
 
             //Internal: sets the active page while running the wizard
             that._setPage = function (ipageNr) {
                 this._checkRunning();
+
                 this.pageNr = ipageNr;
                 $('#WizBoxContent').html(this._pages[this.pageNr].form.renderHtml());
                 this._pages[this.pageNr].form.postCreateHtml();
@@ -268,6 +296,7 @@
             //Performs the 'Finish' action
             that.performFinish = function () {
                 this._checkRunning();
+                that._getPageResultSet();
                 this._stopRunning();
                 this._onFinishFunction();
             }
@@ -287,6 +316,7 @@
                         return;
                     }
                 }
+                that._getPageResultSet();
                 if (this._isFinalPage()) {
                     this._onFinish();
                     return;

@@ -147,11 +147,6 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/His
                 HistoryManager.back();
             });
 
-            // Create custom navigation buttons
-            $.each(Application._customNavigationButton, function(idx, buttonInfo) {
-                this._createNavigationButton("", navSectionDiv, buttonInfo.bitmap, buttonInfo.name, "DQXToolButton2", 100, buttonInfo.handler);
-            });
-
         };
 
 
