@@ -653,6 +653,10 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
 
             that.execute = function(serverUrl, database, proceedFunction) {
                 that._proceedFunction = proceedFunction;
+                if (that._tables.length==0) {
+                    proceedFunction();
+                    return;
+                }
                 $.each(that._tables, function (ID, tableInfo) {
                     var fetcher = DataFetchers.RecordsetFetcher(serverUrl, database, tableInfo.name);
                     $.each(tableInfo.columns, function (colidx, columnInfo) {
