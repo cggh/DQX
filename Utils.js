@@ -160,6 +160,24 @@ DQX.polyStar = function(ctx, x, y, radius, sides, pointSize, angle) {
         }
 
 
+        DQX.customRequest = function(serverUrl,respmodule,respid,data,callback) {
+            var theUrl = serverUrl+'?datatype=custom&respmodule='+respmodule+'&respid='+respid;
+            $.each(data,function(id,val) {
+                theUrl += '&'+id+'='+val;
+            });
+            $.ajax({
+                url: theUrl,
+                success: function (resp) {
+                    var keylist = DQX.parseResponse(resp);
+                    if (callback) callback(keylist);
+                },
+                error: function (resp) {
+                    DQX.reportError('Failed to launch request {module} {id}:\n{rsp}'.DQXformat( { module:respmodule, id:respid, rsp:JSON.stringify(resp) } ));
+                }
+            });
+        }
+
+
         DQX.timeoutRetry = 30000;
         DQX.timeoutAjax = 25000;
 
