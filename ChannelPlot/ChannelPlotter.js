@@ -1,4 +1,5 @@
 ﻿/************************************************************************************************************************************
+/************************************************************************************************************************************
 *************************************************************************************************************************************
 
 
@@ -69,6 +70,23 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Scroller", "DQX
                 return rs;
             }
 
+            that.delChannel =function(id) {
+                 if (id in that._idChannelMap) {
+                     var nr =-1;
+                     $.each(that._channels,function(idx,cha) {
+                         if (cha._myID==id)
+                            nr=idx;
+                     })
+
+
+                     var channelid = that._idChannelMap[id].getCanvasID('wrapper');
+                     this.getElemJQ('Body').find('#'+channelid).remove();
+
+                     that._channels.splice(nr,1);
+                     delete that._idChannelMap[id];
+                }
+            }
+
             //////////////////////////////////////////////////////////////////////////////////////////
             // Create basic html emelents
             //////////////////////////////////////////////////////////////////////////////////////////
@@ -134,6 +152,18 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Scroller", "DQX
                 idatafetcher.myDataConsumer = this;
             }
 
+
+            that.delDataFetcher = function (idatafetcher) {
+                var nr=-1;
+                $.each(this._myDataFetchers,function(idx,fetcher) {
+                    if (fetcher===idatafetcher)
+                        nr = idx;
+                })
+                if (nr>=0) {
+                    idatafetcher.myDataConsumer = null;
+                    this._myDataFetchers.splice(nr,1);
+                }
+            }
 
 
             that.channelModifyVisibility = function (channelID, newStatus) {
