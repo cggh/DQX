@@ -34,6 +34,11 @@ define(["require", "DQX/Framework", "DQX/Controls", "DQX/Msg", "DQX/Utils", "DQX
                     that._clickHandler = handler
                 }
 
+                that._setPlotter = function(iPlotter) {
+                    that._myPlotter=iPlotter;
+                    iPlotter.addDataFetcher(that.dataFetcher);
+                }
+
                 that.draw = function (drawInfo, args) {
                     var PosMin = Math.round((-50 + drawInfo.offsetX) / drawInfo.zoomFactX);
                     var PosMax = Math.round((drawInfo.sizeCenterX + 50 + drawInfo.offsetX) / drawInfo.zoomFactX);

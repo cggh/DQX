@@ -49,6 +49,8 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Scroller", "DQX
                 if (channel._myID in that._idChannelMap) DQX.reportError("Channel id already present: " + channel._myID);
                 this._channels.push(channel);
                 that._idChannelMap[channel._myID] = channel;
+                if ('_setPlotter' in channel)
+                    channel._setPlotter(this);
                 channel._myPlotter = this;
                 this.getElemJQ(onTop ? 'BodyFixed' : 'BodyScroll').append(channel.renderHtml());
                 channel.postCreateHtml();
