@@ -358,7 +358,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 }
                 st += '</table>';
 
-                if (this._legend.length > 0) {
+                if (this._legend) {
                     st += '</fieldset>';
                 }
                 if (!this._autoFillX)
