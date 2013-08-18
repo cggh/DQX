@@ -1636,6 +1636,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 that._uploadedFileId=null;
                 var fileInput = document.getElementById(this.getFullID('input'));
                 var file = fileInput.files[0];
+                that._fileName=file.name;
 
                 var xhr = new XMLHttpRequest();
 
@@ -1678,6 +1679,10 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
             that.getValue = function () {
                 return that._uploadedFileId;
             };
+
+            that.getFileName = function() {
+                return that._fileName;
+            }
 
 
             return that;
