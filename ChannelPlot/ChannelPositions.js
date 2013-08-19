@@ -109,7 +109,7 @@ define(["require", "DQX/Framework", "DQX/Controls", "DQX/Msg", "DQX/Utils", "DQX
                             info.positionID = this.dataFetcher.getColumnPoint(this.startIndex + bestpt, that.positionIDField);
                             info.content=info.positionID;
                             if (that._toolTipHandler)
-                                info.content = that._toolTipHandler(info.positionID);
+                                info.content = that._toolTipHandler(info.positionID,this.startIndex + bestpt);
                             if (that._clickHandler)
                                 info.showPointer = true;
                             return info;
