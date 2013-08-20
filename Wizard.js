@@ -16,6 +16,11 @@
         }
 
         //Creates a wizard, providing a unique identifier
+        // Settings can contain
+        //     title
+        //     sizeX
+        //     sizeY
+        //     canCancel
         Wizard.Create = function (iID, settings) {
             var that = {};
 
@@ -25,6 +30,7 @@
             that._pageIndex = {};
             that._sizeX = 600;
             that._sizeY = 500;
+            that._canCancel = true;
 
             if (settings) {
                 if (settings.title)
@@ -33,6 +39,8 @@
                     that._sizeX = settings.sizeX;
                 if (settings.sizeY)
                     that._sizeY = settings.sizeY;
+                if ('canCancel' in settings)
+                    that._canCancel = settings.canCancel;
             }
 
             //Sets the title of the wizard
@@ -175,12 +183,12 @@
                 thecloser.addStyle('top', '-16px');
 
 
-                var buttons = [
-                    { id: 'WizBoxButtonCancel', name: 'Cancel', bitmap: DQX.BMP('cancel.png'), floatPos: 'left', handler: that._onCancel },
-                    { id: 'WizBoxButtonPrevious', name: 'Previous', bitmap: DQX.BMP('arrow5left.png'), floatPos: 'left', handler: that._onPrevious },
-                    { id: 'WizBoxButtonNext', name: 'Next', bitmap: DQX.BMP('arrow5right.png'), floatPos: 'right', handler: that._onNext },
-                    { id: 'WizBoxButtonFinish', name: 'Finish', bitmap: DQX.BMP('ok.png'), floatPos: 'left', handler: that._onFinish }
-                ];
+                var buttons = [];
+                if (that._canCancel)
+                    buttons.push( { id: 'WizBoxButtonCancel', name: 'Cancel', bitmap: DQX.BMP('cancel.png'), floatPos: 'left', handler: that._onCancel } );
+                buttons.push( { id: 'WizBoxButtonPrevious', name: 'Previous', bitmap: DQX.BMP('arrow5left.png'), floatPos: 'left', handler: that._onPrevious } );
+                buttons.push( { id: 'WizBoxButtonNext', name: 'Next', bitmap: DQX.BMP('arrow5right.png'), floatPos: 'right', handler: that._onNext } );
+                buttons.push( { id: 'WizBoxButtonFinish', name: 'Finish', bitmap: DQX.BMP('ok.png'), floatPos: 'left', handler: that._onFinish } );
 
                 for (var buttonNr = 0; buttonNr < buttons.length; buttonNr++) {
                     var buttonInfo = buttons[buttonNr];
@@ -272,7 +280,10 @@
 
 
             that._onCancel = function () {
-                this._stopRunning();
+                if (!that._canCancel)
+                    alert('This wizard can not be aborted');
+                else
+                    this._stopRunning();
             }
 
             that._onHelp = function () {

@@ -601,7 +601,7 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
             that._tables = [];
             that._tablesMap = {};
 
-            that.addTable = function(iTableName, iColumns, iSortColumn) {
+            that.addTable = function(iTableName, iColumns, iSortColumn, query) {
                 var columns = [];
                 $.each(iColumns, function(idx, col) {
                     if (typeof (col) != 'object') {
@@ -614,6 +614,9 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                     }
                 })
                 var tableInfo = { name: iTableName, columns: columns, sortcolumn: iSortColumn };
+                tableInfo.query = SQL.WhereClause.Trivial();
+                if (query)
+                    tableInfo.query = query;
                 that._tables.push(tableInfo);
                 that._tablesMap[iTableName] = tableInfo;
             };
@@ -662,7 +665,7 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                     $.each(tableInfo.columns, function (colidx, columnInfo) {
                         fetcher.addColumn(columnInfo.id, 'GN');
                     });
-                    fetcher.getData(SQL.WhereClause.Trivial(), tableInfo.sortcolumn, function (data) {
+                    fetcher.getData(tableInfo.query, tableInfo.sortcolumn, function (data) {
                             tableInfo.data = data;
                             that.tryFinalise();
                         },
