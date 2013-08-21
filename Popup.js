@@ -192,8 +192,15 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Controls"],
 
         //Creates a new popup box, providing a title and html content
         //The function returns a unique identifier for this popup
-        Popup.create = function (title, content, helpID) {
+        // settings can contain:
+        //   - canclose: True or false
+        Popup.create = function (title, content, helpID, settings) {
 
+            var canClose = true;
+            if (settings) {
+                if ('canClose' in settings)
+                    canClose=settings.canClose;
+            }
             var wasSet = false;
             var popupID = '';
             $(".DQXFloatBox").each(function (index, Element) {
@@ -235,13 +242,17 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Controls"],
                 thebody.makeAutoVerticalScroller();
                 thebody.addElem(DQX.interpolate(content));
 
-                var thecloser = DocEl.JavaScriptBitmaplink(DQX.BMP("close2.png"), "Close", "DQX.ClosePopup('" + ID + "')");
-                thebox.addElem(thecloser);
-                thecloser.addStyle('position', 'absolute');
-                thecloser.addStyle('right', '-16px');
-                thecloser.addStyle('top', '-16px');
+                if (canClose) {
+                    var thecloser = DocEl.JavaScriptBitmaplink(DQX.BMP("close2.png"), "Close", "DQX.ClosePopup('" + ID + "')");
+                    thebox.addElem(thecloser);
+                    thecloser.addStyle('position', 'absolute');
+                    thecloser.addStyle('right', '-16px');
+                    thecloser.addStyle('top', '-16px');
+                }
 
-                thebox.addElem(Popup._createPinBox(ID, false));
+                if (canClose) {
+                    thebox.addElem(Popup._createPinBox(ID, false));
+                }
 
                 if (helpID) {//Help button
                     thebox.addElem('<IMG SRC="{bmp}" border=0 class="DQXBitmapLink Helpbutton" ALT="Help" TITLE="Help" style="opacity:0.70;position:absolute;right:35px;top:0px;">'.DQXformat({ bmp: DQX.BMP("info2.png") }));
