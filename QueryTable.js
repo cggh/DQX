@@ -286,6 +286,7 @@
                     that.myDataFetcher.deactivateFetchColumn(col.myCompID);
                 });
                 this.myColumns = [];
+                this.mySortOptions = [];
             }
 
             //finds and returns a column definition, providing the column identifier. returns null if not found

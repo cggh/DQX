@@ -484,7 +484,6 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/Fram
             }
 
 
-
             /////////////// INTERNAL FUNCTIONS
 
             that._setParentFrame = function (pframe) {

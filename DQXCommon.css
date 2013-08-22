@@ -891,7 +891,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7f7f7', end
     color:Black;
     padding:4px;
     /*padding-bottom:8px;*/
-	font-size:8pt;
+	font-size:9pt;
 }
 
 .DQXTreeItem2
@@ -900,7 +900,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7f7f7', end
     border: 1px solid rgb(190,190,190);
     color:Black;
     padding:4px;
-	font-size:9pt !important;
+	font-size:10pt !important;
 }
 
 

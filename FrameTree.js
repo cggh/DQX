@@ -25,6 +25,8 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
 
         TreeCtrl._objectBranch = function (iID, icontent) {
             this.myID = iID;
+            if (!iID)
+                this.myID = DQX.getNextUniqueID();
             this.content = icontent;
             this.items = []; //member items of this branch
             this._canSelect = true;
@@ -64,6 +66,11 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
         //Return the child members of this branch
         TreeCtrl._objectBranch.prototype.getItems = function () {
             return this.items;
+        }
+
+        //Removes all child items
+        TreeCtrl._objectBranch.prototype.clear = function () {
+            this.items = [];
         }
 
         //Add a new child to this branch

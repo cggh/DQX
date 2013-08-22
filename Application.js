@@ -93,6 +93,11 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/His
 
             });
 
+            Msg.listen('',{ type: 'ChangeTab', id: Application.frameBody.getFrameID() }, function(scope, frameid) {
+                Application.getView(frameid).onBecomeVisible();
+            });
+
+
             Application.customInitFunction(Application._createFramework2);
         };
 
@@ -209,6 +214,8 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/His
             that.createFrames = function() { DQX.reportError("Please override createFrames"); }; //override to define the frames of this view
 
             that.createPanels = function() { DQX.reportError("Please override createPanels"); }; //override to define the panels of this view
+
+            that.onBecomeVisible = function() {};
 
 
             Application._addView(that);

@@ -71,16 +71,20 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
 
 
 
-            //The currently fetched range of data
-            this._currentRangeMin = 1000.0;
-            this._currentRangeMax = -1000.0;
 
-            this.myDownloadPointsX = []; //X positions of all the currently downloaded points
-            this.myColumns = {}; //maps column IDs to DataFetchers.CurveColumn objects
-            this.totalRecordCount = -1;
+            this.resetAll =function() {
+                //The currently fetched range of data
+                this._currentRangeMin = 1000.0;
+                this._currentRangeMax = -1000.0;
 
-            this._isFetching = false; //If true, an ajax request was sent out and wasn't finished yet
-            this.hasFetchFailed = false; //True if an error occurred while fetching the data
+                this.myDownloadPointsX = []; //X positions of all the currently downloaded points
+                this.myColumns = {}; //maps column IDs to DataFetchers.CurveColumn objects
+                this.totalRecordCount = -1;
+
+                this._isFetching = false; //If true, an ajax request was sent out and wasn't finished yet
+                this.hasFetchFailed = false; //True if an error occurred while fetching the data
+            }
+            this.resetAll();
 
             //Removes all downloaded data, forcing a reload
             this.clearData = function () {

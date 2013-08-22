@@ -406,6 +406,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
             that.applyOnControls = function(fnc) {
             };
 
+            that.findControl = function (id) { return null; }
 
             return that;
         }
@@ -425,6 +426,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 return '<div style="width:{sz}px;display:inline-block"></div>'.DQXformat({ sz: this._size });
             }
             that.postCreateHtml = function () { }
+            that.findControl = function (id) { return null; }
 
             that.applyOnControls = function(fnc) {
             };
@@ -447,6 +449,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 return '<div style="height:{sz}px;width:100%"></div>'.DQXformat({ sz: this._size });
             }
             that.postCreateHtml = function () { }
+            that.findControl = function (id) { return null; }
 
             that.applyOnControls = function(fnc) {
             };
@@ -649,6 +652,8 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
             that._onChange = function () { }
 
             that.getValue = function () { return null; }
+
+            that.findControl = function (id) { return null; }
 
             return that;
         }
