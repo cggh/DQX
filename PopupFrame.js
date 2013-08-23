@@ -28,6 +28,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
             that._title = 'Frame'; if (settings.title) that._title = settings.title;
             that._sizeX = 800; if (settings.sizeX) that._sizeX = settings.sizeX;
             that._sizeY = 600; if (settings.sizeY) that._sizeY = settings.sizeY;
+            that.blocking = false; if (settings.blocking) that.blocking = settings.blocking;
             if (that.typeID in PopupFrame._settingsHistory) {
                 var settingHist = PopupFrame._settingsHistory[that.typeID];
                 that._sizeX = settingHist.sizeX;
@@ -79,6 +80,35 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
 
             that.render = function () {
 
+                if (that.blocking) {
+                    var background = DocEl.Div({ id: 'BlockingBackGround' });
+                    background.addStyle("position", "absolute");
+                    background.addStyle("left", '0px');
+                    background.addStyle("top", '0px');
+                    background.addStyle('width', '100%');
+                    background.addStyle('height', '100%');
+                    var wizbackcol = 'rgba(100,100,100,0.4)';
+                    background.addStyle('background-color', wizbackcol);
+                    background.addStyle('z-index', '2000');
+                    $('#DQXUtilContainer').append(background.toString());
+
+                    $('#BlockingBackGround').mousedown(function (ev) {
+                        if (ev.target.id == 'BlockingBackGround') {
+                            $('#BlockingBackGround').css('background-color', 'rgba(50,50,50,0.6)');
+                            setTimeout(function () {
+                                $('#BlockingBackGround').css('background-color', wizbackcol);
+                                setTimeout(function () {
+                                    $('#BlockingBackGround').css('background-color', 'rgba(50,50,50,0.6)');
+                                    setTimeout(function () {
+                                        $('#BlockingBackGround').css('background-color', wizbackcol);
+                                    }, 150);
+                                }, 150);
+                            }, 150);
+                        }
+                    });
+                }
+
+
                 if ('frameSettings' in settingHist) {
                     that.frameRoot.settingsStreamIn(settingHist.frameSettings);
                 }
@@ -119,7 +149,10 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
                 resizer.setCssClass('DQXPopupFrameResizer DQXPopupFrameResizer2');
 
                 var content = thebox.toString();
-                $('#DQXUtilContainer').append(content);
+                if (!that.blocking)
+                    $('#DQXUtilContainer').append(content);
+                else
+                    $('#BlockingBackGround').append(content);
 
                 $('#' + that.ID + 'closeButton').click($.proxy(that.close, that));
 
@@ -144,6 +177,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
                 settingHist.posY = $("#" + that.ID).position().top;
                 settingHist.frameSettings = this.frameRoot.settingsStreamOut();
                 $("#" + that.ID).remove();
+                $('#BlockingBackGround').remove();
                 //!!!todo: all necessary actions to make sure this object gets garbage collected
             }
 
