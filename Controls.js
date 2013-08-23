@@ -1111,6 +1111,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
         //    agrs.bitmap (optional) : hyperlink bitmap
         //    agrs.text (optional) : hyperlink text
         //    agrs.hint (optional) : hover tooltip
+        //    args.vertShift (optional) : vertical shift
         ////////////////////////////////////////////////////////////////////////////////////////////
 
         Controls.LinkButton = function (iid, args) {

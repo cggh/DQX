@@ -105,8 +105,9 @@
 
 
 
-            //Creates an advanced query tool panel for this table, in the frame provided
-            that.createPanelAdvancedQuery = function(iFrame) {
+            // Creates an advanced query tool panel for this table, in the frame provided
+            // callBackFunction is called everytime the query was changed
+            that.createPanelAdvancedQuery = function(iFrame, callBackFunction) {
                 this.panelAdvancedQueryBuilder = QueryBuilder.Panel(iFrame);
                 var builder = this.panelAdvancedQueryBuilder;
                 var dataFetcher = this.myTable.myDataFetcher;
@@ -118,9 +119,15 @@
                 };
 
                 //Attach message handler that update the query results when requested
-                Msg.listen("",{type:"RequestUpdateQuery",id:builder.myDivID},updateAdvancedQuery);
+                Msg.listen("",{type:"RequestUpdateQuery",id:builder.myDivID}, function() {
+                    updateAdvancedQuery();
+                    if (callBackFunction)
+                        callBackFunction();
+                });
                 //Attach message handler that invalidates the query results when requested
-                Msg.listen("",{type:"QueryModified",id:builder.myDivID},that.invalidateQuery);
+                Msg.listen("",{type:"QueryModified",id:builder.myDivID}, function() {
+                    that.invalidateQuery();
+                });
 
                 $.each(that.myTable.myColumns, function(idx,colinfo) {
                     //var dataType="String";//Float,Integer,MultiChoiceInt
