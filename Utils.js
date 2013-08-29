@@ -466,6 +466,10 @@ DQX.polyStar = function(ctx, x, y, radius, sides, pointSize, angle) {
                 return (Math.round(this.getR() * 255)).toString(16) + (Math.round(this.getG() * 255)).toString(16) + (Math.round(this.getB() * 255)).toString(16);
             }
 
+            that.isBlack = function() {
+                return (that.r<1.0e-9) && (that.g<1.0e-9) && (that.b<1.0e-9);
+            }
+
             //Returns a darkened version of the color, amount between 0 and 1
             that.darken = function (amount) {
                 var fc = 1.0 - amount;

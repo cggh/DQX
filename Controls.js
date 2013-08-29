@@ -127,7 +127,6 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
             var that = {};
             that._legend = '';
             that._controls = [];
-            that._margin = 3;
             that.myID = Controls._getNextControlID();
             that._visible = true;
             that._autoFillX = true;
@@ -233,6 +232,12 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
         Controls.CompoundVert = function (icontrols) {
             var that = Controls.CompoundGenericList(icontrols);
             that.treatAsBlock = false;
+            that._margin = 3;
+
+            that.setMargin = function(margin) {
+                that._margin = margin;
+                return that;
+            }
 
             that.renderHtml = function () {
                 var st = '';
@@ -244,8 +249,8 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 }
                 for (var i = 0; i < this._controls.length; i++) {
                     var el = DocEl.Div({});
-                    el.addStyle('margin-top', this._margin + 'px');
-                    el.addStyle('margin-bottom', this._margin + 'px');
+                    el.addStyle('margin-top', ((i>0)?(this._margin):(this._margin/2)) + 'px');
+                    el.addStyle('margin-bottom', ((i<this._controls.length-1)?(this._margin):(this._margin/2)) + 'px');
                     el.addElem(this._controls[i].renderHtml());
                     st += el.toString();
                 }
