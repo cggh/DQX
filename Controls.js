@@ -23,7 +23,7 @@ In this case, Controls.ExecPostCreateHtml must be called explicitely after the h
 *************************************************************************************************************************************
 *************************************************************************************************************************************/
 
-define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"],
+define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation", "DQX/Externals/spectrum"],
     function (DQX, Msg, DocEl, Scroller, Documentation) {
         var Controls = {};
 
@@ -814,7 +814,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                     textWidth = (args.width - args.height - 12) + 'px';
                 that.content = '';
                 that.content += '<div style="display:inline-block;vertical-align:middle;width:1px;height:100%"></div>';
-                that.content += '<div class="_DQXButtonImage" style="display:inline-block;vertical-align:middle;"><IMG SRC="' + args.bitmap + '" border=0 ALT="' + description + '" TITLE="' + description + '" style="padding-right:7px;"></div>';
+                that.content += '<div class="_DQXButtonImage" style="display:inline-block;vertical-align:middle;"><IMG SRC="' + args.bitmap + '" border=0 ALT="' + description + '" TITLE="' + description + '" style="padding-right:7px"></div>';
                 that.content += '<div class="_DQXButtonText" style="display:inline-block;width:{textw};vertical-align:middle">'.DQXformat({ textw: textWidth }) + DQX.interpolate(args.content) + '</div>';
             }
             if (args.hint)
@@ -1125,6 +1125,10 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
             that._vertShift = 0;
             if (args.vertShift)
                 that._vertShift = args.vertShift;
+            that._opacity = 1;
+            if (args.opacity)
+                that._opacity = args.opacity;
+
             that._smartLink = false;
             if (args.smartLink) {
                 that.myBitmap = DQX.BMP('link1.png');
@@ -1135,9 +1139,9 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 var st = '<a id={id} TITLE="{desc2}" class="DQXHyperlink">'.DQXformat({ id: this.getFullID(''), desc2: that._hint });
                 st += '<span style="white-space:nowrap;">'; //this trick is used to prevent a line break between the image and the text
                 if (this.myBitmap) {
-                    var s = '<IMG SRC="' + this.myBitmap + '" border=0 class="DQXBitmapLink" ALT="{desc1}" TITLE="{desc2}" style="position:relative;top:{shift}px"/>';
+                    var s = '<IMG SRC="' + this.myBitmap + '" border=0 class="DQXBitmapLink" ALT="{desc1}" TITLE="{desc2}" style="position:relative;top:{shift}px;opacity:{opacity}"/>';
                     s = s.DQXformat(
-                        { desc1: that.description, desc2: that._hint, shift: (-this._vertShift) });
+                        { desc1: that.description, desc2: that._hint, shift: (-this._vertShift), opacity: this._opacity });
                     st = st + s;
                 }
                 if (this.text) {
@@ -1690,6 +1694,56 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 return that._fileName;
             }
 
+
+            return that;
+        }
+
+
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // A color picker control
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        Controls.ColorPicker = function (iid, args) {
+            var that = Controls.Control(iid);
+            that.myLabel = null;
+            if ('label' in args)
+                that.myLabel = DQX.interpolate(args.label);
+            that.colorValue = DQX.Color(0.5,0,0);
+            if ('value' in args)
+                that.colorValue = args.value;
+
+
+
+            that._execRenderHtml = function () {
+                var st = '';
+                if (that.myLabel)
+                    st += that.myLabel+'&nbsp;';
+                st +=' <input type="text" id="{id}" />'.DQXformat({id: this.getFullID('')});
+                return st;
+            }
+
+
+            that._execPostCreateHtml = function () {
+
+                if (true) {
+                    $("#"+this.getFullID('')).spectrum({
+                        color: that.colorValue.toString(),
+                        showPalette: true,
+                        palette: ['fff', '000', 'rgb(230,0,0)', 'rgb(0,170,0)', 'rgb(80,80,255)', 'rgb(210,120,0)', 'rgb(200,0,200)'],
+                        change: function(color) {
+                            var rgb = color.toRgb();
+                            that.colorValue = DQX.Color(rgb.r/255.0,rgb.g/255.0,rgb.b/255.0);
+                            that._notifyChanged();
+                        }
+                    });
+                }
+            };
+
+            //Returns the current value of the slider
+            that.getValue = function () {
+                return that.colorValue;
+            };
 
             return that;
         }

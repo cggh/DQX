@@ -492,6 +492,7 @@ DQX.polyStar = function(ctx, x, y, radius, sides, pointSize, angle) {
                 return DQX.Color(parseFloat(parts[1]) / 255.0, parseFloat(parts[2]) / 255.0, parseFloat(parts[3]) / 255.0);
             if (typeof faildefault != 'undefined')
                 return faildefault;
+            return DQX.Color(0,0,0);
         }
 
         DQX.niceColours = [

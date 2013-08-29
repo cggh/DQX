@@ -1342,6 +1342,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/Fram
 
             that.setPadding = function (padding) {
                 this._padding = padding;
+                return that;
             }
 
             //Adds a new control to the form, derived from Control.Control
