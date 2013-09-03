@@ -336,6 +336,7 @@
             var that = {};
             that.isCompound = false;
             that.Tpe = "";
+            that.isTrivial = true;
             return that;
         }
 

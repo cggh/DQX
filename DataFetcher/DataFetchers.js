@@ -281,7 +281,7 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                     else {
                         if (this._userQuery1 != null) {
                             qry = this._userQuery1;
-                            if (this._userQuery2) {
+                            if ((this._userQuery2) && (!this._userQuery2.isTrivial) ) {
                                 qry = SQL.WhereClause.AND([qry, this._userQuery2]);
                             }
                         }

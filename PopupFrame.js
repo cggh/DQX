@@ -63,6 +63,10 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
             that.posY = Math.min(that.posY, DQX.getWindowClientH() - 40);
 
 
+
+            that.onClose = function() {} // Override to get a notification if the popup is about to be closed
+
+
             that.createFrames = function() { DQX.reportError("Please override createFrames"); }; //override to define the frames of this view
 
             that.createPanels = function() { DQX.reportError("Please override createPanels"); }; //override to define the panels of this view
@@ -178,6 +182,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
                 settingHist.frameSettings = this.frameRoot.settingsStreamOut();
                 $("#" + that.ID).remove();
                 $('#BlockingBackGround').remove();
+                that.onClose();
                 //!!!todo: all necessary actions to make sure this object gets garbage collected
             }
 

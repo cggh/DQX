@@ -239,6 +239,12 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 return that;
             }
 
+            that.setTreatAsBlock = function() {
+                that.treatAsBlock = true;
+                return that;
+            }
+
+
             that.renderHtml = function () {
                 var st = '';
                 if (that.treatAsBlock || (!that._autoFillX) )
