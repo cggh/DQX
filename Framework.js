@@ -562,7 +562,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/Fram
                     if (tabid == id)
                         this.activeTabNr = fnr;
                 }
-                this._setSubFramesPosition();
+                this._setSubFramesPosition(false);
                 this._onChangeTab(this.memberFrames[this.activeTabNr].myFrameID);
                 this.getFrameContainer().notifyLayoutChanged();
             }
@@ -835,7 +835,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/Fram
                     this.dragSep = true;
                     this.dragSepNr = sepnr;
                     this.dragOffset = pos - this.sepPosits[sepnr];
-                    $(document).bind('mouseup', that._handleOnMouseUp);
+                    $(document).bind('mouseup', that._handleSplitterOnMouseUp);
                     return false;
                 }
             }
@@ -849,7 +849,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/Fram
                     var totsize = this.isHorSplitter() ? clientel.width() : clientel.height();
                     var pos = this.isHorSplitter() ? posx : posy;
                     this._calculateNewFrameSizeFractions(this.dragSepNr, pos - this.dragOffset, totsize);
-                    this._setSubFramesPosition();
+                    this._setSubFramesPosition(true);
                     return false;
                 }
             }
@@ -862,10 +862,12 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/Fram
             }
 
 
-            that._handleOnMouseUp = function (ev) {
-                $(document).unbind('mouseup', that._handleOnMouseUp);
-                if (that.dragSep)
+            that._handleSplitterOnMouseUp = function (ev) {
+                $(document).unbind('mouseup', that._handleSplitterOnMouseUp);
+                if (that.dragSep) {
+                    that._setSubFramesPosition(false);
                     that.getFrameContainer().notifyLayoutChanged();
+                }
                 that.dragSep = false;
             }
 
@@ -944,10 +946,10 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/Fram
 
             }
 
-            that._setSubFramesPosition = function () {
+            that._setSubFramesPosition = function (isDragging) {
                 this._executeInitialisers();
                 var frameel = $('#' + this.myID);
-                this._setPosition(frameel.position().left, frameel.position().top, frameel.width(), frameel.height(), true, false);
+                this._setPosition(frameel.position().left, frameel.position().top, frameel.width(), frameel.height(), true, false, isDragging);
                 this._executePostInitialisers();
             }
 
@@ -984,7 +986,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/Fram
             }
 
 
-            that._setPosition = function (x0, y0, sx, sy, subFramesOnly, isHidden) {
+            that._setPosition = function (x0, y0, sx, sy, subFramesOnly, isHidden, isDragging) {
                 var frameel = $('#' + this.myID);
 
                 if (!subFramesOnly) {
@@ -1032,7 +1034,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/Fram
                     this.sepPosits = [];
                     var framePosits = that._calculateFramePositions(clientWidth);
                     for (var fnr = 0; fnr < this.memberFrames.length; fnr++) {
-                        this.memberFrames[fnr]._setPosition(framePosits[fnr].pos1, 0, framePosits[fnr].pos2 - framePosits[fnr].pos1 + 1, clientHeight, false, isHidden);
+                        this.memberFrames[fnr]._setPosition(framePosits[fnr].pos1, 0, framePosits[fnr].pos2 - framePosits[fnr].pos1 + 1, clientHeight, false, isHidden, isDragging);
                         if (fnr < this.memberFrames.length - 1) {
                             var splitterel = $('#' + this.getSeparatorDivID(fnr));
                             splitterel.css('position', 'absolute');
@@ -1049,7 +1051,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/Fram
                     this.sepPosits = [];
                     var framePosits = that._calculateFramePositions(clientHeight);
                     for (var fnr = 0; fnr < this.memberFrames.length; fnr++) {
-                        this.memberFrames[fnr]._setPosition(0, framePosits[fnr].pos1, clientWidth, framePosits[fnr].pos2 - framePosits[fnr].pos1 + 1, false, isHidden);
+                        this.memberFrames[fnr]._setPosition(0, framePosits[fnr].pos1, clientWidth, framePosits[fnr].pos2 - framePosits[fnr].pos1 + 1, false, isHidden, isDragging);
                         if (fnr < this.memberFrames.length - 1) {
                             var splitterel = $('#' + this.getSeparatorDivID(fnr));
                             splitterel.css('position', 'absolute');
@@ -1067,7 +1069,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/Fram
                         tabOffset = 30;
                     $('#' + this.getClientDivID() + '_tabbody').css('height', clientHeight /*- 47*/ - tabOffset - 17);
                     for (var fnr = 0; fnr < this.memberFrames.length; fnr++) {
-                        this.memberFrames[fnr]._setPosition(0, tabOffset, clientWidth, clientHeight - tabOffset, false, isHidden || (fnr != this.activeTabNr));
+                        this.memberFrames[fnr]._setPosition(0, tabOffset, clientWidth, clientHeight - tabOffset, false, isHidden || (fnr != this.activeTabNr), isDragging);
                     }
                 }
 
@@ -1079,7 +1081,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/Fram
                     if (this.scrollHelper)
                         this.scrollHelper.update();
                     if (this.myClientObject != null)
-                        this.myClientObject.handleResize();
+                        this.myClientObject.handleResize(isDragging);
                     else
                         this._needUpdateSize = true;
                 }
@@ -1232,7 +1234,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/Fram
                 var sx = myparent.innerWidth();
                 var sy = myparent.innerHeight();
                 that.frameRoot._executeInitialisers();
-                that.frameRoot._setPosition(0, 0, sx, sy, false, false);
+                that.frameRoot._setPosition(0, 0, sx, sy, false, false, false);
                 that.frameRoot._executePostInitialisers();
             }
 
@@ -1424,6 +1426,12 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/Fram
             var that = FramePanel(iParentRef);
             that._panelfirstRendered = false;
             that._toolTipInfo = { ID: null };
+            that._directRedraw = true;
+
+            //If set to false, the canvas is not redrawn during resizing actions
+            that.setDirectDedraw = function(newStatus) {
+                that._directRedraw = newStatus;
+            }
 
 
             that.getMyCanvasElement = function () { return $("#" + that.canvasID)[0]; }
@@ -1544,15 +1552,17 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/Fram
             }
 
 
-            that.handleResize = function () {
+            that.handleResize = function (isDragging) {
                 that._cnvWidth = $('#' + that.getDivID()).innerWidth();
                 that._cnvHeight = $('#' + that.getDivID()).innerHeight();
                 $('#' + that.canvasID).width(that._cnvWidth);
-                that.getMyCanvasElement().width = that._cnvWidth;
                 $('#' + that.canvasID).height(that._cnvHeight);
-                that.getMyCanvasElement().height = that._cnvHeight;
 
-                that.render();
+                if ((!isDragging) || that._directRedraw) {
+                    that.getMyCanvasElement().width = that._cnvWidth;
+                    that.getMyCanvasElement().height = that._cnvHeight;
+                    that.render();
+                }
             };
 
             // Initialise

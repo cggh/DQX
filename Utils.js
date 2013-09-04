@@ -378,7 +378,7 @@ DQX.polyStar = function(ctx, x, y, radius, sides, pointSize, angle) {
             setTimeout(function () {
                 fnc();
                 DQX.stopProcessing();
-            }, 100);
+            }, 20);
         }
 
         //Removes the processing message

@@ -164,7 +164,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
 
 
                 that.frameRoot._postCreateHTML();
-                that._handleResize();
+                that._handleResize(false);
 
                 DQX.ExecPostCreateHtml();
 
@@ -202,6 +202,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
                 $(document).unbind("mouseup.PopupFrameResize");
                 $(document).unbind("mousemove.PopupFrameResize");
                 $('#' + this.ID).css('box-shadow', this._oldBoxShadow);
+                this._handleResize(false);
                 return false;
             }
 
@@ -219,20 +220,20 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
                 var settingHist = PopupFrame._settingsHistory[this.typeID];
                 settingHist.sizeX = this._sizeX;
                 settingHist.sizeY = this._sizeY;
-                this._handleResize();
+                this._handleResize(true);
                 return false;
             }
 
 
 
-            that._handleResize = function () {
+            that._handleResize = function (isDragging) {
                 var myparent = $('#' + that.ID + 'Body');
                 var v1 = myparent.attr('id');
                 var v2 = myparent.get(0).tagName;
                 var sx = myparent.innerWidth();
                 var sy = myparent.innerHeight();
                 that.frameRoot._executeInitialisers();
-                that.frameRoot._setPosition(0, 0, sx, sy, false, false);
+                that.frameRoot._setPosition(0, 0, sx, sy, false, false, isDragging);
                 that.frameRoot._executePostInitialisers();
             }
 
