@@ -248,7 +248,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
             that.renderHtml = function () {
                 var st = '';
                 if (that.treatAsBlock || (!that._autoFillX) )
-                    st += '<div style="display:inline-block">';
+                    st += '<div style="display:inline-block;vertical-align:top">';
                 if (this._legend.length > 0) {
                     st += '<fieldset class="DQXFormFieldSet">';
                     st += '<legend>' + this._legend + '</legend>';
