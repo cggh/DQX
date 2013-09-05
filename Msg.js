@@ -67,5 +67,14 @@ define(
                 Msg._listeneridmap[eventid] = Msg._listeners.length;
             Msg._listeners.push({ eventid: eventid, scopeFilter: scopeFilter, callbackFunction: callbackFunction, context: context });
         }
+
+        Msg.delListener = function(eventid) {
+            if (eventid in Msg._listeneridmap) {
+                var idx = Msg._listeneridmap[eventid];
+                Msg._listeners.splice(idx,1);
+                delete Msg._listeneridmap[eventid];
+            }
+        }
+
         return Msg
     });
