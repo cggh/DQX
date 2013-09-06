@@ -137,7 +137,8 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
 
             this.getFetchColumn = function (cid) {
                 var rs = this.myColumns[cid];
-                if (rs == null) DQX.reportError("Invalid fetcher column id " + cid);
+                if (rs == null)
+                    DQX.reportError("Invalid fetcher column id " + cid);
                 return rs;
             }
 
@@ -408,7 +409,8 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
             this.getColumnPoint = function (currentloadindex, cid) {
                 if ((currentloadindex < 0) || (currentloadindex >= this.myDownloadPointsX.length)) return null;
                 var mycol = this.myColumns[cid];
-                if (!mycol) DQX.reportError('Invalid column ID "{id}"'.DQXformat({ id: cid }));
+                if (!mycol)
+                    DQX.reportError('Invalid column ID "{id}"'.DQXformat({ id: cid }));
                 return mycol.myDownloadValues[currentloadindex];
             }
 

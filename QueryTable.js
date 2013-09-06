@@ -131,16 +131,17 @@
 
                 $.each(that.myTable.myColumns, function(idx,colinfo) {
                     //var dataType="String";//Float,Integer,MultiChoiceInt
-                    var fetchInfo = dataFetcher.getFetchColumn(colinfo.myCompID);
-                    var dataType = fetchInfo.myEncodingType;
-                    var choiceList = null;
-                    if (colinfo._datatype_MultipleChoiceInt) {
-                        dataType = "MultiChoiceInt";
-                        choiceList = colinfo._datatype_MultipleChoiceInt;
+                    if (!colinfo.colIsClientGenerated) {
+                        var fetchInfo = dataFetcher.getFetchColumn(colinfo.myCompID);
+                        var dataType = fetchInfo.myEncodingType;
+                        var choiceList = null;
+                        if (colinfo._datatype_MultipleChoiceInt) {
+                            dataType = "MultiChoiceInt";
+                            choiceList = colinfo._datatype_MultipleChoiceInt;
+                        }
+
+                        builder.addTableColumn(SQL.TableColInfo(colinfo.myCompID, colinfo.myName, dataType, choiceList));
                     }
-
-                    builder.addTableColumn(SQL.TableColInfo(colinfo.myCompID, colinfo.myName, dataType, choiceList));
-
                 });
 
                 //Initialise the query builder
@@ -251,6 +252,7 @@
             that._dataValid = false; //false= does not have valid data
             that.myTableOffset = 0;
             that.totalRecordCount = -1; //means not yet determined
+            that._lastSelClickedRowNr = null;
 
             //Internal usage. Finds a html element in the cluster of elements that define this table
             that.getElementID = function (extension) {
@@ -296,6 +298,37 @@
                 this.mySortOptions = [];
             }
 
+            that.createSelectionColumn = function(tableid, idcolumn, selectionManager) {
+                var col = QueryTable.Column("Sel","sel",0);
+                col.setCellClickHandler(function(myDataFetcher, downloadrownr, info) {
+                    var id = myDataFetcher.getColumnPoint(downloadrownr, idcolumn);
+                    var prevState = selectionManager.isItemSelected(id);
+                    if ( (!info.shiftPressed) || (that._lastSelClickedRowNr == null) ) {
+                        selectionManager.selectItem(id,!prevState);
+                    }
+                    else {
+                        for (var i=Math.min(downloadrownr,that._lastSelClickedRowNr); i<=Math.max(downloadrownr,that._lastSelClickedRowNr); i++) {
+                            var id = myDataFetcher.getColumnPoint(i, idcolumn);
+                            selectionManager.selectItem(id,!prevState);
+                        }
+                    }
+                    that._lastSelClickedRowNr = downloadrownr;
+                    Msg.broadcast({type:'SelectionUpdated'}, tableid);
+                    //that.render();
+                    //alert('sel clicked');
+                });
+                col.colIsClientGenerated = true;
+                col.customTextCreator = function(myDataFetcher, downloadrownr) {
+                    var id = myDataFetcher.getColumnPoint(downloadrownr, idcolumn);
+                    if (selectionManager.isItemSelected(id))
+                        return '<span style="background-color:rgb(255,120,120);border:1px solid rgb(150,150,150)">&nbsp;&nbsp;&nbsp;&nbsp;<span>';
+                    else
+                        return '<span style="border:1px solid rgb(150,150,150)">&nbsp;&nbsp;&nbsp;&nbsp;<span>';
+                };
+                this.myColumns.push(col);
+
+            }
+
             //finds and returns a column definition, providing the column identifier. returns null if not found
             that.findColumn = function (iColID) {
                 for (var colnr in this.myColumns)
@@ -335,6 +368,7 @@
             that._onForward = function () {
                 if (this.myTableOffset + this.myPageSize < this.totalRecordCount) {
                     this.myTableOffset += this.myPageSize;
+                    that._lastSelClickedRowNr = null;
                     this.render();
                 }
                 return false;
@@ -343,6 +377,7 @@
             that._onFirst = function () {
                 this.myTableOffset = 0;
                 this.render();
+                that._lastSelClickedRowNr = null;
                 return false;
             }
 
@@ -350,12 +385,14 @@
                 this.myTableOffset -= this.myPageSize;
                 if (this.myTableOffset < 0) this.myTableOffset = 0;
                 this.render();
+                that._lastSelClickedRowNr = null;
                 return false;
             }
 
             that._onLast = function () {
                 this.myTableOffset = (Math.floor((this.totalRecordCount) / this.myPageSize)) * this.myPageSize;
                 this.render();
+                that._lastSelClickedRowNr = null;
                 return false;
             }
 
@@ -373,12 +410,14 @@
 
             that._onLineUp = function (message2) {
                 this.myTableOffset = Math.max(0, this.myTableOffset - message2);
+                that._lastSelClickedRowNr = null;
                 this.render();
                 return false;
             }
 
             that._onLineDown = function (message2) {
                 this.myTableOffset = Math.max(0, Math.min(this.totalRecordCount - this.myPageSize + 4, this.myTableOffset + message2));
+                that._lastSelClickedRowNr = null;
                 this.render();
                 return false;
             }
@@ -407,6 +446,7 @@
                 this.myDataFetcher.clearData();
                 this.myTableOffset = 0;
                 this._highlightRowNr = -1;
+                that._lastSelClickedRowNr = null;
                 this.render();
             }
 
@@ -560,7 +600,8 @@
                                 if ((this.totalRecordCount < 0) || (rownr < this.totalRecordCount)) cell_content = "?";
                                 if (downloadrownr >= 0) {
                                     hascontent = true;
-                                    cell_content = this.myDataFetcher.getColumnPoint(downloadrownr, thecol.myCompID);
+                                    if (!thecol.colIsClientGenerated)
+                                        cell_content = this.myDataFetcher.getColumnPoint(downloadrownr, thecol.myCompID);
                                     if (thecol.customTextCreator)
                                         cell_content = thecol.customTextCreator(this.myDataFetcher, downloadrownr);
                                     cell_color = thecol.CellToColor(cell_content);
@@ -573,8 +614,9 @@
                                     isLink = true;
                                     var linkID = thecol.myCompID + '~' + rownr + '~link~' + this.myBaseID;
                                     rs_table[tbnr] += '<span class="DQXQueryTableLinkCell" id="{id}">'.DQXformat({ id: linkID });
-                                    rs_table[tbnr] += '<IMG SRC="' + DQX.BMP('link3.png') + '" border=0  id={id} title="{hint}" ALT="Link"> '.
-                                        DQXformat({ hint: thecol._hyperlinkCellHint, id: linkID });
+                                    if (thecol.myCompID != 'sel')
+                                        rs_table[tbnr] += '<IMG SRC="' + DQX.BMP('link3.png') + '" border=0  id={id} title="{hint}" ALT="Link"> '.
+                                            DQXformat({ hint: thecol._hyperlinkCellHint, id: linkID });
                                 }
                                 rs_table[tbnr] += cell_content;
                                 if (isLink)
@@ -599,6 +641,7 @@
                         $('#' + that.myBaseID).find('#' + this._highlightRowNr + '_row_' + that.myBaseID + '_' + tbnr).addClass("DQXTableRowSelected");
 
 
+                $('#' + this.myBaseID).find('.DQXQueryTableLinkCell').mousedown(function() { return false; });
                 $('#' + this.myBaseID).find('.DQXQueryTableLinkCell').click($.proxy(that._onClickLinkCell, that));
                 $('#' + this.myBaseID).find('.DQXQueryTableHeaderText').click($.proxy(that._onClickLinkHeader, that));
                 //$('#' + this.myBaseID).find('.DQXQueryTableLinkHeader').click($.proxy(that._onClickLinkHeader, that));
@@ -678,12 +721,16 @@
             }
 
             that._onClickLinkCell = function (ev) {
-                var tokens = ev.target.id.split('~');
+                if (ev.target.id)
+                    var tokens = ev.target.id.split('~');
+                else
+                    var tokens = ev.currentTarget.id.split('~');
                 var column = this.findColumn(tokens[0]);
                 if (column._cellClickHandler)
-                    column._cellClickHandler(that.myDataFetcher,tokens[1]);
+                    column._cellClickHandler(that.myDataFetcher,tokens[1], {shiftPressed:ev.shiftKey, controlPressed:ev.ctrlKey});
                 if (column._hyperlinkCellMessageScope)
                     Msg.broadcast(column._hyperlinkCellMessageScope, parseInt(tokens[1]));
+                return false;
             }
 
             that._onClickLinkHeader = function (ev) {
