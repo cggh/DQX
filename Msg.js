@@ -23,16 +23,18 @@ define(
         Msg.broadcast = function (scope, content) {
             var receiverCount = 0
             for (var lnr = 0; lnr < Msg._listeners.length; lnr++) {
-                var lscope = Msg._listeners[lnr].scopeFilter;
-                var covered = true;
-                for (var scopekey in lscope) {
-                    if (!(scopekey in scope)) covered = false;
-                    else if (lscope[scopekey] != scope[scopekey]) covered = false;
-                    if (!covered) break;
-                }
-                if (covered) {
-                    Msg._listeners[lnr].callbackFunction.call(Msg._listeners[lnr].context, scope, content);
-                    receiverCount++;
+                if (Msg._listeners[lnr]!=null) {
+                    var lscope = Msg._listeners[lnr].scopeFilter;
+                    var covered = true;
+                    for (var scopekey in lscope) {
+                        if (!(scopekey in scope)) covered = false;
+                        else if (lscope[scopekey] != scope[scopekey]) covered = false;
+                        if (!covered) break;
+                    }
+                    if (covered) {
+                        Msg._listeners[lnr].callbackFunction.call(Msg._listeners[lnr].context, scope, content);
+                        receiverCount++;
+                    }
                 }
             }
             return receiverCount;
@@ -71,7 +73,7 @@ define(
         Msg.delListener = function(eventid) {
             if (eventid in Msg._listeneridmap) {
                 var idx = Msg._listeneridmap[eventid];
-                Msg._listeners.splice(idx,1);
+                Msg._listeners[idx] = null;
                 delete Msg._listeneridmap[eventid];
             }
         }

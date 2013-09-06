@@ -1096,7 +1096,9 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
 
             //Returns the currently selected item
             that.getValue = function () {
-                this._selectedState = this.getJQElement('').find(":selected").attr('value');
+                var item = this.getJQElement('').find(":selected");
+                if (item.length>0)
+                    this._selectedState = item.attr('value');
                 return this._selectedState;
             }
 
