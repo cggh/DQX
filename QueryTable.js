@@ -139,6 +139,10 @@
                             dataType = "MultiChoiceInt";
                             choiceList = colinfo._datatype_MultipleChoiceInt;
                         }
+                        if (colinfo._datatype_MultipleChoiceString) {
+                            dataType = "String";
+                            choiceList = colinfo._datatype_MultipleChoiceString;
+                        }
 
                         builder.addTableColumn(SQL.TableColInfo(colinfo.myCompID, colinfo.myName, dataType, choiceList));
                     }
@@ -226,6 +230,11 @@
             //Defines the datatype as a multiple choice list with integer id's (useful for automatic creation of query tools)
             that.setDataType_MultipleChoiceInt = function(choiceList) {
                 this._datatype_MultipleChoiceInt=choiceList;
+            }
+
+            //Defines the datatype as a multiple choice list with string id's (useful for automatic creation of query tools)
+            that.setDataType_MultipleChoiceString = function(choiceList) {
+                this._datatype_MultipleChoiceString=choiceList;
             }
 
             return that;

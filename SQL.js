@@ -24,7 +24,7 @@
 
             //returns true of this column contains multiple choice values
             that.isMultipleCoice = function () {
-                return (this.datatype == "MultiChoiceInt");
+                return (this.datatype == "MultiChoiceInt") || (this.choicelist);
             }
             return that;
         }
