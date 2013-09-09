@@ -357,11 +357,11 @@
             // Adds a new sort option to the table
             // iOption: of type SQL.TableSort
             // Note: the first sort option added will be activated by default
-            that.addSortOption = function (iName, iOption) {
+            that.addSortOption = function (iName, iOption, isDefault) {
                 DQX.requireMemberFunction(iOption, 'getPrimaryColumnID');
                 this.mySortOptions.push({ name: iName, Option: iOption });
                 this.findColumnRequired(iOption.getPrimaryColumnID()).sortOption = iOption;
-                if (!this.startSortOptionSet) {
+                if ( (!this.startSortOptionSet) || (isDefault) ) {
                     this.startSortOptionSet=true;
                     this.myDataFetcher.setSortOption(iOption,false);
                 }

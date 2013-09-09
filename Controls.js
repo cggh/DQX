@@ -112,6 +112,11 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                     that._control.applyOnControls(fnc);
             };
 
+            that.tearDown = function() {
+                if ('tearDown' in that._control)
+                    that._control.tearDown();
+            }
+
             return that;
         }
 
@@ -132,7 +137,10 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
             that._autoFillX = true;
 
             //Clears the list of member controls
-            that.clear = function () { that._controls = []; }
+            that.clear = function () {
+                that.tearDown();
+                that._controls = [];
+            }
 
             //Determines whether or not the control fills the full horizontal space
             that.setAutoFillX = function(status) { this._autoFillX = status; return this; }
@@ -143,6 +151,14 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 that._controls.push(item);
                 return item;
             }
+
+            that.tearDown = function() {
+                $.each(that._controls, function(idx, ctrl) {
+                    if ('tearDown' in ctrl)
+                        ctrl.tearDown();
+                });
+            }
+
 
             if (icontrols)
                 $.each(icontrols, function (idx, ctrl) { that.addControl(ctrl); });
@@ -495,6 +511,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
             that._enabled = true;
             that._controlExtensionList = ['']; //A list of all the ID's of member DOM elements of the control, registered as extensions to the base ID of the control
             that._hasDefaultFocus = false;
+            that._eventids = [];
 
             if (_debug_) {
                 if ($('#' + iid).length > 0)
@@ -518,7 +535,8 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 }
             }
             //We install a listener so that we can send an event to modify the value of the control
-            Msg.listen('ModifyValue' + that.getFullID(''), { type: 'CtrlModifyValue', id: that.myID }, $.proxy(that._reactModifyValue, that));
+            var eventid = DQX.getNextUniqueID();that._eventids.push(eventid);
+            Msg.listen(eventid, { type: 'CtrlModifyValue', id: that.myID }, $.proxy(that._reactModifyValue, that));
 
 
             that._reactModifyEnabled = function (scope, value) {
@@ -527,7 +545,14 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 }
             }
             //We install a listener so that we can send an event to modify the enabled state of the control
-            Msg.listen('ModifyEnabled' + that.getFullID(), { type: 'CtrlModifyEnabled', id: that.myID }, $.proxy(that._reactModifyEnabled, that));
+            var eventid = DQX.getNextUniqueID();that._eventids.push(eventid);
+            Msg.listen(eventid, { type: 'CtrlModifyEnabled', id: that.myID }, $.proxy(that._reactModifyEnabled, that));
+
+            that.tearDown = function() {
+                $.each(that._eventids, function(idx,eventid) {
+                    Msg.delListener(eventid);
+                });
+            }
 
 
             that.setContextID = function (id) {

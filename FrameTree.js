@@ -70,8 +70,17 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
 
         //Removes all child items
         TreeCtrl._objectBranch.prototype.clear = function () {
+            this.tearDown();
             this.items = [];
         }
+
+        TreeCtrl._objectBranch.prototype.tearDown = function() {
+            $.each(this.items,function(idx, item) {
+                if ('tearDown' in item)
+                    item.tearDown();
+            });
+        }
+
 
         //Add a new child to this branch
         TreeCtrl._objectBranch.prototype.addItem = function (item) {
@@ -120,6 +129,11 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
 
             that.postCreateHtml = function () {
                 return this.control.postCreateHtml();
+            }
+
+            that.tearDown = function() {
+                if (that.control && ('tearDown' in that.control))
+                    that.control.tearDown();
             }
 
             return that;
