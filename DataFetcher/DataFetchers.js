@@ -523,6 +523,7 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
             that.tableName = itableName; //The name of the table to fetch from
             that.columns = [];
             that._maxResultCount = 100000;
+            that._sortReverse = false;
             if (!itableName)
                 DQX.reportError('Invalid table name');
 
@@ -578,7 +579,7 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                 myurl.addUrlQueryItem("tbname", this.tableName);
                 myurl.addUrlQueryItem("collist", this._createActiveColumnListString());
                 myurl.addUrlQueryItem("order", orderField);
-                myurl.addUrlQueryItem("sortreverse", 0);
+                myurl.addUrlQueryItem("sortreverse", that._sortReverse?1:0);
                 myurl.addUrlQueryItem("needtotalcount", 0);
                 myurl.addUrlQueryItem("limit", "0~" + this._maxResultCount);
                 var urlstring = myurl.toString();
