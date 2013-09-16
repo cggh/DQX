@@ -15,6 +15,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
             that._panelfirstRendered = false;
             that._toolTipInfo = { ID: null };
             that._directRedraw = true;
+            that._fixedWidth = null; // if this has a non-zero value, specifies a fixed dimension, if null, specifies autoscaling
 
             that._canvasLayerIds = ['main','selection'];
             that._canvasLayerMap = {};
@@ -28,6 +29,11 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
             that.setDirectDedraw = function(newStatus) {
                 that._directRedraw = newStatus;
             }
+
+            that.setFixedWidth = function(w) {
+                that._fixedWidth = w;
+                that.handleResize();
+            };
 
 
             that.getCanvasID = function(layerid) {
@@ -50,6 +56,11 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
                     sizeY: that._cnvHeight
                 };
                 that.draw(drawInfo);
+            }
+
+
+            that.invalidate = function() {
+                that.render();
             }
 
             // Override this function
@@ -224,7 +235,10 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
 
 
             that.handleResize = function (isDragging) {
-                that._cnvWidth = $('#' + that.getDivID()).innerWidth();
+                if (that._fixedWidth!=null)
+                    that._cnvWidth = that._fixedWidth;
+                else
+                    that._cnvWidth = $('#' + that.getDivID()).innerWidth();
                 that._cnvHeight = $('#' + that.getDivID()).innerHeight();
                 $.each(that._canvasLayerIds, function(idx, layerid) {
                     $('#' + that.getCanvasID(layerid)).width(that._cnvWidth);
