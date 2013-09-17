@@ -108,12 +108,12 @@
             // Creates an advanced query tool panel for this table, in the frame provided
             // callBackFunction is called everytime the query was changed
             that.createPanelAdvancedQuery = function(iFrame, callBackFunction) {
-                this.panelAdvancedQueryBuilder = QueryBuilder.Panel(iFrame);
-                var builder = this.panelAdvancedQueryBuilder;
+                var panelAdvancedQueryBuilder = QueryBuilder.Panel(iFrame);
+                var builder = panelAdvancedQueryBuilder;
                 var dataFetcher = this.myTable.myDataFetcher;
 
                 var updateAdvancedQuery = function () {
-                    var thequery = that.panelAdvancedQueryBuilder.getQuery();
+                    var thequery = builder.getQuery();
                     that.myTable.setQuery(thequery);
                     that.myTable.reLoadTable();
                 };
@@ -151,6 +151,8 @@
                 //Initialise the query builder
                 //builder._createNewStatement(builder.root);
                 builder.render();
+
+                return builder;
             }
 
             return that;
