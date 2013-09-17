@@ -528,6 +528,60 @@ DQX.polyStar = function(ctx, x, y, radius, sides, pointSize, angle) {
         ];
 
 
+        DQX.PersistentAssociator = function(itemCount) {
+            var that={};
+            that.itemCount = itemCount;
+            that.associations = {};
+
+            that.map = function(idlist) {
+
+                var freeItemMap = {};
+                for (var i=0; i<that.itemCount; i++) freeItemMap[i]=1;
+                $.each(idlist, function(idx, id) {
+                    if (idx<that.itemCount) {
+                        if (id in that.associations)
+                            delete freeItemMap[id];
+                    }
+                });
+                var freeItems=[];
+                for (var i=0; i<that.itemCount; i++) {
+                    if (freeItemMap[i]==1)
+                        freeItems.push(i);
+                };
+                var freenr = 0;
+
+                var usedItemMap = {};
+                $.each(idlist, function(idx, id) {
+                    if (idx<that.itemCount) {
+                        var missing = false;
+                        if (!(id in that.associations))
+                            missing = true;
+                        else {
+                            if (that.associations[id] in usedItemMap)
+                                missing = true;
+                        }
+                        if (missing) {
+                            that.associations[id] = freeItems[freenr];
+                            freenr++;
+                        }
+                        usedItemMap[that.associations[id]] = 1;
+                    }
+                });
+
+                that.mapped = true;
+            };
+
+            that.get = function(id) {
+                if (!(id in that.associations))
+                    return -1;
+                else
+                    return that.associations[id];
+            };
+
+            return that;
+        };
+
+
         //////////////////////////////////////////////////////////////////////////////////////////////////////
         // A class that shows visual scroll up / down hints on a scrollable div (makes it easier to see what is scrollable on an iPad)
         // scrollableElement: a jQuery-style element rendered in the DOM, representing a scrollable div
