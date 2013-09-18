@@ -107,8 +107,10 @@
 
             // Creates an advanced query tool panel for this table, in the frame provided
             // callBackFunction is called everytime the query was changed
-            that.createPanelAdvancedQuery = function(iFrame, callBackFunction) {
-                var panelAdvancedQueryBuilder = QueryBuilder.Panel(iFrame);
+            that.createPanelAdvancedQuery = function(iFrame, callBackFunction, noAutoUpdate) {
+                var settings = {};
+                settings.noUpdate = noAutoUpdate;
+                var panelAdvancedQueryBuilder = QueryBuilder.Panel(iFrame, settings);
                 var builder = panelAdvancedQueryBuilder;
                 var dataFetcher = this.myTable.myDataFetcher;
 
@@ -118,16 +120,18 @@
                     that.myTable.reLoadTable();
                 };
 
-                //Attach message handler that update the query results when requested
-                Msg.listen("",{type:"RequestUpdateQuery",id:builder.myDivID}, function() {
-                    updateAdvancedQuery();
-                    if (callBackFunction)
-                        callBackFunction();
-                });
-                //Attach message handler that invalidates the query results when requested
-                Msg.listen("",{type:"QueryModified",id:builder.myDivID}, function() {
-                    that.invalidateQuery();
-                });
+                if (!noAutoUpdate) {
+                    //Attach message handler that update the query results when requested
+                    Msg.listen("",{type:"RequestUpdateQuery",id:builder.myDivID}, function() {
+                        updateAdvancedQuery();
+                        if (callBackFunction)
+                            callBackFunction();
+                    });
+                    //Attach message handler that invalidates the query results when requested
+                    Msg.listen("",{type:"QueryModified",id:builder.myDivID}, function() {
+                        that.invalidateQuery();
+                    });
+                }
 
                 $.each(that.myTable.myColumns, function(idx,colinfo) {
                     //var dataType="String";//Float,Integer,MultiChoiceInt

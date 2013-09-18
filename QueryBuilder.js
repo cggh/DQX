@@ -7,8 +7,8 @@
         // Interactive query builder FramePanel
         //////////////////////////////////////////////////////////////////////////////////////////
 
-        QueryBuilder.Panel = function (iParentRef) {
-            var that = QueryBuilder.Builder(iParentRef);
+        QueryBuilder.Panel = function (iParentRef, settings) {
+            var that = QueryBuilder.Builder(iParentRef, settings);
 
             that.handleResize = function () {
                 if ((that.getRootElem().width() > 5) && (that.getRootElem().height() > 5))
@@ -23,11 +23,14 @@
         // The query builder class
         ///////////////////////////////////////////////////////////////////////////////////////////////////
         // iDivID = the id of the div that serves as a container for the htnl elements
+        // settings.noUpdate
         // NOTE: this should not be called directly. Use QueryBuilder.Panel instead
 
-        QueryBuilder.Builder = function (iParentRef) {
+        QueryBuilder.Builder = function (iParentRef, settings) {
             var that = FramePanel(iParentRef);
 
+            if (!settings)
+                settings = {};
             DQX.ObjectMapper.Add(that);
             that.myColumns = []; //list of SQL.TableColInfo objects
             that.bSepX = 20;
@@ -588,17 +591,18 @@
                 }
 
                 var spacer = createstartendpoint('Filtered data set');
-                var updateBitmap = DocEl.Div();
-                updateBitmap.setCssClass("DQXGlowButton");
-                updateBitmap.addAttribute("onclick", this._createReactFunctionString('_ReactUpdateQuery', -1));
-                updateBitmap.setWidthPx(150);
-                updateBitmap.addElem("Update query results");
-                updateBitmap.addStyle('position', 'absolute');
-                updateBitmap.addStyle('left', '30px');
-                updateBitmap.addStyle('bottom', '-40px');
 
-
-                spacerel.addElem(updateBitmap);
+                if (!settings.noUpdate) {
+                    var updateBitmap = DocEl.Div();
+                    updateBitmap.setCssClass("DQXGlowButton");
+                    updateBitmap.addAttribute("onclick", this._createReactFunctionString('_ReactUpdateQuery', -1));
+                    updateBitmap.setWidthPx(150);
+                    updateBitmap.addElem("Update query results");
+                    updateBitmap.addStyle('position', 'absolute');
+                    updateBitmap.addStyle('left', '30px');
+                    updateBitmap.addStyle('bottom', '-40px');
+                    spacerel.addElem(updateBitmap);
+                }
 
                 container.addElem(spacer);
 
