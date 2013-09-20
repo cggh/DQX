@@ -782,6 +782,13 @@ a:link, a:visited
     border-width:0px;
 }
 
+.DQXGrayClient
+{
+    color:Black;
+    background-color: rgb(210,210,210);
+    border-width:0px;
+}
+
 .DQXClientInfo
 {
     color:rgb(0,0,192);

@@ -68,6 +68,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
         }
         if (_debug_) Controls._surveillance();
 
+
         ////////////////////////////////////////////////////////////////////////////////////////////
         // This control can be used to show or hide another control
         ////////////////////////////////////////////////////////////////////////////////////////////
@@ -120,6 +121,44 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
             return that;
         }
 
+
+
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        // This control can be used to right align another control
+        ////////////////////////////////////////////////////////////////////////////////////////////
+
+        Controls.AlignRight = function (icontrol) {
+            var that = {};
+            that._control = icontrol;
+
+            that.getID = function () {
+                return that._control.getID();
+            }
+
+
+            that.renderHtml = function () {
+                var el = DocEl.Div({ id: this.myID });
+                el.addStyle('display', 'inline-block');
+                el.addStyle('float', 'right');
+                el.addElem(this._control.renderHtml());
+                return el.toString();
+            }
+
+            that.postCreateHtml = function () {
+            }
+
+            that.applyOnControls = function(fnc) {
+                if ('applyOnControls' in that._control)
+                    that._control.applyOnControls(fnc);
+            };
+
+            that.tearDown = function() {
+                if ('tearDown' in that._control)
+                    that._control.tearDown();
+            }
+
+            return that;
+        }
 
 
         ////////////////////////////////////////////////////////////////////////////////////////////
