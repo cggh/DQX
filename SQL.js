@@ -172,6 +172,11 @@
                 }
             }
 
+            that.toDisplayString = function(fieldInfoMap, level) {
+                return fieldInfoMap[that.ColName].name+' '+that.Tpe+' '+fieldInfoMap[that.ColName].toDisplayString(that.CompValue);
+            }
+
+
             return that;
         }
 
@@ -205,6 +210,11 @@
                     this.ColName2 = $("#" + querybuilder.getControlID(ID, "OtherField")).val();
                 }
             }
+
+            that.toDisplayString = function(fieldInfoMap, level) {
+                return fieldInfoMap[that.ColName].name+' = '+fieldInfoMap[that.ColName2].name;
+            }
+
 
             return that;
         }
@@ -240,6 +250,10 @@
                 if ($("#" + querybuilder.getControlID(ID, "OtherField")).length > 0) {
                     this.ColName2 = $("#" + querybuilder.getControlID(ID, "OtherField")).val();
                 }
+            }
+
+            that.toDisplayString = function(fieldInfoMap, level) {
+                return fieldInfoMap[that.ColName].name+' <> '+fieldInfoMap[that.ColName2].name;
             }
 
             return that;
@@ -300,6 +314,20 @@
                 }
             }
 
+
+            that.toDisplayString = function(fieldInfoMap, level) {
+                var str= fieldInfoMap[that.ColName].name+' '+that.Tpe[0]+' ';
+                if (that.Factor!=1)
+                    str += that.Factor+'x';
+                str += fieldInfoMap[that.ColName2].name;
+                if (that.Offset>0)
+                    str += '+'+that.Offset;
+                if (that.Offset<0)
+                    str += '-'+Math.abs(that.Offset);
+                return str;
+            }
+
+
             return that;
         }
 
@@ -314,6 +342,9 @@
             }
             that._fetchStatementContent = function (ID, querybuilder) {
             }
+            that.toDisplayString = function(fieldInfoMap, level) {
+                return fieldInfoMap[that.ColName].name+' is present';
+            }
             return that;
         }
 
@@ -327,6 +358,9 @@
             }
             that._fetchStatementContent = function (ID, querybuilder) {
             }
+            that.toDisplayString = function(fieldInfoMap, level) {
+                return fieldInfoMap[that.ColName].name+' is absent';
+            }
             return that;
         }
 
@@ -337,6 +371,7 @@
             that.isCompound = false;
             that.Tpe = "";
             that.isTrivial = true;
+            that.toDisplayString = function(fieldInfoMap, level) { return 'All'; }
             return that;
         }
 
@@ -346,6 +381,7 @@
             that.isCompound = false;
             that.Tpe = "None";
             that.isNone = true;
+            that.toDisplayString = function(fieldInfoMap, level) { return 'None'; }
             return that;
         }
 
@@ -364,6 +400,22 @@
                 this.Components.push(icomp);
             }
             that.getComponentCount = function () { return this.Components.length; }
+
+            that.toDisplayString = function(fieldInfoMap, level) {
+                if (!level) level = 0;
+                var compstrs = [];
+                $.each(that.Components,function(idx,comp) {
+                    compstrs.push(comp.toDisplayString(fieldInfoMap, level+1));
+                });
+                var joinstr = ' '+that.Tpe+' ';
+                if (level==0)
+                    joinstr = ' <b>'+that.Tpe+'</b> ';
+                var str = compstrs.join(joinstr);
+                if (level==1) str = '['+str+']';
+                if (level>1) str = '('+str+')';
+                return str;
+            }
+
             return that;
         }
 
@@ -389,6 +441,7 @@
             //st = st.replace(/=/g, "*");!!! this should be added in client& server code
             return st;
         }
+
 
 
         //////////////////////////////////////////////////////////////////////////////////////

@@ -681,6 +681,14 @@
                 return this._extractQueryContent(this.root);
             }
 
+/*
+            //returns a user-friendly description of the query
+            that.getQueryDisplayString = function() {
+                if (this.root.myComponents.length == 0)
+                    return 'All';
+            }
+*/
+
             that._importQuery = function (statement) {
                 if (statement.isCompound) {
                     if (statement.Tpe == 'OR')
