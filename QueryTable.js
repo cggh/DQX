@@ -1,4 +1,4 @@
-﻿define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Controls", "DQX/SQL", "DQX/QueryBuilder"],
+define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Controls", "DQX/SQL", "DQX/QueryBuilder"],
     function ($, DQX, DocEl, Msg, FramePanel, Controls, SQL, QueryBuilder) {
 
         var QueryTable = {}
@@ -522,7 +522,7 @@
                 $('#' + that.myBaseID + '_status').html(st);
 
 
-                if (datacomplete && this._dataValid) {
+                if (datacomplete && this._dataValid  && (!this.preventDownloadData) ) {
                     var downloadlink = this.myDataFetcher.createDownloadUrl();
                     var downloadHtml = '<a href=' + downloadlink + '><IMG class="DQXBitmapLink" SRC=' + DQX.BMP('download.png') + ' border=0 title="Download this data as TAB-delimited file" ALT="Download"></a>';
                     //var downloadHtml = '<a href=' + downloadlink + '><span class="DQXHyperlink">Download<br>table</span></a>';
