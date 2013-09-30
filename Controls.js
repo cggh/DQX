@@ -694,6 +694,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 that.setOnChanged(function () {
                     model.set(attr, that.getValue());
                 });
+                return that;
             };
 
             return that;
