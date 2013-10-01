@@ -661,7 +661,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
 
             //Sets the focus to this control
             that.setFocus = function () {
-                if (!this.isRendered) DQX.reportError('Control is not rendered');
+                if (!this.isRendered()) DQX.reportError('Control is not rendered');
                 document.getElementById(this.getFullID('')).focus();
             }
 
@@ -1021,6 +1021,10 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 that._hint = args.hint;
             that._notifyEnter = null;
 
+            //if (that.myLabel)
+            //    that._controlExtensionList.push('TheLabel');
+
+
             //define a notification function that will be called when enter was pressed in the edit box
             that.setNotifyEnter = function (handler) {
                 DQX.checkIsFunction(handler);
@@ -1038,7 +1042,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 edt.addAttribute('autocomplete', "off");
                 var rs = '';
                 if (this.myLabel) {
-                    var label = DocEl.Label({ target: this.getFullID('Label') });
+                    var label = DocEl.Label({ target: this.getFullID('') });
                     label.addElem(this.myLabel);
                     rs = label.toString() + ' ';
                 }

@@ -193,7 +193,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Controls"],
         //Creates a new popup box, providing a title and html content
         //The function returns a unique identifier for this popup
         // settings can contain:
-        //   - canclose: True or false
+        //   - canClose: True or false
         Popup.create = function (title, content, helpID, settings) {
 
             var canClose = true;
