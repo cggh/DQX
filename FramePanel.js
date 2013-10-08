@@ -49,6 +49,14 @@ define(["jquery", "DQX/DocEl", "DQX/Msg"],
 
             that.getRootElem = function () { return $('#' + that.myDivID); }
 
+            that.getScrollPosVert = function() {
+                return $('#'+that.myDivID).scrollTop();
+            }
+
+            that.setScrollPosVert = function(vl) {
+                return $('#'+that.myDivID).scrollTop(vl);
+            }
+
             //Used internally by the framework
             that.handleResize = function () {
                 if ('onResize' in that) {
