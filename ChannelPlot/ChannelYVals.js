@@ -563,11 +563,15 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/Chann
             }
 
 
-            that.createComponentVisibilityControl = function(cmpid, label, showColor) {
+            that.createComponentVisibilityControl = function(cmpid, label, showColor, defaultHidden) {
                 var theLabel=label;
+                if (defaultHidden) {
+                    that.modifyComponentActiveStatus(cmpid,false,false);
+                    that._myPlotter.channelModifyVisibility(that.getID(),false);
+                }
                 if (showColor)
                     theLabel='<span style="background-color:{cl}">&nbsp&nbsp&nbsp</span>&nbsp'.DQXformat({cl:that.myComponents[cmpid].myPlotHints.color})+theLabel;
-                var chk=Controls.Check(null,{ label:theLabel, value:true }).setOnChanged(function() {
+                var chk=Controls.Check(null,{ label:theLabel, value:(!defaultHidden) }).setOnChanged(function() {
                     that.modifyComponentActiveStatus(cmpid,chk.getValue(),false);
                     //check if any component is still visible
                     var channelActive=false;
