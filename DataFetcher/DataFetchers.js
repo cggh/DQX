@@ -314,6 +314,8 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                     myurl.addUrlQueryItem("sortreverse", this.sortReverse ? 1 : 0);
                     myurl.addUrlQueryItem("needtotalcount", ((this.totalRecordCount < 0) && (needtotalrecordcount)) ? 1 : 0);
 
+                    myurl.addUrlQueryItem("needsmartsort", 0);
+
 
                     if (this.useLimit)
                         myurl.addUrlQueryItem("limit", rangemin + "~" + rangemax);

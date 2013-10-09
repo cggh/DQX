@@ -269,6 +269,8 @@
             that.totalRecordCount = -1; //means not yet determined
             that._lastSelClickedRowNr = null;
 
+            that.immediateFetchRecordCount = true;//if true, the record count of the result set is immediately fetched (might slow down for large sets!)
+
             //Internal usage. Finds a html element in the cluster of elements that define this table
             that.getElementID = function (extension) {
                 return this.myBaseID + extension;
@@ -381,7 +383,7 @@
             }
 
             that._onForward = function () {
-                if (this.myTableOffset + this.myPageSize < this.totalRecordCount) {
+                if ((this.myTableOffset + this.myPageSize < this.totalRecordCount) || (this.totalRecordCount<0) ) {
                     this.myTableOffset += this.myPageSize;
                     that._lastSelClickedRowNr = null;
                     this.render();
@@ -521,7 +523,7 @@
                 var datacomplete = false;
 
                 if (this._dataValid)
-                    datacomplete = this.myDataFetcher.IsDataReady(row1, row2, true);
+                    datacomplete = this.myDataFetcher.IsDataReady(row1, row2, that.immediateFetchRecordCount);
 
                 this.totalRecordCount = -1;
                 if ('totalRecordCount' in this.myDataFetcher)
@@ -532,7 +534,7 @@
                 }
                 else {
                     var st = "&nbsp;&nbsp;&nbsp;Current: " + (this.myTableOffset + 1) + "-" + (this.myTableOffset + this.myPageSize);
-                    st += '; Total: ' + this.totalRecordCount;
+                    st += '; Total: ' + ((this.totalRecordCount<0)?(' Unknown'):(this.totalRecordCount));
                 }
                 $('#' + that.myBaseID + '_status').html(st);
 
@@ -668,7 +670,7 @@
                 this.navButtonControls[0].enable(this.myTableOffset > 0);
                 this.navButtonControls[1].enable(this.myTableOffset > 0);
                 var endReached = this.myTableOffset + this.myPageSize >= this.totalRecordCount;
-                this.navButtonControls[2].enable(!endReached);
+                this.navButtonControls[2].enable( (!endReached) || (this.totalRecordCount<0) );
                 this.navButtonControls[3].enable(!endReached);
 
                 DQX.popActivity();
