@@ -206,6 +206,13 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Scroller", "DQX
                 return this._myNavigator;
             }
 
+            that.getVisibleRange = function() {
+                return {
+                    min : (this._offsetX) / this._zoomFactX,
+                    max : (this._sizeCenterX + this._offsetX) / this._zoomFactX
+                }
+            }
+
             //Updates the navigator
             that.updateNavigator = function () {
                 if (!this._sizeCenterX) return; //not yet initialised
