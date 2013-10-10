@@ -49,6 +49,7 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/Chann
             that.valueID = iValueID; // id of the component in the datafetched
             that.isActive = false;
             that.myPlotHints = ChannelYVals.PlotHints();
+            that._maxViewportSizeX=1.0e99;//info will be hidden if the viewport gets larger than this
 
             if ('addFetchColumnValue' in that.myfetcher) {//Convenience function: for fetcher that allow this, add column now if necessary
                 if (!that.myfetcher.hasFetchColumn(that.valueID)) //add column to datafetcher now
@@ -82,8 +83,28 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/Chann
                     this.myfetcher.deactivateFetchColumn(this.valueID);
             }
 
+            that.setMaxViewportSizeX = function(maxval) {
+                that._maxViewportSizeX= maxval;
+                return that;
+            }
+
+
 
             that.draw = function (drawInfo, args) {
+
+                this._pointsX = []; this._pointsY = []; this._pointsIndex = [];
+
+                if ( drawInfo.sizeCenterX/drawInfo.zoomFactX > that._maxViewportSizeX ) {
+                    drawInfo.centerContext.fillStyle = "black";
+                    drawInfo.centerContext.font = 'bold 14px sans-serif';
+                    drawInfo.centerContext.textBaseline = 'bottom';
+                    drawInfo.centerContext.textAlign = 'left';
+                    drawInfo.centerContext.globalAlpha = 0.5;
+                    drawInfo.centerContext.fillText("Zoom in to see individual points", 10, 15);
+                    drawInfo.centerContext.globalAlpha = 1.0;
+                    return;
+                }
+
                 var rangemin = args.rangemin;
                 var rangemax = args.rangemax;
                 var points = this.myfetcher.getColumnPoints(args.PosMin, args.PosMax, this.valueID);
@@ -93,7 +114,6 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/Chann
                 if (xvals.length > 10000) psz = 2;
                 var plothints = this.myPlotHints;
                 var hasYFunction = "YFunction" in this;
-                this._pointsX = []; this._pointsY = []; this._pointsIndex = [];
                 var pointsX = this._pointsX;
                 var pointsY = this._pointsY;
                 var pointsIndex = this._pointsIndex;
@@ -242,6 +262,9 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/Chann
                     that.myPlotHints.opacity = opacity;
             }
 
+            that.getActive = function() { return that.isActive; }
+
+
             //modifies the activity status of this component
             that.modifyComponentActiveStatus = function (newstatus) {
                 if (this.isActive == newstatus)
@@ -375,6 +398,9 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/Chann
                 this.myPlotHints.color = icolor
             }
 
+            that.getActive = function() { return that.isActive; }
+
+
             //modifies the activity status of this component
             that.modifyComponentActiveStatus = function (newstatus) {
                 if (this.isActive == newstatus)
@@ -482,6 +508,9 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/Chann
                     return;
                 this.isActive = newstatus;
             }
+
+            that.getActive = function() { return that.isActive; }
+
 
             that.draw = function (drawInfo, args) {
                 var rangemin = args.rangemin;

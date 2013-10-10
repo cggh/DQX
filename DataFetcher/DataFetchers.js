@@ -45,6 +45,8 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
             this.database = idatabase; //The name of the database to fetch from
             this.tablename = itablename; //The name of the table to fetch from
             this.rangeExtension = 1.5; //Left & right buffer that is automatically fetched along with the range request
+            this._maxViewportSizeX=1.0e99;//info will be hidden if the viewport gets larger than this
+
             this._requestNr = 0;
             if (!itablename)
                 DQX.reportError('Invalid table name');
@@ -69,7 +71,9 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                 this.clearData();
             }
 
-
+            this.setMaxViewportSizeX = function(maxval) {
+                this._maxViewportSizeX = maxval;
+            }
 
 
             this.resetAll =function() {
@@ -247,6 +251,9 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
             //internal: initiates the ajax data fetching call
             this._fetchRange = function (rangemin, rangemax, needtotalrecordcount) {
 
+                if (rangemax-rangemin>this._maxViewportSizeX)
+                    return;
+
                 if ((this._userQuery1) && (this._userQuery1.isNone)) {//Query indicates that we should fetch nothing!
                     this.hasFetchFailed = false;
                     this._isFetching = false;
@@ -360,6 +367,9 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
 
             //Call this to determine if all data in a specific range is ready, and start fetching extra data if necessary
             this.IsDataReady = function (rangemin, rangemax, needtotalrecordcount) {
+                if (rangemax-rangemin>this._maxViewportSizeX)
+                    return true;
+
                 if ((rangemin >= this._currentRangeMin) && (rangemax <= this._currentRangeMax)) {
                     var buffer = (rangemax - rangemin) / 2;
                     if ((rangemin - buffer < this._currentRangeMin) || (rangemax + buffer > this._currentRangeMax)) {

@@ -421,6 +421,7 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
                 drawInfo.centerContext.globalAlpha = 1.0;
             }
 
+
             that.drawFetchBusyMessage = function (drawInfo) {
                 drawInfo.centerContext.fillStyle = "rgb(0,192,0)";
                 drawInfo.centerContext.font = '25px sans-serif';
