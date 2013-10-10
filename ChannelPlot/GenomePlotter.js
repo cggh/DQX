@@ -36,7 +36,7 @@ define(["jquery", "DQX/Utils", "DQX/Msg", "DQX/ChannelPlot/ChannelPlotter", "DQX
             that.addDataFetcher(that._annotationFetcher);
 
             that._MaxZoomFactX = 1.0 / 0.2;
-            that.getNavigator.minScrollSize = 0.0001;
+            that.getNavigator().setMinScrollSize(0.0001);
 
             that.minZoomWindowSize = 600;//minimum viewport, in bp, that is shown when jumping to a specific position
 
@@ -48,6 +48,11 @@ define(["jquery", "DQX/Utils", "DQX/Msg", "DQX/ChannelPlot/ChannelPlotter", "DQX
             that.annotationChannel.setTitle('Genes');
             that.annotationChannel.darkenFactor = 0.95;
             that.addChannel(that.annotationChannel, true);
+
+            that.setMaxXZoomFactor = function(fullMaxZoom, scrollMaxZoom) {
+                that._MaxZoomFactX = fullMaxZoom;
+                that.getNavigator().setMinScrollSize(1.0/scrollMaxZoom);
+            }
 
 
             that.getAnnotationFetcher = function () {

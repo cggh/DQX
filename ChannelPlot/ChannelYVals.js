@@ -94,7 +94,7 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/Chann
 
                 this._pointsX = []; this._pointsY = []; this._pointsIndex = [];
 
-                if ( drawInfo.sizeCenterX/drawInfo.zoomFactX > that._maxViewportSizeX ) {
+                if ( drawInfo.sizeCenterX/drawInfo.zoomFactX > that._maxViewportSizeX+1 ) {
                     drawInfo.centerContext.fillStyle = "black";
                     drawInfo.centerContext.font = 'bold 14px sans-serif';
                     drawInfo.centerContext.textBaseline = 'bottom';
