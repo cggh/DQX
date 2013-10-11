@@ -269,6 +269,7 @@
             that.totalRecordCount = -1; //means not yet determined
             that._lastSelClickedRowNr = null;
 
+            that.fetchBuffer = 200;
             that.immediateFetchRecordCount = true;//if true, the record count of the result set is immediately fetched (might slow down for large sets!)
 
             //Internal usage. Finds a html element in the cluster of elements that define this table
@@ -446,7 +447,10 @@
                     this.render();
                 }
                 if (this._highlightRowNr >= this.myTableOffset + this.myPageSize) {
-                    this.myTableOffset = Math.max(0, Math.min(this.totalRecordCount - this.myPageSize + 4, this._highlightRowNr - this.myPageSize + 4));
+                    var newOffset = this._highlightRowNr - this.myPageSize + 4;
+                    if (this.totalRecordCount>=0)
+                        var newOffset = Math.min(this.totalRecordCount - this.myPageSize + 4, newOffset);
+                    this.myTableOffset = Math.max(0, newOffset);
                     this.render();
                 }
             }
@@ -518,8 +522,8 @@
 
 
 
-                var row1 = Math.max(0, this.myTableOffset - 200);
-                var row2 = this.myTableOffset + this.myPageSize + 200;
+                var row1 = Math.max(0, this.myTableOffset - this.fetchBuffer);
+                var row2 = this.myTableOffset + this.myPageSize + this.fetchBuffer;
                 var datacomplete = false;
 
                 if (this._dataValid)
@@ -680,9 +684,10 @@
             that.modifyHightlightRow = function (newRowNr) {
                 if (this.hasHighlight) {
                     if (newRowNr >= 0) {
-                        if ((!this._dataValid) || (this.totalRecordCount <= 0)) return;
+                        if ((!this._dataValid)/* || (this.totalRecordCount <= 0)*/) return;
                         newRowNr = Math.max(0, newRowNr);
-                        newRowNr = Math.min(this.totalRecordCount - 1, newRowNr);
+                        if (this.totalRecordCount>=0)
+                            newRowNr = Math.min(this.totalRecordCount - 1, newRowNr);
                     }
                     else newRowNr = -1;
                     if (that._highlightRowNr != newRowNr) {

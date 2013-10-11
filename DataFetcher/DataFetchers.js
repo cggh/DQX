@@ -202,6 +202,7 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                 if ('TotalRecordCount' in keylist)
                     this.totalRecordCount = keylist['TotalRecordCount'];
 
+
                 //decode all the downloaded columns
                 var b64codec = DataDecoders.B64();
                 var vallistdecoder = DataDecoders.ValueListDecoder();
@@ -211,6 +212,15 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                         if (this.myColumns[cid].isActive()) {
                             this.myColumns[cid].myDownloadValues = vallistdecoder.doDecode(keylist[cid]);
                         }
+                    if (this.useLimit) {
+                        var startPoint = Math.max(0,parseInt(keylist['start']));
+                        var requestedcount = parseInt(keylist['stop']) - startPoint + 1;
+                        var obtainedcount = this.myDownloadPointsX.length;
+                        if (obtainedcount<requestedcount) {
+                            this.totalRecordCount = startPoint+obtainedcount;
+                            //alert('downloaded: '+obtainedcount+' '+requestedcount);
+                        }
+                    }
                     //txt = "Fetched points: " + this.myDownloadPointsX.length + " (" + resp.length / 1000.0 + "Kb, " + Math.round(resp.length / this.myDownloadPointsX.length * 100) / 100 + "bytes/point)";
                     //$("#click2").text(txt);
                 }
