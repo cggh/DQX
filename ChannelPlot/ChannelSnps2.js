@@ -565,7 +565,11 @@
                     while (positXUnCorr[firstPos] < 0) firstPos += 1;
                     var lastPos = posits.length - 1;
                     while (positXUnCorr[lastPos] > sizeX) lastPos -= 1;
-                    var size = (positXUnCorr[lastPos - 1] - positXUnCorr[firstPos]) / (lastPos - firstPos);
+                    if (lastPos>firstPos)
+                        var size = (positXUnCorr[lastPos] - positXUnCorr[firstPos]) / (lastPos - firstPos);
+                    else
+                        var size = 600;
+                    if (size>600) size=600;
                     if (size < minsize) size = minsize;
                     //first pass: use all snps to determine shift
                     var shift = 0;
