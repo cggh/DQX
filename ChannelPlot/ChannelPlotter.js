@@ -197,6 +197,18 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Scroller", "DQX
                 }
             }
 
+            //sets the position and width
+            that.getPosition = function (centerpos, width) {
+                var rs = {};
+                rs.left = this._offsetX / this._zoomFactX;
+                var viewPortWidth = this.getViewPortWidth();
+                if (viewPortWidth > 0) {
+                    rs.right = (this._offsetX+viewPortWidth) / this._zoomFactX;
+                }
+                return rs;
+            }
+
+
             //Converts canvas screen X coordinate to logical X coordinate
             that.screenPos2XVal = function (ScreenPosX) {
                 return (ScreenPosX + this._offsetX) / this._zoomFactX;
@@ -220,6 +232,8 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Scroller", "DQX
                 var ps2 = (this.screenPos2XVal(this._sizeCenterX) - this._fullRangeMin) / (this._fullRangeMax - this._fullRangeMin);
                 this._myNavigator.setRange(this._fullRangeMin / 1.0e6, this._fullRangeMax / 1.0e6);
                 this._myNavigator.setValue(ps1, ps2 - ps1);
+                if (!this._preventSendPositionChangeNotification)
+                    Msg.broadcast({ type: 'PosOrZoomFactorXChanged', id: that.myID });
             }
 
             //responds to a navigator notification
@@ -227,6 +241,8 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Scroller", "DQX
                 var psx = this._fullRangeMin + fraction * (this._fullRangeMax - this._fullRangeMin);
                 this._offsetX = psx * this._zoomFactX;
                 this.render();
+                if (!this._preventSendPositionChangeNotification)
+                    Msg.broadcast({ type: 'PosOrZoomFactorXChanged', id: that.myID });
             }
 
             //responds to a navigator notification
@@ -238,6 +254,8 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Scroller", "DQX
                 var psx = this._fullRangeMin + scrollPosFraction * (this._fullRangeMax - this._fullRangeMin);
                 this._offsetX = psx * this._zoomFactX;
                 this.render();
+                if (!this._preventSendPositionChangeNotification)
+                    Msg.broadcast({ type: 'PosOrZoomFactorXChanged', id: that.myID });
             }
 
             that.clipViewRange = function (ev) {
@@ -442,7 +460,9 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Scroller", "DQX
                     if (this._channels[i].getAutoFillHeight())
                         this._channels[i].resizeY(autoChannelH);
 
+                this._preventSendPositionChangeNotification = true;
                 this.zoomScrollTo(this._myNavigator.scrollPos, this._myNavigator.ScrollSize);
+                this._preventSendPositionChangeNotification = false;
 
                 this.render();
             };

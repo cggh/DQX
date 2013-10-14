@@ -49,6 +49,11 @@ define(["jquery", "DQX/Utils", "DQX/Msg", "DQX/ChannelPlot/ChannelPlotter", "DQX
             that.annotationChannel.darkenFactor = 0.95;
             that.addChannel(that.annotationChannel, true);
 
+            Msg.listen('',{ type: 'PosOrZoomFactorXChanged', id: that.myID }, function() {
+                Msg.broadcast({ type: 'ChromosomePositionChanged', id: that.myID });
+            });
+
+
             that.setMaxXZoomFactor = function(fullMaxZoom, scrollMaxZoom) {
                 that._MaxZoomFactX = fullMaxZoom;
                 that.getNavigator().setMinScrollSize(1.0/scrollMaxZoom);
@@ -122,6 +127,9 @@ define(["jquery", "DQX/Utils", "DQX/Msg", "DQX/ChannelPlot/ChannelPlotter", "DQX
                     this.render();
                     //this.myHScroller.draw();
                 }
+
+                Msg.broadcast({ type: 'ChromosomePositionChanged', id: that.myID });
+
             }
 
             //adds a new chromosome to the viewer
