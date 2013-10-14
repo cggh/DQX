@@ -369,7 +369,9 @@
             that.addSortOption = function (iName, iOption, isDefault) {
                 DQX.requireMemberFunction(iOption, 'getPrimaryColumnID');
                 this.mySortOptions.push({ name: iName, Option: iOption });
-                this.findColumnRequired(iOption.getPrimaryColumnID()).sortOption = iOption;
+                var thecol = this.findColumn(iOption.getPrimaryColumnID());
+                if (thecol)
+                    thecol.sortOption = iOption;
                 if ( (!this.startSortOptionSet) || (isDefault) ) {
                     this.startSortOptionSet=true;
                     this.myDataFetcher.setSortOption(iOption,false);
