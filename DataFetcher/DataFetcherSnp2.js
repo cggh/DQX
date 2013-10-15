@@ -72,11 +72,13 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders", "DQX/DataFetcher/D
             this.setDataSource = function (idataid, callOnCompleted) {
                 this.clearData();
                 this.dataid = idataid;
-                DQX.setProcessing("Downloading...");
-                this._callOnCompleted = callOnCompleted;
-                this._listSnpPositionInfo = null;
-                this._listSampleCallInfo = null;
-                DataFetcherFile.getFile(serverUrl, this.dataid + "/_MetaData", $.proxy(this._onFetchMetaInfo, this));
+                if (idataid) {
+                    DQX.setProcessing("Downloading...");
+                    this._callOnCompleted = callOnCompleted;
+                    this._listSnpPositionInfo = null;
+                    this._listSampleCallInfo = null;
+                    DataFetcherFile.getFile(serverUrl, this.dataid + "/_MetaData", $.proxy(this._onFetchMetaInfo, this));
+                }
             }
 
             //sets the list of sequence ID's that should be fetched
