@@ -174,6 +174,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
             that.myID = Controls._getNextControlID();
             that._visible = true;
             that._autoFillX = true;
+            that._legendClass = "DQXFormFieldSet";
 
             //Clears the list of member controls
             that.clear = function () {
@@ -203,7 +204,13 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 $.each(icontrols, function (idx, ctrl) { that.addControl(ctrl); });
 
             //Sets a header legend for the group
-            that.setLegend = function (txt) { this._legend = txt; return this; }
+            that.setLegend = function (txt) {
+                this._legend = txt; return this;
+            }
+            that.setLegendSimple = function () {
+                that._legendClass = "DQXFormFieldSetSimple";
+                return this;
+            }
 
             that.getID = function () {
                 if (this._controls.length == 0) DQX.reportError('Compound control has no components');
@@ -263,7 +270,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 if (!that._autoFillX)
                     st += '<div style="display:inline-block">';
                 if (this._legend.length > 0) {
-                    st += '<fieldset class="DQXFormFieldSet">';
+                    st += '<fieldset class="{cls}">'.DQXformat({cls:that._legendClass});
                     st += '<legend>' + this._legend + '</legend>';
                 }
                 for (var i = 0; i < this._controls.length; i++)
@@ -305,7 +312,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 if (that.treatAsBlock || (!that._autoFillX) )
                     st += '<div style="display:inline-block;vertical-align:top">';
                 if (this._legend.length > 0) {
-                    st += '<fieldset class="DQXFormFieldSet">';
+                    st += '<fieldset class="{cls}">'.DQXformat({cls:that._legendClass});
                     st += '<legend>' + this._legend + '</legend>';
                 }
                 for (var i = 0; i < this._controls.length; i++) {
@@ -406,7 +413,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 if (!this._autoFillX)
                     st += '<div style="display:inline-block">';
                 if (this._legend) {
-                    st += '<fieldset class="DQXFormFieldSet">';
+                    st += '<fieldset class="{cls}">'.DQXformat({cls:that._legendClass});
                     st += '<legend>' + this._legend + '</legend>';
                 }
 
