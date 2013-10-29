@@ -966,7 +966,12 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                     this.getJQElement('').css('opacity', 0.4);
             }
 
-            return that;
+
+            that.modifyEnabled = function (newstate) {
+                that.enable(newstate);
+            }
+
+                return that;
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////
