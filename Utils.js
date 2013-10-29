@@ -417,6 +417,14 @@ DQX.polyStar = function(ctx, x, y, radius, sides, pointSize, angle) {
                 this.queryitems.push({ name: iname, content: icontent });
             }
 
+            that.delUrlQueryItem = function (iname) {
+                $.each(that.queryitems, function(idx, it) {
+                    if (it.name==iname)
+                        that.queryitems.splice(idx,1);
+                });
+            }
+
+
             that.toString = function () {
                 var rs = this.name;
                 if (this.queryitems.length > 0) {

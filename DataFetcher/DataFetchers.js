@@ -242,6 +242,24 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                 setTimeout($.proxy(this.myDataConsumer.notifyDataReady, this.myDataConsumer), DQX.timeoutRetry);
             }
 
+
+            this._ajaxResponse_FetchRecordCount = function(resp) {
+                var keylist = DQX.parseResponse(resp); //unpack the response
+
+                if ("Error" in keylist)
+                    return;
+
+                if (keylist.requestid != this._recordcountrequestid)
+                    return;
+
+                if ('TotalRecordCount' in keylist)
+                    this.totalRecordCount = keylist['TotalRecordCount'];
+
+                //tell the consumer of this that the data are ready
+                this.myDataConsumer.notifyDataReady();
+            }
+
+
             this._createActiveColumnListString = function () {
                 var collist = "";
                 for (var cid in this.myColumns)
@@ -260,6 +278,9 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
 
             //internal: initiates the ajax data fetching call
             this._fetchRange = function (rangemin, rangemax, needtotalrecordcount) {
+
+                if (!needtotalrecordcount)
+                    var q=0;
 
                 if (rangemax-rangemin>this._maxViewportSizeX)
                     return;
@@ -343,9 +364,31 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                         var thethis = this;
                         if (this.showDownload)
                             DQX.setProcessing("Downloading...");
+
                         $.ajax({
                             url: urlString,
-                            success: function (resp) { thethis._ajaxResponse_FetchRange(resp) },
+                            success: function (resp) {
+                                thethis._ajaxResponse_FetchRange(resp);
+                                if (!needtotalrecordcount) {//Fetch record cound in a second pass
+                                    var myurl2 = DQX.Url(thethis.serverurl);
+                                    thethis._recordcountrequestid = DQX.getNextUniqueID();
+                                    myurl2.addUrlQueryItem("datatype", 'getrecordcount');
+                                    myurl2.addUrlQueryItem('database', thethis.database);
+                                    myurl2.addUrlQueryItem('requestid', thethis._recordcountrequestid);
+                                    myurl2.addUrlQueryItem("qry", SQL.WhereClause.encode(qry));
+                                    myurl2.addUrlQueryItem("tbname", thethis.tablename);
+                                    $.ajax({
+                                        url: myurl2.toString(),
+                                        success: function (resp) {
+                                            thethis._ajaxResponse_FetchRecordCount(resp);
+                                        },
+                                        error: function (resp) {
+                                            var q=0;
+                                        }
+                                    });
+                                }
+                            },
+
                             error: function (resp) { thethis._ajaxFailure_FetchRange(resp) }
                         });
                     }

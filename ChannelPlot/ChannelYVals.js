@@ -760,7 +760,7 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/Chann
                 var alldataready = true;
                 var fetcherror = false;
                 for (var fetchnr = 0; fetchnr < fetcherlist.length; fetchnr++) {
-                    if (!fetcherlist[fetchnr].IsDataReady(this.PosMin, this.PosMax, false))
+                    if (!fetcherlist[fetchnr].IsDataReady(this.PosMin, this.PosMax, true))
                         alldataready = false;
                     if (fetcherlist[fetchnr].hasFetchFailed)
                         fetcherror = true;

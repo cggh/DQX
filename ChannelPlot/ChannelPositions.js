@@ -48,7 +48,7 @@ define(["require", "DQX/Framework", "DQX/Controls", "DQX/Msg", "DQX/Utils", "DQX
                     this.drawStandardGradientRight(drawInfo, 1);
 
                     //Draw SNPs
-                    this.dataFetcher.IsDataReady(PosMin, PosMax, false);
+                    this.dataFetcher.IsDataReady(PosMin, PosMax, true);
                     var points = this.dataFetcher.getColumnPoints(PosMin, PosMax, this.positionIDField);
                     var xvals = points.xVals;
                     var colorFieldStates = null;

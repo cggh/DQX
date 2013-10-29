@@ -487,7 +487,7 @@
             //iquery should be one of the query objects defined in SQL.WhereClause
             that.setQuery = function (iquery) {
                 this._highlightRowNr = -1;
-                this.myDataFetcher._userQuery1 = iquery;
+                this.myDataFetcher.setUserQuery1(iquery);
                 this._dataValid = true;
             }
 
@@ -540,7 +540,7 @@
                 }
                 else {
                     var st = "&nbsp;&nbsp;&nbsp;Current: " + (this.myTableOffset + 1) + "-" + (this.myTableOffset + this.myPageSize);
-                    st += '; Total: ' + ((this.totalRecordCount<0)?(' Unknown'):(this.totalRecordCount));
+                    st += '; Total: ' + ((this.totalRecordCount<0)?(' <i>[fetching...]</i>'):(this.totalRecordCount));
                 }
                 $('#' + that.myBaseID + '_status').html(st);
 
