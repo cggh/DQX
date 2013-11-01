@@ -226,6 +226,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
             that.modifyEnabled = function (newstate) {
                 for (var i = 0; i < this._controls.length; i++)
                     this._controls[i].modifyEnabled(id);
+                return that;
             }
 
             that.postCreateHtml = function () {
@@ -406,6 +407,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
 
             that.modifyEnabled = function (newstate) {
                 this._loopItems(function (it) { it.modifyEnabled(id); });
+                return that;
             }
 
             that.renderHtml = function () {
@@ -633,6 +635,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                     else
                         this.getJQElement(this._controlExtensionList[i]).attr("disabled", "disabled");
                 }
+                return that;
             }
 
             //Use this function to add a callback function that will be called when the value of the control was changed
