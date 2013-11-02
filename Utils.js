@@ -121,6 +121,18 @@ DQX.polyStar = function(ctx, x, y, radius, sides, pointSize, angle) {
         }
 
 
+        DQX.getUrlSearchString = function(token) {
+            var tokens = window.location.search.substring(1).split('&');
+            for (var tokennr = 0; tokennr < tokens.length; tokennr++) {
+                if (tokens[tokennr]) {
+                    var tokenpair = tokens[tokennr].split('=');
+                    if (tokenpair[0]==token) return tokenpair[1];
+                }
+            }
+            return null;
+        }
+
+
         DQX.serverDataStore = function(serverUrl, content, callback) {
             $.ajax({
                 url: serverUrl+'?datatype=storedata',

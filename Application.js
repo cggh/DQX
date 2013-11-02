@@ -7,6 +7,15 @@ IMPORTANT NOTE:
  *************************************************************************************************************************************
  *************************************************************************************************************************************/
 
+
+
+/************************************************************************************************************************************
+ *
+ * Application: the one and single application object
+ * Application.startupParams: a map with tokens provided on the url on startup
+ *
+ ************************************************************************************************************************************/
+
 define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/HistoryManager", "DQX/Controls"],
     function ($, DQX, DocEl, Msg, Framework, HistoryManager, Controls) {
         var Application = {};
@@ -47,6 +56,15 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/His
                     message='<b>Fatal error:</b> This browser is outdated and does not support the features necessary to run this application';
                 $('#Div1').html(message);//If not, set an error message
                 return;
+            }
+
+            Application.startupParams = {};
+            var tokens = window.location.search.substring(1).split('&');
+            for (var tokennr = 0; tokennr < tokens.length; tokennr++) {
+                if (tokens[tokennr]) {
+                    var tokenpair = tokens[tokennr].split('=');
+                    Application.startupParams[tokenpair[0]] = tokenpair[1];
+                }
             }
 
             DQX.Init();
