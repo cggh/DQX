@@ -214,9 +214,9 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
                     else
                         that.hideToolTip();
                     if (showPointer)
-                        $('#' + that.canvasID).css('cursor', 'pointer');
+                        $('#'+that.getCanvasID('selection')).css('cursor', 'pointer');
                     else
-                        $('#' + that.canvasID).css('cursor', 'auto');
+                        $('#'+that.getCanvasID('selection')).css('cursor', 'auto');
                 }
             };
 
