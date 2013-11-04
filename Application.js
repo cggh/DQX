@@ -74,6 +74,11 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/His
             })
         };
 
+        //returns a list of all views
+        Application.getViewList = function() {
+            return Application._views;
+        }
+
         Application.getView = function(viewID) {
             if (!Application._viewMap[viewID])
                 DQX.reportError('Invalid view '+viewID);
