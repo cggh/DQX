@@ -1069,6 +1069,8 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
             that._execPostCreateHtml = function () {
                 this.getJQElement('').bind("propertychange input paste", $.proxy(that._onChange, that));
                 this.getJQElement('').bind("keyup", $.proxy(that._onKeyUp, that));
+                if (that._hasDefaultFocus)
+                    this.getJQElement('').select();
             }
 
             that._onKeyUp = function (ev) {
