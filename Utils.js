@@ -1218,6 +1218,14 @@ DQX.polyStar = function(ctx, x, y, radius, sides, pointSize, angle) {
             var frcdigits = -(Math.log(bestjump.Jump1 * bestjump.JumpReduc) / Math.log(10.0));
             bestjump.textDecimalCount = Math.max(0, Math.ceil(frcdigits));
 
+            bestjump.value2String = function(val) {
+                if ( (Math.abs(val)>=100000) ) {
+                    return val.toExponential();
+                }
+                else
+                    return val.toFixed(this.textDecimalCount);
+            }
+
             return bestjump;
         }
 
