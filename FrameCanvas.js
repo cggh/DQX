@@ -17,6 +17,8 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
             that._directRedraw = true;
             that._fixedWidth = null; // if this has a non-zero value, specifies a fixed dimension, if null, specifies autoscaling
 
+            that.selectionHorOnly = false;//Set to true to have the user (mouse driven) selection restricted to horizontal areas
+
             that._canvasLayerIds = ['main','selection'];
             that._canvasLayerMap = {};
             $.each(that._canvasLayerIds, function(idx,id) {
@@ -154,11 +156,17 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
                 ctx.clearRect(0, 0, selCanvas.width, selCanvas.height);
                 ctx.fillStyle='rgba(255,0,0,0.1)';
                 ctx.strokeStyle='rgba(255,0,0,0.5)';
+                var yp0 = that.dragY0;
+                var yp1 = that.dragY1;
+                if (that.selectionHorOnly) {
+                    yp0 = 0;
+                    yp1 = that.getMyCanvasElement('selection').height;
+                }
                 ctx.beginPath();
-                ctx.moveTo(that.dragX0, that.dragY0);
-                ctx.lineTo(that.dragX0, that.dragY1);
-                ctx.lineTo(that.dragX1, that.dragY1);
-                ctx.lineTo(that.dragX1, that.dragY0);
+                ctx.moveTo(that.dragX0, yp0);
+                ctx.lineTo(that.dragX0, yp1);
+                ctx.lineTo(that.dragX1, yp1);
+                ctx.lineTo(that.dragX1, yp0);
                 ctx.closePath();
                 ctx.fill();
                 ctx.stroke();
@@ -213,10 +221,10 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
                     }
                     else
                         that.hideToolTip();
-                    if (showPointer)
-                        $('#'+that.getCanvasID('selection')).css('cursor', 'pointer');
-                    else
-                        $('#'+that.getCanvasID('selection')).css('cursor', 'auto');
+                    var pointerType = showPointer?"pointer":"auto";
+                    $('#' + that.canvasID).css('cursor', pointerType);
+                    $('#'+that.getCanvasID('main')).css('cursor', pointerType);
+                    $('#'+that.getCanvasID('selection')).css('cursor', pointerType);
                 }
             };
 

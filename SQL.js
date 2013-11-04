@@ -37,6 +37,8 @@
 
         SQL.WhereClause = {};
 
+        SQL.WhereClause.whcClassGenerator = {};
+
         //A list of all comparison operators that act on a field
         SQL.WhereClause._fieldComparisonOperators = [
             { ID: '=', name: 'Equals',
@@ -127,6 +129,9 @@
         }
 
         //A class that encapsulates the comparison of a field to a fixed value
+        SQL.WhereClause.whcClassGenerator['comparefixed'] = function(args) {
+            return SQL.WhereClause.CompareFixed(args.ColName,args.Tpe,args.CompValue);
+        }
         SQL.WhereClause.CompareFixed = function (icolname, icomptype, ivalue) {
             var that = {};
             var fnd = false;
@@ -135,6 +140,7 @@
                     fnd = true;
             if (!fnd)
                 DQX.reportError("Invalid comparison where clause statement: " + icompoundtype);
+            that.whcClass = 'comparefixed';
             that.isCompound = false;
             that.ColName = icolname;
             that.Tpe = icomptype;
@@ -181,8 +187,15 @@
         }
 
         //A class that Encapsulates the equality comparison of a field to another field
+        SQL.WhereClause.whcClassGenerator['equalsfield'] = function(args) {
+            var whc = SQL.WhereClause.EqualsField();
+            whc.ColName = args.ColName;
+            whc.ColName2 = args.ColName2;
+            return whc;
+        }
         SQL.WhereClause.EqualsField = function () {
             var that = {};
+            that.whcClass = 'equalsfield';
             that.isCompound = false;
             that.ColName = "";
             that.ColName2 = "";
@@ -222,8 +235,15 @@
 
 
         //A class that Encapsulates the differential comparison of a field to another field
+        SQL.WhereClause.whcClassGenerator['differsfield'] = function(args) {
+            var whc = SQL.WhereClause.EqualsField();
+            whc.ColName = args.ColName;
+            whc.ColName2 = args.ColName2;
+            return whc;
+        }
         SQL.WhereClause.DiffersField = function () {
             var that = {};
+            that.whcClass = 'differsfield';
             that.isCompound = false;
             that.ColName = "";
             that.ColName2 = "";
@@ -261,8 +281,17 @@
 
 
         //A class that Encapsulates the numerical comparison of a field to another field
+        SQL.WhereClause.whcClassGenerator['comparefield'] = function(args) {
+            var whc = SQL.WhereClause.CompareField(args.Tpe);
+            whc.ColName = args.ColName;
+            whc.ColName2 = args.ColName2;
+            whc.Factor = args.Factor;
+            whc.Offset = args.Offset;
+            return whc;
+        }
         SQL.WhereClause.CompareField = function (icomptype) {
             var that = {};
+            that.whcClass = 'comparefield';
             that.isCompound = false;
             that.ColName = "";
             that.ColName2 = "";
@@ -334,8 +363,14 @@
 
 
         //A class that checks for presence of the value
+        SQL.WhereClause.whcClassGenerator['ispresent'] = function(args) {
+            var whc = SQL.WhereClause.IsPresent();
+            whc.ColName = args.ColName;
+            return whc;
+        }
         SQL.WhereClause.IsPresent = function () {
             var that = {};
+            that.whcClass = 'ispresent';
             that.isCompound = false;
             that.Tpe = "ISPRESENT";
             that._buildStatement = function (ID, elem, querybuilder) {
@@ -350,8 +385,14 @@
 
 
         //A class that checks for absence of the value
+        SQL.WhereClause.whcClassGenerator['isabsent'] = function(args) {
+            var whc = SQL.WhereClause.IsPresent();
+            whc.ColName = args.ColName;
+            return whc;
+        }
         SQL.WhereClause.IsAbsent = function () {
             var that = {};
+            that.whcClass = 'isabsent';
             that.isCompound = false;
             that.Tpe = "ISABSENT";
             that._buildStatement = function (ID, elem, querybuilder) {
@@ -366,8 +407,13 @@
 
 
         //A class that Encapsulates the absence of a where clause
+        SQL.WhereClause.whcClassGenerator['trivial'] = function(args) {
+            var whc = SQL.WhereClause.Trivial();
+            return whc;
+        }
         SQL.WhereClause.Trivial = function () {
             var that = {};
+            that.whcClass = 'trivial';
             that.isCompound = false;
             that.Tpe = "";
             that.isTrivial = true;
@@ -376,8 +422,13 @@
         }
 
         //A class that Encapsulates a query that should return nothing
+        SQL.WhereClause.whcClassGenerator['none'] = function(args) {
+            var whc = SQL.WhereClause.None();
+            return whc;
+        }
         SQL.WhereClause.None = function () {
             var that = {};
+            that.whcClass = 'none';
             that.isCompound = false;
             that.Tpe = "None";
             that.isNone = true;
@@ -388,10 +439,18 @@
 
 
         //A class that Encapsulates a compound statement
+        SQL.WhereClause.whcClassGenerator['compound'] = function(args) {
+            var whc = SQL.WhereClause.Compound(args.Tpe,[]);
+            $.each(args.Components,function(idx, comp) {
+                whc.addComponent(SQL.WhereClause.whcClassGenerator[comp.whcClass](comp));
+            });
+            return whc;
+        }
         SQL.WhereClause.Compound = function (icompoundtype, components) {
             if ((icompoundtype != 'AND') && (icompoundtype != 'OR'))
                 DQX.reportError("Invalid compound where clause statement: " + icompoundtype);
             var that = {};
+            that.whcClass = 'compound';
             that.isCompound = true;
             that.Tpe = icompoundtype;
             that.Components = components;
@@ -438,10 +497,20 @@
             var st = Base64.encode(jsonstring);
             st = st.replace(/\+/g, "-");
             st = st.replace(/\//g, "_");
+            if (Base64.decode(st)!=jsonstring) {
+                var testdecoded = Base64.decode(st);
+                DQX.reportError('Invalid encoding');
+            }
             //st = st.replace(/=/g, "*");!!! this should be added in client& server code
             return st;
         }
 
+        //Decodes astring encoded whereclause object and returns the whereclause
+        SQL.WhereClause.decode = function (st) {
+            st = Base64.decode(st);
+            var tree = JSON.parse(st);
+            return SQL.WhereClause.whcClassGenerator[tree.whcClass](tree);
+        }
 
 
         //////////////////////////////////////////////////////////////////////////////////////
