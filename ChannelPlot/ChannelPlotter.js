@@ -370,6 +370,16 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Scroller", "DQX
                 this.render();
             }
 
+
+            that.getMark = function() {
+                if (!this._markPresent)
+                    return null;
+                return {
+                    min:this._markPos1,
+                    max:this._markPos2
+                };
+            }
+
             that.render = function () {
                 if (!this._sizeCenterX) return; //not yet initialised
                 var drawInfo = {
