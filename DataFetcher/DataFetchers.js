@@ -67,7 +67,10 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
             }
 
             this.setUserQuery2 = function (qry) {
-                this._userQuery2 = qry;
+                if (qry.isTrivial)
+                    this._userQuery2 = null;
+                else
+                    this._userQuery2 = qry;
                 this.clearData();
             }
 
