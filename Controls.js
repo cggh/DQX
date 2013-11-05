@@ -1110,6 +1110,105 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
         }
 
 
+
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        // An textarea box (=multiline edit)
+        //    args.value (optional) : initial content of the edit box
+        //    args.size (optional) : number of horizontal characters of the edit box
+        //    args.linecount (optional) : number of lines of the edit box
+        //    args.hint (optional) : hover tooltip
+        ////////////////////////////////////////////////////////////////////////////////////////////
+
+        Controls.Textarea = function (iid, args) {
+            var that = Controls.Control(iid);
+            that.myLabel = args.label;
+            that.value = '';
+            if ('value' in args)
+                that.value = args.value;
+            that.size = 6;
+            if ('size' in args)
+                that.size = args.size;
+            that.linecount = 2;
+            if ('linecount' in args)
+                that.linecount = args.linecount;
+            if (args.hint)
+                that._hint = args.hint;
+            that._notifyEnter = null;
+
+            //if (that.myLabel)
+            //    that._controlExtensionList.push('TheLabel');
+
+
+            //define a notification function that will be called when enter was pressed in the edit box
+            that.setNotifyEnter = function (handler) {
+                DQX.checkIsFunction(handler);
+                this._notifyEnter = handler;
+            }
+
+            that._execRenderHtml = function () {
+                var edt = DocEl.Create("textarea", { id: this.getFullID('') });
+                edt.addElem(that.value);
+                if (this._hint)
+                    edt.addHint(this._hint);
+                edt.addAttribute('cols', that.size);
+                edt.addAttribute('rows', that.linecount);
+                edt.addAttribute('name', this.getFullID(''));
+                edt.addAttribute('autocorrect', "off");
+                edt.addAttribute('autocapitalize', "off");
+                edt.addAttribute('autocomplete', "off");
+                var rs = '';
+                if (this.myLabel) {
+                    var label = DocEl.Label({ target: this.getFullID('') });
+                    label.addElem(this.myLabel);
+                    rs = label.toString() + ' ';
+                }
+                return rs + edt.toString();
+            }
+
+
+
+            that._execPostCreateHtml = function () {
+                this.getJQElement('').bind("propertychange input paste", $.proxy(that._onChange, that));
+                this.getJQElement('').bind("keyup", $.proxy(that._onKeyUp, that));
+                if (that._hasDefaultFocus)
+                    this.getJQElement('').select();
+            }
+
+            that._onKeyUp = function (ev) {
+                this._onChange();
+                if (ev.keyCode == 13) {
+                    if (this._notifyEnter)
+                        this._notifyEnter();
+                }
+            }
+
+            that._onChange = function () {
+                var lastval = this.value;
+                var newval = this.getValue();
+                if (newval != lastval) {
+                    this.value = newval;
+                    this._notifyChanged();
+                }
+            }
+
+            //Return the content of the edit box
+            that.getValue = function () {
+                this.value = this.getJQElement('').val();
+                return this.value;
+            }
+
+            //Modify the content of the edit box
+            that.modifyValue = function (newvalue) {
+                if (newvalue == this.getValue()) return;
+                this.value = newvalue;
+                this.getJQElement('').val(newvalue);
+                this._notifyChanged();
+            }
+
+            return that;
+        }
+
+
         ////////////////////////////////////////////////////////////////////////////////////////////
         // A combo box
         //    agrs.label : text label put in front of the combo box
