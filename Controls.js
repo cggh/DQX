@@ -69,10 +69,16 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
         if (_debug_) Controls._surveillance();
 
         //Stores the status of a control (and subcontrols) to a single object
+        //NOTE: only controls with specified classID's will be serialised!
         Controls.storeSettings = function(ictrl) {
             var obj={};
             ictrl.applyOnControls(function(actrl) {
-                obj[actrl.getID()]=actrl.getValue();
+                if (actrl.getValue) {
+                    var ctrlid = actrl.classID;
+                    if (ctrlid) {
+                        obj[ctrlid]=actrl.getValue();
+                    }
+                }
             });
             return obj;
         }
@@ -81,8 +87,11 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
         //Recalls the status of a control (and subcontrols) from a single object
         Controls.recallSettings = function(ictrl, settObj, preventNotify) {
             ictrl.applyOnControls(function(actrl) {
-                if (settObj[actrl.getID()])
-                    actrl.modifyValue(settObj[actrl.getID()],preventNotify);
+                if (actrl.modifyValue) {
+                    var ctrlid = actrl.classID;
+                    if ( (ctrlid) && (settObj[ctrlid]!=null) )
+                        actrl.modifyValue(settObj[ctrlid],preventNotify);
+                }
             });
         }
 
@@ -203,6 +212,11 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
             //Determines whether or not the control fills the full horizontal space
             that.setAutoFillX = function(status) { this._autoFillX = status; return this; }
 
+            that.setID = function(iid) {
+                that.myCustomID = iid;
+                return that;
+            }
+
             //add a new control to the list
             that.addControl = function (item) {
                 DQX.requireMemberFunction(item, 'getID');
@@ -231,6 +245,8 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
             }
 
             that.getID = function () {
+                if (that.myCustomID)
+                    return that.myCustomID;
                 if (this._controls.length == 0) DQX.reportError('Compound control has no components');
                 return this._controls[0].getID(id);
             }
@@ -373,6 +389,11 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
             //Sets a header legend for the group
             that.setLegend = function (txt) { this._legend = txt; return this; }
 
+            that.setID = function(iid) {
+                that.myCustomID = iid;
+                return that;
+            }
+
             //Determines whether or not the control fills the full horizontal space
             that.setAutoFillX = function(status) { this._autoFillX = status; return this; }
 
@@ -415,6 +436,8 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
 
 
             that.getID = function () {
+                if (that.myCustomID)
+                    return that.myCustomID;
                 if (!this.getItem(0, 0)) DQX.reportError('Compound control has no components');
                 return this.getItem(0, 0).getID(id);
             }
@@ -588,6 +611,12 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
             that.setHasDefaultFocus = function () {
                 this._hasDefaultFocus = true;
                 return this;
+            }
+
+            //Used for store/recall serialisation of the control data
+            that.setClassID = function(id) {
+                that.classID = id;
+                return that;
             }
 
             that.getID = function () { return this.myID; }
@@ -1117,11 +1146,12 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
             }
 
             //Modify the content of the edit box
-            that.modifyValue = function (newvalue) {
+            that.modifyValue = function (newvalue, preventNotify) {
                 if (newvalue == this.getValue()) return;
                 this.value = newvalue;
                 this.getJQElement('').val(newvalue);
-                this._notifyChanged();
+                if (!preventNotify)
+                    this._notifyChanged();
             }
 
             return that;
@@ -1216,11 +1246,12 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
             }
 
             //Modify the content of the edit box
-            that.modifyValue = function (newvalue) {
+            that.modifyValue = function (newvalue, preventNotify) {
                 if (newvalue == this.getValue()) return;
                 this.value = newvalue;
                 this.getJQElement('').val(newvalue);
-                this._notifyChanged();
+                if (!preventNotify)
+                    this._notifyChanged();
             }
 
             return that;
@@ -1306,13 +1337,14 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
             }
 
             //Sets what item is selected
-            that.modifyValue = function (newstate) {
+            that.modifyValue = function (newstate, preventNotify) {
                 if (newstate == this.getValue()) return;
                 if (!this.isState(newstate))
                     DQX.reportError('Invalid combo box state: ' + newstate);
                 this._selectedState = newstate;
                 this.getJQElement('').val(this._selectedState);
-                this._notifyChanged();
+                if (!preventNotify)
+                    this._notifyChanged();
             }
 
 
@@ -1493,7 +1525,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 return this._selectedState;
             }
 
-            that.modifyValue = function (newstate) {
+            that.modifyValue = function (newstate, preventNotify) {
                 if (newstate == this.getValue()) return;
                 if (!this.isState(newstate))
                     DQX.reportError('Invalid combo box state');
@@ -1504,7 +1536,8 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                     else
                         that.getJQElement(state.id).removeAttr('checked');
                 })
-                this._notifyChanged();
+                if (!preventNotify)
+                    this._notifyChanged();
             }
 
             that.modifyItemEnabled = function(itemID, newState) {
@@ -1701,12 +1734,13 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
             }
 
             //sets the currently active item
-            that.modifyValue = function (newvalue) {
+            that.modifyValue = function (newvalue, preventNotify) {
                 if (this._activeItem != null)
                     this.getJQElement('').children('#' + this._getLineID(this._activeItem)).addClass('DQXLargeListItem').removeClass('DQXLargeListItemSelected');
                 this.getJQElement('').children('#' + this._getLineID(newvalue)).removeClass('DQXLargeListItem').addClass('DQXLargeListItemSelected');
                 this._activeItem = newvalue;
-                this._notifyChanged();
+                if (!preventNotify)
+                    this._notifyChanged();
             }
 
             //For a checked list, return the list with currently checked items
@@ -1795,13 +1829,14 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
             };
 
             //Modifies the current value of the slider
-            that.modifyValue = function (newvalue) {
+            that.modifyValue = function (newvalue, preventNotify) {
                 if (newvalue == this.getValue()) return;
                 this._value = newvalue;
                 $('#' + this.getFullID('Value')).text(this._value.toFixed(this.digits));
                 this._scroller.setValue((this._value - this._minval) / (this._maxval - this._minval), 0.02);
                 this._scroller.draw();
-                this._notifyChanged();
+                if (!preventNotify)
+                    this._notifyChanged();
             };
 
             return that;
