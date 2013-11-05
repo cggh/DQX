@@ -68,6 +68,24 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
         }
         if (_debug_) Controls._surveillance();
 
+        //Stores the status of a control (and subcontrols) to a single object
+        Controls.storeSettings = function(ictrl) {
+            var obj={};
+            ictrl.applyOnControls(function(actrl) {
+                obj[actrl.getID()]=actrl.getValue();
+            });
+            return obj;
+        }
+
+
+        //Recalls the status of a control (and subcontrols) from a single object
+        Controls.recallSettings = function(ictrl, settObj, preventNotify) {
+            ictrl.applyOnControls(function(actrl) {
+                if (settObj[actrl.getID()])
+                    actrl.modifyValue(settObj[actrl.getID()],preventNotify);
+            });
+        }
+
 
         ////////////////////////////////////////////////////////////////////////////////////////////
         // This control can be used to show or hide another control
