@@ -575,6 +575,48 @@
         }
 
 
+        SQL.WhereClause.clone = function(qry) {
+            return SQL.WhereClause.decode(SQL.WhereClause.encode(qry));
+        }
+
+
+        //returns a new query that is based on an existing query, adding an extra between statement to restrict a value range
+        SQL.WhereClause.createRangeRestriction = function(origQuery0, fieldName, minVal, maxVal) {
+            var origQuery = SQL.WhereClause.clone(origQuery0);
+            var newStatement = SQL.WhereClause.CompareBetween(fieldName, minVal.toString(), maxVal.toString());
+            if (origQuery.isTrivial) {
+                return newStatement;
+            }
+            //try to find a matching between statement
+            var betweenStatement = null;
+
+            if (origQuery.Tpe=='between')
+                if (origQuery.ColName==fieldName)
+                    betweenStatement = origQuery;
+
+            if ( (origQuery.isCompound) && (origQuery.Tpe=='AND') ) {
+                $.each(origQuery.Components,function(idx,comp) {
+                    if (comp.Tpe=='between')
+                        if (comp.ColName==fieldName)
+                            betweenStatement = comp;
+                });
+            }
+            if (betweenStatement) {//If found, adjust
+                betweenStatement.CompValueMin = (Math.max(parseFloat(betweenStatement.CompValueMin), parseFloat(minVal))).toString();
+                betweenStatement.CompValueMax = (Math.min(parseFloat(betweenStatement.CompValueMax), parseFloat(maxVal))).toString();
+                return origQuery;
+            }
+            //Add the between statement
+            if ( (origQuery.isCompound) && (origQuery.Tpe=='AND') ) {
+                origQuery.addComponent(newStatement);
+                return origQuery;
+            }
+            else {
+                return SQL.WhereClause.AND([origQuery,newStatement]);
+            }
+
+        }
+
         //////////////////////////////////////////////////////////////////////////////////////
         // Encapsulates a sql sort statement
         //////////////////////////////////////////////////////////////////////////////////////
