@@ -276,8 +276,9 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#c3c3c3', end
 
 .DQXTableRowHover td {
     /*color: rgb(255,0,0) !important;*/
-    border-top: rgb(170,170,255) solid 1px !important;
-    border-bottom: rgb(170,170,255) solid 1px !important;
+/*    border-top: rgb(170,170,255) solid 1px !important;
+    border-bottom: rgb(170,170,255) solid 1px !important;*/
+    outline: rgb(120,120,120) solid 1px !important;
 }
 
 .DQXTableRowSelected td 
