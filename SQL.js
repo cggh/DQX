@@ -65,6 +65,10 @@
                 Float: true, Integer: true,
                 Create: function () { return SQL.WhereClause.CompareFixed('', '>=', '') }
             },
+            { ID: 'between', name: 'Between',
+                Float: true, Integer: true,
+                Create: function () { return SQL.WhereClause.CompareBetween('', '', '') }
+            },
             { ID: 'CONTAINS', name: 'Contains',
                 String: true,
                 Create: function () { return SQL.WhereClause.CompareFixed('', 'CONTAINS', '') }
@@ -185,6 +189,64 @@
 
             return that;
         }
+
+
+        //A class that encapsulates the comparison of a field to a value range
+        SQL.WhereClause.whcClassGenerator['between'] = function(args) {
+            return SQL.WhereClause.CompareBetween(args.ColName, args.CompValueMin,  args.CompValueMax);
+        }
+        SQL.WhereClause.CompareBetween = function (icolname, ivalueMin, ivalueMax) {
+            var that = {};
+            that.whcClass = 'between';
+            that.isCompound = false;
+            that.ColName = icolname;
+            that.CompValueMin = ivalueMin;
+            that.CompValueMax = ivalueMax;
+            that.Tpe = "between";
+
+            //Creates the associated controls in the querybuilder GUI
+            that._buildStatement = function (ID, elem, querybuilder) {
+
+                if (!querybuilder.hasColumn(this.ColName))
+                    return;
+
+                var mycol = querybuilder.getColumn(this.ColName);
+
+                var compcontent = DocEl.Edit(this.CompValueMin);
+                compcontent.setID(querybuilder.getControlID(ID, "ContentMin"));
+                compcontent.setWidthPx(140);
+                compcontent.setCssClass('DQXQBQueryboxControl');
+                querybuilder.decorateQueryStatementControl(compcontent, ID);
+                elem.addElem(compcontent);
+
+                elem.addElem(" and ");
+
+                var compcontent = DocEl.Edit(this.CompValueMax);
+                compcontent.setID(querybuilder.getControlID(ID, "ContentMax"));
+                compcontent.setWidthPx(140);
+                compcontent.setCssClass('DQXQBQueryboxControl');
+                querybuilder.decorateQueryStatementControl(compcontent, ID);
+                elem.addElem(compcontent);
+            }
+
+            //Fetches the content of this statement from the controls in the querybuilder GUI
+            that._fetchStatementContent = function (ID, querybuilder) {
+                if ($("#" + querybuilder.getControlID(ID, "ContentMin")).length > 0) {
+                    this.CompValueMin = $("#" + querybuilder.getControlID(ID, "ContentMin")).val();
+                }
+                if ($("#" + querybuilder.getControlID(ID, "ContentMax")).length > 0) {
+                    this.CompValueMax = $("#" + querybuilder.getControlID(ID, "ContentMax")).val();
+                }
+            }
+
+            that.toDisplayString = function(fieldInfoMap, level) {
+                return fieldInfoMap[that.ColName].name+' between '+fieldInfoMap[that.ColName].toDisplayString(that.CompValueMin )+' and '+fieldInfoMap[that.ColName].toDisplayString(that.CompValueMax);
+            }
+
+
+            return that;
+        }
+
 
         //A class that Encapsulates the equality comparison of a field to another field
         SQL.WhereClause.whcClassGenerator['equalsfield'] = function(args) {
