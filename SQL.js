@@ -579,9 +579,43 @@
             return SQL.WhereClause.decode(SQL.WhereClause.encode(qry));
         }
 
+        //returns a new query that is based on an existing query, adding an extra fixed value statement
+        SQL.WhereClause.createValueRestriction = function(origQuery0, fieldName, value) {
+            var origQuery = SQL.WhereClause.clone(origQuery0);
+            var newStatement = SQL.WhereClause.CompareFixed(fieldName, '=', value.toString());
+            if (origQuery.isTrivial) {
+                return newStatement;
+            }
+            //try to find a matching fixed comparison statement
+            var compStatement = null;
+            if (origQuery.Tpe=='=')
+                if (origQuery.ColName==fieldName)
+                    compStatement = origQuery;
+
+            if ( (origQuery.isCompound) && (origQuery.Tpe=='AND') ) {
+                $.each(origQuery.Components,function(idx,comp) {
+                    if (comp.Tpe=='=')
+                        if (comp.ColName==fieldName)
+                            compStatement = comp;
+                });
+            }
+            if (compStatement) {//If found, adjust
+                compStatement.CompValue = value;
+                return origQuery;
+            }
+            //Add the statement
+            if ( (origQuery.isCompound) && (origQuery.Tpe=='AND') ) {
+                origQuery.addComponent(newStatement);
+                return origQuery;
+            }
+            else {
+                return SQL.WhereClause.AND([origQuery,newStatement]);
+            }
+        }
+
 
         //returns a new query that is based on an existing query, adding an extra between statement to restrict a value range
-        SQL.WhereClause.createRangeRestriction = function(origQuery0, fieldName, minVal, maxVal) {
+        SQL.WhereClause.createRangeRestriction = function(origQuery0, fieldName, minVal, maxVal, ignorePreviousRange) {
             var origQuery = SQL.WhereClause.clone(origQuery0);
             var newStatement = SQL.WhereClause.CompareBetween(fieldName, minVal.toString(), maxVal.toString());
             if (origQuery.isTrivial) {
@@ -602,8 +636,14 @@
                 });
             }
             if (betweenStatement) {//If found, adjust
-                betweenStatement.CompValueMin = (Math.max(parseFloat(betweenStatement.CompValueMin), parseFloat(minVal))).toString();
-                betweenStatement.CompValueMax = (Math.min(parseFloat(betweenStatement.CompValueMax), parseFloat(maxVal))).toString();
+                if (ignorePreviousRange) {
+                    betweenStatement.CompValueMin = minVal.toString();
+                    betweenStatement.CompValueMax = maxVal.toString();
+                }
+                else {
+                    betweenStatement.CompValueMin = (Math.max(parseFloat(betweenStatement.CompValueMin), parseFloat(minVal))).toString();
+                    betweenStatement.CompValueMax = (Math.min(parseFloat(betweenStatement.CompValueMax), parseFloat(maxVal))).toString();
+                }
                 return origQuery;
             }
             //Add the between statement
@@ -614,7 +654,6 @@
             else {
                 return SQL.WhereClause.AND([origQuery,newStatement]);
             }
-
         }
 
         //////////////////////////////////////////////////////////////////////////////////////
