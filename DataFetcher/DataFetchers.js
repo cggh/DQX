@@ -592,16 +592,23 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
             that.columns = [];
             that._maxResultCount = 100000;
             that._sortReverse = false;
+            that._distinct = false;
             if (!itableName)
                 DQX.reportError('Invalid table name');
 
             that.addColumn = function (id, encoding) {
                 this.columns.push({ id: id, encoding: encoding });
-            }
+            };
 
             that.setMaxResultCount = function (maxcount) {
                 this._maxResultCount = maxcount;
-            }
+            };
+
+            that.makeDistinct = function(status) {
+                that._distinct = status;
+                return that;
+            };
+
 
             that._ajaxResponse_FetchRange = function (resp, respHandler, failHandler) {
                 if (this.showDownload)
@@ -650,6 +657,7 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                 myurl.addUrlQueryItem("sortreverse", that._sortReverse?1:0);
                 myurl.addUrlQueryItem("needtotalcount", 0);
                 myurl.addUrlQueryItem("limit", "0~" + this._maxResultCount);
+                myurl.addUrlQueryItem("distinct", that._distinct?1:0);
                 var urlstring = myurl.toString();
                 this._isFetching = true;
                 var thethis = this;
@@ -676,7 +684,7 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
             that._tables = [];
             that._tablesMap = {};
 
-            that.addTable = function(iTableName, iColumns, iSortColumn, query) {
+            that.addTable = function(iTableName, iColumns, iSortColumn, query, settings) {
                 var columns = [];
                 $.each(iColumns, function(idx, col) {
                     if (typeof (col) != 'object') {
@@ -689,6 +697,8 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                     }
                 })
                 var tableInfo = { name: iTableName, columns: columns, sortcolumn: iSortColumn };
+                if (settings && settings.distinct)
+                    tableInfo.distinct=true;
                 tableInfo.query = SQL.WhereClause.Trivial();
                 if (query)
                     tableInfo.query = query;
@@ -737,6 +747,7 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                 }
                 $.each(that._tables, function (ID, tableInfo) {
                     var fetcher = DataFetchers.RecordsetFetcher(serverUrl, database, tableInfo.name);
+                    fetcher.makeDistinct(tableInfo.distinct);
                     $.each(tableInfo.columns, function (colidx, columnInfo) {
                         fetcher.addColumn(columnInfo.id, 'GN');
                     });
