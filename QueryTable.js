@@ -316,8 +316,9 @@
                 this.mySortOptions = [];
             }
 
-            that.createSelectionColumn = function(tableid, idcolumn, selectionManager) {
-                var col = QueryTable.Column("Sel","sel",0);
+            that.createSelectionColumn = function(colID, colName, tableid, idcolumn, selectionManager, onChanged) {
+                var col = QueryTable.Column(colName, colID, 0);
+                col.isSelection = true;
                 col.setCellClickHandler(function(myDataFetcher, downloadrownr, info) {
                     var id = myDataFetcher.getColumnPoint(downloadrownr, idcolumn);
                     var prevState = selectionManager.isItemSelected(id);
@@ -331,17 +332,16 @@
                         }
                     }
                     that._lastSelClickedRowNr = downloadrownr;
-                    Msg.broadcast({type:'SelectionUpdated'}, tableid);
-                    //that.render();
-                    //alert('sel clicked');
+                    if (onChanged)
+                        onChanged();
                 });
                 col.colIsClientGenerated = true;
                 col.customTextCreator = function(myDataFetcher, downloadrownr) {
                     var id = myDataFetcher.getColumnPoint(downloadrownr, idcolumn);
                     if (selectionManager.isItemSelected(id))
-                        return '<span style="background-color:rgb(255,120,120);border:1px solid rgb(150,150,150)">&nbsp;&nbsp;&nbsp;&nbsp;<span>';
+                        return '<span style="background-color:rgb(255,120,120);border:1px solid rgb(150,150,150)">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>';
                     else
-                        return '<span style="border:1px solid rgb(150,150,150)">&nbsp;&nbsp;&nbsp;&nbsp;<span>';
+                        return '<span style="border:1px solid rgb(150,150,150)">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>';
                 };
                 this.myColumns.push(col);
 
@@ -637,7 +637,7 @@
                                     isLink = true;
                                     var linkID = thecol.myCompID + '~' + rownr + '~link~' + this.myBaseID;
                                     rs_table[tbnr] += '<span class="DQXQueryTableLinkCell" id="{id}">'.DQXformat({ id: linkID });
-                                    if (thecol.myCompID != 'sel')
+                                    if (!thecol.isSelection)
                                         rs_table[tbnr] += '<IMG SRC="' + DQX.BMP('link3.png') + '" border=0  id={id} title="{hint}" ALT="Link"> '.
                                             DQXformat({ hint: thecol._hyperlinkCellHint, id: linkID });
                                 }
