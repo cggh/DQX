@@ -76,6 +76,8 @@ DQX.polyStar = function(ctx, x, y, radius, sides, pointSize, angle) {
 
         DQX.reportError = function (txt) {
             alert("ERROR: " + DQX.interpolate(txt));
+            if (_debug_)
+                debugger;
             throw txt;
         }
 
