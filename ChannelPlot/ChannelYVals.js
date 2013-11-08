@@ -621,14 +621,16 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/Chann
                     that._myPlotter.channelModifyVisibility(that.getID(),false);
                 }
                 var chk=Controls.Check(null,{ label:that.getTitle(), value:(!defaultHidden) }).setClassID(that._myID).setOnChanged(function() {
-                    //check if any component is still visible
-                    var channelActive=false;
-                    for (var compid in that.myComponents)
-                        that.modifyComponentActiveStatus(compid,chk.getValue(),false);
-                    that._myPlotter.channelModifyVisibility(that.getID(),chk.getValue());
-                    that._myPlotter.render();
+                    that.modifyVisibility(chk.getValue());
                 });
                 return chk;
+            }
+
+            that.modifyVisibility = function(isVisible) {
+                for (var compid in that.myComponents)
+                    that.modifyComponentActiveStatus(compid, isVisible, false);
+                that._myPlotter.channelModifyVisibility(that.getID(), isVisible);
+                that._myPlotter.render();
             }
 
 
