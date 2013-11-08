@@ -24,6 +24,9 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/His
         Application._customNavigationButtons = [];
         Application._views=[];
         Application._viewMap={};
+
+
+
         Application._addView = function(view) {
             if (view.getStateID() in Application._viewMap)
                 DQX.reportError('Duplicate view id: ' + view.getStateID());
@@ -112,7 +115,8 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/His
                     .setMargins(0)
                     .setFrameClass('DQXFrame');
                 view.createFrames(view._myFrame);
-                view._myFrame.setInitialiseFunction(view._initialisePanels);
+                if (!view._doEarlyInitialisation)
+                    view._myFrame.setInitialiseFunction(view._initialisePanels);
 
             });
 
@@ -134,6 +138,11 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/His
 
             DQX.initPostCreate();
             HistoryManager.init();
+
+            $.each(Application._views,function(idx,view){
+                if (view._doEarlyInitialisation)
+                    view._initialisePanels();
+            });
 
         };
 
@@ -188,7 +197,13 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/His
             that._myID=iid;
             that._myTitle=ititle;
             that._myFrame = null;//Framework.frame instance, provided by application during initialisation
+            that._doEarlyInitialisation = false;
 
+            //Call this function if you want to initialise (i.e. call createPanels) the view when the application starts
+            //Alternative: view is only initialised when it becomes visible
+            that.setEarlyInitialisation = function() {
+                that._doEarlyInitialisation = true;
+            }
 
             that.getStateID = function () { return this._myID; };
 
