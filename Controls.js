@@ -1141,7 +1141,8 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
 
             //Return the content of the edit box
             that.getValue = function () {
-                this.value = this.getJQElement('').val();
+                if (this.isRendered())
+                    this.value = this.getJQElement('').val();
                 return this.value;
             }
 
