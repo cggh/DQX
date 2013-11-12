@@ -1151,6 +1151,17 @@ DQX.polyStar = function(ctx, x, y, radius, sides, pointSize, angle) {
         // It provides some basic functionality
         //////////////////////////////////////////////////////////////////////////////////
 
+
+        // On retina-like devices, this determines the multiplication factor needed for the pixel buffer to get native resolution
+        DQX.canvasBackingScale = function() {
+            if ('devicePixelRatio' in window) {
+                if (window.devicePixelRatio > 1) {
+                    return window.devicePixelRatio;
+                }
+            }
+            return 1;
+        }
+
         DQX.CanvasElement = function (iCanvasID) {
             var that = {};
             that.myCanvasID = iCanvasID;
