@@ -63,6 +63,19 @@ DQX.polyStar = function(ctx, x, y, radius, sides, pointSize, angle) {
 	    ctx.closePath();
 	};
 
+
+        // Returns a function that wraps around the argument function fn, making sure it is called not more often than delay specifies
+        DQX.debounce = function(fn, delay) {
+            var timer = null;
+            return function () {
+                var context = this, args = arguments;
+                clearTimeout(timer);
+                timer = setTimeout(function () {
+                    fn.apply(context, args);
+                }, delay);
+            };
+        };
+
         DQX.BMP = function (name) {
             return require.toUrl('./Bitmaps/'+name);
         };
