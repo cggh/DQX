@@ -61,6 +61,11 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Scroller", "DQX
                     this._rightOffset = Scroller.vScrollWidth;
             }
 
+            that.getChannelList = function() {
+                return that._channels;
+
+            }
+
             that.findChannel = function (id) {
                 return that._idChannelMap[id];
             }
