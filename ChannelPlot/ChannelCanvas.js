@@ -27,6 +27,7 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
             that._title = '';
             that._subTitle = '';
             that._toolTipInfo = { ID: null };
+            that._onClickHandler = null;
 
             that._isVisible = true;
             that.canHide = true;
@@ -100,6 +101,10 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
             }
 
             that.setPlotter = function (thePlotter) { } //can override
+
+            that.setOnClickHandler = function(handler) {
+                that._onClickHandler = handler;
+            }
 
             that.hideToolTip = function () { } //can override en remove any tooltip if this function was called
 

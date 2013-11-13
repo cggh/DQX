@@ -679,9 +679,14 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/Chann
                 var py = this.getEventPosY(ev);
                 if ((this._canChangeYScaleTop) || (this._canChangeYScaleBottom)) {
                     if (px > -50)
-                        $('#' + this.getCanvasID('left')).css('cursor', 'row-resize');
-                    else
-                        $('#' + this.getCanvasID('left')).css('cursor', 'auto');
+                        var cursorName = 'row-resize';
+                    else {
+                        if (that._onClickHandler)
+                            var cursorName = 'pointer';
+                        else
+                            var cursorName = 'auto';
+                    }
+                    $('#' + this.getCanvasID('left')).css('cursor', cursorName);
 
                 }
             }
@@ -702,6 +707,11 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/Chann
                 this._draggingY0 = py;
                 this.draggingMinVal0 = this._minVal;
                 this.draggingMaxVal0 = this._maxVal;
+
+                if ( (!this._draggingYScaleTop) && (!this._draggingYScaleBottom) && (this._onClickHandler)) {
+                    this._onClickHandler();
+                }
+
                 ev.returnValue = false;
                 return false;
             }
