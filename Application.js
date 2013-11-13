@@ -24,6 +24,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/His
         Application._customNavigationButtons = [];
         Application._views=[];
         Application._viewMap={};
+        Application._showViewsAsTabs = false;
 
 
 
@@ -43,6 +44,10 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/His
         // Add a button to the nagivation section (right part of the app header)
         Application.addNavigationButton = function(name, bitmap, width, handler) {
             Application._customNavigationButtons.push({ name: name, bitmap: bitmap, width: width, handler: handler });
+        }
+
+        Application.showViewsAsTabs = function() {
+            Application._showViewsAsTabs = true;
         }
 
         Application.customInitFunction = function(proceedFunction) {
@@ -105,7 +110,10 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/His
                 .setFixedSize(Framework.dimY, 60).setFrameClassClient('DQXPage').setMargins(0).setAllowScrollBars(false,false);
 
             //The body panel of the page
-            Application.frameBody = Application.frameRoot.addMemberFrame(Framework.FrameGroupStack('info', 1)).setAnimateTransition();
+            if (Application._showViewsAsTabs)
+                Application.frameBody = Application.frameRoot.addMemberFrame(Framework.FrameGroupTab('info', 1));
+            else
+                Application.frameBody = Application.frameRoot.addMemberFrame(Framework.FrameGroupStack('info', 1)).setAnimateTransition();
 
             $.each(Application._views,function(idx,view){
                 view._myFrame = Application.frameBody.addMemberFrame(Framework.FrameGeneric(view.getStateID(), 1))
