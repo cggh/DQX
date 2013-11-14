@@ -86,6 +86,10 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
                 return this;
             }
 
+            that.setHeaderTooltip = function(str) {
+                that._headerTooltip = str;
+            }
+
             that.getTitle = function () {
                 return this._title;
             }
@@ -133,6 +137,13 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
                 return py + $(this.getCanvasElement('center')).offset().top;
             }
 
+            that.posXLeftCanvas2Screen = function (px) {
+                return px + $(this.getCanvasElement('left')).offset().left;
+            }
+
+            that.posYLeftCanvas2Screen = function (py) {
+                return py + $(this.getCanvasElement('left')).offset().top;
+            }
 
             that.renderHtml = function () {
                 var wrapper = DocEl.Div({ id: this.getCanvasID('wrapper') });
@@ -182,6 +193,8 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
                 $('#' + this.getCanvasID('center')).mousemove($.proxy(that._onMouseMove, that));
                 $('#' + this.getCanvasID('center')).mouseenter($.proxy(that._onMouseEnter, that));
                 $('#' + this.getCanvasID('center')).mouseleave($.proxy(that._onMouseLeave, that));
+                $('#' + this.getCanvasID('left')).mouseenter($.proxy(that._onLeftMouseEnter, that));
+                $('#' + this.getCanvasID('left')).mouseleave($.proxy(that._onLeftMouseLeave, that));
 
 
 
@@ -365,6 +378,35 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
                 this._toolTipInfo.ID = null;
                 $('#DQXUtilContainer').find('.DQXChannelToolTip').remove();
                 $('#DQXUtilContainer').find('.DQXChannelToolTipHighlightPoint').remove();
+            }
+
+
+
+            that._onLeftMouseLeave = function (ev) {
+                this.onStopHoverOverChannel();
+                this.hideHeaderToolTip();
+            }
+
+            that._onLeftMouseEnter = function (ev) {
+                if ((!that._currentHeaderTooltipID)&&(that._headerTooltip)) {
+                    that._currentHeaderTooltipID = 'ChannelHeaderTooltip_'+DQX.getNextUniqueID();
+                    var px = this.getEventPosX(ev);
+                    var py = this.getEventPosY(ev);
+                    var tooltip = DocEl.Div({ id:that._currentHeaderTooltipID });
+                    tooltip.setCssClass("DQXChannelToolTip");
+                    tooltip.addStyle("position", "absolute");
+                    var screenWidth = $('#Div1').width();
+                    //var screenBottom = $('#Div1').height();
+                    tooltip.addStyle("right", (screenWidth - this.posXLeftCanvas2Screen(0)-30) + 'px');
+                    tooltip.addStyle("top", (this.posYLeftCanvas2Screen(0)) + 'px');
+                    tooltip.addElem(that._headerTooltip);
+                    $('#DQXUtilContainer').append(tooltip.toString());
+                }
+            }
+
+            that.hideHeaderToolTip = function () {
+                $('#'+that._currentHeaderTooltipID).remove();
+                that._currentHeaderTooltipID = null;
             }
 
 
