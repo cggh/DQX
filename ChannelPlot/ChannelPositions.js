@@ -97,6 +97,8 @@ define(["require", "DQX/Framework", "DQX/Controls", "DQX/Msg", "DQX/Utils", "DQX
                         var pointsIndex = this._pointsIndex;
                         var mindst = 12;
                         var bestpt = -1;
+                        if (!pointsX)
+                            return;
                         for (var i = 0; i < pointsX.length; i++)
                             if (Math.abs(px - pointsX[i]) <= mindst) {
                                 mindst = Math.abs(px - pointsX[i]);

@@ -378,6 +378,13 @@
                 }
             }
 
+            that.getRecordCount = function() {
+                if (that.totalRecordCount<0)
+                    return null;
+                else
+                    return that.totalRecordCount;
+            }
+
             //This function is called by the datafetcher to inform the table that new data is ready. In reaction, we render the table
             that.notifyDataReady = function () {
                 if (this.myDataFetcher.isValid())
