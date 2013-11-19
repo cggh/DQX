@@ -316,7 +316,7 @@
                 this.mySortOptions = [];
             }
 
-            that.createSelectionColumn = function(colID, colName, tableid, idcolumn, selectionManager, onChanged) {
+            that.createSelectionColumn = function(colID, colName, tableid, idcolumn, selectionManager, color, onChanged) {
                 var col = QueryTable.Column(colName, colID, 0);
                 col.isSelection = true;
                 col.setCellClickHandler(function(myDataFetcher, downloadrownr, info) {
@@ -336,10 +336,11 @@
                         onChanged();
                 });
                 col.colIsClientGenerated = true;
+                col.colorString = color.toString();
                 col.customTextCreator = function(myDataFetcher, downloadrownr) {
                     var id = myDataFetcher.getColumnPoint(downloadrownr, idcolumn);
                     if (selectionManager.isItemSelected(id))
-                        return '<span style="background-color:rgb(255,120,120);border:1px solid rgb(150,150,150)">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>';
+                        return '<span style="background-color:'+col.colorString+';border:1px solid rgb(150,150,150)">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>';
                     else
                         return '<span style="border:1px solid rgb(150,150,150)">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>';
                 };
