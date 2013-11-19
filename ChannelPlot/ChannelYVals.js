@@ -626,11 +626,12 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/Chann
                 return chk;
             }
 
-            that.modifyVisibility = function(isVisible) {
+            that.modifyVisibility = function(isVisible, preventReDraw) {
                 for (var compid in that.myComponents)
                     that.modifyComponentActiveStatus(compid, isVisible, false);
-                that._myPlotter.channelModifyVisibility(that.getID(), isVisible);
-                that._myPlotter.render();
+                that._myPlotter.channelModifyVisibility(that.getID(), isVisible, preventReDraw);
+                if (!preventReDraw)
+                    that._myPlotter.render();
             }
 
 

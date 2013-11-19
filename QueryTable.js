@@ -385,6 +385,13 @@
                     return that.totalRecordCount;
             }
 
+
+            that.getSortColumn = function() {
+                //this.myDataFetcher.sortReverse = reverse;
+                return this.myDataFetcher.positionField;
+            }
+
+
             //This function is called by the datafetcher to inform the table that new data is ready. In reaction, we render the table
             that.notifyDataReady = function () {
                 if (this.myDataFetcher.isValid())

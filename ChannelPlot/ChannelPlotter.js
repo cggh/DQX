@@ -173,14 +173,14 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Scroller", "DQX
             }
 
 
-            that.channelModifyVisibility = function (channelID, newStatus) {
+            that.channelModifyVisibility = function (channelID, newStatus, preventReDraw) {
                 var theChannel = this._idChannelMap[channelID];
                 if (!theChannel) DQX.reportError("Invalid channel id " + channelID);
                 if (newStatus!=theChannel.getVisible()) {
                     theChannel._setVisible(newStatus);
-                    this.render();
+                    if (!preventReDraw)
+                        this.render();
                 }
-                //this.handleResize();
             }
 
             ///////////////////////////////////////////////////////////////////////////////////////////////////////

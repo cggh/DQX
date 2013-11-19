@@ -123,7 +123,8 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
             this.addFetchColumn = function (ifolder, iconfig, ipropid, color) {
                 var cid = ifolder + '_' + iconfig + '_' + ipropid;
                 if (cid in this.myColumns)
-                    DQX.reportError("Column id already present: " + cid);
+                    //DQX.reportError("Column id already present: " + cid);
+                    return this.myColumns[cid];
                 this.myColumns[cid] = DataFetcherSummary.SummaryColumn(cid, ifolder, iconfig, ipropid, color);
                 this.clearData();
                 return this.myColumns[cid];
