@@ -755,7 +755,7 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                             tableInfo.data = data;
                             that.tryFinalise();
                         },
-                        function (msg) { DQX.reportError(msg + ' data: ' + tableInfo.tableName); }
+                        function (msg) { DQX.reportError(msg + ' data: ' + tableInfo.name); }
                     );
                     //DQX.setProcessing("Downloading...");
                 });
