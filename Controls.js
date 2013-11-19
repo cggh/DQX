@@ -1295,6 +1295,17 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 return (id in this._statesMap);
             }
 
+            that.setItems = function(states, selectedState) {
+                this.myStates = [];
+                $.each(states, function (idx, item) {
+                    DQX.requireMember(item, 'id');
+                    DQX.requireMember(item, 'name');
+                    that.myStates.push(item);
+                });
+                that._selectedState = selectedState;
+                this.getJQElement('').html(that._buildSelectContent());
+            }
+
             that._buildSelectContent = function () {
                 var st = '';
                 for (var i = 0; i < this.myStates.length; i++)
