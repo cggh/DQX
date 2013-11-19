@@ -157,6 +157,8 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Scroller", "DQX
                 if (!isPresent)
                     this._myDataFetchers.push(idatafetcher);
                 idatafetcher.myDataConsumer = this;
+                if (this._chromosomes[this.currentChromoNr - 1])
+                    idatafetcher.setChromoID(this._chromosomes[this.currentChromoNr - 1].id);
             }
 
 
