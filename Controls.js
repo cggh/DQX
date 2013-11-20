@@ -372,7 +372,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
 
 
         Controls.BaseCustom = function () {
-            var that = Controls.CompoundHor([]);
+            var that = Controls.CompoundHor([]).setAutoFillX(false);
             return that;
         }
 
