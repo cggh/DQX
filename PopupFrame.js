@@ -187,7 +187,10 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
                 $("#" + that.ID).remove();
                 $('#BlockingBackGround').remove();
                 that.onClose();
-                //!!!todo: all necessary actions to make sure this object gets garbage collected
+                that.frameRoot.applyOnPanels(function(panel) {
+                    if (panel.tearDown)
+                        panel.tearDown();
+                });
             }
 
             that._onResizeMouseDown = function (ev) {

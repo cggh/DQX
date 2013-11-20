@@ -1390,6 +1390,10 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/Fram
             that.handleResize = function () {
             }
 
+            that.tearDown = function() {
+                that._content.tearDown();
+            }
+
             return that;
         }
 

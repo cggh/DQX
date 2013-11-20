@@ -27,6 +27,8 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
     function (DQX, Msg, DocEl, Scroller, Documentation) {
         var Controls = {};
 
+        Controls.autoCreateListeners = false;//set to true create event listeners for each control
+
         Controls._currentControlNr = 0;
 
         Controls._getNextControlID = function () {
@@ -629,9 +631,12 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                     this.modifyValue(value);
                 }
             }
-            //We install a listener so that we can send an event to modify the value of the control
-            var eventid = DQX.getNextUniqueID();that._eventids.push(eventid);
-            Msg.listen(eventid, { type: 'CtrlModifyValue', id: that.myID }, $.proxy(that._reactModifyValue, that));
+
+            if (Controls.autoCreateListeners) {
+                //We install a listener so that we can send an event to modify the value of the control
+                var eventid = DQX.getNextUniqueID();that._eventids.push(eventid);
+                Msg.listen(eventid, { type: 'CtrlModifyValue', id: that.myID }, $.proxy(that._reactModifyValue, that));
+            }
 
 
             that._reactModifyEnabled = function (scope, value) {
@@ -639,9 +644,12 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                     this.modifyEnabled(value);
                 }
             }
-            //We install a listener so that we can send an event to modify the enabled state of the control
-            var eventid = DQX.getNextUniqueID();that._eventids.push(eventid);
-            Msg.listen(eventid, { type: 'CtrlModifyEnabled', id: that.myID }, $.proxy(that._reactModifyEnabled, that));
+
+            if (Controls.autoCreateListeners) {
+                //We install a listener so that we can send an event to modify the enabled state of the control
+                var eventid = DQX.getNextUniqueID();that._eventids.push(eventid);
+                Msg.listen(eventid, { type: 'CtrlModifyEnabled', id: that.myID }, $.proxy(that._reactModifyEnabled, that));
+            }
 
             that.tearDown = function() {
                 $.each(that._eventids, function(idx,eventid) {
