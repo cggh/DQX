@@ -371,8 +371,11 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
         }
 
 
-        Controls.BaseCustom = function () {
-            var that = Controls.CompoundHor([]).setAutoFillX(false);
+        Controls.BaseCustom = function (stackVertical) {
+            if (!stackVertical)
+                var that = Controls.CompoundHor([]);
+            else
+                var that = Controls.CompoundVert([]);
             return that;
         }
 
