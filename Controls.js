@@ -1322,6 +1322,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 });
                 that._selectedState = selectedState;
                 this.getJQElement('').html(that._buildSelectContent());
+                that._buildStatesMap();
             }
 
             that._buildSelectContent = function () {
