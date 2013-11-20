@@ -397,7 +397,7 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
                     tooltip.addStyle("position", "absolute");
                     var screenWidth = $('#Div1').width();
                     //var screenBottom = $('#Div1').height();
-                    tooltip.addStyle("right", (screenWidth - this.posXLeftCanvas2Screen(0)-30) + 'px');
+                    tooltip.addStyle("right", (screenWidth - this.posXLeftCanvas2Screen(0)-0) + 'px');
                     tooltip.addStyle("top", (this.posYLeftCanvas2Screen(0)) + 'px');
                     tooltip.addElem(that._headerTooltip);
                     $('#DQXUtilContainer').append(tooltip.toString());

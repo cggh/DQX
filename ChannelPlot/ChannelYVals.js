@@ -667,8 +667,8 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/Chann
 
                 $('#' + this.getCanvasID('left')).mousedown($.proxy(that._onMouseDownLeft, that));
                 $('#' + this.getCanvasID('left')).mousemove($.proxy(that._onMouseMoveLeft, that));
-                $('#' + this.getCanvasID('left')).mouseenter($.proxy(that._onMouseEnterLeft, that));
-                $('#' + this.getCanvasID('left')).mouseleave($.proxy(that._onMouseLeaveLeft, that));
+//                $('#' + this.getCanvasID('left')).mouseenter($.proxy(that._onMouseEnterLeft, that));
+//                $('#' + this.getCanvasID('left')).mouseleave($.proxy(that._onMouseLeaveLeft, that));
             }
 
 

@@ -371,7 +371,14 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
         }
 
 
-        ////////////////////////////////////////////////////////////////////////////////////////////
+        Controls.BaseCustom = function () {
+            var that = Controls.CompoundHor([]);
+            return that;
+        }
+
+
+
+            ////////////////////////////////////////////////////////////////////////////////////////////
         //A compound control grouping a list of controls on a grid
         ////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1269,10 +1276,11 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
 
         ////////////////////////////////////////////////////////////////////////////////////////////
         // A combo box
-        //    agrs.label : text label put in front of the combo box
-        //    agrs.states : list of combo box states, each state of the type { id:..., name,... }
-        //    agrs.value (optional) : initial selected value of the combo box
-        //    agrs.hint (optional) : hover tooltip
+        //    args.label : text label put in front of the combo box
+        //    args.states : list of combo box states, each state of the type { id:..., name,... }
+        //    args.value (optional) : initial selected value of the combo box
+        //    args.hint (optional) : hover tooltip
+        //    args.width: combo box width
         ////////////////////////////////////////////////////////////////////////////////////////////
 
         Controls.Combo = function (iid, args) {
@@ -1286,6 +1294,8 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 that._selectedState = args.value;
             if (args.hint)
                 that._hint = args.hint;
+            if ('width' in args)
+                that._width = args.width;
 
             that._buildStatesMap = function () {
                 this._statesMap = {};
@@ -1330,6 +1340,8 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 wrapper.addStyle('display', 'inline-block');
                 wrapper.setCssClass('DQXSelectWrapper');
                 var cmb = DocEl.Create('select', { id: this.getFullID(''), parent: wrapper });
+                if (that._width)
+                    cmb.addStyle('width',that._width+'px');
                 if (this._hint)
                     cmb.addHint(this._hint);
                 cmb.addElem(this._buildSelectContent());
