@@ -543,8 +543,10 @@
                 var row2 = this.myTableOffset + this.myPageSize + this.fetchBuffer;
                 var datacomplete = false;
 
-                if (this._dataValid)
-                    datacomplete = this.myDataFetcher.IsDataReady(row1, row2, that.immediateFetchRecordCount);
+                if (this._dataValid) {
+                    if (!this.preventFetch)
+                        datacomplete = this.myDataFetcher.IsDataReady(row1, row2, that.immediateFetchRecordCount);
+                }
 
                 this.totalRecordCount = -1;
                 if ('totalRecordCount' in this.myDataFetcher)
@@ -611,9 +613,6 @@
                         rs_table[tbnr] += "</th>";
                     }
                 }
-
-                if (rightPartCount==0)
-                    DQX.reportError('Right part of the table should contain at least one column');
 
 
 
