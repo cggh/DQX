@@ -282,8 +282,6 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
             //internal: initiates the ajax data fetching call
             this._fetchRange = function (rangemin, rangemax, needtotalrecordcount) {
 
-                if (!needtotalrecordcount)
-                    var q=0;
 
                 if (rangemax-rangemin>this._maxViewportSizeX)
                     return;
