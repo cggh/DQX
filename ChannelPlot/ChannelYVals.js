@@ -7,8 +7,8 @@
 *************************************************************************************************************************************/
 
 
-define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/ChannelCanvas"],
-    function ($, DocEl, Msg, Controls, ChannelCanvas) {
+define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/ChannelCanvas", "DQX/DataFetcher/DataFetchers"],
+    function ($, DocEl, Msg, Controls, ChannelCanvas, DataFetchers) {
         var ChannelYVals = {};
 
 
