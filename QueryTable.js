@@ -1,5 +1,5 @@
-﻿define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Controls", "DQX/SQL", "DQX/QueryBuilder"],
-    function ($, DQX, DocEl, Msg, FramePanel, Controls, SQL, QueryBuilder) {
+﻿define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Controls", "DQX/SQL", "DQX/QueryBuilder", "DQX/DataFetcher/DataFetchers"],
+    function ($, DQX, DocEl, Msg, FramePanel, Controls, SQL, QueryBuilder, DataFetchers) {
 
         var QueryTable = {}
 
@@ -270,7 +270,7 @@
             that._lastSelClickedRowNr = null;
 
             that.fetchBuffer = 200;
-            that.immediateFetchRecordCount = true;//if true, the record count of the result set is immediately fetched (might slow down for large sets!)
+            that.recordCountFetchType = DataFetchers.RecordCountFetchType.IMMEDIATE;
 
             //Internal usage. Finds a html element in the cluster of elements that define this table
             that.getElementID = function (extension) {
@@ -545,7 +545,7 @@
 
                 if (this._dataValid) {
                     if (!this.preventFetch)
-                        datacomplete = this.myDataFetcher.IsDataReady(row1, row2, that.immediateFetchRecordCount);
+                        datacomplete = this.myDataFetcher.IsDataReady(row1, row2, that.recordCountFetchType);
                 }
 
                 this.totalRecordCount = -1;

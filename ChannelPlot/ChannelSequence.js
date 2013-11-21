@@ -73,7 +73,7 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/ChannelPlot/ChannelCanvas", "DQX/
 
                 var alldataready = true;
                 var fetcherror = false;
-                if (!that.myfetcher.IsDataReady(PosMin, PosMax, false))
+                if (!that.myfetcher.IsDataReady(PosMin, PosMax))
                     alldataready = false;
                 if (that.myfetcher.hasFetchFailed)
                     fetcherror = true;

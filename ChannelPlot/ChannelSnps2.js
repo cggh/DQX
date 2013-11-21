@@ -91,7 +91,7 @@
 
                 var alldataready = true;
                 var fetcherror = false;
-                if (!that.myDataFetcher.IsDataReady(this.PosMin, this.PosMax, false))
+                if (!that.myDataFetcher.IsDataReady(this.PosMin, this.PosMax))
                     alldataready = false;
                 if (that.myDataFetcher.hasFetchFailed)
                     fetcherror = true;

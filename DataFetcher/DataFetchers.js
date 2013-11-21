@@ -11,6 +11,12 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
         var DataFetchers = {}
 
 
+        //Enum specifying the fetch type options for the total record count
+        DataFetchers.RecordCountFetchType = {
+            IMMEDIATE : 0,
+            DELAYED : 1,
+            NONE : 2
+        }
 
         //////////////////////////////////////////////////////////////////////////////////////
         //  Class DataFetchers.Table
@@ -280,8 +286,10 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
             }
 
             //internal: initiates the ajax data fetching call
-            this._fetchRange = function (rangemin, rangemax, needtotalrecordcount) {
-
+            // recordCountFetchType is of type DataFetchers.RecordCountFetchType
+            this._fetchRange = function (rangemin, rangemax, recordCountFetchType) {
+                if (!recordCountFetchType)
+                    recordCountFetchType = DataFetchers.RecordCountFetchType.IMMEDIATE;
 
                 if (rangemax-rangemin>this._maxViewportSizeX)
                     return;
@@ -351,7 +359,7 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                     myurl.addUrlQueryItem("start", rangemin); //not used by server: only used for reflecting info to this client response code
                     myurl.addUrlQueryItem("stop", rangemax); //idem
                     myurl.addUrlQueryItem("sortreverse", this.sortReverse ? 1 : 0);
-                    myurl.addUrlQueryItem("needtotalcount", ((this.totalRecordCount < 0) && (needtotalrecordcount)) ? 1 : 0);
+                    myurl.addUrlQueryItem("needtotalcount", ((this.totalRecordCount < 0) && (recordCountFetchType==DataFetchers.RecordCountFetchType.IMMEDIATE)) ? 1 : 0);
 
                     myurl.addUrlQueryItem("needsmartsort", 0);
 
@@ -370,7 +378,7 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                             url: urlString,
                             success: function (resp) {
                                 thethis._ajaxResponse_FetchRange(resp);
-                                if (!needtotalrecordcount) {//Fetch record cound in a second pass
+                                if (recordCountFetchType==DataFetchers.RecordCountFetchType.DELAYED) {//Fetch record cound in a second pass
                                     var myurl2 = DQX.Url(thethis.serverurl);
                                     thethis._recordcountrequestid = DQX.getNextUniqueID();
                                     myurl2.addUrlQueryItem("datatype", 'getrecordcount');
@@ -384,7 +392,6 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                                             thethis._ajaxResponse_FetchRecordCount(resp);
                                         },
                                         error: function (resp) {
-                                            var q=0;
                                         }
                                     });
                                 }
@@ -419,20 +426,21 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                 return myurl.toString();
             }
 
-            //Call this to determine if all data in a specific range is ready, and start fetching extra data if necessary
-            this.IsDataReady = function (rangemin, rangemax, needtotalrecordcount) {
+            // Call this to determine if all data in a specific range is ready, and start fetching extra data if necessary
+            // recordCountFetchType is of type DataFetchers.RecordCountFetchType.IMMEDIATE
+            this.IsDataReady = function (rangemin, rangemax, recordCountFetchType) {
                 if (rangemax-rangemin>this._maxViewportSizeX)
                     return true;
 
                 if ((rangemin >= this._currentRangeMin) && (rangemax <= this._currentRangeMax)) {
                     var buffer = (rangemax - rangemin) / 2;
                     if ((rangemin - buffer < this._currentRangeMin) || (rangemax + buffer > this._currentRangeMax)) {
-                        this._fetchRange(rangemin, rangemax, needtotalrecordcount);
+                        this._fetchRange(rangemin, rangemax, recordCountFetchType);
                     }
                     return true;
                 }
                 else {
-                    this._fetchRange(rangemin, rangemax, needtotalrecordcount);
+                    this._fetchRange(rangemin, rangemax, recordCountFetchType);
                     return false;
                 }
             }
