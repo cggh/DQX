@@ -637,7 +637,7 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                 if (this.showDownload)
                     DQX.stopProcessing();
                 if (failHandler)
-                    failHandler('Server error');
+                    failHandler('Server error '+JSON.stringify(resp));
             }
 
             that._createActiveColumnListString = function () {
