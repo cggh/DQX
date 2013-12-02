@@ -29,6 +29,10 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
                 return that;
             }
 
+            that.setOnItemHighlighted = function(handler) {
+                that._onItemHighlighted = handler;
+            }
+
             //Call this function to make the list have a search function that shows string matches
             //Optionally, for template-based item rendering, a list of template components that should be searched for can be provided
             that.setHasFilter = function (ifilterTemplateComponentList) {
@@ -163,8 +167,11 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
                     $('#' + this.myListDivID).children('#' + this._activeItem).addClass('DQXLargeListItem').removeClass('DQXLargeListItemSelected');
                 $('#' + this.myListDivID).children('#' + id).removeClass('DQXLargeListItem').addClass('DQXLargeListItemSelected');
                 this._activeItem = id;
-                if (!noEvent)
+                if (!noEvent) {
                     Msg.broadcast({ type: 'SelectItem', id: this.myID }, this._activeItem);
+                    if (that._onItemHighlighted)
+                        that._onItemHighlighted(that._activeItem)
+                }
             }
 
             //Automatically scroll the highlighted item in the visible area
