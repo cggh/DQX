@@ -12,6 +12,60 @@ define(["require", "jquery", "DQX/Msg", "DQX/DocEl", "handlebars"],
         //Inject DQX into the global namespace so that click handlers can find it
         DQX = {};
 
+        // A class helping the scheduling of functions that execute asynchronously
+        DQX.Scheduler = function() {
+            var that = {};
+
+            that.scheduledFunctions = [];
+            that.completedTokens = {}
+
+            // Add a sceduled function. The execution will only start if all required tokens are marked as completed
+            that.add = function(requiredTokens, func) {
+                that.scheduledFunctions.push({
+                    requiredList: requiredTokens,
+                    func: func
+                });
+            };
+
+            // Call this function to mark a token as being completed
+            that.setCompleted = function(token) {
+                that.completedTokens[token] = true;
+            };
+
+            that._tryNext = function() {
+                var nextAction = null;
+                var completed = true;
+                $.each(that.scheduledFunctions, function(idx, item) {
+                    if (!item.started) {
+                        completed = false;
+                        var canExecute = true;
+                        $.each(item.requiredList, function(idx2, requiredToken) {
+                            if (!that.completedTokens[requiredToken])
+                                canExecute = false;
+                        });
+                        if (canExecute)
+                            nextAction = item;
+                    }
+                });
+
+                if (nextAction) {
+                    nextAction.started = true;
+                    nextAction.func();
+                }
+                if (!completed)
+                    setTimeout(that._tryNext, 50);
+            };
+
+            // Start the execution of the scheduled functions
+            that.execute = function() {
+                that._tryNext();
+            }
+
+            return that;
+        }
+
+
+
 DQX.getRGB = function(r, g, b, alpha) {
 		if (r != null && b == null) {
 			alpha = g;
