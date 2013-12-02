@@ -35,6 +35,10 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
             this._collapsed = false;
         }
 
+        TreeCtrl._objectBranch.prototype.getID = function (status) {
+            return this.myID;
+        }
+
         //determine whether or not the branch can be selected by the user
         TreeCtrl._objectBranch.prototype.setCanSelect = function (status) {
             this._canSelect = status;
