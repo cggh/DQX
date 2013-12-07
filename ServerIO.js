@@ -51,6 +51,7 @@ define(["require", "DQX/Framework", "DQX/Popup", "DQX/Msg", "DQX/Utils", "DQX/Do
                     var indent = -1;
                     $.each(resp.Content.split('\n'), function(idx, line) {
                         var linediv = DocEl.Div();
+                        var addLine = true;
                         linediv.setCssClass('DQXLogReportLine');
                         if (line.substring(0,3) == '==>') {
                             linediv.setCssClass('DQXLogReportHeader');
@@ -77,8 +78,13 @@ define(["require", "DQX/Framework", "DQX/Popup", "DQX/Msg", "DQX/Utils", "DQX/Do
                         if (line.substring(0,8) == 'WARNING:') {
                             linediv.setCssClass('DQXLogReportWarning');
                         }
-                        linediv.addElem(line);
-                        content += linediv.toString();
+                        if (line.substring(0,2) == '[<') {
+                            addLine = false;
+                        }
+                        if (addLine) {
+                            linediv.addElem(line);
+                            content += linediv.toString();
+                        }
                     });
                     div.addElem(content)
                     Popup.create('Calculation log '+logid, div.toString() );
