@@ -81,6 +81,9 @@ define(["require", "DQX/Framework", "DQX/Popup", "DQX/Msg", "DQX/Utils", "DQX/Do
                         if (line.substring(0,2) == '[<') {
                             addLine = false;
                         }
+                        if (line.substring(0,3) == '@@@') {
+                            addLine = false;
+                        }
                         if (addLine) {
                             linediv.addElem(line);
                             content += linediv.toString();
