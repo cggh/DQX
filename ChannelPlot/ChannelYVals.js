@@ -143,9 +143,15 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/Chann
                             else drawInfo.centerContext.lineTo(psx, psy);
                             thefirst = false;
                             var xlast = x;
+                            var psxlast = psx;
+                            var psylast = psy;
                         }
                         else {
                             if ((!thefirst) && (plothints.interruptLineAtAbsent)) {
+                                drawInfo.centerContext.moveTo(psxlast, psylast-1);
+                                drawInfo.centerContext.lineTo(psxlast, psylast+1);
+                                drawInfo.centerContext.moveTo(psxlast-1, psylast);
+                                drawInfo.centerContext.lineTo(psxlast+1, psylast);
                                 thefirst = true;
                             }
                         }
