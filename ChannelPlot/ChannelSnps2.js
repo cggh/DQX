@@ -274,7 +274,9 @@
                                         drawInfo.centerContext.fillStyle = customfiltercolor;
                                         lastcolornr = colornr;
                                     }
-                                    drawInfo.centerContext.fillRect(positXCorrLeft[i] + shl, py, positXCorrLength[i] + shr, ly);
+                                    var covtot = DP[i];
+                                    var h = 2 + Math.round((ly - 3) * Math.min(1.0, (1+covtot) / (1+this.covRange)));
+                                    drawInfo.centerContext.fillRect(positXCorrLeft[i] + shl, py + ly - h, positXCorrLength[i] + shr, h);
                                 }
                                 else {
                                     if (GT[i] != null) {
@@ -338,7 +340,7 @@
                                                 lastcolornr = colornr;
                                             }
                                         }
-                                        var h = 2 + Math.round((ly - 3) * Math.min(1.0, covtot / this.covRange));
+                                        var h = 2 + Math.round((ly - 3) * Math.min(1.0, (1+covtot) / (1+this.covRange)));
                                         drawInfo.centerContext.fillRect(positXCorrLeft[i] + shl, py + ly - h, positXCorrLength[i] + shr, h);
                                     }
 
@@ -349,7 +351,7 @@
                                             drawInfo.centerContext.fillStyle = absentcolor;
                                             lastcolornr = colornr;
                                         }
-                                        drawInfo.centerContext.fillRect(positXCorrLeft[i] + shl, py + 7, positXCorrLength[i] + shr, ly - 13);
+                                        //drawInfo.centerContext.fillRect(positXCorrLeft[i] + shl, py + 7, positXCorrLength[i] + shr, ly - 13);
                                     }
                                 }
                             }
@@ -839,7 +841,7 @@
             }
 
             that.setCoverageRange = function (newrange) {
-                this.covRange = Math.max(1, newrange);
+                this.covRange = Math.max(0, newrange);
                 this.getMyPlotter().render();
             }
 
