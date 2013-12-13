@@ -84,6 +84,10 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                 for (var i = 0; i < this.myStartList.length; i++)
                     this.myStopList.push(this.myStartList[i] + sizes[i]);
                 this.myNameList = vallistdecoder.doDecode(keylist['Names']);
+                var tmpNameList = this.myNameList;
+                $.each(tmpNameList, function(idx, str) {
+                    tmpNameList[idx] = decodeURIComponent(str);
+                });
                 this.myIDList = vallistdecoder.doDecode(keylist['IDs']);
                 this.myTypeList = vallistdecoder.doDecode(keylist['Types']);
                 this.myParentIDList = vallistdecoder.doDecode(keylist['ParentIDs']);
