@@ -21,7 +21,7 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
             this.database = iconfig.database;
             this.annotTableName = iconfig.annotTableName;
             this.fetchSubFeatures = true;
-            this.ftype = 'gene';
+            this.ftype = '';
             this.fsubtype = 'exon';
             this.showFeatureType = false;
 
@@ -43,6 +43,7 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
 
             this.translateChromoId = function (id) { return id; }
 
+            // note : fTypeName can be comma separated list
             this.setFeatureType = function (fTypeName, fSubTypeName) {
                 this.ftype = fTypeName;
                 this.fsubtype = fSubTypeName;
@@ -166,8 +167,12 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                 thedata.myExonStarts = [];
                 thedata.myExonStops = [];
                 var genemap = {}
+                var typeMap = [];
+                $.each(this.ftype.split(','), function(idx, tpe) {
+                    typeMap[tpe] = true;
+                });
                 for (i = 0; i < this.myStartList.length; i++)
-                    if ((this.myStopList[i] >= rangemin) && (this.myStartList[i] <= rangemax) && ((this.myTypeList[i] == this.ftype) || (this.ftype.length == 0))) {
+                    if ((this.myStopList[i] >= rangemin) && (this.myStartList[i] <= rangemax) && ((typeMap[this.myTypeList[i]]) || (this.ftype.length == 0))) {
                         genemap[this.myIDList[i]] = thedata.myIDList.length;
                         thedata.myStartList.push(this.myStartList[i]);
                         thedata.myStopList.push(this.myStopList[i]);
