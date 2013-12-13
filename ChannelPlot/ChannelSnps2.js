@@ -205,7 +205,7 @@
                 //Create the color lut
                 var colors = [' rgb(0,0,255)', 'rgb(220,0,0)', 'rgb(0,150,150)'];
                 var absentcolor = 'rgb(220,220,220)';
-                var customfiltercolor = 'rgb(200,200,200)';
+                var customfiltercolor = 'rgb(160,160,160)';
                 var conformcolor1 = 'rgb(200,150,0)';
                 var conformcolor2 = 'rgb(0,180,0)';
                 var disconformcolor = 'rgb(0,0,0)';
@@ -256,7 +256,7 @@
                 }
 
                 //draw the snps
-                var lastcolornr = -1;
+                var lastcolornr = -1;drawInfo.centerContext.fillStyle = customfiltercolor;
                 for (var seqnr = 0; seqnr < this.mySeqIDs.length; seqnr++) {
                     if (this.seqLy[seqnr] > 0) {
                         var py = this.seqPy[seqnr];
@@ -763,14 +763,14 @@
                         var vl = self.data.getSnpInfo(info.ID)[self.hoverSnp];
                         if (ignoreTags.indexOf(info.ID)<0) {
                             if (info.DataType == 'Value') vl = vl.toFixed(3); //todo !!!a hack that needs to be resolved
-                            infostr+= info.Name + '= ';
+                            infostr+= info.Name + ': ';
                             infostr+= vl;
                             infostr+= '<br/>';
                         }
                         snp_info[info.Name] = vl;
                     });
                     //show filters that were applied to this snp
-                    infostr += 'Applied filters:';
+                    infostr += 'FILTER:';
                     var filterFlagList = self.data.getSnpInfo('FilterFlags')[self.hoverSnp];
                     $.each(filterFlagList, function (idx, flag) {
                         if (flag)
@@ -781,11 +781,11 @@
                     this.hoverSnpInfo = snp_info;
                     if (this.hoverSeqNr >= 0) {
                         infostr += '<br><b>Variant call</b></br>';
-                        infostr += 'Sample= '+this.getSequenceDisplayName(this.mySeqIDs[this.hoverSeqNr]) + '<br>';
+                        infostr += 'Sample: '+this.getSequenceDisplayName(this.mySeqIDs[this.hoverSeqNr]) + '<br>';
                         var callInfo = this.data.seqdata[this.mySeqIDs[this.hoverSeqNr]];
                         $.each(callInfo, function (key, val) {
                             if (key != 'customFilter')
-                                infostr += key + '= ' + ((val[self.hoverSnp] != null) ? val[self.hoverSnp].toFixed(0) : '---') + '<br>';
+                                infostr += key + ': ' + ((val[self.hoverSnp] != null) ? val[self.hoverSnp].toFixed(0) : '---') + '<br>';
                         });
 
                     }

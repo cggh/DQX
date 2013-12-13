@@ -746,13 +746,13 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/ChannelPlot/ChannelCanvas", "DQX/
                     $.each(this.myDataFetcher.getSnPositInfoList(), function (idx, info) {
                         var vl = self.data.getSnpInfo(info.ID)[self.hoverSnp];
                         if (info.DataType == 'Value') vl = vl.toFixed(3); //!!!a hack that needs to be resolved
-                        infostr += info.Name + '= ';
+                        infostr += info.Name + ': ';
                         infostr += vl;
                         infostr += '<br/>';
                         snp_info[info.Name] = vl;
                     });
                     //show filters that were applied to this snp
-                    infostr += '<b>Applied filters</b><br/>';
+                    infostr += '<b>FILTER</b><br/>';
                     var filterFlagList = self.data.getSnpInfo('FilterFlags')[self.hoverSnp];
                     $.each(filterFlagList, function (idx, flag) {
                         if (flag)

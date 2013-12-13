@@ -1860,8 +1860,10 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
             that.getValue = function () {
                 if (this.minIsNone && (this._value == this._minval))
                     return null;
-                else
-                    return this._value;
+                else {
+                    var mf = Math.pow(10,this.digits)
+                    return Math.round(this._value*mf)*1.0/mf;
+                }
             };
 
             //Modifies the current value of the slider

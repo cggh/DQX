@@ -1417,3 +1417,11 @@ canvas, .DQXDragHeader
 {
     -ms-touch-action:none;
 }
+
+.ColorInfoBlock
+{
+    display: inline-block;
+    width:8px;
+    height:8px;
+    border: 1px solid rgb(0,0,0);
+}

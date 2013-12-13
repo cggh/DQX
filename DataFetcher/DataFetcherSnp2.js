@@ -579,7 +579,7 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders", "DQX/DataFetcher/D
                             $.each(filter.customCallFilters, function (ID, filter) {
                                 if (filter.fieldNr != null) {
                                     if (filter.value != null) {
-                                        if (seq_sampleCallInfo[filter.fieldNr][i] < filter.value)
+                                        if (seq_sampleCallInfo[filter.fieldNr][i] < filter.value-0.05)
                                             customFiltered = true;
                                     }
                                 }
