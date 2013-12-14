@@ -33,6 +33,8 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
             that.canHide = true;
             that._maxViewportSizeX=1.0e9;//info will be hidden if the viewport gets larger than this
 
+            that._isMarkVisible = true;
+
             that.getID = function () { return that._myID; }
 
             that.getRequiredRightWidth = function () {//can be overwritten
@@ -108,6 +110,10 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
 
             that.setOnClickHandler = function(handler) {
                 that._onClickHandler = handler;
+            }
+
+            that.setMarkVisible = function(status) {
+                that._isMarkVisible = status;
             }
 
             that.hideToolTip = function () { } //can override en remove any tooltip if this function was called
@@ -549,6 +555,8 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
             }
 
             that.drawMark = function (drawInfo, showText) {
+                if (!that._isMarkVisible)
+                    return;
                 if (drawInfo.mark.present) {
                     var psx1 = Math.round((drawInfo.mark.pos1) * drawInfo.zoomFactX - drawInfo.offsetX) - 0.5;
                     var psx2 = Math.round((drawInfo.mark.pos2) * drawInfo.zoomFactX - drawInfo.offsetX) + 0.5;
