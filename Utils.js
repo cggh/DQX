@@ -602,12 +602,18 @@ DQX.polyStar = function(ctx, x, y, radius, sides, pointSize, angle) {
 
         //converts a html color string to a DQX.Color
         DQX.parseColorString = function (colorstring, faildefault) {
-            var parts = colorstring.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
-            if ((parts) && (parts.length >= 2) && (parts[1].length > 0) && (parts[2].length > 0) && (parts[3].length > 0))
-                return DQX.Color(parseFloat(parts[1]) / 255.0, parseFloat(parts[2]) / 255.0, parseFloat(parts[3]) / 255.0);
-            if (typeof faildefault != 'undefined')
-                return faildefault;
-            return DQX.Color(0,0,0);
+            try {
+                var parts = colorstring.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+                if ((parts) && (parts.length >= 2) && (parts[1].length > 0) && (parts[2].length > 0) && (parts[3].length > 0))
+                    return DQX.Color(parseFloat(parts[1]) / 255.0, parseFloat(parts[2]) / 255.0, parseFloat(parts[3]) / 255.0);
+                if (typeof faildefault != 'undefined')
+                    return faildefault;
+                return DQX.Color(0,0,0);
+            }
+            catch(err)
+            {
+                DQX.reportError('Invalid color string: '+colorstring)
+            }
         }
 
         DQX.niceColours = [
