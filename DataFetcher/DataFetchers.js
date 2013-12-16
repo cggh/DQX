@@ -533,6 +533,7 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                 "String": { id:"ST", type:"String" },    //returns string data
                 "Float2": { id:"F2", type:"Float" },    //returns floats in 2 base64 bytes
                 "Float3": { id:"F3", type:"Float" },     //returns floats in 3 base64 bytes
+                "Float4": { id:"F4", type:"Float" },     //returns floats in 4 base64 bytes
                 "Int": { id:"IN", type:"Integer" },        //returns exact integers
                 "IntB64": { id:"IB", type:"Integer" },     //returns exact integers, base64 encoded
                 "IntDiff": { id:"ID", type:"Integer" }     //returns exact integers as differences with previous values
