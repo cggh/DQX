@@ -21,7 +21,7 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
             this.database = iconfig.database;
             this.annotTableName = iconfig.annotTableName;
             this.fetchSubFeatures = true;
-            this.ftype = '';
+            this.ftype = 'gene';
             this.fsubtype = 'exon';
             this.showFeatureType = false;
 
