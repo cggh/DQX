@@ -15,9 +15,36 @@
             that._minDrawZoomFactX = 1 / 300.0;
             that._clickInfo = []; //will hold info about clickable areas
             that.darkenFactor = 1.0;
+            that._drawLabels = true;
+            that._showIDInToolTip = true;
+            that._autoVerticalPosition = true;
+            that._colorByName = false;
+            that._slotH = 10;
+
+            that.setSlotHeight = function(vl) {
+                that._slotH = vl;
+            }
 
             that.setMinDrawZoomFactX = function (vl) {
                 this._minDrawZoomFactX = vl;
+            }
+
+            that.setDrawLabels = function (vl) {
+                this._drawLabels = vl;
+            }
+
+            that.setAutoVerticalPosition = function(vl) {
+                that._autoVerticalPosition = vl;
+            }
+
+            that.showIDInToolTip = function(vl) {
+                that._showIDInToolTip = vl;
+            }
+
+
+            that.setColorByName = function(name2ColorMap) {
+                that._colorByName = true;
+                that._name2ColorMap = name2ColorMap;
             }
 
             that.draw = function (drawInfo) {
@@ -42,7 +69,7 @@
                 var ps = -4500;
                 ranseed = 0;
                 drawInfo.centerContext.strokeStyle = "black";
-                var slotcount = Math.floor((this._height - 5) / 10);
+                var slotcount = Math.floor((this._height - 5) / that._slotH);
                 var slotmaxpos = [];
                 for (var i = 0; i < 3; i++) slotmaxpos[i] = -100;
 
@@ -57,13 +84,20 @@
                     drawInfo.centerContext.textBaseline = 'bottom';
                     drawInfo.centerContext.textAlign = 'left';
                     var abbrevlabel = label;
-                    for (var slotnr = 0; (slotnr < slotcount) && (slotmaxpos[slotnr] > psx1); slotnr++);
+                    var slotnr = 0;
+                    if (that._autoVerticalPosition) {
+                        for (var slotnr = 0; (slotnr < slotcount) && (slotmaxpos[slotnr] > psx1); slotnr++);
+                    }
                     if (slotnr < slotcount) {
-                        var labellen = drawInfo.centerContext.measureText(label).width;
+                        if (this._drawLabels) {
+                            var labellen = drawInfo.centerContext.measureText(label).width;
+                        }
+                        else
+                            var labellen = 0;
                         var clickpt = {};
                         clickpt.x0 = Math.round(psx1 + 2);
-                        clickpt.y0 = Math.round(3 + 10 * slotnr);
-                        clickpt.Y1 = clickpt.y0 + 10;
+                        clickpt.y0 = Math.round(3 + that._slotH * slotnr);
+                        clickpt.Y1 = clickpt.y0 + that._slotH;
                         clickpt.name = label;
                         clickpt.ID = annot.myIDList[i];
                         clickpt.StartPs = annot.myStartList[i];
@@ -71,8 +105,13 @@
 
                         drawInfo.centerContext.fillStyle = "rgb(220,160,100)";
                         drawInfo.centerContext.strokeStyle = "rgb(128,128,128)";
+
+                        if (that._colorByName) {
+                            drawInfo.centerContext.fillStyle = that._name2ColorMap[annot.myNameList[i]].toStringCanvas();
+                        }
+
                         drawInfo.centerContext.beginPath();
-                        drawInfo.centerContext.rect(Math.round(psx1) + 0.5, Math.round(clickpt.y0) + 0.5, Math.round(psx2 - psx1), 8);
+                        drawInfo.centerContext.rect(Math.round(psx1) + 0.5, Math.round(clickpt.y0) + 0.5, Math.round(psx2 - psx1), that._slotH - 2);
                         drawInfo.centerContext.fill();
                         drawInfo.centerContext.stroke();
 
@@ -85,15 +124,17 @@
                                 var epsx1 = exstartlist[exnr] * drawInfo.zoomFactX - drawInfo.offsetX;
                                 var epsx2 = exstoplist[exnr] * drawInfo.zoomFactX - drawInfo.offsetX;
                                 drawInfo.centerContext.beginPath();
-                                drawInfo.centerContext.rect(Math.round(epsx1) + 0.5, Math.round(clickpt.y0) + 0.5, Math.round(epsx2 - epsx1) + 1, 8);
+                                drawInfo.centerContext.rect(Math.round(epsx1) + 0.5, Math.round(clickpt.y0) + 0.5, Math.round(epsx2 - epsx1) + 1, that._slotH - 2);
                                 drawInfo.centerContext.fill();
                                 drawInfo.centerContext.stroke();
                             }
                         }
 
-                        drawInfo.centerContext.fillStyle = "black";
-                        drawInfo.centerContext.fillText(abbrevlabel, Math.round(psx2 + 2) + 0.5, clickpt.Y1 + 0.5);
-                        slotmaxpos[slotnr] = psx2 + labellen + 6;
+                        if (this._drawLabels) {
+                            drawInfo.centerContext.fillStyle = "black";
+                            drawInfo.centerContext.fillText(abbrevlabel, Math.round(psx2 + 2) + 0.5, clickpt.Y1 + 0.5);
+                            slotmaxpos[slotnr] = psx2 + labellen + 6;
+                        }
 
                         clickpt.XCent = Math.round((psx1 + psx2) / 2);
                         clickpt.X1 = psx2 + labellen;
@@ -140,7 +181,9 @@
                     thetip = {};
                     thetip.px = Math.min(clickpt.X1 - 50, Math.max(clickpt.x0, px));
                     thetip.py = clickpt.Y1 - 5;
-                    thetip.content = clickpt.name + "<br>" + clickpt.ID;
+                    thetip.content = clickpt.name;
+                    if (that._showIDInToolTip)
+                        thetip.content += "<br>" + clickpt.ID;
                     thetip.ID = clickpt.ID;
                     thetip.showPointer = true;
                 }
