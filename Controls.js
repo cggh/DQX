@@ -1818,6 +1818,13 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
             that._value = that._minval; if (args.value) that._value = args.value;
             that.digits = 0; if (args.digits) that.digits = args.digits;
             that.minIsNone = false; if (args.minIsNone) that.minIsNone = args.minIsNone;
+            that._notifyOnFinished = false;
+
+            // Call this function to force the control to call the onChanged function only when the dragging is completed
+            that.setNotifyOnFinished = function() {
+                that._notifyOnFinished = true;
+                return that;
+            }
 
             that._controlExtensionList.push('Canvas');
 
@@ -1852,8 +1859,13 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
             that.scrollTo = function () {
                 this._value = (this._scroller.rangeMin + this._scroller.scrollPos * (this._scroller.rangeMax - this._scroller.rangeMin));
                 this.showValue();
-                this._notifyChanged();
+                if (!that._notifyOnFinished)
+                    this._notifyChanged();
             };
+            that.scrollFinished = function() {
+                if (that._notifyOnFinished)
+                    this._notifyChanged();
+            }
 
 
             //Returns the current value of the slider

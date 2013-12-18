@@ -63,6 +63,13 @@ ul li
     font-family: "Courier New", Courier, monospace;
 }
 
+.DQXLogReportDataDump {
+    font-size:8pt;
+    font-family: "Courier New", Courier, monospace;
+    color: rgb(130,130,130);
+}
+
+
 .DQXLogReportHeader {
     font-size:10pt;
     font-family: Verdana, Arial, Helvetica, sans-serif;
@@ -71,7 +78,15 @@ ul li
     padding-bottom:2px;
 }
 
-.DQXLogReportFooter {
+.DQXLogReportHeaderSub {
+    font-size:10pt;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-style:italic;
+    padding-top:5px;
+    padding-bottom:2px;
+}
+
+.DQXLogReportFooter, .DQXLogReportFooterSub {
     color: rgb(150,150,150);
     font-size:7pt;
     font-family: Verdana, Arial, Helvetica, sans-serif;
@@ -85,7 +100,8 @@ ul li
 }
 
 .DQXLogReportCommand {
-    color: rgb(0,0,180);
+    font-size:8pt;
+    color: rgb(100,100,180);
 }
 
 .DQXLogReportError {

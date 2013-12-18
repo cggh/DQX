@@ -49,6 +49,7 @@ define(["require", "DQX/Framework", "DQX/Popup", "DQX/Msg", "DQX/Utils", "DQX/Do
                     div.setCssClass('DQXLogReport');
                     var content = '';
                     var indent = -1;
+                    var isDataDump = false;
                     $.each(resp.Content.split('\n'), function(idx, line) {
                         var linediv = DocEl.Div();
                         var addLine = true;
@@ -58,12 +59,38 @@ define(["require", "DQX/Framework", "DQX/Popup", "DQX/Msg", "DQX/Utils", "DQX/Do
                             line = line.substring(3);
                             indent += 1;
                         }
+                        if (line.substring(0,3) == '-->') {
+                            linediv.setCssClass('DQXLogReportHeaderSub');
+                            line = line.substring(3);
+                            indent += 1;
+                        }
+                        if (line.substring(0,3) == 'DD>') {
+                            indent += 1;
+                            addLine = false;
+                            isDataDump = true;
+                        }
+
+
                         linediv.addStyle('margin-left',30*Math.max(0,indent)+'px')
+
+
                         if (line.substring(0,3) == '<==') {
                             indent -= 1;
                             linediv.setCssClass('DQXLogReportFooter');
                             line = line.substring(3);
                         }
+                        if (line.substring(0,3) == '<--') {
+                            indent -= 1;
+                            linediv.setCssClass('DQXLogReportFooterSub');
+                            line = line.substring(3);
+                        }
+                        if (line.substring(0,3) == '<DD') {
+                            indent -= 1;
+                            addLine = false;
+                            isDataDump = false;
+                        }
+
+
                         if (line.substring(0,8) == 'COMMAND:') {
                             linediv.setCssClass('DQXLogReportCommand');
                             line = line.substring(8);
@@ -85,8 +112,12 @@ define(["require", "DQX/Framework", "DQX/Popup", "DQX/Msg", "DQX/Utils", "DQX/Do
                             addLine = false;
                         }
                         if (addLine) {
+                            if (isDataDump) {
+                                line = line.replace(/ /g,'&nbsp;')
+                                line = '<div class="DQXLogReportDataDump">' + line +'</div>';
+                            }
                             linediv.addElem(line);
-                            content += linediv.toString();
+                                content += linediv.toString();
                         }
                     });
                     div.addElem(content)

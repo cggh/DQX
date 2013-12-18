@@ -256,6 +256,8 @@ define(["jquery", "DQX/DocEl", "DQX/Msg"],
             }
 
             that._onMouseUp = function (ev) {
+                if ('scrollFinished' in this.myConsumer)
+                    this.myConsumer.scrollFinished();
             }
 
             that._onMouseHover = function (ev) {
