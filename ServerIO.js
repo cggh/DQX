@@ -30,7 +30,7 @@ define(["require", "DQX/Framework", "DQX/Popup", "DQX/Msg", "DQX/Utils", "DQX/Do
                     }
                 });
             };
-            poll();
+            setTimeout(poll, 1000);
         };
 
         ServerIO.customAsyncRequest = function(serverUrl, respmodule, request, data, onCompleted) {
