@@ -1,6 +1,6 @@
 
-define(["require", "DQX/Framework", "DQX/Popup", "DQX/Msg", "DQX/Utils", "DQX/DocEl", "DQX/Controls"],
-    function (require, Framework, Popup, Msg, DQX, DocEl, Controls) {
+define(["require", "DQX/Framework", "DQX/Popup", "DQX/Msg", "DQX/Utils", "DQX/DocEl", "DQX/Controls", "DQX/base64"],
+    function (require, Framework, Popup, Msg, DQX, DocEl, Controls, Base64) {
 
 
         var ServerIO = {};
@@ -50,7 +50,9 @@ define(["require", "DQX/Framework", "DQX/Popup", "DQX/Msg", "DQX/Utils", "DQX/Do
                     var content = '';
                     var indent = -1;
                     var isDataDump = false;
-                    $.each(resp.Content.split('\n'), function(idx, line) {
+                    var origcontent = resp.Content;
+                    var lines = origcontent.split('\n');
+                    $.each(lines, function(idx, line) {
                         var linediv = DocEl.Div();
                         var addLine = true;
                         linediv.setCssClass('DQXLogReportLine');
@@ -117,9 +119,10 @@ define(["require", "DQX/Framework", "DQX/Popup", "DQX/Msg", "DQX/Utils", "DQX/Do
                                 line = '<div class="DQXLogReportDataDump">' + line +'</div>';
                             }
                             linediv.addElem(line);
-                                content += linediv.toString();
+                            content += linediv.toString();
                         }
                     });
+
                     div.addElem(content)
                     Popup.create('Calculation log '+logid, div.toString() );
                 }
