@@ -428,6 +428,12 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/Chann
                 var rangemax = args.rangemax;
                 var points1 = this.myfetcher.getColumnPoints(args.PosMin, args.PosMax, this.YIDMin);
                 var points2 = this.myfetcher.getColumnPoints(args.PosMin, args.PosMax, this.YIDMax);
+                if (points1.missingData || points2.missingData) {
+                    drawInfo.centerContext.fillStyle = "red";
+                    drawInfo.centerContext.font = '15px sans-serif';
+                    drawInfo.centerContext.textBaseline = 'middle';
+                    drawInfo.centerContext.fillText('Data missing',100,15);
+                }
                 var xvals1 = points1.xVals;
                 var yvals1 = points1.YVals;
                 var xvals2 = points1.xVals;
@@ -441,7 +447,7 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/Chann
                 var hasYFunction = "YFunction" in this;
 
                 var psx, psy;
-                for (i = 0; i < xvals1.length; i++) {
+                for (var i = 0; i < xvals1.length; i++) {
                     psx = xvals1[i] * drawInfo.zoomFactX - drawInfo.offsetX;
                     if (yvals1[i] != null) {
                         var y = yvals1[i];
@@ -457,7 +463,7 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/Chann
                     }
                     else drawInfo.centerContext.lineTo(psx, psy);
                 }
-                for (i = xvals2.length - 1; i >= 0; i--) {
+                for (var i = xvals2.length - 1; i >= 0; i--) {
                     var psx = xvals2[i] * drawInfo.zoomFactX - drawInfo.offsetX;
                     if (yvals2[i] != null) {
                         var y = yvals2[i];

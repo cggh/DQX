@@ -36,7 +36,10 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                 this._propertyBuffers = [];
                 for (prop in propresults) {
                     var dt = propresults[prop];
-                    this._buffer[prop] = DataDecoders.Encoder.Create(dt.encoder).decodeArray(dt.data);
+                    if (dt)
+                        this._buffer[prop] = DataDecoders.Encoder.Create(dt.encoder).decodeArray(dt.data);
+                    else
+                        this._buffer[prop] = null;
                 }
             }
 
@@ -55,6 +58,10 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                 if (!(cid in this._buffer))
                     return thedata;
                 var lst = this._buffer[cid];
+                if (!lst) {
+                    thedata.missingData = true;
+                    return thedata;
+                }
                 var startnr = Math.max(0, Math.floor(rangemin / this._blockSize) - this._blockStart);
                 var endnr = Math.min(lst.length - 1, Math.ceil(rangemax / this._blockSize) - this._blockStart);
                 thedata.extraInfo = {};
@@ -264,7 +271,8 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                 var propresults = keylist['results'];
                 this._propertySummerariserInfo = {}
                 for (prop in propresults) {
-                    this._propertySummerariserInfo[prop] = propresults[prop].summariser;
+                    if (propresults[prop])
+                        this._propertySummerariserInfo[prop] = propresults[prop].summariser;
                 }
 
                 //tell the consumer of this that the data are ready
