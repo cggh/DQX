@@ -32,6 +32,11 @@ define(["require", "jquery", "DQX/Msg", "DQX/DocEl", "handlebars"],
                 that.completedTokens[token] = true;
             };
 
+            // Call this function to set a notification function that will be called when all actions are completed
+            that.setOnFullyCompleted = function(handler) {
+                that._onFullyCompleted = handler;
+            }
+
             that._tryNext = function() {
                 var nextAction = null;
                 var completed = true;
@@ -54,6 +59,9 @@ define(["require", "jquery", "DQX/Msg", "DQX/DocEl", "handlebars"],
                 }
                 if (!completed)
                     setTimeout(that._tryNext, 50);
+                else
+                    if (that._onFullyCompleted)
+                        that._onFullyCompleted();
             };
 
             // Start the execution of the scheduled functions
