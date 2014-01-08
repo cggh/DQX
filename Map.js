@@ -1023,13 +1023,16 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
 
             that._handleOnZoomChanged = function () {
                 GMaps.defaults.zoom = that.myMap.getZoom();
-                GMaps.defaults.center = that.myMap.getCenter();
                 for (var i = 0; i < this._myOverlays.length; i++)
                     if ("onZoomLevelChanged" in this._myOverlays[i])
                         this._myOverlays[i].onZoomLevelChanged();
             }
+            that._handleOnCenterChanged = function () {
+                GMaps.defaults.center = that.myMap.getCenter();
+            }
 
             google.maps.event.addListener(that.myMap, 'zoom_changed', $.proxy(that._handleOnZoomChanged, that));
+            google.maps.event.addListener(that.myMap, 'center_changed', $.proxy(that._handleOnCenterChanged, that));
 
 
 
