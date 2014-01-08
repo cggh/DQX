@@ -13,6 +13,10 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
 
         var GMaps = {}
 
+        GMaps.defaults = {
+            zoom: 2,
+            center : new google.maps.LatLng(0, 0)
+        };
 
         GMaps.Coord = function (longit, lattit) {
             var that = {};
@@ -951,9 +955,16 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
 
             var styledMap = new google.maps.StyledMapType(styles, { name: "Simple" });
 
+            var startZoom = GMaps.defaults.zoom;
+            var startCenter = GMaps.defaults.center;
+            if (istartzoomlevel)
+                startZoom = istartzoomlevel;
+            if (istartcoord)
+                startCenter = new google.maps.LatLng(istartcoord.lattit, istartcoord.longit);
+
             var mapoptions = {
-                zoom: istartzoomlevel,
-                center: new google.maps.LatLng(istartcoord.lattit, istartcoord.longit),
+                zoom: startZoom,
+                center: startCenter,
                 mapTypeControlOptions: {
                     mapTypeIds: [google.maps.MapTypeId.ROADMAP, google.maps.MapTypeId.TERRAIN, google.maps.MapTypeId.SATELLITE, 'map_style_simple']
                 }
@@ -1011,6 +1022,8 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
             }
 
             that._handleOnZoomChanged = function () {
+                GMaps.defaults.zoom = that.myMap.getZoom();
+                GMaps.defaults.center = that.myMap.getCenter();
                 for (var i = 0; i < this._myOverlays.length; i++)
                     if ("onZoomLevelChanged" in this._myOverlays[i])
                         this._myOverlays[i].onZoomLevelChanged();
