@@ -1034,6 +1034,86 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
             google.maps.event.addListener(that.myMap, 'zoom_changed', $.proxy(that._handleOnZoomChanged, that));
             google.maps.event.addListener(that.myMap, 'center_changed', $.proxy(that._handleOnCenterChanged, that));
 
+            google.maps.event.addListener(that.myMap, 'mousedown', function (event) {
+                //setTimeout("mySingleClickBelovedFunction();;", 200);
+                event.stop();
+                event.cancelBubble = true;
+                if (event.stopPropagation) {
+                    event.stopPropagation();
+                }
+                if (event.preventDefault) {
+                    event.preventDefault();
+                } else {
+                    event.returnValue = false;
+                }
+
+//                mouseMoveHandler = google.maps.event.addListener(that.myMap, 'mousemove', function(e) {
+//                    // Create a new polyline instance if it does not exists
+//                    if ("undefined" == typeof(GMap._poly[GMap._active_overlay])) {
+//                        GMap._poly[GMap._active_overlay] = new google.maps.Polyline(polyOptions);
+//                    }
+//                    var path = GMap._poly[GMap._active_overlay].getPath();
+//                    path.push(e.latLng);
+//                }); // End of mousemove lister
+
+
+                var map = 'Already created map object';
+                var polyOptions = {
+                    strokeColor: '#000000',
+                    strokeOpacity: 1.0,
+                    strokeWeight: 2,
+                    map: that.myMap,
+                    idx: 0
+                };
+                var mouseMoveHandler = null;
+
+                var GMap = {};
+
+
+                google.maps.event.addListener(that.myMap, 'mousedown', function(e) {
+
+                    GMap.poly = new google.maps.Polyline(polyOptions);
+
+                    mouseMoveHandler = google.maps.event.addListener(that.myMap, 'mousemove', function(e) {
+                        // Create a new polyline instance if it does not exists
+                        var path = GMap.poly.getPath();
+                        path.push(e.latLng);
+                        e.stop();
+                        e.cancelBubble = true;
+                        if (e.stopPropagation) {
+                            e.stopPropagation();
+                        }
+                        if (e.preventDefault) {
+                            e.preventDefault();
+                        } else {
+                            e.returnValue = false;
+                        }
+                        return false;
+                    }); // End of mousemove lister
+
+
+                    e.stop();
+                    e.cancelBubble = true;
+                    if (e.stopPropagation) {
+                        e.stopPropagation();
+                    }
+                    if (e.preventDefault) {
+                        e.preventDefault();
+                    } else {
+                        e.returnValue = false;
+                    }
+                    return false;
+                });
+
+                google.maps.event.addListener(that.myMap, 'mouseup', function(e) {
+                    google.maps.event.removeListener(mouseMoveHandler);
+                });
+
+
+
+
+                return false;
+            });
 
 
             that.handleResize = function () {
