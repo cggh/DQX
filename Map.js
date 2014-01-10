@@ -276,11 +276,6 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
         GMaps.PointSet = function (iid, imapobject, iminzoomlevel, bitmapfile, displayOptions) {
             var that = {};
 
-//  wget --output-document test.png "https://chart.googleapis.com/chart?chst=d_map_pin_letter&chld=A|B88A00|FF0000"
-//            that.pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + "00AAAA",
-//                new google.maps.Size(21, 34),
-//                new google.maps.Point(0,0),
-//                new google.maps.Point(10, 34));
 
 
             if (!displayOptions) {
@@ -1142,8 +1137,10 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
 
             // Expects a GMaps.Coord
             that.isCoordInsideLassoSelection = function(coord) {
+                if (!that.selectionPolygonPoints)
+                    return false;
                 var point = that.myMap.getProjection().fromLatLngToPoint(coord.toGoogleLatLng());
-                return isPointInPoly({
+                return isPointInPoly(that.selectionPolygonPoints,{
                     x: point.x,
                     y: point.y
                 })
