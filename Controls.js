@@ -1034,6 +1034,11 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                     this.getJQElement('').css('opacity', 0.4);
             }
 
+            //to be called when the button is running
+            that.changeContent = function(newContent) {
+                this.getJQElement('').html(newContent);
+            }
+
 
             that.modifyEnabled = function (newstate) {
                 that.enable(newstate);
