@@ -276,6 +276,13 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
         GMaps.PointSet = function (iid, imapobject, iminzoomlevel, bitmapfile, displayOptions) {
             var that = {};
 
+//  wget --output-document test.png "https://chart.googleapis.com/chart?chst=d_map_pin_letter&chld=A|B88A00|FF0000"
+//            that.pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + "00AAAA",
+//                new google.maps.Size(21, 34),
+//                new google.maps.Point(0,0),
+//                new google.maps.Point(10, 34));
+
+
             if (!displayOptions) {
                 displayOptions = {
                     showMarkers: true,
@@ -377,6 +384,7 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                 }
 
                 if (this.displayOptions.showMarkers) {
+
                     for (var i = 0; i < ipointset.length; i++) {
                         (function (iarg) {//closure because we need persistent counter
                             var pointnr = iarg;
@@ -974,6 +982,7 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
             that.myMap.mapTypes.set('map_style_simple', styledMap);
             that.myMap.setMapTypeId('map_style_simple');
 
+
             /*
             //Create base overlay structure
             that.containerOverlay = new google.maps.OverlayView();
@@ -1031,89 +1040,123 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                 GMaps.defaults.center = that.myMap.getCenter();
             }
 
-            google.maps.event.addListener(that.myMap, 'zoom_changed', $.proxy(that._handleOnZoomChanged, that));
-            google.maps.event.addListener(that.myMap, 'center_changed', $.proxy(that._handleOnCenterChanged, that));
 
-            google.maps.event.addListener(that.myMap, 'mousedown', function (event) {
-                //setTimeout("mySingleClickBelovedFunction();;", 200);
-                event.stop();
-                event.cancelBubble = true;
-                if (event.stopPropagation) {
-                    event.stopPropagation();
-                }
-                if (event.preventDefault) {
-                    event.preventDefault();
-                } else {
-                    event.returnValue = false;
-                }
+            that.lassoPointImage = new google.maps.MarkerImage(DQX.BMP("circle1.png"), null, null, new google.maps.Point(8, 8));
 
-//                mouseMoveHandler = google.maps.event.addListener(that.myMap, 'mousemove', function(e) {
-//                    // Create a new polyline instance if it does not exists
-//                    if ("undefined" == typeof(GMap._poly[GMap._active_overlay])) {
-//                        GMap._poly[GMap._active_overlay] = new google.maps.Polyline(polyOptions);
-//                    }
-//                    var path = GMap._poly[GMap._active_overlay].getPath();
-//                    path.push(e.latLng);
-//                }); // End of mousemove lister
+            that.startLassoSelection = function(callbackOnComplete) {
+                if (that.lassoSelecting)
+                    return;
 
-
-                var map = 'Already created map object';
-                var polyOptions = {
+                that.lassoSelecting = true;
+                that.lassoSelectingCallbackOnComplete = callbackOnComplete;
+                that.lassoPolygon1 = new google.maps.Polygon({
                     strokeColor: '#000000',
                     strokeOpacity: 1.0,
                     strokeWeight: 2,
+                    fillColor: "rgb(255,128,0)",
+                    fillOpacity: 0.3,
                     map: that.myMap,
+                    clickable: false,
                     idx: 0
-                };
-                var mouseMoveHandler = null;
+                });
+                that.lassoPolygon2 = new google.maps.Polygon({
+                    strokeColor: '#000000',
+                    strokeOpacity: 0.25,
+                    strokeWeight: 1,
+                    fillColor: "rgb(0,0,0)",
+                    fillOpacity: 0.1,
+                    map: that.myMap,
+                    clickable: false,
+                    idx: 0
+                });
+                that.lassoPoints = [];
+                that.selectionPolygonPoints = [];//lasso points, in flat coordinates
 
-                var GMap = {};
+                that.lassoEventListener_click = google.maps.event.addListener(that.myMap, 'click', function(event) {
+                    that.lassoPolygon1.getPath().push(event.latLng);
+                    that.lassoPolygon2.getPath().push(event.latLng);
 
+                    var markerObject = new google.maps.Marker({
+                        position: event.latLng,
+                        map: that.theMap,
+                        icon: that.lassoPointImage,
+                        clickable: false
+                    });
+                    markerObject.setMap(that.myMap);
+                    that.lassoPoints.push(markerObject);
 
-                google.maps.event.addListener(that.myMap, 'mousedown', function(e) {
+                    var point = that.myMap.getProjection().fromLatLngToPoint(event.latLng);
+                    that.selectionPolygonPoints.push({
+                        x: point.x,
+                        y: point.y
+                    });
 
-                    GMap.poly = new google.maps.Polyline(polyOptions);
-
-                    mouseMoveHandler = google.maps.event.addListener(that.myMap, 'mousemove', function(e) {
-                        // Create a new polyline instance if it does not exists
-                        var path = GMap.poly.getPath();
-                        path.push(e.latLng);
-                        e.stop();
-                        e.cancelBubble = true;
-                        if (e.stopPropagation) {
-                            e.stopPropagation();
-                        }
-                        if (e.preventDefault) {
-                            e.preventDefault();
-                        } else {
-                            e.returnValue = false;
-                        }
-                        return false;
-                    }); // End of mousemove lister
-
-
-                    e.stop();
-                    e.cancelBubble = true;
-                    if (e.stopPropagation) {
-                        e.stopPropagation();
-                    }
-                    if (e.preventDefault) {
-                        e.preventDefault();
-                    } else {
-                        e.returnValue = false;
-                    }
-                    return false;
                 });
 
-                google.maps.event.addListener(that.myMap, 'mouseup', function(e) {
-                    google.maps.event.removeListener(mouseMoveHandler);
+                that.lassoEventListener_dblclick = google.maps.event.addListener(that.myMap, 'dblclick', function(event) {
+                    setTimeout(function() {
+                        that.stopLassoSelection();
+                        if (that.lassoSelectingCallbackOnComplete)
+                            that.lassoSelectingCallbackOnComplete();
+                    }, 100);
                 });
 
+                that.lassoEventListener_mousemove = google.maps.event.addListener(that.myMap, 'mousemove', function(event) {
+                    var path = that.lassoPolygon2.getPath();
+                    if (path.length>0) {
+                        if (path.length>1)
+                            path.pop();
+                        path.push(event.latLng);
+                    }
+
+                });
+
+                that.myMap.set('draggableCursor', 'crosshair');
+                that.myMap.set('disableDoubleClickZoom', true);
+            }
+
+            that.stopLassoSelection = function() {
+                if (!that.lassoSelecting)
+                    return;
+                that.lassoSelecting = false;
+                google.maps.event.removeListener(that.lassoEventListener_click);
+                google.maps.event.removeListener(that.lassoEventListener_mousemove);
+                google.maps.event.removeListener(that.lassoEventListener_dblclick);
+                that.myMap.set('draggableCursor', 'default');
+                that.myMap.set('disableDoubleClickZoom', false);
+                that.lassoPolygon1.setMap(null);that.lassoPolygon1 = null;
+                that.lassoPolygon2.setMap(null);that.lassoPolygon2 = null;
+                $.each(that.lassoPoints, function(idx, pt) {
+                    pt.setMap(null);
+                });
+                that.lassoPoints = null;
+            }
+
+            function isPointInPoly(poly, pt) {
+                for(var c = false, i = -1, l = poly.length, j = l - 1; ++i < l; j = i)
+                    ((poly[i].y <= pt.y && pt.y < poly[j].y) || (poly[j].y <= pt.y && pt.y < poly[i].y))
+                        && (pt.x < (poly[j].x - poly[i].x) * (pt.y - poly[i].y) / (poly[j].y - poly[i].y) + poly[i].x)
+                    && (c = !c);
+                return c;
+            }
+
+            // Expects a GMaps.Coord
+            that.isCoordInsideLassoSelection = function(coord) {
+                var point = that.myMap.getProjection().fromLatLngToPoint(coord.toGoogleLatLng());
+                return isPointInPoly({
+                    x: point.x,
+                    y: point.y
+                })
+            }
+
+
+            google.maps.event.addListener(that.myMap, 'zoom_changed', $.proxy(that._handleOnZoomChanged, that));
+            google.maps.event.addListener(that.myMap, 'center_changed', $.proxy(that._handleOnCenterChanged, that));
 
 
 
-                return false;
-            });
+
+
 
 
             that.handleResize = function () {
