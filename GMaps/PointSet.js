@@ -1,65 +1,151 @@
 
-define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarker", "DQX/Msg", "DQX/DocEl", "DQX/Utils", "DQX/FramePanel", "DQX/Map"],
-    function ($, Countries, GeoJSON, StyledMarker, Msg, DocEl, DQX, FramePanel, Map) {
+define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarker", "DQX/Msg", "DQX/DocEl", "DQX/Utils", "DQX/FramePanel", "DQX/Map", "DQX/GMaps/CanvasLayer"],
+    function ($, Countries, GeoJSON, StyledMarker, Msg, DocEl, DQX, FramePanel, Map, CanvasLayer) {
 
         var PointSet = {};
 
+
         PointSet.Create = function (imapobject, settings) {
             var that = {};
-
-            // Preparing the markers
-            var canvas = document.createElement('canvas');
-            var markerHalfWidth = 5;
-            canvas.width = 2*markerHalfWidth;
-            canvas.height = 2*markerHalfWidth;
-            var ctx = canvas.getContext("2d");
-            ctx.fillStyle="rgba(255,0,0,0.5)";
-            ctx.beginPath();
-            ctx.arc(markerHalfWidth, markerHalfWidth, markerHalfWidth, 0, 2 * Math.PI, false);
-            ctx.fill();
-//            ctx.strokeStyle = "rgba(0,0,0,0.5)";
-//            ctx.stroke();
-            url = canvas.toDataURL();
-            that.markerImage1 = new google.maps.MarkerImage(url, null, null, new google.maps.Point(markerHalfWidth, markerHalfWidth));
-
-            // Preparing the markers
-            var canvas = document.createElement('canvas');
-            var markerHalfWidth = 5;
-            canvas.width = 2*markerHalfWidth+1;
-            canvas.height = 2*markerHalfWidth+1;
-            var ctx = canvas.getContext("2d");
-            ctx.fillStyle="rgba(255,0,0,0.5)";
-            ctx.beginPath();
-            ctx.arc(markerHalfWidth, markerHalfWidth, markerHalfWidth-1, 0, 2 * Math.PI, false);
-            ctx.fill();
-            ctx.strokeStyle = "rgb(0,0,0)";
-            ctx.lineWidth=2;
-            ctx.stroke();
-            url = canvas.toDataURL();
-            that.markerImage2 = new google.maps.MarkerImage(url, null, null, new google.maps.Point(markerHalfWidth, markerHalfWidth));
-
-
-//            https://chart.googleapis.com/chart?chst=d_map_spin&chld=0.25|0|FF0000|9|b|O
-//  wget --output-document test.png "https://chart.googleapis.com/chart?chst=d_map_pin_letter&chld=A|B88A00|FF0000"
-//            that.pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + "00AAAA",
-//                new google.maps.Size(21, 34),
-//                new google.maps.Point(0,0),
-//                new google.maps.Point(10, 34));
-
-//            that.markerImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + "00AAAA",
-//                //new google.maps.Size(21, 34),
-//                new google.maps.Size(11, 16),
-//                new google.maps.Point(0,0),
-//                new google.maps.Point(10, 34));
-
-
             that.myMapObject = imapobject;
             that.myPointSet = [];
+            that.pointSize = 6;
+            that.opacity = 0.75;
+            that.pointShape = 0;
+
+
+            var canvasLayerOptions = {
+                map: that.myMapObject.myMap,
+                resizeHandler: function() { that._resize() },
+                animate: false,
+                updateHandler: function() { that.draw() }
+            };
+            that.canvasLayer = new CanvasLayer.CanvasLayer(canvasLayerOptions);
+            that.context = that.canvasLayer.canvas.getContext('2d');
+
+            google.maps.event.addListener(that.myMapObject.myMap, 'click', function(event) { that.onMouseClick(event); });
+            google.maps.event.addListener(that.myMapObject.myMap, 'mousemove', function(event) { that.onMouseMove(event); });
+
+
+            that.setPointStyle = function(sett) {
+                that.opacity = sett.opacity;
+                that.pointSize = sett.pointSize;
+                that.pointShape = -1;
+                if (sett.pointShape == 'rectangle')
+                    that.pointShape = 0;
+                if (sett.pointShape == 'circle')
+                    that.pointShape = 1;
+                if (that.pointShape < 0)
+                    DQX.reportError('Invalid point shape');
+            }
+
+            that._resize = function() {
+            }
+
+            // argument: Google latlong object
+            that.findPointAtPosition = function(latLng) {
+                var mapProjection = that.myMapObject.myMap.getProjection();
+                if (!mapProjection)
+                    return null;
+                var mousept = mapProjection.fromLatLngToPoint(latLng);
+                var mindst = 5;
+                var matchpoint = null;
+                var scale = Math.pow(2, that.myMapObject.myMap.zoom);
+                $.each(that.myPointSet, function (idx, point) {
+                    var dst = Math.sqrt(Math.pow(mousept.x-point.pt.x,2) + Math.pow(mousept.y-point.pt.y,2)) * scale;
+                    if (dst<=mindst) {
+                        mindst = dst;
+                        matchpoint = point;
+                    }
+                });
+                return matchpoint;
+            }
+
+            that.onMouseMove = function(event) {
+                if (that.myMapObject.lassoSelecting)
+                    return;
+                var matchpoint = that.findPointAtPosition(event.latLng);
+                if (matchpoint)
+                    that.myMapObject.myMap.set('draggableCursor', 'pointer');
+                else
+                    that.myMapObject.myMap.set('draggableCursor', 'default');
+            }
+
+            that.onMouseClick = function(event) {
+                if (that.myMapObject.lassoSelecting)
+                    return;
+                var matchpoint = that.findPointAtPosition(event.latLng);
+                if (matchpoint && that._pointClickCallBack)
+                    that._pointClickCallBack(matchpoint.id);
+            }
+
+            that.draw = function() {
+
+                //Prepare color category strings
+                var colorStrings = [];
+                $.each(DQX.standardColors, function(idx, color) {
+                    colorStrings.push(color.changeOpacity(that.opacity).toStringCanvas());
+                });
+
+                var canvasWidth = that.canvasLayer.canvas.width;
+                var canvasHeight = that.canvasLayer.canvas.height;
+                var ctx = that.context;
+                ctx.setTransform(1, 0, 0, 1, 0, 0);
+                ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+
+                ctx.fillStyle = 'rgba(0, 0, 255, 0.1)';
+                ctx.fillRect(0,0,canvasWidth,canvasHeight);
+
+                ctx.fillStyle = 'rgba(0, 128, 0, 0.5)';
+
+                var mapProjection = that.myMapObject.myMap.getProjection();
+                if (!mapProjection)
+                    return;
+
+
+
+                ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+                // scale is just 2^zoom
+                var scale = Math.pow(2, that.myMapObject.myMap.zoom);
+                ctx.scale(scale, scale);
+                var pts = that.pointSize/scale;
+                var ptso = pts/2;
+
+                /* If the map was not translated, the topLeft corner would be 0,0 in
+                 * world coordinates. Our translation is just the vector from the
+                 * world coordinate of the topLeft corder to 0,0.
+                 */
+                var offset = mapProjection.fromLatLngToPoint(that.canvasLayer.getTopLeft());
+                ctx.translate(-offset.x, -offset.y);
+
+                // project rectLatLng to world coordinates and draw
+                $.each(that.myPointSet, function (idx, point) {
+                    var pt = mapProjection.fromLatLngToPoint(new google.maps.LatLng(point.lattit, point.longit));
+                    point.pt = pt;
+                    ctx.fillStyle = colorStrings[point.catNr];
+
+                    if (that.pointShape == 0)
+                        ctx.fillRect(pt.x-ptso, pt.y-ptso, pts, pts);
+                    else {
+                        ctx.beginPath();
+                        ctx.arc(pt.x, pt.y, ptso, 0, 2 * Math.PI, false);
+                        ctx.closePath();
+                        ctx.fill();
+                    }
+
+                    if (point.sel) {
+                        ctx.fillStyle = "rgba(0,0,0,0.5)";
+                        ctx.fillRect(pt.x-pts/8, pt.y-ptso, pts/4, pts);
+                        ctx.fillRect(pt.x-ptso, pt.y-pts/8, pts, pts/4);
+                    }
+                });
+
+
+            }
+
 
             that.clearPoints = function () {
-                for (var pointnr = 0; pointnr < that.myPointSet.length; pointnr++)
-                    if (that.myPointSet[pointnr].marker)
-                        that.myPointSet[pointnr].marker.setMap(null);
                 this.myPointSet = [];
             }
 
@@ -73,53 +159,12 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
 
 
             that.setPoints = function (ipointset) {
-                that.clearPoints();
                 that.myPointSet = ipointset;
-                $.each(that.myPointSet, function (idx, point) {
-
-                    var marker = point.sel?that.markerImage2:that.markerImage1;
-                    var markerObject = new google.maps.Marker({
-                        position: new google.maps.LatLng(point.lattit, point.longit),
-                        icon: marker
-                    });
-                    markerObject.setMap(that.myMapObject.myMap);
-                    google.maps.event.addListener(markerObject, 'click', function() {
-                        if (that._pointClickCallBack)
-                            that._pointClickCallBack(point.id);
-                    });
-                    point.marker = markerObject;
-
-                });
             };
-
-            that.updateSelectionState = function(pointnr) {
-                if (!that.myPointSet)
-                    return;
-                if ( (pointnr<0) || (pointnr>=that.myPointSet.length) )
-                    DQX.reportError('Invalid point nr');
-
-                var point = that.myPointSet[pointnr];
-
-                point.marker.setMap(null);
-
-                var marker = point.sel?that.markerImage2:that.markerImage1;
-                var markerObject = new google.maps.Marker({
-                    position: new google.maps.LatLng(point.lattit, point.longit),
-                    icon: marker
-                });
-                markerObject.setMap(that.myMapObject.myMap);
-                google.maps.event.addListener(markerObject, 'click', function() {
-                    if (that._pointClickCallBack)
-                        that._pointClickCallBack(point.id);
-                });
-                point.marker = markerObject;
-
-            }
 
             that.zoomFit = function (minsize) {
                 if (that.myPointSet.length == 0)
                     return;
-
                 var bounds = new google.maps.LatLngBounds();
                 $.each(that.myPointSet, function(idx, point) {
                     bounds.extend(new google.maps.LatLng(point.lattit, point.longit));
@@ -137,9 +182,13 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
             }
 
 
-
             return that;
-        };
+        }
+
+
+
+
+
 
 
         return PointSet;

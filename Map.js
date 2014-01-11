@@ -1103,7 +1103,6 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                             path.pop();
                         path.push(event.latLng);
                     }
-
                 });
 
                 that.myMap.set('draggableCursor', 'crosshair');
