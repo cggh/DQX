@@ -175,14 +175,14 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                     $.each(that.aggregators, function(idx, aggr) {
                         var pt = mapProjection.fromLatLngToPoint(new google.maps.LatLng(aggr.lattit, aggr.longit));
                         aggr.pt = pt;
-                        var rd = Math.sqrt(aggr.totCount/that.maxAggrCount) * drawPieChartSize;
+                        var rd = Math.sqrt(aggr.totCount*1.0/that.maxAggrCount) * drawPieChartSize;
                         aggr.rd = rd;
                         var incrCount = 0;
                         var prevAng = 0;
                         $.each(aggr.catsCount, function(catNr, count) {
                             ctx.fillStyle = colorStrings0[catNr];
                             incrCount += count;
-                            var ang = incrCount/aggr.totCount * 2 * Math.PI;
+                            var ang = incrCount*1.0/aggr.totCount * 2 * Math.PI;
                             ctx.beginPath();
                             ctx.moveTo(pt.x, pt.y);
                             ctx.arc(pt.x, pt.y, rd, prevAng, ang, false);
@@ -196,6 +196,12 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                         ctx.arc(pt.x, pt.y, rd, 0, 2 * Math.PI, false);
                         ctx.closePath();
                         ctx.stroke();
+                        if (aggr.selCount>0) {
+                            ctx.lineWidth = 4/scale;
+                            ctx.beginPath();
+                            ctx.arc(pt.x, pt.y, rd, 0, aggr.selCount*1.0 / aggr.totCount * 2 * Math.PI, false);
+                            ctx.stroke();
+                        }
                     });
                 }
 
@@ -321,7 +327,28 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                 $.each(that.aggregators, function(idx, aggr) {
                     that.maxAggrCount = Math.max(that.maxAggrCount, aggr.totCount);
                 });
+
+                that.countAggregateSelection();
             };
+
+            that.countAggregateSelection = function() {
+                $.each(that.aggregators, function(idx, aggr) {
+                    aggr.selCount = 0;
+                });
+                $.each(that.myPointSet, function(idx, point) {
+                    var id = Math.round(point.lattit*10000).toString()+'_'+Math.round(point.longit*10000).toString();
+                    point.isAggregated = !!that.aggregatorMap[id];
+                    if (point.isAggregated && point.sel)
+                        that.aggregatorMap[point.aggregid].selCount += 1;
+                });
+
+            }
+
+            that.updateSelection = function() {
+                that.countAggregateSelection();
+                that.draw();
+            };
+
 
             that.zoomFit = function (minsize) {
                 if (that.myPointSet.length == 0)
