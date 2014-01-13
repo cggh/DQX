@@ -71,22 +71,55 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                 return matchpoint;
             }
 
+            // argument: Google latlong object
+            that.findPieChartAtPosition = function(latLng) {
+                if ((!that.aggregatePieChart) || (!that.aggregators))
+                    return;
+                var mapProjection = that.myMapObject.myMap.getProjection();
+                if (!mapProjection)
+                    return null;
+                var mousept = mapProjection.fromLatLngToPoint(latLng);
+                var scale = Math.pow(2, that.myMapObject.myMap.zoom);
+                var matchAggr = null;
+                $.each(that.aggregators, function (idx, aggr) {
+                    var dst = Math.sqrt(Math.pow(mousept.x-aggr.pt.x,2) + Math.pow(mousept.y-aggr.pt.y,2));
+                    if (dst<=aggr.rd)
+                        matchAggr = aggr;
+                });
+                return matchAggr;
+            }
+
             that.onMouseMove = function(event) {
                 if (that.myMapObject.lassoSelecting)
                     return;
                 var matchpoint = that.findPointAtPosition(event.latLng);
-                if (matchpoint)
+                if (matchpoint) {
                     that.myMapObject.myMap.set('draggableCursor', 'pointer');
-                else
-                    that.myMapObject.myMap.set('draggableCursor', 'default');
+                    return;
+                }
+                if (that.aggregatePieChart && (that.aggregators)) {
+                    var matchaggr = that.findPieChartAtPosition(event.latLng);
+                    if (matchaggr) {
+                        that.myMapObject.myMap.set('draggableCursor', 'pointer');
+                        return;
+                    }
+                }
+                that.myMapObject.myMap.set('draggableCursor', 'default');
             }
 
             that.onMouseClick = function(event) {
                 if (that.myMapObject.lassoSelecting)
                     return;
                 var matchpoint = that.findPointAtPosition(event.latLng);
-                if (matchpoint && that._pointClickCallBack)
+                if (matchpoint && that._pointClickCallBack) {
                     that._pointClickCallBack(matchpoint.id);
+                }
+                if (that.aggregatePieChart && that._pieChartClickCallBack && (that.aggregators)) {
+                    var matchaggr = that.findPieChartAtPosition(event.latLng);
+                    if (matchaggr) {
+                        that._pieChartClickCallBack(matchaggr);
+                    }
+                }
             }
 
             that.draw = function() {
@@ -141,6 +174,7 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                         var pt = mapProjection.fromLatLngToPoint(new google.maps.LatLng(aggr.lattit, aggr.longit));
                         aggr.pt = pt;
                         var rd = Math.sqrt(aggr.totCount/that.maxAggrCount) * drawPieChartSize;
+                        aggr.rd = rd;
                         var incrCount = 0;
                         var prevAng = 0;
                         $.each(aggr.catsCount, function(catNr, count) {
@@ -213,9 +247,12 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                 this.clearPoints();
             }
 
-            that.setPointClickCallBack = function(handler) {
-                that._pointClickCallBack = handler;
+            that.setPointClickCallBack = function(handlerPoint, handlerPieChart) {
+                that._pointClickCallBack = handlerPoint;
+                that._pieChartClickCallBack = handlerPieChart;
             }
+
+
 
 
             that.setPoints = function (ipointset) {
