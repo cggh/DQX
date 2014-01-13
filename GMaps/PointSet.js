@@ -113,11 +113,13 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                 var matchpoint = that.findPointAtPosition(event.latLng);
                 if (matchpoint && that._pointClickCallBack) {
                     that._pointClickCallBack(matchpoint.id);
+                    return;
                 }
                 if (that.aggregatePieChart && that._pieChartClickCallBack && (that.aggregators)) {
                     var matchaggr = that.findPieChartAtPosition(event.latLng);
                     if (matchaggr) {
                         that._pieChartClickCallBack(matchaggr);
+                        return;
                     }
                 }
             }
