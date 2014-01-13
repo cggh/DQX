@@ -1103,6 +1103,7 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                             path.pop();
                         path.push(event.latLng);
                     }
+
                 });
 
                 that.myMap.set('draggableCursor', 'crosshair');
@@ -1150,8 +1151,19 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
             google.maps.event.addListener(that.myMap, 'center_changed', $.proxy(that._handleOnCenterChanged, that));
 
 
+            that.storeSettings = function() {
+                var sett = {
+                    zoomFactor: that.myMap.zoom,
+                    centerLongit: that.myMap.getCenter().lng(),
+                    centerLattit: that.myMap.getCenter().lat()
+                };
+                return sett;
+            };
 
-
+            that.recallSettings = function(sett) {
+                that.myMap.setZoom(sett.zoomFactor);
+                that.myMap.setCenter(new google.maps.LatLng(sett.centerLattit, sett.centerLongit));
+            }
 
 
 
