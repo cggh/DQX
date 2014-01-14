@@ -607,6 +607,14 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                 this.columns.push({ id: id, encoding: encoding });
             };
 
+            that.getColumnIDs = function() {
+                 var ids = [];
+                $.each(this.columns,function(idx, col) {
+                    ids.push(col.id);
+                });
+                return ids;
+            }
+
             that.setMaxResultCount = function (maxcount) {
                 this._maxResultCount = maxcount;
             };
