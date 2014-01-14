@@ -25,9 +25,22 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
             that.canvasLayer = new CanvasLayer.CanvasLayer(canvasLayerOptions);
             that.context = that.canvasLayer.canvas.getContext('2d');
 
-            google.maps.event.addListener(that.myMapObject.myMap, 'click', function(event) { that.onMouseClick(event); });
-            google.maps.event.addListener(that.myMapObject.myMap, 'mousemove', function(event) { that.onMouseMove(event); });
+            that.googleEventListeners = [];
 
+            that.googleEventListeners.push(google.maps.event.addListener(that.myMapObject.myMap, 'click', function(event) { that.onMouseClick(event); }));
+            that.googleEventListeners.push(google.maps.event.addListener(that.myMapObject.myMap, 'mousemove', function(event) { that.onMouseMove(event); }));
+
+            that.googleEventListeners.push(google.maps.event.addListener(that.myMapObject.myMap, 'mouseout', function(event) {
+                that.removeTooltip();
+            }));
+
+
+
+            that.onCloseCustom = function() {
+                $.each(that.googleEventListeners, function(idx, evid) {
+                    google.maps.event.removeListener(evid);
+                });
+            };
 
             that.setPointStyle = function(sett) {
                 that.opacity = sett.opacity;
@@ -89,14 +102,52 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                 return matchAggr;
             }
 
+            that.removeTooltip = function() {
+                if (that.toolTipShowingID) {
+                    $('#DQXUtilContainer').find('.DQXChannelToolTip').remove();
+                    that.toolTipShowingID = null;
+                }
+            }
+
+            that.showTooltip = function(event, point) {
+                var pointID = point.id;
+                if (that.toolTipShowingID != pointID) {
+                    if (that.toolTipShowingID)
+                        that.removeTooltip();
+                    that.toolTipShowingID = pointID;
+                    var content =point.id + '<br>';
+                    content += point.longit.toFixed(5) + ', ' + point.lattit.toFixed(5) + '<br>';
+                    if (that.pointSettings.catData)
+                        content += point.catName;
+                    if (that.pointSettings.numData)
+                        content += point.numProp;
+                    var tooltip = DocEl.Div();
+                    tooltip.setCssClass("DQXChannelToolTip");
+                    tooltip.addStyle("position", "absolute");
+                    //return px + $(this.getCanvasElement('center')).offset().left;
+
+                    var offsetX = $('#'+that.myMapObject.getID()).offset().left;
+                    var offsetY = $('#'+that.myMapObject.getID()).offset().top;
+
+                    tooltip.addStyle("left", (offsetX + event.pixel.x + 10) + 'px');
+                    tooltip.addStyle("top", (offsetY + event.pixel.y + 10) + 'px');
+                    tooltip.addStyle("z-index", '9999999');
+                    tooltip.addElem(content);
+                    $('#DQXUtilContainer').append(tooltip.toString());
+                }
+            }
+
             that.onMouseMove = function(event) {
                 if (that.myMapObject.lassoSelecting)
                     return;
                 var matchpoint = that.findPointAtPosition(event.latLng);
                 if (matchpoint) {
                     that.myMapObject.myMap.set('draggableCursor', 'pointer');
+                    that.showTooltip(event, matchpoint);
                     return;
                 }
+                else
+                    that.removeTooltip();
                 if (that.aggregatePieChart && (that.aggregators)) {
                     var matchaggr = that.findPieChartAtPosition(event.latLng);
                     if (matchaggr) {
@@ -213,11 +264,10 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                     if ((!point.isAggregated) || (!that.aggregatePieChart) ) {
                         var pt = mapProjection.fromLatLngToPoint(new google.maps.LatLng(point.lattit, point.longit));
                         point.pt = pt;
-                        if (hasCategoricalProperty)
-                            ctx.fillStyle = colorStrings[point.catNr];
-
                         if (hasNumericalProperty)
                             ctx.fillStyle = DQX.HSL2Color(0.5-point.numPropFrac*0.75,1,0.5).changeOpacity(that.opacity).toStringCanvas();
+                        else
+                            ctx.fillStyle = colorStrings[point.catNr];
 
 
                         pt.x += point.offsetX * drawPieChartSize/3;
