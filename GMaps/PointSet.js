@@ -142,6 +142,9 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                 ctx.setTransform(1, 0, 0, 1, 0, 0);
                 ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
+                if ((!that.myPointSet) || (that.myPointSet.length == 0))
+                    return;
+
                 ctx.fillStyle = 'rgba(0, 0, 255, 0.1)';
                 ctx.fillRect(0,0,canvasWidth,canvasHeight);
 
@@ -150,8 +153,6 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                 var mapProjection = that.myMapObject.myMap.getProjection();
                 if (!mapProjection)
                     return;
-
-
 
                 ctx.setTransform(1, 0, 0, 1, 0, 0);
 
@@ -206,11 +207,18 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                 }
 
                 // Draw individual points
+                var hasCategoricalProperty = that.pointSettings.catData
+                var hasNumericalProperty = that.pointSettings.numData
                 $.each(that.myPointSet, function (idx, point) {
                     if ((!point.isAggregated) || (!that.aggregatePieChart) ) {
                         var pt = mapProjection.fromLatLngToPoint(new google.maps.LatLng(point.lattit, point.longit));
                         point.pt = pt;
-                        ctx.fillStyle = colorStrings[point.catNr];
+                        if (hasCategoricalProperty)
+                            ctx.fillStyle = colorStrings[point.catNr];
+
+                        if (hasNumericalProperty)
+                            ctx.fillStyle = DQX.HSL2Color(0.5-point.numPropFrac*0.75,1,0.5).changeOpacity(that.opacity).toStringCanvas();
+
 
                         pt.x += point.offsetX * drawPieChartSize/3;
                         pt.y += point.offsetY * drawPieChartSize/3;
@@ -226,8 +234,15 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                         }
                         if (that.pointShape == 2) {
                             var grd=ctx.createRadialGradient(pt.x,pt.y,0,pt.x,pt.y,ptso);
-                            grd.addColorStop(0,colorStrings[point.catNr]);
-                            grd.addColorStop(1,colorStrings2[point.catNr]);
+                            if (hasNumericalProperty) {
+                                var cl = DQX.HSL2Color(0.5-point.numPropFrac*0.75,1,0.5).changeOpacity(that.opacity);
+                                grd.addColorStop(0, cl.toStringCanvas());
+                                grd.addColorStop(1, cl.changeOpacity(0).toStringCanvas());
+                            }
+                            else {
+                                grd.addColorStop(0,colorStrings[point.catNr]);
+                                grd.addColorStop(1,colorStrings2[point.catNr]);
+                            }
                             ctx.fillStyle = grd;
                             ctx.beginPath();
                             ctx.arc(pt.x, pt.y, ptso, 0, 2 * Math.PI, false);
@@ -263,7 +278,8 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
 
 
 
-            that.setPoints = function (ipointset) {
+            that.setPoints = function (ipointset, ipointSettings) {
+                that.pointSettings = ipointSettings;
 
                 function normRand() {
                     var x1, x2, rad;
@@ -329,6 +345,7 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                 });
 
                 that.countAggregateSelection();
+
             };
 
             that.countAggregateSelection = function() {
