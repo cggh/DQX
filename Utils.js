@@ -230,6 +230,28 @@ DQX.polyStar = function(ctx, x, y, radius, sides, pointSize, angle) {
             });
         }
 
+
+        DQX.serverDataStoreLong = function(serverUrl, content, callback) {
+            $.ajax({
+                url: serverUrl+'?datatype=storedatalong',
+                type: "post",
+                data: content,
+                success: function (resp) {
+                    var keylist = DQX.parseResponse(resp);
+                    if ("Error" in keylist) {
+                        DQX.reportError('Failed to store server data: '+keylist.Error);
+                        return;
+                    }
+                    var id=keylist.id;
+                    if (callback) callback(id);
+                },
+                error: function (resp) {
+                    DQX.reportError('Failed to store server data');
+                }
+            });
+        }
+
+
         DQX.serverDataFetch = function(serverUrl, id, callback) {
             $.ajax({
                 url: serverUrl+'?datatype=fetchstoredata&id='+id,

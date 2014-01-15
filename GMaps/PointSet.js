@@ -265,7 +265,7 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                         var pt = mapProjection.fromLatLngToPoint(new google.maps.LatLng(point.lattit, point.longit));
                         point.pt = pt;
                         if (hasNumericalProperty)
-                            ctx.fillStyle = DQX.HSL2Color(0.5-point.numPropFrac*0.75,1,0.5).changeOpacity(that.opacity).toStringCanvas();
+                            ctx.fillStyle = DQX.HSL2Color(0.5-point.numPropFrac*1.0,1,0.5).changeOpacity(that.opacity).toStringCanvas();
                         else
                             ctx.fillStyle = colorStrings[point.catNr];
 
