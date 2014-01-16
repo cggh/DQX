@@ -488,6 +488,13 @@
                 this.render();
             }
 
+            that.clearData = function() {
+                this.totalRecordCount = -1; //means not yet determined
+                this.myDataFetcher.clearData();
+                this._highlightRowNr = -1;
+                that._lastSelClickedRowNr = null;
+            }
+
             //Causes the current table information to be invalidated (does not initiate a reload)
             that.invalidate = function () {
                 if (this._dataValid) {
