@@ -148,7 +148,12 @@
                             choiceList = colinfo._datatype_MultipleChoiceString;
                         }
 
-                        builder.addTableColumn(SQL.TableColInfo(colinfo.myCompID, colinfo.myName, dataType, choiceList));
+                        queryColInfo = SQL.TableColInfo(colinfo.myCompID, colinfo.myName, dataType, choiceList);
+                        if (colinfo.CellToText)
+                            queryColInfo.content2Display = colinfo.CellToText;
+                        if (colinfo.CellToTextInv)
+                            queryColInfo.display2Content = colinfo.CellToTextInv;
+                        builder.addTableColumn(queryColInfo);
                     }
                 });
 

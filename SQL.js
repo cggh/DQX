@@ -17,6 +17,16 @@
             that.datatype = idatatype;
             that.choicelist = ichoicelist;
 
+            //Converts a column content value to a display string
+            that.content2Display = function(vl) {
+                return vl.toString();
+            }
+
+            //Converts a display string to a column content value
+            that.display2Content = function(str) {
+                return str;
+            }
+
             //returns true if this column is of numerical type
             that.isNumerical = function () {
                 return (this.datatype == "Float") || (this.datatype == "Integer");
@@ -166,19 +176,21 @@
                     elem.addElem(ctrl_choices);
                     return;
                 }
-
-                var compcontent = DocEl.Edit(this.CompValue);
-                compcontent.setID(querybuilder.getControlID(ID, "Content"));
-                compcontent.setWidthPx(140);
-                compcontent.setCssClass('DQXQBQueryboxControl');
-                querybuilder.decorateQueryStatementControl(compcontent, ID);
-                elem.addElem(compcontent);
+                else {
+                    var compcontent = DocEl.Edit(mycol.content2Display(this.CompValue));
+                    compcontent.setID(querybuilder.getControlID(ID, "Content"));
+                    compcontent.setWidthPx(140);
+                    compcontent.setCssClass('DQXQBQueryboxControl');
+                    querybuilder.decorateQueryStatementControl(compcontent, ID);
+                    elem.addElem(compcontent);
+                }
             }
 
             //Fetches the content of this statement from the controls in the querybuilder GUI
             that._fetchStatementContent = function (ID, querybuilder) {
+                var mycol = querybuilder.getColumn(this.ColName);
                 if ($("#" + querybuilder.getControlID(ID, "Content")).length > 0) {
-                    this.CompValue = $("#" + querybuilder.getControlID(ID, "Content")).val();
+                    this.CompValue = mycol.display2Content($("#" + querybuilder.getControlID(ID, "Content")).val());
                 }
             }
 
@@ -212,7 +224,7 @@
 
                 var mycol = querybuilder.getColumn(this.ColName);
 
-                var compcontent = DocEl.Edit(this.CompValueMin);
+                var compcontent = DocEl.Edit(mycol.content2Display(this.CompValueMin));
                 compcontent.setID(querybuilder.getControlID(ID, "ContentMin"));
                 compcontent.setWidthPx(140);
                 compcontent.setCssClass('DQXQBQueryboxControl');
@@ -221,7 +233,7 @@
 
                 elem.addElem(" and ");
 
-                var compcontent = DocEl.Edit(this.CompValueMax);
+                var compcontent = DocEl.Edit(mycol.content2Display(this.CompValueMax));
                 compcontent.setID(querybuilder.getControlID(ID, "ContentMax"));
                 compcontent.setWidthPx(140);
                 compcontent.setCssClass('DQXQBQueryboxControl');
@@ -231,11 +243,12 @@
 
             //Fetches the content of this statement from the controls in the querybuilder GUI
             that._fetchStatementContent = function (ID, querybuilder) {
+                var mycol = querybuilder.getColumn(this.ColName);
                 if ($("#" + querybuilder.getControlID(ID, "ContentMin")).length > 0) {
-                    this.CompValueMin = $("#" + querybuilder.getControlID(ID, "ContentMin")).val();
+                    this.CompValueMin = mycol.display2Content($("#" + querybuilder.getControlID(ID, "ContentMin")).val());
                 }
                 if ($("#" + querybuilder.getControlID(ID, "ContentMax")).length > 0) {
-                    this.CompValueMax = $("#" + querybuilder.getControlID(ID, "ContentMax")).val();
+                    this.CompValueMax = mycol.display2Content($("#" + querybuilder.getControlID(ID, "ContentMax")).val());
                 }
             }
 

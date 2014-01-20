@@ -1515,5 +1515,35 @@ DQX.polyStar = function(ctx, x, y, radius, sides, pointSize, angle) {
                 return DQX.vendor_name_cache[tag + style] = DQX.vendorPropName(elem.style, style);
             }
         };
+
+
+        DQX.JD2DateTime = function(JD) {
+            return new Date((JD-2440587.5)*24*60*60*1000);
+        }
+
+        DQX.DateTime2JD = function(date) {
+            return date.getTime()/(24.0*60*60*1000) + 2440587.5;
+        }
+
+
+
+
+        // test
+
+//        var dt = new Date(2014,4,12,1,0,0);
+//
+//        var pad = function(n) {return n<10 ? '0'+n : n};
+//        var str = dt.getUTCFullYear()
+//            + '-' + pad( dt.getUTCMonth() + 1 )
+//            + '-' + pad( dt.getUTCDate() );
+//
+//        var year = parseInt(str.substring(0,4));
+//        var month = parseInt(str.substring(5,7));
+//        var day = parseInt(str.substring(8,10));
+//
+//        var jd = DQX.DateTime2JD(new Date(year, month-1, day));
+//
+//        var dt2 = DQX.JD2DateTime(jd);
+
         return DQX;
     });
