@@ -59,6 +59,7 @@ define(["jquery", "DQX/Utils"],
                             rs = (rs << 6) + this.invencode[st.charCodeAt(ps)];
                             ps++;
                         }
+                        //rs = Math.random()*Math.pow(64,bytecount);//!!!
                         vals.push(rs * slope + offset);
                     }
                 }
