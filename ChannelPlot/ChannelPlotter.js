@@ -20,8 +20,27 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Scroller", "DQX
             if ('leftWidth' in args) that._leftWidth = args.leftWidth;
             that._rightWidth = 0; //size of the right side panel
             that._rightOffset = 0; //size of the right offset, including e.g. area for vertical scroll bars
+
+            that.scaleConversionFactor = 1.0e6
+
             that._headerHeight = 35;
+            that._hasHeader = true;
+            if ('hasHeader' in args)
+                that._hasHeader = args.hasHeader;
+            if (!that._hasHeader)
+                that._headerHeight = 0;
+
             that._footerHeight = 32;
+            that._hasFooter = true;
+            if ('hasFoother' in args)
+                that._hasFooter = args.hasFoother;
+            if (!that._hasFoother)
+                that._footerHeight = 0;
+
+            that._hasXScale = true;
+            if ('hasXScale' in args)
+                that._hasXScale = args.hasXScale;
+
             that._navigatorHeight = 30;
             that._channels = [];
             that._idChannelMap = {};
@@ -42,6 +61,18 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Scroller", "DQX
             that.getRightWidth = function () { return that._rightWidth; }
 
             that.getRightOffset = function () { return that._rightOffset; }
+
+
+            that.setRange = function(rangeMin, rangeMax) {
+                if (!this._sizeCenterX)
+                    DQX.reportError('Not initialised');
+                that._fullRangeMin = rangeMin;
+                that._fullRangeMax = rangeMax;
+                this._offsetX = 0;
+                this._zoomFactX = this._sizeCenterX / ((this._fullRangeMax - this._fullRangeMin));
+                that.render();
+                that.updateNavigator();
+            };
 
             that.addChannel = function (channel, onTop) {
                 if (onTop)
@@ -239,7 +270,7 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Scroller", "DQX
                 if (!this._sizeCenterX) return; //not yet initialised
                 var ps1 = (this.screenPos2XVal(0) - this._fullRangeMin) / (this._fullRangeMax - this._fullRangeMin);
                 var ps2 = (this.screenPos2XVal(this._sizeCenterX) - this._fullRangeMin) / (this._fullRangeMax - this._fullRangeMin);
-                this._myNavigator.setRange(this._fullRangeMin / 1.0e6, this._fullRangeMax / 1.0e6);
+                this._myNavigator.setRange(this._fullRangeMin / that.scaleConversionFactor, this._fullRangeMax / that.scaleConversionFactor);
                 this._myNavigator.setValue(ps1, ps2 - ps1);
                 if (!this._preventSendPositionChangeNotification)
                     Msg.broadcast({ type: 'PosOrZoomFactorXChanged', id: that.myID });
@@ -487,7 +518,8 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Scroller", "DQX
             };
 
             //Add scale channel
-            that.addChannel(ChannelCanvas.XScale('_XScale'), true);
+            if (that._hasXScale)
+                that.addChannel(ChannelCanvas.XScale('_XScale'), true);
 
             return that;
         }
