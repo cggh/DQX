@@ -63,13 +63,18 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Scroller", "DQX
             that.getRightOffset = function () { return that._rightOffset; }
 
 
-            that.setRange = function(rangeMin, rangeMax) {
+            // maxZoomFactor is defined as 1/(minimum fraction of the full range that should be in the viewport)
+            that.setRange = function(rangeMin, rangeMax, maxZoomFactor) {
                 if (!this._sizeCenterX)
                     DQX.reportError('Not initialised');
                 that._fullRangeMin = rangeMin;
                 that._fullRangeMax = rangeMax;
-                this._offsetX = 0;
-                this._zoomFactX = this._sizeCenterX / ((this._fullRangeMax - this._fullRangeMin));
+                that._offsetX = 0;
+                that._zoomFactX = this._sizeCenterX / ((this._fullRangeMax - this._fullRangeMin));
+                if (maxZoomFactor) {
+                    that._MaxZoomFactX = maxZoomFactor;
+                    that.getNavigator().setMinScrollSize(1.0/that._MaxZoomFactX);
+                }
                 that.render();
                 that.updateNavigator();
             };

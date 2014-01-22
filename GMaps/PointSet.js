@@ -261,7 +261,7 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                 var hasCategoricalProperty = that.pointSettings.catData
                 var hasNumericalProperty = that.pointSettings.numData
                 $.each(that.myPointSet, function (idx, point) {
-                    if ((!point.isAggregated) || (!that.aggregatePieChart) ) {
+                    if ( (!that.isPointFiltered(point)) && ((!point.isAggregated) || (!that.aggregatePieChart) ) ) {
                         var pt = mapProjection.fromLatLngToPoint(new google.maps.LatLng(point.lattit, point.longit));
                         point.pt = pt;
                         if (hasNumericalProperty)
@@ -325,7 +325,22 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                 that._pieChartClickCallBack = handlerPieChart;
             }
 
+            that._pointFilters = {};
 
+            // Define a filter step for the map points
+            that.setPointFilter = function(filterID, filterFunction) {
+                that._pointFilters[filterID] = filterFunction;
+            }
+
+            that.isPointFiltered = function(point) {
+                var filtered = false
+                $.each(that._pointFilters, function(id, filter) {
+                    if (filter)
+                        if (filter(point))
+                            filtered = true;
+                });
+                return filtered;
+            }
 
 
             that.setPoints = function (ipointset, ipointSettings) {
@@ -375,17 +390,19 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                     }
                 });
                 $.each(that.myPointSet, function(idx, point) {
-                    var id = Math.round(point.lattit*10000).toString()+'_'+Math.round(point.longit*10000).toString();
-                    point.isAggregated = !!that.aggregatorMap[id];
-                    if (point.isAggregated) {
-                        point.aggregid = id;
-                        var aggr = that.aggregatorMap[id];
-                        aggr.longit = point.longit;
-                        aggr.lattit = point.lattit;
-                        aggr.totCount += 1;
-                        while (aggr.catsCount.length<=point.catNr)
-                            aggr.catsCount.push(0);
-                        aggr.catsCount[point.catNr] += 1;
+                    if (!that.isPointFiltered(point)) {
+                        var id = Math.round(point.lattit*10000).toString()+'_'+Math.round(point.longit*10000).toString();
+                        point.isAggregated = !!that.aggregatorMap[id];
+                        if (point.isAggregated) {
+                            point.aggregid = id;
+                            var aggr = that.aggregatorMap[id];
+                            aggr.longit = point.longit;
+                            aggr.lattit = point.lattit;
+                            aggr.totCount += 1;
+                            while (aggr.catsCount.length<=point.catNr)
+                                aggr.catsCount.push(0);
+                            aggr.catsCount[point.catNr] += 1;
+                        }
                     }
                 });
 
