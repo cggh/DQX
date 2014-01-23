@@ -73,7 +73,7 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                 var matchpoint = null;
                 var scale = Math.pow(2, that.myMapObject.myMap.zoom);
                 $.each(that.myPointSet, function (idx, point) {
-                    if ((!point.isAggregated) || (!that.aggregatePieChart) ) {
+                    if ( (!that.isPointFiltered(point)) && (point.pt) && ((!point.isAggregated) || (!that.aggregatePieChart) ) ) {
                         var dst = Math.sqrt(Math.pow(mousept.x-point.pt.x,2) + Math.pow(mousept.y-point.pt.y,2)) * scale;
                         if (dst<=mindst) {
                             mindst = dst;
