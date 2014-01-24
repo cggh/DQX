@@ -601,7 +601,7 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
                         drawInfo.centerContext.fillText(txt, psx1 - 1, 10);
                         drawInfo.centerContext.textAlign = 'left';
                         var size = Math.abs(drawInfo.mark.pos2 - drawInfo.mark.pos1);
-                        txt = size.toFixed(0) + 'bp';
+                        txt = size.toFixed(0)/* + 'bp'*/;
                         drawInfo.centerContext.strokeText(txt, psx2, 10);
                         drawInfo.centerContext.fillText(txt, psx2, 10);
                         drawInfo.centerContext.shadowBlur = 0;

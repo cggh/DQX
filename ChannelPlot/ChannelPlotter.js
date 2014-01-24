@@ -130,6 +130,11 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Scroller", "DQX
                 }
             }
 
+            //Call this function to define a notification function called when the user selects a range
+            that.setOnRangeSelected = function(handler) {
+                that._onRangeSelected = handler;
+            }
+
             //////////////////////////////////////////////////////////////////////////////////////////
             // Create basic html emelents
             //////////////////////////////////////////////////////////////////////////////////////////
@@ -335,6 +340,8 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Scroller", "DQX
             }
 
             that.handleMouseUp = function (channel, ev, args) {
+                if (that._mousemarking && that._onRangeSelected)
+                    that._onRangeSelected();
             }
 
             that.handleMouseMove = function (channel, ev, args) {
@@ -410,6 +417,11 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Scroller", "DQX
                 this._markPresent = true;
                 this._markPos1 = pos1;
                 this._markPos2 = pos2;
+                this.render();
+            }
+
+            that.delMark = function() {
+                this._markPresent = false;
                 this.render();
             }
 
