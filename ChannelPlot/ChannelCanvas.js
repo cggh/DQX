@@ -492,7 +492,13 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
             }
 
             //Draws a vertical scale in the left panel of the channel
-            that.drawVertScale = function (drawInfo, minvl, maxvl) {
+            that.drawVertScale = function (drawInfo, minvl, maxvl, iSettings) {
+                var offsetFrac = 0.1;
+                var rangeFrac = 0.8;
+                if (iSettings && (typeof(iSettings.offsetFrac) != 'undefined') )
+                    offsetFrac = iSettings.offsetFrac;
+                if (iSettings && (typeof(iSettings.rangeFrac) != 'undefined'))
+                    rangeFrac = iSettings.rangeFrac;
                 var cnt = drawInfo.sizeY*(15.0/120.0);
                 var jumps = DQX.DrawUtil.getScaleJump((maxvl - minvl) / cnt);
 
@@ -505,15 +511,17 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
                 drawInfo.centerContext.strokeStyle = "black";
                 drawInfo.leftContext.globalAlpha = 0.6;
                 drawInfo.centerContext.globalAlpha = 0.05;
+                drawInfo.centerContext.lineWidth = 1;
                 for (j = Math.ceil(minvl / jumps.Jump1); j <= Math.floor(maxvl / jumps.Jump1); j++) {
                     vl = j * jumps.Jump1;
-                    yp = Math.round(drawInfo.sizeY - drawInfo.sizeY * 0.1 - (vl - minvl) / (maxvl - minvl) * drawInfo.sizeY * 0.8) - 0.5;
+                    yp = Math.round(drawInfo.sizeY - drawInfo.sizeY * offsetFrac - (vl - minvl) / (maxvl - minvl) * drawInfo.sizeY * rangeFrac) - 0.5;
                     if (j % jumps.JumpReduc == 0) {
                         drawInfo.leftContext.beginPath();
                         drawInfo.leftContext.moveTo(drawInfo.sizeLeftX - 8, yp);
                         drawInfo.leftContext.lineTo(drawInfo.sizeLeftX, yp);
                         drawInfo.leftContext.stroke();
-                        drawInfo.leftContext.fillText(vl.toFixed(jumps.textDecimalCount), drawInfo.sizeLeftX - 12, yp + 5);
+                        if (yp<drawInfo.sizeY-2)
+                            drawInfo.leftContext.fillText(vl.toFixed(jumps.textDecimalCount), drawInfo.sizeLeftX - 12, yp + 5);
                         drawInfo.centerContext.beginPath();
                         drawInfo.centerContext.moveTo(0, yp);
                         drawInfo.centerContext.lineTo(drawInfo.sizeCenterX, yp);
