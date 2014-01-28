@@ -14,6 +14,7 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
             that.opacity = 0.75;
             that.pointShape = 0;
             that.aggregatePieChart = true;
+            that.maxAggrCount = 0;
 
 
             var canvasLayerOptions = {
@@ -301,7 +302,7 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                         }
 
                         if (point.sel) {
-                            ctx.fillStyle = "rgba(0,0,0,0.5)";
+                            ctx.fillStyle = "rgba(0,0,0,0.75)";
                             ctx.fillRect(pt.x-pts/8, pt.y-ptso, pts/4, pts);
                             ctx.fillRect(pt.x-ptso, pt.y-pts/8, pts, pts/4);
                         }
@@ -406,7 +407,6 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                     }
                 });
 
-                that.maxAggrCount = 0;
                 $.each(that.aggregators, function(idx, aggr) {
                     that.maxAggrCount = Math.max(that.maxAggrCount, aggr.totCount);
                 });
