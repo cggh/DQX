@@ -31,6 +31,11 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
         }
 
 
+        GMaps.GoogleLatLng2Coord = function(latlng) {
+            return GMaps.Coord(latlng.lng(), latlng.lat());
+        }
+
+
         GMaps.MapItemLayouter = function (imapobject, iid, ioffset) {
             var that = {};
             that.mapObject = imapobject;
@@ -1038,6 +1043,10 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
 
             that.lassoPointImage = new google.maps.MarkerImage(DQX.BMP("circle1.png"), null, null, new google.maps.Point(8, 8));
 
+            that.isSelecting = function() {
+                return that.lassoSelecting || that.rectSelecting;
+            }
+
             that.startLassoSelection = function(callbackOnComplete) {
                 if (that.lassoSelecting)
                     return;
@@ -1145,6 +1154,71 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                     y: point.y
                 })
             }
+
+
+            that.startRectSelection = function(callbackOnComplete) {
+                if (that.rectSelecting)
+                    return;
+
+                that.rectSelecting = true;
+                that.rectPointSelectCount = 0;
+                that.rectSelectingCallbackOnComplete = callbackOnComplete;
+                that.lassoPolygon1 = new google.maps.Polygon({
+                    strokeColor: '#000000',
+                    strokeOpacity: 1.0,
+                    strokeWeight: 2,
+                    fillColor: "rgb(255,128,0)",
+                    fillOpacity: 0.3,
+                    map: that.myMap,
+                    clickable: false,
+                    idx: 0
+                });
+
+                that.rectEventListener_click = google.maps.event.addListener(that.myMap, 'click', function(event) {
+                    if (that.rectPointSelectCount==0) {
+                        that.rectSelectPoint1 = event.latLng;
+                        that.rectPointSelectCount = 1;
+                        return;
+                    }
+                    if (that.rectPointSelectCount==1) {
+                        setTimeout(function() {
+                            that.stopRectSelection();
+                            if (that.rectSelectingCallbackOnComplete)
+                                that.rectSelectingCallbackOnComplete(GMaps.GoogleLatLng2Coord(that.rectSelectPoint1), GMaps.GoogleLatLng2Coord(that.rectSelectPoint2));
+                        }, 100);
+                        return;
+                    }
+                });
+
+
+                that.rectEventListener_mousemove = google.maps.event.addListener(that.myMap, 'mousemove', function(event) {
+                    if (that.rectPointSelectCount==1) {
+                        that.rectSelectPoint2 = event.latLng;
+                        var path = that.lassoPolygon1.getPath();
+                        while (path.length>0) path.pop();
+                        path.push(that.rectSelectPoint1);
+                        path.push(new google.maps.LatLng(that.rectSelectPoint1.lat(), that.rectSelectPoint2.lng()));
+                        path.push(that.rectSelectPoint2);
+                        path.push(new google.maps.LatLng(that.rectSelectPoint2.lat(), that.rectSelectPoint1.lng()));
+                    }
+                });
+
+                that.myMap.set('draggableCursor', 'crosshair');
+                that.myMap.set('disableDoubleClickZoom', true);
+            }
+
+
+            that.stopRectSelection = function() {
+                if (!that.rectSelecting)
+                    return;
+                that.rectSelecting = false;
+                google.maps.event.removeListener(that.rectEventListener_click);
+                google.maps.event.removeListener(that.rectEventListener_mousemove);
+                that.myMap.set('draggableCursor', 'default');
+                that.myMap.set('disableDoubleClickZoom', false);
+                that.lassoPolygon1.setMap(null);that.lassoPolygon1 = null;
+            }
+
 
 
             google.maps.event.addListener(that.myMap, 'zoom_changed', $.proxy(that._handleOnZoomChanged, that));

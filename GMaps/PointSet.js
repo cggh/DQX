@@ -139,7 +139,7 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
             }
 
             that.onMouseMove = function(event) {
-                if (that.myMapObject.lassoSelecting)
+                if (that.myMapObject.isSelecting())
                     return;
                 var matchpoint = that.findPointAtPosition(event.latLng);
                 if (matchpoint) {
@@ -160,7 +160,7 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
             }
 
             that.onMouseClick = function(event) {
-                if (that.myMapObject.lassoSelecting)
+                if (that.myMapObject.isSelecting())
                     return;
                 var matchpoint = that.findPointAtPosition(event.latLng);
                 if (matchpoint && that._pointClickCallBack) {
