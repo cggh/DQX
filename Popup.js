@@ -66,7 +66,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Controls"],
                 var newPosY = ev.pageY + dragOffsetY;
                 newPosX = Math.min(newPosX, DQX.getWindowClientW() - boxW - 10);
                 newPosY = Math.min(newPosY, DQX.getWindowClientH() - 40);
-                var newPosX = Math.max(10, newPosX);
+                var newPosX = Math.max(0, newPosX);
                 var newPosY = Math.max(10, newPosY);
                 dragElem.css({ left: newPosX, top: newPosY });
                 return false;

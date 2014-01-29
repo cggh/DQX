@@ -25,6 +25,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
             that.frameRoot = FrameWork.FrameGeneric('');
             that.frameRoot._frameContainer = that;
             that.getFrameRoot = function () { return this.frameRoot; }
+            that.maximised = false;
 
             that.frameRoot.setFrameClass('DQXLightFrame');
 
@@ -145,11 +146,17 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
 
                 var thecloser = DocEl.JavaScriptBitmaplink(DQX.BMP("close2.png"), "Close", "");
                 thecloser.addAttribute("id", that.ID + 'closeButton');
-
                 thebox.addElem(thecloser);
                 thecloser.addStyle('position', 'absolute');
-                thecloser.addStyle('right', '-16px');
-                thecloser.addStyle('top', '-16px');
+                thecloser.addStyle('right', '-12px');
+                thecloser.addStyle('top', '-12px');
+
+                var theMaximiser = DocEl.JavaScriptBitmaplink(DQX.BMP("maximize.png"), "Maximise", "");
+                theMaximiser.addAttribute("id", that.ID + 'maximiseButton');
+                thebox.addElem(theMaximiser);
+                theMaximiser.addStyle('position', 'absolute');
+                theMaximiser.addStyle('right', '20px');
+                theMaximiser.addStyle('top', '2px');
 
                 var resizer = DocEl.Div({ parent: thebox });
                 resizer.setCssClass('DQXPopupFrameResizer DQXPopupFrameResizer1');
@@ -163,6 +170,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
                     $('#BlockingBackGround').append(content);
 
                 $('#' + that.ID + 'closeButton').click($.proxy(that.close, that));
+                $('#' + that.ID + 'maximiseButton').click(that.maximise);
 
                 $('#' + that.ID).find('.DQXPopupFrameResizer').mousedown($.proxy(that._onResizeMouseDown, that))
 
@@ -179,10 +187,38 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
                 PopupFrame._settingsHistory[that.typeID].frameSettings = this.frameRoot.settingsStreamOut();
             }
 
+            that.maximise = function() {
+                that.maximised = !that.maximised;
+                if (that.maximised) {
+                    that.unMaximisedPosX = $("#" + that.ID).position().left;
+                    that.unMaximisedPosY = $("#" + that.ID).position().top;
+                    that.unMaximisedSizeX = that._sizeX;
+                    that.unMaximisedSizeY = that._sizeY;
+                    newSizeX = DQX.getWindowClientW() - 10;
+                    newSizeY = DQX.getWindowClientH() - 50;
+                    that._sizeX = $('#' + this.ID + 'Body').width();
+                    that._sizeY = $('#' + this.ID + 'Body').height();
+                    $('#' + that.ID).offset({top: 5, left: 0});
+                    $('#' + that.ID + 'Body').width(newSizeX);
+                    $('#' + that.ID + 'Body').height(newSizeY);
+    //                var settingHist = PopupFrame._settingsHistory[this.typeID];
+    //                settingHist.sizeX = this._sizeX;
+    //                settingHist.sizeY = this._sizeY;
+                    that._handleResize(true);
+                }
+                else {
+                    $('#' + that.ID).offset({top: that.unMaximisedPosX, left: that.unMaximisedPosY});
+                    $('#' + that.ID + 'Body').width(that.unMaximisedSizeX);
+                    $('#' + that.ID + 'Body').height(that.unMaximisedSizeY);
+                }
+            }
+
             that.close = function () {
                 var settingHist = PopupFrame._settingsHistory[that.typeID];
-                settingHist.posX = $("#" + that.ID).position().left;
-                settingHist.posY = $("#" + that.ID).position().top;
+                if (!that.maximised) {
+                    settingHist.posX = $("#" + that.ID).position().left;
+                    settingHist.posY = $("#" + that.ID).position().top;
+                }
                 settingHist.frameSettings = this.frameRoot.settingsStreamOut();
                 $("#" + that.ID).remove();
                 $('#BlockingBackGround').remove();
@@ -214,20 +250,22 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
             }
 
             that._onResizeMouseMove = function (ev) {
-                var newSizeX = this._resizeW0 + ev.pageX - this._resizeX0;
-                var newSizeY = this._resizeH0 + ev.pageY - this._resizeY0;
-                newSizeX = Math.max(newSizeX, this._minSizeX);
-                newSizeY = Math.max(newSizeY, this._minSizeY);
-                newSizeX = Math.min(newSizeX, DQX.getWindowClientW() - 50);
-                newSizeY = Math.min(newSizeY, DQX.getWindowClientH() - 50);
-                $('#' + this.ID + 'Body').width(newSizeX);
-                $('#' + this.ID + 'Body').height(newSizeY);
-                this._sizeX = newSizeX;
-                this._sizeY = newSizeY;
-                var settingHist = PopupFrame._settingsHistory[this.typeID];
-                settingHist.sizeX = this._sizeX;
-                settingHist.sizeY = this._sizeY;
-                this._handleResize(true);
+                if (!that.maximised) {
+                    var newSizeX = this._resizeW0 + ev.pageX - this._resizeX0;
+                    var newSizeY = this._resizeH0 + ev.pageY - this._resizeY0;
+                    newSizeX = Math.max(newSizeX, this._minSizeX);
+                    newSizeY = Math.max(newSizeY, this._minSizeY);
+                    newSizeX = Math.min(newSizeX, DQX.getWindowClientW() - 50);
+                    newSizeY = Math.min(newSizeY, DQX.getWindowClientH() - 50);
+                    $('#' + this.ID + 'Body').width(newSizeX);
+                    $('#' + this.ID + 'Body').height(newSizeY);
+                    this._sizeX = newSizeX;
+                    this._sizeY = newSizeY;
+                    var settingHist = PopupFrame._settingsHistory[this.typeID];
+                    settingHist.sizeX = this._sizeX;
+                    settingHist.sizeY = this._sizeY;
+                    this._handleResize(true);
+                }
                 return false;
             }
 
