@@ -97,7 +97,7 @@ define(["jquery", "DQX/Utils", "DQX/Msg", "DQX/ChannelPlot/ChannelPlotter", "DQX
             that.setChromosome = function (newchromoid, updatepicker, redraw) {
                 var newchromonr = this.getChromoNr(newchromoid);
                 if (newchromonr == null) {
-                    alert('This feature is not in the scope of the current data set');
+                    alert('This feature is not in the scope of the current data set (chromosome id: '+newchromoid+')');
                     return;
                 }
                 if (newchromonr != this.currentChromoNr)
