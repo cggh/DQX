@@ -280,6 +280,8 @@ DQX.polyStar = function(ctx, x, y, radius, sides, pointSize, angle) {
                 url: theUrl,
                 success: function (resp) {
                     var keylist = DQX.parseResponse(resp);
+                    if ('Error' in keylist)
+                        DQX.reportError('Error: '+keylist.Error);
                     if (callback) callback(keylist);
                 },
                 error: function (resp) {
