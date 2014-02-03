@@ -204,7 +204,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
     //                var settingHist = PopupFrame._settingsHistory[this.typeID];
     //                settingHist.sizeX = this._sizeX;
     //                settingHist.sizeY = this._sizeY;
-                    that._handleResize(true);
+                    that._handleResize(false);
                 }
                 else {
                     $('#' + that.ID).offset({top: that.unMaximisedPosX, left: that.unMaximisedPosY});
