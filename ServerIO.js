@@ -9,7 +9,7 @@ define(["require", "DQX/Framework", "DQX/Popup", "DQX/Msg", "DQX/Utils", "DQX/Do
             var popupid = Popup.create('Processing','Server is processing. This may take a while!<p><div id="calculationprogressbox" style="min-width:400px"></div><p>', null, {canClose: false} );
             var poll = function() {
                 data = {};
-                DQX.customRequest(serverUrl, 'uploadtracks', 'querycalculation', { calculationid: calculationid }, function(resp) {
+                DQX.customRequest(serverUrl, PnServerModule, 'querycalculation', { calculationid: calculationid }, function(resp) {
                     if (resp.failed) {
                         alert(resp.status);
                         DQX.ClosePopup(popupid);
@@ -40,8 +40,8 @@ define(["require", "DQX/Framework", "DQX/Popup", "DQX/Msg", "DQX/Utils", "DQX/Do
         };
 
         ServerIO.showLog = function(serverUrl, logid) {
-            //!!! todo: move server side out of uploadtracks and into DQXServer
-            DQX.customRequest(serverUrl, 'uploadtracks','getcalculationlog',{ id: logid },function(resp) {
+            //!!! todo: move server side out of Pn Server Module and into DQXServer
+            DQX.customRequest(serverUrl, PnServerModule,'getcalculationlog',{ id: logid },function(resp) {
                 if (resp.Error)
                     Popup.create('Calculation log', 'No log data present');
                 else {
