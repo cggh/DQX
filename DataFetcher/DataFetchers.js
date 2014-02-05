@@ -205,8 +205,8 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                         }
 
                 //update the currently downloaded range
-                this._currentRangeMin = parseFloat(keylist["start"]);
-                this._currentRangeMax = parseFloat(keylist["stop"]);
+                this._currentRangeMin = parseFloat(keylist["_start"]);
+                this._currentRangeMax = parseFloat(keylist["_stop"]);
 
                 if ('TotalRecordCount' in keylist)
                     this.totalRecordCount = keylist['TotalRecordCount'];
@@ -222,8 +222,8 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                             this.myColumns[cid].myDownloadValues = vallistdecoder.doDecode(keylist[cid]);
                         }
                     if (this.useLimit) {
-                        var startPoint = Math.max(0,parseInt(keylist['start']));
-                        var requestedcount = parseInt(keylist['stop']) - startPoint + 1;
+                        var startPoint = Math.max(0,parseInt(keylist['_start']));
+                        var requestedcount = parseInt(keylist['_stop']) - startPoint + 1;
                         var obtainedcount = this.myDownloadPointsX.length;
                         if (obtainedcount<requestedcount) {
                             this.totalRecordCount = startPoint+obtainedcount;
@@ -356,8 +356,8 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                     myurl.addUrlQueryItem("posfield", this.positionField);
                     if (this.positionField)
                         myurl.addUrlQueryItem("order", this.positionField);
-                    myurl.addUrlQueryItem("start", rangemin); //not used by server: only used for reflecting info to this client response code
-                    myurl.addUrlQueryItem("stop", rangemax); //idem
+                    myurl.addUrlQueryItem("_start", rangemin); //not used by server: only used for reflecting info to this client response code
+                    myurl.addUrlQueryItem("_stop", rangemax); //idem
                     myurl.addUrlQueryItem("sortreverse", this.sortReverse ? 1 : 0);
                     myurl.addUrlQueryItem("needtotalcount", ((this.totalRecordCount < 0) && (recordCountFetchType==DataFetchers.RecordCountFetchType.IMMEDIATE)) ? 1 : 0);
 
