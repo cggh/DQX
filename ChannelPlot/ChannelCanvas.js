@@ -360,7 +360,7 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
                         tooltip.addStyle("position", "absolute");
                         tooltip.addStyle("left", (this.posXCenterCanvas2Screen(this._toolTipInfo.px) + 10) + 'px');
                         tooltip.addStyle("top", (this.posYCenterCanvas2Screen(this._toolTipInfo.py) + 10) + 'px');
-                        tooltip.addElem(this._toolTipInfo.content);
+                        tooltip.addElem(this._toolTipInfo.content||'');
                         $('#DQXUtilContainer').append(tooltip.toString());
                         if (this._toolTipInfo.highlightPoint) {
                             var tooltip = DocEl.Div();

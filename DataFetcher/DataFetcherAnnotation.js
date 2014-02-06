@@ -21,6 +21,11 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
             this.database = iconfig.database;
             this.annotTableName = iconfig.annotTableName;
             this.fetchSubFeatures = true;
+            this.field_start = 'fstart';
+            this.field_stop = 'fstop';
+            this.field_chrom = 'chromid'
+            this.field_name = 'fname';
+            this.field_id = 'fid';
             this.ftype = 'gene';
             this.fsubtype = 'exon';
             this.showFeatureType = false;
@@ -40,6 +45,7 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
             this._isFetching = false;
             this.hasFetchFailed = false;
             this._requestNr = 0;
+            this._userQuery2 = null;
 
             this.translateChromoId = function (id) { return id; }
 
@@ -47,6 +53,15 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
             this.setFeatureType = function (fTypeName, fSubTypeName) {
                 this.ftype = fTypeName;
                 this.fsubtype = fSubTypeName;
+            }
+
+
+            this.setUserQuery2 = function(qry) {
+                if (qry.isTrivial)
+                    this._userQuery2 = null;
+                else
+                    this._userQuery2 = qry;
+                this.clearData();
             }
 
             this.clearData = function () {
@@ -132,9 +147,21 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                     myurl.addUrlQueryItem('start', rangemin);
                     myurl.addUrlQueryItem('stop', rangemax);
                     myurl.addUrlQueryItem('table', this.annotTableName);
-                    myurl.addUrlQueryItem('ftype', this.ftype);
-                    myurl.addUrlQueryItem('fsubtype', this.fsubtype);
+                    myurl.addUrlQueryItem('fieldstart', this.field_start);
+                    myurl.addUrlQueryItem('fieldstop', this.field_stop);
+                    myurl.addUrlQueryItem('fieldchrom', this.field_chrom);
+                    myurl.addUrlQueryItem('fieldid', this.field_id);
+                    myurl.addUrlQueryItem('fieldname', this.field_name);
+                    if (this.ftype)
+                        myurl.addUrlQueryItem('ftype', this.ftype);
+                    if (this.fsubtype)
+                        myurl.addUrlQueryItem('fsubtype', this.fsubtype);
                     myurl.addUrlQueryItem('subfeatures', this.fetchSubFeatures ? '1' : 0);
+
+                    if (this._userQuery2) {
+                        myurl.addUrlQueryItem("qry", SQL.WhereClause.encode(this._userQuery2));
+                    }
+
                     this._isFetching = true;
                     var thethis = this;
                     $.ajax({
@@ -172,9 +199,11 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                 thedata.myExonStops = [];
                 var genemap = {}
                 var typeMap = [];
-                $.each(this.ftype.split(','), function(idx, tpe) {
-                    typeMap[tpe] = true;
-                });
+                if (this.ftype) {
+                    $.each(this.ftype.split(','), function(idx, tpe) {
+                        typeMap[tpe] = true;
+                    });
+                }
                 for (i = 0; i < this.myStartList.length; i++)
                     if ((this.myStopList[i] >= rangemin) && (this.myStartList[i] <= rangemax) && ((typeMap[this.myTypeList[i]]) || (this.ftype.length == 0))) {
                         genemap[this.myIDList[i]] = thedata.myIDList.length;
