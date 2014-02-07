@@ -593,26 +593,35 @@
         }
 
         //returns a new query that is based on an existing query, adding an extra fixed value statement
-        SQL.WhereClause.createValueRestriction = function(origQuery0, fieldName, value) {
+        SQL.WhereClause.createValueRestriction = function(origQuery0, fieldName, value, comparisonType) {
+            if (!comparisonType)
+                comparisonType = '=';
             var origQuery = SQL.WhereClause.clone(origQuery0);
-            var newStatement = SQL.WhereClause.CompareFixed(fieldName, '=', value.toString());
+            var newStatement = SQL.WhereClause.CompareFixed(fieldName, comparisonType, value.toString());
             if (origQuery.isTrivial) {
                 return newStatement;
             }
             //try to find a matching fixed comparison statement
             var compStatement = null;
-            if (origQuery.Tpe=='=')
-                if (origQuery.ColName==fieldName)
+            if (origQuery.Tpe == comparisonType)
+                if (origQuery.ColName == fieldName)
                     compStatement = origQuery;
 
             if ( (origQuery.isCompound) && (origQuery.Tpe=='AND') ) {
                 $.each(origQuery.Components,function(idx,comp) {
-                    if (comp.Tpe=='=')
-                        if (comp.ColName==fieldName)
+                    if (comp.Tpe == comparisonType)
+                        if (comp.ColName == fieldName)
                             compStatement = comp;
                 });
             }
             if (compStatement) {//If found, adjust
+                var needAdjust = true;
+                if ( (comparisonType == '<') || (comparisonType == '<=') )
+                    if (value < compStatement.CompValue)
+                        needAdjust = false;
+                if ( (comparisonType == '>') || (comparisonType == '>=') )
+                    if (value > compStatement.CompValue)
+                        needAdjust = false;
                 compStatement.CompValue = value;
                 return origQuery;
             }
