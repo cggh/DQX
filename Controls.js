@@ -245,6 +245,10 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 that._legendClass = "DQXFormFieldSetSimple";
                 return this;
             }
+            that.setLegendClass = function (clss) {
+                that._legendClass = clss;
+                return this;
+            }
 
             that.getID = function () {
                 if (that.myCustomID)
