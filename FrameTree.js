@@ -160,6 +160,15 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
                 return that._activeItem;
             }
 
+
+            that.clear = function() {
+                that.root = TreeCtrl.Branch();
+                that.root.myTree = that;
+                that._itemList = [];
+                that._itemMap = {};
+                that._activeItem = '';
+            }
+
             //Find a tree item by its identifier
             that.findItem = function (id) {
                 return this._itemMap[id];

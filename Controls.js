@@ -1193,6 +1193,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
         //    args.size (optional) : number of horizontal characters of the edit box
         //    args.linecount (optional) : number of lines of the edit box
         //    args.hint (optional) : hover tooltip
+        //    args.fixedfont : true for fixed spacing font
         ////////////////////////////////////////////////////////////////////////////////////////////
 
         Controls.Textarea = function (iid, args) {
@@ -1209,6 +1210,8 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 that.linecount = args.linecount;
             if (args.hint)
                 that._hint = args.hint;
+            if (args.fixedfont)
+                that._fixedfont = args.fixedfont;
             that._notifyEnter = null;
 
             //if (that.myLabel)
@@ -1232,6 +1235,9 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 edt.addAttribute('autocorrect', "off");
                 edt.addAttribute('autocapitalize', "off");
                 edt.addAttribute('autocomplete', "off");
+                if (that._fixedfont) {
+                    edt.addStyle('font-family', 'Courier');
+                }
                 var rs = '';
                 if (this.myLabel) {
                     var label = DocEl.Label({ target: this.getFullID('') });
