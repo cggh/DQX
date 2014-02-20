@@ -39,8 +39,10 @@
                     that._sizeX = settings.sizeX;
                 if (settings.sizeY)
                     that._sizeY = settings.sizeY;
-                if ('canCancel' in settings)
-                    that._canCancel = settings.canCancel;
+                if ('canCancel' in settings){
+                    that._canCancel = settings.canCancel;}
+                if (settings.noBackground)
+                    that._noBackground = settings.noBackground;
             }
 
             //Sets the title of the wizard
@@ -128,7 +130,8 @@
                 background.addStyle('width', '100%');
                 background.addStyle('height', '100%');
                 var wizbackcol = 'rgba(100,100,100,0.4)';
-                background.addStyle('background-color', wizbackcol);
+                if (!that._noBackground)
+                    background.addStyle('background-color', wizbackcol);
                 background.addStyle('z-index', '2000');
                 $('#DQXUtilContainer').append(background.toString());
 
