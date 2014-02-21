@@ -280,6 +280,11 @@ DQX.polyStar = function(ctx, x, y, radius, sides, pointSize, angle) {
                 url: theUrl,
                 success: function (resp) {
                     var keylist = DQX.parseResponse(resp);
+                    if (typeof(keylist) !== 'object') {
+                        if (resp.indexOf('Authentication')>0)
+                            DQX.reportError('Client is not authenticated');
+                        DQX.reportError('Invalid server response type');
+                    }
                     if ('Error' in keylist)
                         DQX.reportError('Error: '+keylist.Error);
                     if (callback) callback(keylist);
