@@ -285,8 +285,12 @@ DQX.polyStar = function(ctx, x, y, radius, sides, pointSize, angle) {
                             DQX.reportError('Client is not authenticated');
                         DQX.reportError('Invalid server response type');
                     }
-                    if ('Error' in keylist)
-                        DQX.reportError('Error: '+keylist.Error);
+                    if ('Error' in keylist) {
+                        if (keylist.Error=='NotAuthenticated')
+                            DQX.reportError('The application is currently not authenticated.\nPlease reload it in the browser to trigger the authentication');
+                        else
+                            DQX.reportError('Error: '+keylist.Error);
+                    }
                     if (callback) callback(keylist);
                 },
                 error: function (resp) {
