@@ -90,7 +90,17 @@ define(["jquery", "DQX/Msg"],
             //Reacts to a change in url hash tag
             _onChanged: function () {
                 var newstateKeys = {};
-                var tokens = window.location.hash.substring(1).split('&');
+                var theHash = window.location.hash;
+
+//                if (!HistoryManager.isNotFirstUrlHashTest) {
+//                    theStoredHash = DQX.getUrlSearchString('fragment');
+//                    if (theStoredHash) {
+//                        theHash = theStoredHash.replace(/%23/g,'#');
+//                    }
+//                    HistoryManager.isNotFirstUrlHashTest = true;
+//                }
+
+                var tokens = theHash.substring(1).split('&');
                 for (var tokennr = 0; tokennr < tokens.length; tokennr++) {
                     if (tokens[tokennr]) {
                         var tokenpair = tokens[tokennr].split('=');
@@ -147,8 +157,10 @@ define(["jquery", "DQX/Msg"],
                         }
                     }
                 }
-                if (activeView)
+                if (activeView) {
+                    if (!HistoryManager.__preventSetFragment)
                     HistoryManager.setState(activeView.getStateKeys());
+                }
             },
 
             end: true
