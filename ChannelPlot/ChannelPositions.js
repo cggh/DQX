@@ -15,6 +15,7 @@ define(["require", "DQX/Framework", "DQX/Controls", "DQX/Msg", "DQX/Utils", "DQX
                 that._toolTipHandler = null;
                 that._clickHandler = null;
                 that.dataFetcher.addFetchColumnActive(that.positionIDField, "String");
+                that._selectionQuery = null;
 
                 //Uses a categorical string field in the datafetcher to assign colors to position indicators
                 // iStates: map linking field value to DQX.Color instances
@@ -22,6 +23,10 @@ define(["require", "DQX/Framework", "DQX/Controls", "DQX/Msg", "DQX/Utils", "DQX
                     that._catColorFieldName =  iFieldName;
                     that._catColorStates = iStates;
                     that.dataFetcher.addFetchColumnActive(that._catColorFieldName, "String");
+                }
+
+                that.setSelectionStateHandler = function(iSelectionQuery) {
+                    that._selectionQuery = iSelectionQuery;
                 }
 
                 //Provides a function that will be called when hovering over a position. The return string of this function will be displayed as tooltip
@@ -51,10 +56,11 @@ define(["require", "DQX/Framework", "DQX/Controls", "DQX/Msg", "DQX/Utils", "DQX
                     this.dataFetcher.IsDataReady(PosMin, PosMax, DataFetchers.RecordCountFetchType.IMMEDIATE);
                     var points = this.dataFetcher.getColumnPoints(PosMin, PosMax, this.positionIDField);
                     var xvals = points.xVals;
+                    var ids = points.YVals;
                     var colorFieldStates = null;
                     if (this._catColorFieldName)
                         colorFieldStates = this.dataFetcher.getColumnPoints(PosMin, PosMax, this._catColorFieldName).YVals;
-                    drawInfo.centerContext.fillStyle = DQX.Color(1.0, 0.75, 0.0).toStringCanvas();
+                    drawInfo.centerContext.fillStyle = DQX.Color(0.7, 0.7, 0.7).toStringCanvas();
                     drawInfo.centerContext.strokeStyle = DQX.Color(0.0, 0.0, 0.0).toString();
                     this._pointsX = [];
                     var pointsX = this._pointsX;
@@ -69,6 +75,20 @@ define(["require", "DQX/Framework", "DQX/Controls", "DQX/Msg", "DQX/Utils", "DQX
                         if (Math.abs(psx-psxLast)>0.9) {
                             pointsX.push(psx); pointsIndex.push(i + points.startIndex);
                             var psy = 4.5;
+
+                            if (that._selectionQuery) {
+                                if (that._selectionQuery(ids[i])) {
+                                    drawInfo.centerContext.fillStyle = DQX.Color(1.0, 0.0, 0.0, 0.5).toStringCanvas();
+                                    drawInfo.centerContext.beginPath();
+                                    drawInfo.centerContext.moveTo(psx, psy-5);
+                                    drawInfo.centerContext.lineTo(psx + 4 +4, psy + 8+3);
+                                    drawInfo.centerContext.lineTo(psx - 4 -5, psy + 8+3);
+                                    drawInfo.centerContext.closePath();
+                                    drawInfo.centerContext.fill();
+                                    drawInfo.centerContext.fillStyle = DQX.Color(0.7, 0.7, 0.7).toStringCanvas();
+                                }
+                            }
+
                             if (colorFieldStates) {
                                 var color = DQX.Color(0.7,0.7,0.7);
                                 if (colorFieldStates[i] in that._catColorStates)
@@ -79,9 +99,11 @@ define(["require", "DQX/Framework", "DQX/Controls", "DQX/Msg", "DQX/Utils", "DQX
                             drawInfo.centerContext.moveTo(psx, psy);
                             drawInfo.centerContext.lineTo(psx + 4, psy + 8);
                             drawInfo.centerContext.lineTo(psx - 4, psy + 8);
-                            drawInfo.centerContext.lineTo(psx, psy);
+                            drawInfo.centerContext.closePath();
                             drawInfo.centerContext.fill();
                             drawInfo.centerContext.stroke();
+
+
                             psxLast = psx;
                         }
                     }
