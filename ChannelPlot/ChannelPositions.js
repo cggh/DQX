@@ -72,21 +72,22 @@ define(["require", "DQX/Framework", "DQX/Controls", "DQX/Msg", "DQX/Utils", "DQX
                     for (var i = 0; i < xvals.length; i++) {
                         var x = xvals[i];
                         var psx = Math.round(x * drawInfo.zoomFactX - drawInfo.offsetX) + 0.5;
-                        if (Math.abs(psx-psxLast)>0.9) {
+                        var isSelected = false;
+                        if (that._selectionQuery)
+                            isSelected = that._selectionQuery(ids[i]);
+                        if ( (Math.abs(psx-psxLast)>0.9) || (isSelected) ) {
                             pointsX.push(psx); pointsIndex.push(i + points.startIndex);
                             var psy = 4.5;
 
-                            if (that._selectionQuery) {
-                                if (that._selectionQuery(ids[i])) {
-                                    drawInfo.centerContext.fillStyle = DQX.Color(1.0, 0.0, 0.0, 0.5).toStringCanvas();
-                                    drawInfo.centerContext.beginPath();
-                                    drawInfo.centerContext.moveTo(psx, psy-5);
-                                    drawInfo.centerContext.lineTo(psx + 4 +4, psy + 8+3);
-                                    drawInfo.centerContext.lineTo(psx - 4 -5, psy + 8+3);
-                                    drawInfo.centerContext.closePath();
-                                    drawInfo.centerContext.fill();
-                                    drawInfo.centerContext.fillStyle = DQX.Color(0.7, 0.7, 0.7).toStringCanvas();
-                                }
+                            if (isSelected) {
+                                drawInfo.centerContext.fillStyle = DQX.Color(1.0, 0.0, 0.0, 0.5).toStringCanvas();
+                                drawInfo.centerContext.beginPath();
+                                drawInfo.centerContext.moveTo(psx, psy-5);
+                                drawInfo.centerContext.lineTo(psx + 4 +4, psy + 8+3);
+                                drawInfo.centerContext.lineTo(psx - 4 -5, psy + 8+3);
+                                drawInfo.centerContext.closePath();
+                                drawInfo.centerContext.fill();
+                                drawInfo.centerContext.fillStyle = DQX.Color(0.7, 0.7, 0.7).toStringCanvas();
                             }
 
                             if (colorFieldStates) {
