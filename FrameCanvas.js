@@ -114,20 +114,22 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
 
 
             that._onMouseClick = function(ev) {
-                if (!that._hasMouseMoved)
+                if ( (!that._hasMouseMoved) && (!that.isSelecting()) )
                     that.onMouseClick(ev, { x: that.getEventPosX(ev), y: that.getEventPosY(ev), pageY: ev.pageY });
             };
 
             that._onMouseDown = function(ev) {
-                $(document).bind("mouseup.FrameCanvas", that._onMouseDragUp);
-                $(document).bind("mousemove.FrameCanvas", that._onMouseDragMove);
-                that.hideToolTip();
-                that.dragging = true;
-                that._hasMouseMoved = false;
-                that.dragX0 = that.getEventPosX(ev);
-                that.dragY0 = that.getEventPosY(ev);
-                that.dragX1 = that.dragX0;
-                that.dragY1 = that.dragY0;
+                if (!that.lassoSelecting) {
+                    $(document).bind("mouseup.FrameCanvas", that._onMouseDragUp);
+                    $(document).bind("mousemove.FrameCanvas", that._onMouseDragMove);
+                    that.hideToolTip();
+                    that.dragging = true;
+                    that._hasMouseMoved = false;
+                    that.dragX0 = that.getEventPosX(ev);
+                    that.dragY0 = that.getEventPosY(ev);
+                    that.dragX1 = that.dragX0;
+                    that.dragY1 = that.dragY0;
+                }
                 ev.returnValue = false;
                 return false;
             };
@@ -186,11 +188,14 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
                 return false;
             }
 
+            that.isSelecting = function() {
+                return that.dragging || that.lassoSelecting;
+            }
 
             that._onMouseMove = function(ev) {
                 var px = that.getEventPosX(ev);
                 var py = that.getEventPosY(ev);
-                if (!that.dragging) {
+                if (!that.isSelecting()) {
                     var newToolTipInfo = that.getToolTipInfo(px, py);
                     var showPointer = false;
                     if (newToolTipInfo) {
@@ -233,6 +238,73 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
             that._onMouseLeave = function(ev) {
                 that.hideToolTip();
             };
+
+
+            that.startLassoSelection = function(callbackOnComplete) {
+                if (that.lassoSelecting)
+                    return;
+                that.lassoSelecting = true;
+                that.lassoSelectingCallbackOnComplete = callbackOnComplete;
+                var selPts = [];
+
+                var drawSelArea = function(tempPt) {
+                    var selCanvas = that.getMyCanvasElement('selection');
+                    var ctx = selCanvas.getContext("2d");
+                    ctx.setTransform(1, 0, 0, 1, 0, 0);
+                    ctx.clearRect(0, 0, selCanvas.width, selCanvas.height);
+                    ctx.fillStyle='rgba(255,0,0,0.1)';
+                    ctx.strokeStyle='rgba(255,0,0,0.5)';
+                    ctx.beginPath();
+                    $.each(selPts, function(idx, pt) {
+                        if (idx==0)
+                            ctx.moveTo(pt.x, pt.y);
+                        else
+                            ctx.lineTo(pt.x, pt.y);
+                    });
+                    if (tempPt && (selPts.length>0))
+                        ctx.lineTo(tempPt.x, tempPt.y);
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.stroke();
+                }
+
+
+                var lassoEventListener_click = function(ev) {
+                    var px = that.getEventPosX(ev);
+                    var py = that.getEventPosY(ev);
+                    selPts.push({x:px, y:py});
+                    drawSelArea();
+                    //debugger;
+                    //alert('point click');
+                };
+
+                var lassoEventListener_dblclick = function() {
+                    $('#' + clickLayerId).unbind("click.FrameCanvasLasso");
+                    $('#' + clickLayerId).unbind("dblclick.FrameCanvasLasso");
+                    $(document).unbind("mousemove.FrameCanvasLasso");
+                    var selectedPoints = selPts;
+                    selPts = [];
+                    drawSelArea();
+                    $('#' + clickLayerId).css('cursor', 'auto');
+                    that.lassoSelecting = false;
+                    if (that.lassoSelectingCallbackOnComplete)
+                        that.lassoSelectingCallbackOnComplete(selectedPoints);
+                };
+
+                var lassoEventListener_mousemove = function(ev) {
+                    var px = that.getEventPosX(ev);
+                    var py = that.getEventPosY(ev);
+                    drawSelArea({x:px, y:py});
+                };
+
+                $('#' + clickLayerId).bind("click.FrameCanvasLasso", lassoEventListener_click);
+                $('#' + clickLayerId).bind("dblclick.FrameCanvasLasso", lassoEventListener_dblclick);
+                $(document).bind("mousemove.FrameCanvasLasso", lassoEventListener_mousemove);
+                $('#' + clickLayerId).css('cursor', 'crosshair');
+
+
+            };
+
 
 
             that.hideToolTip = function () {
