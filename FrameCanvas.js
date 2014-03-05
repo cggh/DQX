@@ -189,7 +189,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
             }
 
             that.isSelecting = function() {
-                return that.dragging || that.lassoSelecting;
+                return that.dragging || that.lassoSelecting || that.halfPlaneSelecting;
             }
 
             that._onMouseMove = function(ev) {
@@ -301,11 +301,79 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
                 $('#' + clickLayerId).bind("dblclick.FrameCanvasLasso", lassoEventListener_dblclick);
                 $(document).bind("mousemove.FrameCanvasLasso", lassoEventListener_mousemove);
                 $('#' + clickLayerId).css('cursor', 'crosshair');
-
-
             };
 
 
+            that.startHalfPlaneSelection = function(callbackOnComplete) {
+                if (that.halfPlaneSelecting)
+                    return;
+                that.halfPlaneSelecting = true;
+                that.halfPlaneSelectingCallbackOnComplete = callbackOnComplete;
+
+                var drawSelArea = function(tempPt) {
+                    var selCanvas = that.getMyCanvasElement('selection');
+                    var ctx = selCanvas.getContext("2d");
+                    ctx.setTransform(1, 0, 0, 1, 0, 0);
+                    ctx.clearRect(0, 0, selCanvas.width, selCanvas.height);
+                    ctx.fillStyle='rgba(255,0,0,0.1)';
+                    ctx.strokeStyle='rgba(255,0,0,0.5)';
+                    if (firstPoint && tempPt) {
+                        var ptcent = firstPoint;
+                        dir = {x:tempPt.x-firstPoint.x, y:tempPt.y-firstPoint.y}
+                        var dirSize = Math.sqrt(dir.x*dir.x+dir.y*dir.y);
+                        if (dirSize>10) {
+                            dir.x /= dirSize;
+                            dir.y /= dirSize;
+                            if (Math.abs(dir.y)<0.05) dir.y = 0;
+                            if (Math.abs(dir.x)<0.05) dir.x = 0;
+                            var mg = 10000;
+                            ctx.beginPath();
+                            ctx.moveTo(ptcent.x-mg*dir.x, ptcent.y-mg*dir.y);
+                            ctx.lineTo(ptcent.x+mg*dir.x, ptcent.y+mg*dir.y);
+                            ctx.lineTo(ptcent.x+mg*dir.x + mg*dir.y, ptcent.y+mg*dir.y - mg*dir.x);
+                            ctx.lineTo(ptcent.x-mg*dir.x + mg*dir.y, ptcent.y-mg*dir.y - mg*dir.x);
+                            ctx.closePath();
+                            ctx.fill();
+                            ctx.stroke();
+                        }
+                        else
+                            dir = null;
+                    }
+                }
+
+                var firstPoint = null;
+                var dir = null;
+
+                var eventListener_click = function(ev) {
+                    var px = that.getEventPosX(ev);
+                    var py = that.getEventPosY(ev);
+                    if (!firstPoint) {
+                        firstPoint = {x:px, y:py};
+                        drawSelArea(null);
+                    }
+                    else {
+                        $('#' + clickLayerId).unbind("click.FrameCanvasHalfPlaneSelection");
+                        $(document).unbind("mousemove.FrameCanvasHalfPlaneSelection");
+                        drawSelArea(null);
+                        $('#' + clickLayerId).css('cursor', 'auto');
+                        that.halfPlaneSelecting = false;
+                        if (that.halfPlaneSelectingCallbackOnComplete && dir)
+                            that.halfPlaneSelectingCallbackOnComplete(firstPoint, dir);
+                    }
+                };
+
+                var eventListener_mousemove = function(ev) {
+                    var px = that.getEventPosX(ev);
+                    var py = that.getEventPosY(ev);
+                    drawSelArea({x:px, y:py});
+                };
+
+                $('#' + clickLayerId).bind("click.FrameCanvasHalfPlaneSelection", eventListener_click);
+                $(document).bind("mousemove.FrameCanvasHalfPlaneSelection", eventListener_mousemove);
+                $('#' + clickLayerId).css('cursor', 'crosshair');
+
+
+            };
 
             that.hideToolTip = function () {
                 that._toolTipInfo.ID = null;
