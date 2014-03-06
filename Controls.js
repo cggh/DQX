@@ -1217,6 +1217,8 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 that._hint = args.hint;
             if (args.fixedfont)
                 that._fixedfont = args.fixedfont;
+            if (args.noWrap)
+                that._noWrap = args.noWrap;
             that._notifyEnter = null;
 
             //if (that.myLabel)
@@ -1240,6 +1242,11 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 edt.addAttribute('autocorrect', "off");
                 edt.addAttribute('autocapitalize', "off");
                 edt.addAttribute('autocomplete', "off");
+                if (this._noWrap) {
+                    edt.addStyle('overflow-x','scroll');
+                    edt.addStyle('white-space','nowrap');
+                    edt.addAttribute('wrap', "off");
+                }
                 if (that._fixedfont) {
                     edt.addStyle('font-family', 'Courier');
                 }
