@@ -592,6 +592,23 @@
             return SQL.WhereClause.decode(SQL.WhereClause.encode(qry));
         }
 
+        //returns a new query that is based on an existing query, adding an extra statement
+        SQL.WhereClause.createRestriction = function(origQuery0, newStatement) {
+            var origQuery = SQL.WhereClause.clone(origQuery0);
+            if (origQuery.isTrivial) {
+                return newStatement;
+            }
+            //Add the statement
+            if ( (origQuery.isCompound) && (origQuery.Tpe=='AND') ) {
+                origQuery.addComponent(newStatement);
+                return origQuery;
+            }
+            else {
+                return SQL.WhereClause.AND([origQuery,newStatement]);
+            }
+        }
+
+
         //returns a new query that is based on an existing query, adding an extra fixed value statement
         SQL.WhereClause.createValueRestriction = function(origQuery0, fieldName, value, comparisonType) {
             if (!comparisonType)
