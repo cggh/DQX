@@ -1244,7 +1244,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 edt.addAttribute('autocomplete', "off");
                 if (this._noWrap) {
                     edt.addStyle('overflow-x','scroll');
-                    edt.addStyle('white-space','nowrap');
+                    edt.addStyle('white-space','pre');
                     edt.addAttribute('wrap', "off");
                 }
                 if (that._fixedfont) {
