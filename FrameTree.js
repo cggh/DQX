@@ -33,6 +33,11 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
             this.myParent = null;
             this.myTree = null;
             this._collapsed = false;
+            this.showBracket = true;
+        }
+
+        TreeCtrl._objectBranch.prototype.setID = function (id) {
+            this.myID = id;
         }
 
         TreeCtrl._objectBranch.prototype.getID = function (status) {
@@ -154,6 +159,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
             that._itemList = [];
             that._itemMap = {}; //map structured container of the items
             that._activeItem = '';
+            that.canCollapse = true;
 
             //Return the highlighted item in the tree
             that.getActiveItem = function () {
@@ -195,7 +201,10 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
             that._getDivIDItem = function (id) { return this.myID + '_DQXIt_' + id; }
 
             that._createButtonHtml = function (_collapsed) {
-                return '<IMG SRC="' + DQX.BMP(_collapsed ? 'morelines.png' : 'lesslines.png') + '" border=0 ALT="" TITLE="" class="DQXTreeButtonImage" style="float:left;padding-right:6px">';
+                if (!that.canCollapse)
+                    return '';
+                else
+                    return '<IMG SRC="' + DQX.BMP(_collapsed ? 'morelines.png' : 'lesslines.png') + '" border=0 ALT="" TITLE="" class="DQXTreeButtonImage" style="float:left;padding-right:6px">';
             }
 
             that._renderSub = function (parentDiv, item, level) {
@@ -229,14 +238,13 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
                     descdv.addStyle('padding-bottom', '4px');
                     var descdv2 = DocEl.Div({ parent: descdv });
                     descdv2.addStyle('padding-left', '17px');
-                    descdv2.addStyle('border-width', '0px');
-                    descdv2.addStyle('border-color', 'rgb(128,128,128)');
-                    descdv2.addStyle('border-left-width', '1px');
-                    //descdv2.addStyle('border-bottom-width', '1px');
-                    //descdv2.addStyle('border-top-width', '1px');
-                    descdv2.addStyle('border-style', 'solid');
-                    //descdv2.addStyle('border-top-left-radius', '8px');
-                    descdv2.addStyle('border-bottom-left-radius', '6px');
+                    if (item.showBracket) {
+                        descdv2.addStyle('border-width', '0px');
+                        descdv2.addStyle('border-color', 'rgb(128,128,128)');
+                        descdv2.addStyle('border-left-width', '1px');
+                        descdv2.addStyle('border-style', 'solid');
+                        descdv2.addStyle('border-bottom-left-radius', '6px');
+                    }
                     var gr = 0.82 - 0.07 * level;
                     //descdv2.setBackgroundColor(DQX.Color(gr, gr, gr));
                     for (var i = 0; i < subItems.length; i++) {
