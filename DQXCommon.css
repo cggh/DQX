@@ -630,6 +630,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fafafa', end
     cursor:pointer;
     opacity:0.6;
     filter:alpha(opacity=60); /* For IE8 and earlier */
+
 }
 
 .DQXBitmapLink:hover, .DQXBitmapLinkTransparent:hover

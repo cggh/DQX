@@ -240,7 +240,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
                     descdv2.addStyle('padding-left', '17px');
                     if (item.showBracket) {
                         descdv2.addStyle('border-width', '0px');
-                        descdv2.addStyle('border-color', 'rgb(128,128,128)');
+                        descdv2.addStyle('border-color', 'rgb(190,190,190)');
                         descdv2.addStyle('border-left-width', '1px');
                         descdv2.addStyle('border-style', 'solid');
                         descdv2.addStyle('border-bottom-left-radius', '6px');
