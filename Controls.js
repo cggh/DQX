@@ -1199,6 +1199,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
         //    args.linecount (optional) : number of lines of the edit box
         //    args.hint (optional) : hover tooltip
         //    args.fixedfont : true for fixed spacing font
+        //    args.accepttabs
         ////////////////////////////////////////////////////////////////////////////////////////////
 
         Controls.Textarea = function (iid, args) {
@@ -1219,6 +1220,8 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 that._fixedfont = args.fixedfont;
             if (args.noWrap)
                 that._noWrap = args.noWrap;
+            if (args.accepttabs)
+                that._accepttabs = args.accepttabs;
             that._notifyEnter = null;
 
             //if (that.myLabel)
@@ -1263,10 +1266,36 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
 
             that._execPostCreateHtml = function () {
                 this.getJQElement('').bind("propertychange input paste", $.proxy(that._onChange, that));
+                if (that._accepttabs)
+                    this.getJQElement('').bind("keydown", that._onKeyDown);
                 this.getJQElement('').bind("keyup", $.proxy(that._onKeyUp, that));
                 if (that._hasDefaultFocus)
                     this.getJQElement('').select();
             }
+
+            that._onKeyDown = function (ev) {
+                if (that._accepttabs) {
+                    if(ev.keyCode === 9) { // tab was pressed
+                        // get caret position/selection
+                        var start = this.selectionStart;
+                        var end = this.selectionEnd;
+
+                        var $this = $(this);
+                        var value = $this.val();
+
+                        // set textarea value to: text before caret + tab + text after caret
+                        $this.val(value.substring(0, start)
+                            + "\t"
+                            + value.substring(end));
+
+                        // put caret at right position again (add one for the tab)
+                        this.selectionStart = this.selectionEnd = start + 1;
+
+                        // prevent the focus lose
+                        ev.preventDefault();
+                    }
+                }
+            };
 
             that._onKeyUp = function (ev) {
                 this._onChange();
