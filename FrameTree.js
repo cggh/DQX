@@ -34,6 +34,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
             this.myTree = null;
             this._collapsed = false;
             this.showBracket = true;
+            this.canCollapse = true;
         }
 
         TreeCtrl._objectBranch.prototype.setID = function (id) {
@@ -54,6 +55,10 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
         TreeCtrl._objectBranch.prototype.setCollapsed = function (status) {
             this._collapsed = status;
             return this;
+        }
+
+        TreeCtrl._objectBranch.prototype.isCollapsed = function (status) {
+            return this._collapsed;
         }
 
         //determine whether or not the branch can be selected by the user
@@ -196,6 +201,14 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
             }
 
 
+            that.scrollToBranch = function(branchid) {
+                var thediv = $('#' + that.getDivID());
+                var branchdivid = that._getDivIDItem(branchid);
+                var branchdiv = thediv.find('#' + branchdivid);
+                var offset = branchdiv.position().top;
+                thediv.animate({scrollTop: offset}, 1000);
+            }
+
 
             that._getDivIDButton = function (id) { return this.myID + '_DQXBt_' + id; }
             that._getDivIDItem = function (id) { return this.myID + '_DQXIt_' + id; }
@@ -223,7 +236,9 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
                 if (hasSubItems) {
                     var buttondv = DocEl.Div({ parent: titledv, id: this._getDivIDButton(item.myID) });
                     buttondv.setCssClass("DQXTreeButton");
-                    buttondv.addElem(this._createButtonHtml(item._collapsed));
+                    if (item.canCollapse) {
+                        buttondv.addElem(this._createButtonHtml(item._collapsed));
+                    }
                 }
 
                 contentstr = item.renderHtml(this.myID)

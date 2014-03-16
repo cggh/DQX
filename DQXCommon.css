@@ -1015,6 +1015,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7f7f7', end
 
 .DQXTreeButton
 {
+    display:inline-block;
+
     cursor:pointer;
 }
 
