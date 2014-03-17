@@ -291,10 +291,10 @@ DQX.polyStar = function(ctx, x, y, radius, sides, pointSize, angle) {
                                 location.reload();
                                 return;
                             }
-                                DQX.reportError('Application has been stopped');
+                                alert('Application has been stopped');
                         }
                         else
-                            DQX.reportError('Error: '+keylist.Error);
+                            alert('Error: '+keylist.Error);
                     }
                     if (callback) callback(keylist);
                 },

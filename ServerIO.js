@@ -5,7 +5,7 @@ define(["require", "DQX/Framework", "DQX/Popup", "DQX/Msg", "DQX/Utils", "DQX/Do
 
         var ServerIO = {};
 
-        ServerIO.waitForCompletion = function(serverUrl, calculationid, onCompleted, initialResponse) {
+        ServerIO.waitForCompletion = function(serverUrl, calculationid, onCompleted, initialResponse, onFailed) {
             var popupid = Popup.create('Processing','Server is processing. This may take a while!<p><div id="calculationprogressbox" style="min-width:400px"></div><p>', null, {canClose: false} );
             var poll = function() {
                 data = {};
@@ -13,6 +13,8 @@ define(["require", "DQX/Framework", "DQX/Popup", "DQX/Msg", "DQX/Utils", "DQX/Do
                     if (resp.failed) {
                         alert(resp.status);
                         DQX.ClosePopup(popupid);
+                        if (onFailed)
+                            onFailed(initialResponse);
                     }
                     else {
                         if (resp.completed) {
@@ -33,9 +35,9 @@ define(["require", "DQX/Framework", "DQX/Popup", "DQX/Msg", "DQX/Utils", "DQX/Do
             setTimeout(poll, 200);
         };
 
-        ServerIO.customAsyncRequest = function(serverUrl, respmodule, request, data, onCompleted) {
+        ServerIO.customAsyncRequest = function(serverUrl, respmodule, request, data, onCompleted, onFailed) {
             DQX.customRequest(serverUrl, respmodule, request, data, function(resp) {
-                ServerIO.waitForCompletion(serverUrl, resp.calculationid, onCompleted, resp);
+                ServerIO.waitForCompletion(serverUrl, resp.calculationid, onCompleted, resp, onFailed);
             });
         };
 
