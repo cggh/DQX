@@ -670,6 +670,8 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
                     this.drawStandardGradientLeft(locDrawInfo, darkenFactor);
                     this.drawStandardGradientRight(locDrawInfo, darkenFactor);
                     this.drawMessage(locDrawInfo, "Zoom in to see " + this._title);
+                    if (this._always_call_draw)
+                        this.draw(locDrawInfo);
                 }
                 else
                     this.draw(locDrawInfo);
