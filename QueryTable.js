@@ -651,11 +651,18 @@
                                     hascontent = true;
                                     if (!thecol.colIsClientGenerated)
                                         cell_content = this.myDataFetcher.getColumnPoint(downloadrownr, thecol.myCompID);
+                                    var origcontent = cell_content;
                                     if (thecol.customTextCreator)
                                         cell_content = thecol.customTextCreator(this.myDataFetcher, downloadrownr);
                                     cell_color = thecol.CellToColor(cell_content);
                                     cell_content = thecol.CellToText(cell_content);
                                     cell_title = cell_content;
+                                    if (thecol.barGraphWidth)
+                                        cell_content = '<div style="display:inline-block;width:{width}px"><div class="QueryTableValueBar" style="width:{widthfr}px"></div></div><div style="/*position:relative;left:-70px;*/display:inline-block">{content}</div>'.DQXformat({
+                                            width:thecol.barGraphWidth,
+                                            widthfr: Math.round((origcontent-thecol.minval)/(thecol.maxval-thecol.minval)*thecol.barGraphWidth),
+                                            content: cell_content
+                                        });
                                 }
                                 rs_table[tbnr] += "<td style='background-color:" + cell_color + "'>";
                                 var isLink = false;
