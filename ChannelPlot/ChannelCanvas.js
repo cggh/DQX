@@ -194,7 +194,8 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
             }
 
             that.postCreateHtml = function () {
-                $('#' + this.getCanvasID('center')).click($.proxy(that._onMouseClick, that));
+                $('#' + this.getCanvasID('center')).click($.proxy(_.partialRight(that._onMouseClick, 'center'), that));
+                $('#' + this.getCanvasID('left')).click($.proxy(_.partialRight(that._onMouseClick, 'left'), that));
                 $('#' + this.getCanvasID('center')).mousedown($.proxy(that._onMouseDown, that));
                 $('#' + this.getCanvasID('center')).mousemove($.proxy(that._onMouseMove, that));
                 $('#' + this.getCanvasID('center')).mouseenter($.proxy(that._onMouseEnter, that));
@@ -236,11 +237,15 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
             }
 
 
-            that._onMouseClick = function (ev) {
+            that._onMouseClick = function (ev, area) {
+                var area = area || 'center';
                 if (!this.getMyPlotter()._hasMouseMoved) {
                     var px = this.getEventPosX(ev);
                     var py = this.getEventPosY(ev);
-                    this.handleMouseClicked(px, py);
+                    if (area == 'center')
+                        this.handleMouseClicked(px, py);
+                    else
+                        this.handleMouseClickedSide(px, py, area);
                 }
 
             }
@@ -338,6 +343,8 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
             that.handleMouseClicked = function (px, py) {
             }
 
+            that.handleMouseClickedSide = function (px, py, area) {
+            }
 
             that.getToolTipInfo = function (px, py) {
                 return null;
