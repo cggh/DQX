@@ -1199,6 +1199,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
         //    args.linecount (optional) : number of lines of the edit box
         //    args.hint (optional) : hover tooltip
         //    args.fixedfont : true for fixed spacing font
+        //    args.accepttabs
         ////////////////////////////////////////////////////////////////////////////////////////////
 
         Controls.Textarea = function (iid, args) {
@@ -1219,6 +1220,8 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 that._fixedfont = args.fixedfont;
             if (args.noWrap)
                 that._noWrap = args.noWrap;
+            if (args.accepttabs)
+                that._accepttabs = args.accepttabs;
             that._notifyEnter = null;
 
             //if (that.myLabel)
@@ -1263,10 +1266,36 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
 
             that._execPostCreateHtml = function () {
                 this.getJQElement('').bind("propertychange input paste", $.proxy(that._onChange, that));
+                if (that._accepttabs)
+                    this.getJQElement('').bind("keydown", that._onKeyDown);
                 this.getJQElement('').bind("keyup", $.proxy(that._onKeyUp, that));
                 if (that._hasDefaultFocus)
                     this.getJQElement('').select();
             }
+
+            that._onKeyDown = function (ev) {
+                if (that._accepttabs) {
+                    if(ev.keyCode === 9) { // tab was pressed
+                        // get caret position/selection
+                        var start = this.selectionStart;
+                        var end = this.selectionEnd;
+
+                        var $this = $(this);
+                        var value = $this.val();
+
+                        // set textarea value to: text before caret + tab + text after caret
+                        $this.val(value.substring(0, start)
+                            + "\t"
+                            + value.substring(end));
+
+                        // put caret at right position again (add one for the tab)
+                        this.selectionStart = this.selectionEnd = start + 1;
+
+                        // prevent the focus lose
+                        ev.preventDefault();
+                    }
+                }
+            };
 
             that._onKeyUp = function (ev) {
                 this._onChange();
@@ -1447,7 +1476,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
             }
 
             that._execRenderHtml = function () {
-                var st = '<a id={id} TITLE="{desc2}" class="DQXHyperlink">'.DQXformat({ id: this.getFullID(''), desc2: that._hint });
+                var st = '<a id={id} TITLE="{desc2}" >'.DQXformat({ id: this.getFullID(''), desc2: that._hint });
                 st += '<span style="white-space:nowrap;">'; //this trick is used to prevent a line break between the image and the text
                 if (this.myBitmap) {
                     var s = '<IMG SRC="' + this.myBitmap + '" border=0 class="DQXBitmapLink" ALT="{desc1}" TITLE="{desc2}" style="position:relative;top:{shift}px;opacity:{opacity}"/>';
@@ -1482,6 +1511,57 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
 
             return that;
         }
+
+
+
+
+        Controls.ImageButton = function (iid, args) {
+            var that = Controls.Control(iid);
+            that.myBitmap = args.bitmap;
+            that._hint = '';
+            if (args.hint)
+                that._hint = args.hint;
+            that._vertShift = 0;
+            if (args.vertShift)
+                that._vertShift = args.vertShift;
+
+            that._execRenderHtml = function () {
+                var st = '<span id={id} TITLE="{desc2}" >'.DQXformat({ id: this.getFullID(''), desc2: that._hint });
+                st += '<span style="white-space:nowrap;">'; //this trick is used to prevent a line break between the image and the text
+                if (this.myBitmap) {
+                    var s = '<IMG SRC="' + this.myBitmap + '" border=0 class="DQXBitmapLinkTransparent" ALT="{desc1}" TITLE="{desc2}" style="position:relative;top:{shift}px"/>';
+                    s = s.DQXformat(
+                        { desc1: that.description, desc2: that._hint, shift: (-this._vertShift), opacity: this._opacity });
+                    st = st + s;
+                }
+                if (this.text) {
+                    if (this.myBitmap) st += '&thinsp;';
+                    st += '<span style="white-space:normal;">' + this.text + '</span>';
+                }
+                st += '</span>';
+                st += '</span>';
+                return st;
+            }
+
+            that._execPostCreateHtml = function () {
+                var target = 'click.controlevent';
+                this.getJQElement('').unbind(target).bind(target, $.proxy(that._onClick, that));
+            }
+
+            that._onClick = function () {
+                this._notifyChanged();
+            }
+
+            that.getValue = function () {
+                return "";
+            }
+
+            that.modifyValue = function (newstate) {
+            }
+
+            return that;
+        }
+
 
         ////////////////////////////////////////////////////////////////////////////////////////////
         // A help button, where the id of the control is the documentation id
