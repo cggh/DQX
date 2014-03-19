@@ -8,8 +8,8 @@
 
 define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
     function ($, DQX, DocEl, Msg, FramePanel) {
-        return function (iid, iParentRef) {
-            var that = FramePanel(iid, iParentRef);
+        return function (iParentRef) {
+            var that = FramePanel(iParentRef);
 
 
             that._panelfirstRendered = false;
