@@ -7,7 +7,7 @@
 *************************************************************************************************************************************/
 
 
-define(["DQX/Externals/lodash", "jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
+define(["_", "jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
     function (_, $, DocEl, Msg, Scroller) {
         var ChannelCanvas = {};
 
