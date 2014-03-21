@@ -282,6 +282,12 @@
                 return this.myBaseID + extension;
             }
 
+            that.isPresentInDOMTree = function() {
+                var id = "#" + this.myBaseID;
+                var rs = $(id);
+                return (rs.length > 0);
+            }
+
             //Internal usage. Finds a html element in the cluster of elements that define this table
             that.getElement = function (extension) {
                 var id = "#" + this.myBaseID + extension;
@@ -521,6 +527,8 @@
 
             //Renders the table to html
             that.render = function () {
+                if (!that.isPresentInDOMTree())
+                    return;
                 DQX.pushActivity("Creating table");
 
                 if (!this._pagerCreated) {
@@ -564,12 +572,23 @@
                 if ('totalRecordCount' in this.myDataFetcher)
                     this.totalRecordCount = this.myDataFetcher.totalRecordCount;
 
+                this.isTruncatedRecordCount = false;
+                if ('isTruncatedRecordCount' in this.myDataFetcher)
+                    this.isTruncatedRecordCount = this.myDataFetcher.isTruncatedRecordCount;
+
                 if (this.totalRecordCount == 0) {
                     st = '<span class="DQXImportantMessage">This result set does not contain any data<span>';
                 }
                 else {
                     var st = "&nbsp;&nbsp;&nbsp;Current: " + (this.myTableOffset + 1) + "-" + (this.myTableOffset + this.myPageSize);
-                    st += '; Total: ' + ((this.totalRecordCount<0)?(' <i>[fetching...]</i>'):(this.totalRecordCount));
+                    str_recordCount = ' <i>[fetching...]</i>';
+                    if (this.totalRecordCount>0) {
+                        if (!this.isTruncatedRecordCount)
+                            str_recordCount = '' + this.totalRecordCount;
+                        else
+                            str_recordCount = '>' + this.totalRecordCount;
+                    }
+                    st += '; Total: ' + str_recordCount;
                 }
                 $('#' + that.myBaseID + '_status').html(st);
 

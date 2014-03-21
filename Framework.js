@@ -296,7 +296,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/Fram
 
             //Specifies the frame to adapt its vertical size automatically to the size of the content
             that.setAutoSize = function () {
-                this.setMinSize(Framework.dimY, 1);
+                this.setMinSize(Framework.dimY, 0);
                 this.autoSizeY = true;
                 return this;
             }

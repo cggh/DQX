@@ -53,6 +53,8 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
             this.rangeExtension = 1.5; //Left & right buffer that is automatically fetched along with the range request
             this._maxViewportSizeX=1.0e99;//info will be hidden if the viewport gets larger than this
 
+            this._maxrecordcount = 1000000;//When fetching record counts, cap to this value
+
             this._requestNr = 0;
             if (!itablename)
                 DQX.reportError('Invalid table name');
@@ -78,6 +80,11 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                 else
                     this._userQuery2 = qry;
                 this.clearData();
+            }
+
+            // Use this function to cap the value of the record count of the result set. This speeds up the underlying count query
+            this.setMaxRecordCount = function(mx) {
+                this._maxrecordcount = mx
             }
 
             this.setMaxViewportSizeX = function(maxval) {
@@ -263,6 +270,9 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
 
                 if ('TotalRecordCount' in keylist)
                     this.totalRecordCount = keylist['TotalRecordCount'];
+                this.isTruncatedRecordCount = false;
+                if ('Truncated' in keylist)
+                    this.isTruncatedRecordCount = keylist['Truncated']
 
                 //tell the consumer of this that the data are ready
                 this.myDataConsumer.notifyDataReady();
@@ -386,6 +396,7 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                                     myurl2.addUrlQueryItem('requestid', thethis._recordcountrequestid);
                                     myurl2.addUrlQueryItem("qry", SQL.WhereClause.encode(qry));
                                     myurl2.addUrlQueryItem("tbname", thethis.tablename);
+                                    myurl2.addUrlQueryItem("maxrecordcount", thethis._maxrecordcount);
                                     $.ajax({
                                         url: myurl2.toString(),
                                         success: function (resp) {
