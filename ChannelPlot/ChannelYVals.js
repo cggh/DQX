@@ -612,7 +612,7 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/Chann
                 }
                 if (showColor)
                     theLabel='<span style="background-color:{cl}">&nbsp&nbsp&nbsp</span>&nbsp'.DQXformat({cl:that.myComponents[cmpid].myPlotHints.color})+theLabel;
-                var chk=Controls.Check(null,{ label:theLabel, value:(!defaultHidden) }).setOnChanged(function() {
+                var chk=Controls.Check(null,{ label:theLabel, value:(!defaultHidden) }).setClassID('compvisib_'+cmpid).setOnChanged(function() {
                     that.modifyComponentActiveStatus(cmpid,chk.getValue(),false);
                     //check if any component is still visible
                     var channelActive=false;
