@@ -16,6 +16,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
             that._toolTipInfo = { ID: null };
             that._directRedraw = true;
             that._fixedWidth = null; // if this has a non-zero value, specifies a fixed dimension, if null, specifies autoscaling
+            that._fixedHeight = null; // if this has a non-zero value, specifies a fixed dimension, if null, specifies autoscaling
 
             that.selectionHorOnly = false;//Set to true to have the user (mouse driven) selection restricted to horizontal areas
 
@@ -34,6 +35,11 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
 
             that.setFixedWidth = function(w) {
                 that._fixedWidth = w;
+                that.handleResize();
+            };
+
+            that.setFixedHeight = function(w) {
+                that._fixedHeight = w;
                 that.handleResize();
             };
 
@@ -387,7 +393,10 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
                     that._cnvWidth = that._fixedWidth;
                 else
                     that._cnvWidth = $('#' + that.getDivID()).innerWidth();
-                that._cnvHeight = $('#' + that.getDivID()).innerHeight();
+                if (that._fixedHeight!=null)
+                    that._cnvHeight = that._fixedHeight;
+                else
+                    that._cnvHeight = $('#' + that.getDivID()).innerHeight();
                 $.each(that._canvasLayerIds, function(idx, layerid) {
                     $('#' + that.getCanvasID(layerid)).width(that._cnvWidth);
                     $('#' + that.getCanvasID(layerid)).height(that._cnvHeight);
