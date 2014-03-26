@@ -249,6 +249,37 @@ define(["jquery", "DQX/Utils"],
             return that;
         }
 
+
+        DataDecoders.Encoder.MultiCatCount = function (info) {
+            var that = {};
+            DQX.checkIsNumber(info.CatCount);
+            DQX.checkIsNumber(info.EncoderLen);
+            that.catCount = parseInt(info.CatCount);
+            that.encoderlen = parseInt(info.EncoderLen);
+            var _b64codec = DataDecoders.B64();
+            that.decodeArray = function (datastr) {
+                var strlen = datastr.length;
+                var reclen = that.catCount * that.encoderlen;
+                var rs = [];
+                for (var offset = 0; offset < strlen; ) {
+                    var subrs = [];
+                    for (var i = 0; i < that.catCount; i++) {
+                        subrs.push(_b64codec.B642IntFixed(datastr, offset, that.encoderlen));
+                        offset += that.encoderlen;
+                    }
+                    rs.push(subrs);
+                }
+                return rs;
+            }
+            that.decodeSingle = function (datastr, offset) {
+                throw 'Not implemented';
+            }
+            that.getRecordLength = function () { return this.byteCount; };
+
+            return that;
+        }
+
+
         //Factory function that automatically creates a codec based on the properties
         DataDecoders.Encoder.Create = function (info) {
             if (info['ID'] == 'Int2B64')
@@ -263,6 +294,8 @@ define(["jquery", "DQX/Utils"],
                 return DataDecoders.Encoder.Boolean(info);
             if (info['ID'] == 'BooleanListB64')
                 return DataDecoders.Encoder.BooleanListB64(info);
+            if (info['ID'] == 'MultiCatCount')
+                return DataDecoders.Encoder.MultiCatCount(info);
             DQX.reportError("Invalid encoder id " + info['ID']);
         }
 

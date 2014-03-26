@@ -52,7 +52,7 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
 
             //returns the data points in a specified range for a specific property identifier
             that.getColumnPoints = function (rangemin, rangemax, cid) {
-                var thedata = {};
+                var thedata = { blockSize:that._blockSize };
                 thedata.xVals = [];
                 thedata.YVals = [];
                 if (!(cid in this._buffer))
@@ -216,6 +216,12 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                 }
                 return buffer.getColumnPoints(rangemin, rangemax, cid); ;
             }
+
+            this.getCurrentBlockSize = function (rangemin, rangemax) {
+                var blockSize = this.getOptimalBlockSize(rangemin, rangemax);
+                var buffer = this._getLevelBuffer(blockSize);
+                return buffer._blockSize;
+            };
 
             //get the column value for a specific point in the current load set
             this.getColumnPoint = function (blockSize, currentloadindex, cid) {
