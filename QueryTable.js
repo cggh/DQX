@@ -309,12 +309,13 @@
             that.createTableColumn = function(
                 iCol,            //A a QueryTable.Column object
                 encodingType,     // Identifier for the encoding type for transfer (see DataFetchers.CurveColumn for list of possibilities)
-                sortable        // If true, this column will be sortable
+                sortable,        // If true, this column will be sortable
+                sortByDefault
             ) {
                 this.myDataFetcher.addFetchColumn(iCol.myCompID, encodingType);
                 var col = this.addTableColumn(iCol);
                 if (sortable)
-                    this.addSortOption(iCol.myName, SQL.TableSort([iCol.myCompID]));
+                    this.addSortOption(iCol.myName, SQL.TableSort([iCol.myCompID]), !!(sortByDefault));
                 return col;
             }
 
