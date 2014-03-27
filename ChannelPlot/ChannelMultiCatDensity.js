@@ -13,16 +13,23 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/Chann
 
 
 
-        ChannelMultiCatDensity.Channel = function (id, ifetcher, icol) {
+        ChannelMultiCatDensity.Channel = function (id, ifetcher, icol, args) {
             var that = ChannelCanvas.Base(id);
             that._height = 120;
             that.myfetcher = ifetcher;
+            that._minVal = 0;
+            that._maxVal = 1;
+            that._categoryColors = {};
+            that._scaleRelative = false;
+            that._canChangeYScaleTop = true;
+            that._canChangeYScaleBottom = false;
 
             that.mycol = icol;
 
-//            that._minVal = args.minVal;
-//            that._maxVal = args.maxVal;
-//            that.myComponents = {}; //maps components ids to ChannelPlotChannelMultiCatDensityComp objects
+            if (args.categoryColors)
+                that._categoryColors = args.categoryColors;
+            if (args.maxVal)
+                that._maxVal = args.maxVal;
             that.minDrawZoomFactX = 0; //if the zoom factor drops below this point, the channel isn't drawn anymore
 
 
@@ -33,11 +40,14 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/Chann
                 return that;
             }
 
-            //returns a list of all fetchers that are currently active in this plot (i.e. correspond to active components)
             that.getActiveDataFetchers = function () {
-                var lst = [];
-                return lst;
+                return [this.myfetcher];
             }
+
+            that.setPlotter = function (thePlotter) {
+                thePlotter.addDataFetcher(this.myfetcher);
+            }
+
 
             var parent_postCreateHtml = $.proxy(that.postCreateHtml, that);
             that.postCreateHtml = function () {
@@ -45,8 +55,6 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/Chann
 
                 $('#' + this.getCanvasID('left')).mousedown($.proxy(that._onMouseDownLeft, that));
                 $('#' + this.getCanvasID('left')).mousemove($.proxy(that._onMouseMoveLeft, that));
-//                $('#' + this.getCanvasID('left')).mouseenter($.proxy(that._onMouseEnterLeft, that));
-//                $('#' + this.getCanvasID('left')).mouseleave($.proxy(that._onMouseLeaveLeft, that));
             }
 
 
@@ -56,7 +64,7 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/Chann
             that._onMouseMoveLeft = function (ev) {
                 var px = this.getEventPosX(ev);
                 var py = this.getEventPosY(ev);
-                if ((this._canChangeYScaleTop) || (this._canChangeYScaleBottom)) {
+                if ( (!that._scaleRelative) && ((this._canChangeYScaleTop) || (this._canChangeYScaleBottom)) ) {
                     if (px > -50)
                         var cursorName = 'row-resize';
                     else {
@@ -87,7 +95,7 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/Chann
                 this.draggingMinVal0 = this._minVal;
                 this.draggingMaxVal0 = this._maxVal;
 
-                if ( (!this._draggingYScaleTop) && (!this._draggingYScaleBottom) && (this._onClickHandler)) {
+                if ( (!that._scaleRelative) && (!this._draggingYScaleTop) && (!this._draggingYScaleBottom) && (this._onClickHandler)) {
                     this._onClickHandler();
                 }
 
@@ -126,7 +134,19 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/Chann
                 this.drawStandardGradientLeft(drawInfo, 1);
                 this.drawStandardGradientRight(drawInfo, 1);
 
-                this.drawVertScale(drawInfo, this._minVal, this._maxVal);
+                if (!that._scaleRelative) {
+                    that.drawVertScale(drawInfo, that._minVal, that._maxVal,  {offsetFrac:0.07, rangeFrac:0.86});
+                    var psy_fact = 1.0 / (that._maxVal - that._minVal) * drawInfo.sizeY * 0.86;
+                    var psy_offset = drawInfo.sizeY - drawInfo.sizeY * 0.07 + that._minVal * psy_fact;
+                }
+                else
+                {
+                    that.drawVertScale(drawInfo, 0, 100, {offsetFrac:0.07, rangeFrac:0.86});
+                    var psy_fact = 1.0 / (100.0) * drawInfo.sizeY * 0.9;
+                    var psy_offset = drawInfo.sizeY - drawInfo.sizeY * 0.05;
+                }
+
+
 
                 var PosMin = Math.round((-50 + drawInfo.offsetX) / drawInfo.zoomFactX);
                 var PosMax = Math.round((drawInfo.sizeCenterX + 50 + drawInfo.offsetX) / drawInfo.zoomFactX);
@@ -136,68 +156,57 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/Chann
                 if (that.myfetcher.hasFetchFailed)
                     fetcherror = true;
 
+
                 //var blockSize = this.myfetcher.getCurrentBlockSize(PosMin, PosMax);
                 var points = this.myfetcher.getColumnPoints(PosMin, PosMax, that.mycol.myID);
                 var xvals = points.xVals;
                 var yvals = points.YVals;
                 var blockSize = points.blockSize;
 
-                for (i = 0; i < xvals.length - 1; i++) {
-                    var psx1 = Math.round(xvals[i] * drawInfo.zoomFactX - drawInfo.offsetX);
-                    var psx2 = Math.round(xvals[i + 1] * drawInfo.zoomFactX - drawInfo.offsetX);
-                    var dens1 = 0;
-                    for (var j = 0; j<2; j++) {
-                        if (j==0) drawInfo.centerContext.fillStyle = 'rgb(192,100,100)';
-                        if (j==1) drawInfo.centerContext.fillStyle = 'rgb(100,100,192)';
-                        var dens2 = dens1 + yvals[i][0]/blockSize;
-                        drawInfo.centerContext.fillRect(psx1, dens1*800, psx2 - psx1 + 1, dens2*800);
-                        dens1 = dens2;
+                var categories = null;
+                if (that.myfetcher._propertySummerariserInfo)
+                    categories = that.myfetcher._propertySummerariserInfo[that.mycol.myID].Categories;
+
+                if (categories) {
+                    categoryColors = [];
+                    for (var j = 0; j<categories.length; j++) {
+                        var cl = that._categoryColors[categories[j]];
+                        if (!cl)
+                            cl = DQX.Color(0.75, 0.75, 0.75).toStringCanvas();
+                        categoryColors.push(cl);
+                    }
+
+                    for (var i = 0; i < xvals.length; i++) {
+                        var psx1 = Math.round((xvals[i]-blockSize/2) * drawInfo.zoomFactX - drawInfo.offsetX);
+                        var psx2 = Math.round((xvals[i]+blockSize/2) * drawInfo.zoomFactX - drawInfo.offsetX);
+                        var totDens = 0;
+                        $.each(yvals[i], function(idx, vl) { totDens += vl});
+                        totDens /= blockSize;
+                        if (!totDens)
+                            totDens =1;
+                        var dens1 = 0;
+                        var yp1 = psy_offset;
+                        for (var j = 0; j<categories.length; j++) {
+//                            if (j==0) drawInfo.centerContext.fillStyle = 'rgb(192,100,100)';
+//                            if (j==1) drawInfo.centerContext.fillStyle = 'rgb(100,100,192)';
+                            drawInfo.centerContext.fillStyle = categoryColors[j];
+                            var blockcount = yvals[i][j];
+                            var dens2 = dens1 + blockcount/blockSize;
+                            if (!that._scaleRelative)
+                                var yp2 = psy_offset-dens2*psy_fact;
+                            else
+                                var yp2 = psy_offset-dens2/totDens*100*psy_fact;
+                            drawInfo.centerContext.fillRect(
+                                psx1,
+                                yp1,
+                                psx2 - psx1 + 1,
+                                yp2-yp1
+                            );
+                            dens1 = dens2;yp1 = yp2;
+                        }
                     }
                 }
 
-
-//                var hasdata = false;
-//                for (var compid in this.myComponents)
-//                    if (this.myComponents[compid].isActive)
-//                        hasdata = true;
-//
-//                if ( (drawInfo.needZoomIn) || (drawInfo.zoomFactX < this.minDrawZoomFactX) ) {
-//                    if (!hasdata)
-//                        this.drawMessage(drawInfo, "");
-//                    else
-//                        this.drawMessage(drawInfo, "Zoom in to see " + this.getTitle());
-//                    return;
-//                }
-//                if (!hasdata) return;
-//
-//
-//                drawInfo.centerContext.strokeStyle = "black";
-//                this.PosMin = Math.round((-50 + drawInfo.offsetX) / drawInfo.zoomFactX);
-//                this.PosMax = Math.round((drawInfo.sizeCenterX + 50 + drawInfo.offsetX) / drawInfo.zoomFactX);
-//
-//                var fetcherlist = this.getActiveDataFetchers();
-//                var alldataready = true;
-//                var fetcherror = false;
-//                for (var fetchnr = 0; fetchnr < fetcherlist.length; fetchnr++) {
-//                    if (!fetcherlist[fetchnr].IsDataReady(this.PosMin, this.PosMax, DataFetchers.RecordCountFetchType.NONE))
-//                        alldataready = false;
-//                    if (fetcherlist[fetchnr].hasFetchFailed)
-//                        fetcherror = true;
-//                }
-//                if ((!alldataready) && (!fetcherror)) this.drawFetchBusyMessage(drawInfo);
-//                if (fetcherror) this.drawFetchFailedMessage(drawInfo);
-//
-//                if (alldataready)
-//                    var q = 0;
-//
-//                for (var levelnr = 0; levelnr < 2; levelnr++) {
-//                    for (var compid in this.myComponents) {
-//                        var comp = this.myComponents[compid];
-//                        if ((comp.isActive) && (levelnr == comp.level)) {
-//                            comp.draw(drawInfo, { PosMin: this.PosMin, PosMax: this.PosMax, rangemin: this._minVal, rangemax: this._maxVal });
-//                        }
-//                    }
-//                }
 
                 this.drawMark(drawInfo);
                 this.drawTitle(drawInfo);
