@@ -341,9 +341,17 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
             var that = Controls.CompoundGenericList(icontrols);
             that.treatAsBlock = false;
             that._margin = 3;
+            that._leftIndent = 0;
 
             that.setMargin = function(margin) {
                 that._margin = margin;
+                return that;
+            }
+
+            that.setLeftIndent = function(vl) {
+                that._leftIndent = vl;
+                if (!that.treatAsBlock)
+                    DQX.reportError('Invalid combination of settings');
                 return that;
             }
 
@@ -356,7 +364,9 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
             that.renderHtml = function () {
                 var st = '';
                 if (that.treatAsBlock || (!that._autoFillX) )
-                    st += '<div style="display:inline-block;vertical-align:top">';
+                    st += '<div style="display:inline-block;vertical-align:top;margin-left:{marginleft}px">'.DQXformat({
+                        marginleft: that._leftIndent
+                    });
                 if (this._legend.length > 0) {
                     st += '<fieldset class="{cls}">'.DQXformat({cls:that._legendClass});
                     st += '<legend>' + this._legend + '</legend>';
