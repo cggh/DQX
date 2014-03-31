@@ -306,7 +306,7 @@ DQX.polyStar = function(ctx, x, y, radius, sides, pointSize, angle) {
 
 
         DQX.timeoutRetry = 30000;
-        DQX.timeoutAjax = 25000;
+        DQX.timeoutAjax = 60000;
 
         //A namespace for drawing helper utilities
         DQX.DrawUtil = {};
