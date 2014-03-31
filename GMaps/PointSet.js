@@ -15,7 +15,7 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
             that.pointShape = 0;
             that.aggregatePieChart = true;
             that.maxAggrCount = 0;
-
+            that.colorMap = DQX.standardColors;
 
             var canvasLayerOptions = {
                 map: that.myMapObject.myMap,
@@ -41,6 +41,10 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                 $.each(that.googleEventListeners, function(idx, evid) {
                     google.maps.event.removeListener(evid);
                 });
+            };
+
+            that.setColorMap = function(mp) {
+                that.colorMap = mp;
             };
 
             that.setPointStyle = function(sett) {
@@ -182,7 +186,7 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                 var colorStrings0 = [];
                 var colorStrings = [];
                 var colorStrings2 = [];
-                $.each(DQX.standardColors, function(idx, color) {
+                $.each(that.colorMap, function(idx, color) {
                     colorStrings0.push(color.changeOpacity(0.75).toStringCanvas());
                     colorStrings.push(color.changeOpacity(that.opacity).toStringCanvas());
                     colorStrings2.push(color.changeOpacity(0).toStringCanvas());

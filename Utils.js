@@ -734,6 +734,10 @@ DQX.polyStar = function(ctx, x, y, radius, sides, pointSize, angle) {
                 that.mapped = true;
             };
 
+            that.getAssociations = function() {
+                return that.associations;
+            }
+
             that.get = function(id) {
                 if (!(id in that.associations))
                     return -1;
