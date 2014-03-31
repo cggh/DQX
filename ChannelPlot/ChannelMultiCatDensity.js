@@ -165,7 +165,8 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/Chann
 
                 var categories = null;
                 if (that.myfetcher._propertySummerariserInfo)
-                    categories = that.myfetcher._propertySummerariserInfo[that.mycol.myID].Categories;
+                    if (that.myfetcher._propertySummerariserInfo[that.mycol.myID])
+                        categories = that.myfetcher._propertySummerariserInfo[that.mycol.myID].Categories;
 
                 if (categories) {
                     categoryColors = [];
