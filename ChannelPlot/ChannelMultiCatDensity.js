@@ -157,11 +157,11 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/Chann
                     fetcherror = true;
 
 
-                //var blockSize = this.myfetcher.getCurrentBlockSize(PosMin, PosMax);
                 var points = this.myfetcher.getColumnPoints(PosMin, PosMax, that.mycol.myID);
                 var xvals = points.xVals;
                 var yvals = points.YVals;
                 var blockSize = points.blockSize;
+
 
                 var categories = null;
                 if (that.myfetcher._propertySummerariserInfo)
@@ -205,7 +205,11 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/Chann
                                 dens1 = dens2;yp1 = yp2;
                             }
                         }
+
                     }
+                    drawInfo.centerContext.font = '10px sans-serif';
+                    drawInfo.centerContext.fillStyle = "rgb(0,0,0)";
+                    drawInfo.centerContext.fillText(blockSize.toString()+'bp', 10, 10);
                 }
 
 
