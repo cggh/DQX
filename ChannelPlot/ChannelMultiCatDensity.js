@@ -181,28 +181,28 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/Chann
                         var psx2 = Math.round((xvals[i]+blockSize/2) * drawInfo.zoomFactX - drawInfo.offsetX);
                         var totDens = 0;
                         $.each(yvals[i], function(idx, vl) { totDens += vl});
-                        totDens /= blockSize;
-                        if (!totDens)
-                            totDens =1;
-                        var dens1 = 0;
-                        var yp1 = psy_offset;
-                        for (var j = 0; j<categories.length; j++) {
-//                            if (j==0) drawInfo.centerContext.fillStyle = 'rgb(192,100,100)';
-//                            if (j==1) drawInfo.centerContext.fillStyle = 'rgb(100,100,192)';
-                            drawInfo.centerContext.fillStyle = categoryColors[j];
-                            var blockcount = yvals[i][j];
-                            var dens2 = dens1 + blockcount/blockSize;
-                            if (!that._scaleRelative)
-                                var yp2 = psy_offset-dens2*psy_fact;
-                            else
-                                var yp2 = psy_offset-dens2/totDens*100*psy_fact;
-                            drawInfo.centerContext.fillRect(
-                                psx1,
-                                yp1,
-                                psx2 - psx1 + 1,
-                                yp2-yp1
-                            );
-                            dens1 = dens2;yp1 = yp2;
+                        if (totDens>0) {
+                            totDens /= blockSize;
+                            if (!totDens)
+                                totDens =1;
+                            var dens1 = 0;
+                            var yp1 = psy_offset;
+                            for (var j = 0; j<categories.length; j++) {
+                                drawInfo.centerContext.fillStyle = categoryColors[j];
+                                var blockcount = yvals[i][j];
+                                var dens2 = dens1 + blockcount/blockSize;
+                                if (!that._scaleRelative)
+                                    var yp2 = psy_offset-dens2*psy_fact;
+                                else
+                                    var yp2 = psy_offset-dens2/totDens*100*psy_fact;
+                                drawInfo.centerContext.fillRect(
+                                    psx1,
+                                    yp1,
+                                    psx2 - psx1 + 1,
+                                    yp2-yp1
+                                );
+                                dens1 = dens2;yp1 = yp2;
+                            }
                         }
                     }
                 }
