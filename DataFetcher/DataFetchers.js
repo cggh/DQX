@@ -54,6 +54,7 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
             this._maxViewportSizeX=1.0e99;//info will be hidden if the viewport gets larger than this
 
             this._maxrecordcount = 1000000;//When fetching record counts, cap to this value
+            this._reportIfError = false;// If false, silently retry on error. If true, report error & stop
 
             this._requestNr = 0;
             if (!itablename)
@@ -67,6 +68,10 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
             //Two optional restricting queries, defined as a DQXWhereClause style object
             this._userQuery1 = null;
             this._userQuery2 = null;
+
+            this.setReportIfError = function(status) {
+                this._reportIfError = status;
+            }
 
             //defines a custom query to apply on the data records
             this.setUserQuery1 = function (iquery) {
@@ -193,7 +198,10 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
 
                 if ("Error" in keylist) {
                     this.hasFetchFailed = true;
-                    setTimeout($.proxy(this.myDataConsumer.notifyDataReady, this.myDataConsumer), DQX.timeoutRetry);
+                    if (this._reportIfError)
+                        alert('Error:\n' + keylist.Error);
+                    else
+                        setTimeout($.proxy(this.myDataConsumer.notifyDataReady, this.myDataConsumer), DQX.timeoutRetry);
                     return;
                 }
 
@@ -249,13 +257,20 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
             this._ajaxFailure_FetchRange = function (resp) {
                 if (this.showDownload)
                     DQX.stopProcessing();
-                //alert('###error');
                 this.hasFetchFailed = true;
                 this._isFetching = false;
-                //tell the consumer of this that the data are 'ready'
-                //note: this will cause a requery, which is what we want
-                //the timout introduces a delay, avoiding that the server is flooded with requeries
-                setTimeout($.proxy(this.myDataConsumer.notifyDataReady, this.myDataConsumer), DQX.timeoutRetry);
+                if (this._reportIfError) {
+                    var errorText = 'Error:\n';
+                    if (resp.statusText)
+                        errorText += resp.statusText;
+                    alert(errorText);
+                }
+                else {
+                    //tell the consumer of this that the data are 'ready'
+                    //note: this will cause a requery, which is what we want
+                    //the timout introduces a delay, avoiding that the server is flooded with requeries
+                    setTimeout($.proxy(this.myDataConsumer.notifyDataReady, this.myDataConsumer), DQX.timeoutRetry);
+                }
             }
 
 
@@ -300,6 +315,7 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
             this._fetchRange = function (rangemin, rangemax, recordCountFetchType) {
                 if (!recordCountFetchType)
                     recordCountFetchType = DataFetchers.RecordCountFetchType.IMMEDIATE;
+
 
                 if (rangemax-rangemin>this._maxViewportSizeX)
                     return;
@@ -346,7 +362,7 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                     }
 
                     var qrytype = "qry";
-                    if (this.useLimit) qrytype = "pageqry"
+                    if (this.useLimit) qrytype = "pageqry";
 
                     if (!this.positionField) {
                         if (!this.useLimit)
