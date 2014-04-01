@@ -54,7 +54,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
                 return $("#" + that.getCanvasID(layerid))[0];
             }
 
-            that.render = function () {
+            that.render_exec = function () {
                 var ctx = that.getMyCanvasElement('main').getContext("2d");
                 ctx.fillStyle="#FFFFFF";
                 ctx.fillRect(0, 0, that._cnvWidth,that._cnvHeight);
@@ -66,10 +66,14 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
                 that.draw(drawInfo);
             }
 
-
-            that.invalidate = function() {
-                that.render();
+            that.render = function () {
+                if (that._directRedraw)
+                    that.render_exec();
+                else
+                    DQX.executeProcessing(function() { that.render_exec(); });
             }
+
+            that.invalidate = DQX.debounce(that.render, 150);
 
             // Override this function
             that.draw = function(drawInfo) {
