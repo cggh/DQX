@@ -1936,6 +1936,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
             that.digits = 0; if (args.digits) that.digits = args.digits;
             that.minIsNone = false; if (args.minIsNone) that.minIsNone = args.minIsNone;
             that._notifyOnFinished = false;
+            that._drawIndicators = true; if (args.drawIndicators===false) that._drawIndicators = false;
 
             // Call this function to force the control to call the onChanged function only when the dragging is completed
             that.setNotifyOnFinished = function() {
@@ -1956,7 +1957,10 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
             }
 
             that.showValue = function () {
-                var txt = this._value.toFixed(this.digits);
+                if (!that.customValueMapper)
+                    var txt = this._value.toFixed(this.digits);
+                else
+                    var txt = that.customValueMapper(this._value);
                 if (this.minIsNone && (this._value == this._minval))
                     txt = 'None';
                 $('#' + this.getFullID('Value')).text(txt);
@@ -1964,6 +1968,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
 
             that._execPostCreateHtml = function () {
                 this._scroller = Scroller.HScrollBar(this.getFullID('Canvas'));
+                this._scroller.drawIndicators = that._drawIndicators;
                 this._scroller.myConsumer = this;
                 this._scroller.zoomareafraction = 0.00001;
                 this._scroller.setRange(this._minval, this._maxval);
@@ -1999,7 +2004,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
             that.modifyValue = function (newvalue, preventNotify) {
                 if (newvalue == this.getValue()) return;
                 this._value = newvalue;
-                $('#' + this.getFullID('Value')).text(this._value.toFixed(this.digits));
+                this.showValue();
                 this._scroller.setValue((this._value - this._minval) / (this._maxval - this._minval), 0.02);
                 this._scroller.draw();
                 if (!preventNotify)

@@ -24,6 +24,7 @@ define(["jquery", "DQX/DocEl", "DQX/Msg"],
             that.minScrollSize = 0.0005; //this determines the maximum zoom factor for the zoom slider
             that.units = '';
             that.myConsumer = null;
+            that.drawIndicators = true;
 
             that.zoomareafraction = 0.3;
 
@@ -162,25 +163,27 @@ define(["jquery", "DQX/DocEl", "DQX/Msg"],
                 }
 
                 //scroll bar position indicators
-                centercontext.globalAlpha = 1;
-                centercontext.fillStyle = "black";
-                centercontext.font = '11px sans-serif';
-                centercontext.textBaseline = 'top';
-                centercontext.textAlign = 'center';
-                centercontext.shadowColor = "white";
-                centercontext.shadowBlur = 3;
-                var scalejumps = DQX.DrawUtil.getScaleJump(20 / this.sizeX * (this.rangeMax - this.rangeMin));
-                var i2 = ((this.rangeMax - this.rangeMin)) / scalejumps.Jump1;
-                for (var i = 0; i < i2; i++) {
-                    var x = i * scalejumps.Jump1;
-                    var psx = this.ScrollAreaStartX + Math.round((x - this.rangeMin) / (this.rangeMax - this.rangeMin) * this.ScrollAreaSizeX);
-                    if ((psx > this.ScrollAreaStartX + 10) && (psx < this.ScrollAreaStartX + this.ScrollAreaSizeX - 10)) {
-                        if (i % scalejumps.JumpReduc == 0) {
-                            centercontext.fillText(x.toFixed(scalejumps.textDecimalCount) + that.units, psx, this.sizeY / 2 - 7);
+                if (that.drawIndicators) {
+                    centercontext.globalAlpha = 1;
+                    centercontext.fillStyle = "black";
+                    centercontext.font = '11px sans-serif';
+                    centercontext.textBaseline = 'top';
+                    centercontext.textAlign = 'center';
+                    centercontext.shadowColor = "white";
+                    centercontext.shadowBlur = 3;
+                    var scalejumps = DQX.DrawUtil.getScaleJump(20 / this.sizeX * (this.rangeMax - this.rangeMin));
+                    var i2 = ((this.rangeMax - this.rangeMin)) / scalejumps.Jump1;
+                    for (var i = 0; i < i2; i++) {
+                        var x = i * scalejumps.Jump1;
+                        var psx = this.ScrollAreaStartX + Math.round((x - this.rangeMin) / (this.rangeMax - this.rangeMin) * this.ScrollAreaSizeX);
+                        if ((psx > this.ScrollAreaStartX + 10) && (psx < this.ScrollAreaStartX + this.ScrollAreaSizeX - 10)) {
+                            if (i % scalejumps.JumpReduc == 0) {
+                                centercontext.fillText(x.toFixed(scalejumps.textDecimalCount) + that.units, psx, this.sizeY / 2 - 7);
+                            }
                         }
                     }
+                    centercontext.shadowColor = "transparent";
                 }
-                centercontext.shadowColor = "transparent";
 
                 //scroll bar bar
                 //centercontext.globalAlpha = 0.55;
