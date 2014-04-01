@@ -106,6 +106,9 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                 this.myIDList = vallistdecoder.doDecode(keylist['IDs']);
                 this.myTypeList = vallistdecoder.doDecode(keylist['Types']);
                 this.myParentIDList = vallistdecoder.doDecode(keylist['ParentIDs']);
+                this.myExtraField1List = null;
+                if (this.extrafield1)
+                    this.myExtraField1List = vallistdecoder.doDecode(keylist['ExtraField1']);
                 if (success_callback) {
                     var annots = [];
                     for (var i = 0; i < this.myStartList.length; i++) {
@@ -151,11 +154,16 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                     myurl.addUrlQueryItem('fieldstop', this.field_stop);
                     myurl.addUrlQueryItem('fieldchrom', this.field_chrom);
                     myurl.addUrlQueryItem('fieldid', this.field_id);
-                    myurl.addUrlQueryItem('fieldname', this.field_name);
+                    if (this.field_name)
+                        myurl.addUrlQueryItem('fieldname', this.field_name);
+                    else
+                        myurl.addUrlQueryItem('fieldname', this.field_id);
                     if (this.ftype)
                         myurl.addUrlQueryItem('ftype', this.ftype);
                     if (this.fsubtype)
                         myurl.addUrlQueryItem('fsubtype', this.fsubtype);
+                    if (this.extrafield1)
+                        myurl.addUrlQueryItem('extrafield1', this.extrafield1);
                     myurl.addUrlQueryItem('subfeatures', this.fetchSubFeatures ? '1' : 0);
 
                     if (this._userQuery2) {
@@ -197,6 +205,9 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                 thedata.myIDList = [];
                 thedata.myExonStarts = [];
                 thedata.myExonStops = [];
+                thedata.extraField1List = null;
+                if (this.extrafield1)
+                    thedata.extraField1List = [];
                 var genemap = {}
                 var typeMap = [];
                 if (this.ftype) {
@@ -216,6 +227,8 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                         thedata.myIDList.push(this.myIDList[i]);
                         thedata.myExonStarts.push([]);
                         thedata.myExonStops.push([]);
+                        if (this.extrafield1)
+                            thedata.extraField1List.push(this.myExtraField1List[i]);
                     }
                 for (i = 0; i < this.myStartList.length; i++)
                     if ((this.myStopList[i] >= rangemin) && (this.myStartList[i] <= rangemax) && (this.myTypeList[i] == this.fsubtype)) {

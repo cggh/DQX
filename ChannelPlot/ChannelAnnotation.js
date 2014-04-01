@@ -66,6 +66,12 @@
 
                 var annot = this._annotationFetcher.getData(imin, imax);
 
+                var hasColors = (!!(this._annotationFetcher.extrafield1)) && (this.funcMapExtraField2Color);
+
+                if (hasColors) {
+                    var colorList = this.funcMapExtraField2Color(annot.extraField1List);
+                }
+
                 var ps = -4500;
                 ranseed = 0;
                 drawInfo.centerContext.strokeStyle = "black";
@@ -74,7 +80,9 @@
                 for (var i = 0; i < 3; i++) slotmaxpos[i] = -100;
 
                 for (var i = 0; i < annot.myStartList.length; i++) {
-                    var label = annot.myNameList[i];
+                    var label = '';
+                    if (this._annotationFetcher.field_name)
+                        label = annot.myNameList[i];
                     ps = annot.myStartList[i];
                     var len = annot.myStopList[i] - annot.myStartList[i];
                     var psx1 = ps * drawInfo.zoomFactX - drawInfo.offsetX;
@@ -108,6 +116,12 @@
 
                         if (that._colorByName) {
                             drawInfo.centerContext.fillStyle = that._name2ColorMap[annot.myNameList[i]].toStringCanvas();
+                        }
+
+                        if (hasColors) {
+                            var colstr = colorList[i].toString();
+                            drawInfo.centerContext.fillStyle = colstr;
+                            drawInfo.centerContext.strokeStyle = colstr;
                         }
 
                         drawInfo.centerContext.beginPath();
