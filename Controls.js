@@ -1947,12 +1947,14 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
             that._controlExtensionList.push('Canvas');
 
             that._execRenderHtml = function () {
-                st = '<div id="{id}" style="width:{width}px">'.DQXformat({ id: this.getFullID(''), width: this._width });
+                st = '';
+                st += '<div style="display:inline-block">';
+                st += '<div id="{id}" style="width:{width}px">'.DQXformat({ id: this.getFullID(''), width: this._width });
                 st += '<span >{content}</span>'.DQXformat({ content: that._label });
                 st += '<span id="{id}" style="float:right">1</span>'.DQXformat({ id: this.getFullID('Value') });
                 st += "</div>";
-
                 st += '<div><canvas id="{id}" width="{width}"  height="{height}"></canvas></div>'.DQXformat({ id: this.getFullID('Canvas'), width: this._width, height: this._height });
+                st += "</div>";
                 return st;
             }
 
@@ -1963,7 +1965,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                     var txt = that.customValueMapper(this._value);
                 if (this.minIsNone && (this._value == this._minval))
                     txt = 'None';
-                $('#' + this.getFullID('Value')).text(txt);
+                $('#' + this.getFullID('Value')).html(txt);
             }
 
             that._execPostCreateHtml = function () {
