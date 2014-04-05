@@ -373,8 +373,12 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 }
                 for (var i = 0; i < this._controls.length; i++) {
                     var el = DocEl.Div({});
-                    el.addStyle('margin-top', ((i>0)?(this._margin):(this._margin/2)) + 'px');
-                    el.addStyle('margin-bottom', ((i<this._controls.length-1)?(this._margin):(this._margin/2)) + 'px');
+                    if (that._margin>0) {
+                        if (i>0)
+                            el.addStyle('margin-top', ((i>0)?(this._margin):(this._margin/2)) + 'px');
+                        if (i<this._controls.length-1)
+                            el.addStyle('margin-bottom', ((i<this._controls.length-1)?(this._margin):(this._margin/2)) + 'px');
+                    }
                     el.addElem(this._controls[i].renderHtml());
                     st += el.toString();
                 }
@@ -395,6 +399,69 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 var that = Controls.CompoundHor([]);
             else
                 var that = Controls.CompoundVert([]);
+            return that;
+        }
+
+
+        //////////////////////////////////////////////////////////////////////////
+
+        Controls.Section = function (icontrol, settings) {
+            var that = {};
+            that._control = icontrol;
+            that.myID = Controls._getNextControlID();
+            that._visible = true;
+            that._headerStyleClass = 'DQXControlSectionHeader';
+            that._bodyStyleClass = 'DQXControlSectionBody';
+            that._title = settings.title;
+            if (settings.headerStyleClass)
+                that._headerStyleClass = settings.headerStyleClass;
+            if (settings.bodyStyleClass)
+                that._bodyStyleClass = settings.bodyStyleClass;
+
+
+
+            that.getID = function () {
+                return myID;
+            }
+
+            that.setVisible = function (newStatus) {
+                if (newStatus != that._visible) {
+                    that._visible = newStatus;
+                    if (newStatus)
+                        $('#' + that.myID).show();
+                    else
+                        $('#' + that.myID).hide();
+                }
+                return this;
+            }
+
+
+            that.renderHtml = function () {
+                var el = DocEl.Div({ id: this.myID });
+                var header = DocEl.Div({ parent: el });
+                header.setCssClass(that._headerStyleClass);
+                header.addElem(that._title);
+                var body = DocEl.Div({ parent: el});
+                body.setCssClass(that._bodyStyleClass);
+                body.addElem(this._control.renderHtml());
+                return el.toString();
+            }
+
+            that.postCreateHtml = function () {
+                if (!that._visible)
+                    $('#' + that.myID).hide();
+            }
+
+            that.applyOnControls = function(fnc) {
+                if ('applyOnControls' in that._control)
+                    that._control.applyOnControls(fnc);
+            };
+
+            that.tearDown = function() {
+                if ('tearDown' in that._control)
+                    that._control.tearDown();
+            }
+
             return that;
         }
 
