@@ -110,7 +110,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
 
 
             that.getID = function () {
-                return myID;
+                return that.myID;
             }
 
             that.setVisible = function (newStatus) {
@@ -135,6 +135,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
             that.postCreateHtml = function () {
                 if (!that._visible)
                     $('#' + that.myID).hide();
+                this._control.postCreateHtml();
             }
 
             that.applyOnControls = function(fnc) {
@@ -174,6 +175,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
             }
 
             that.postCreateHtml = function () {
+                this._control.postCreateHtml();
             }
 
             that.applyOnControls = function(fnc) {
@@ -413,6 +415,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
             that._headerStyleClass = 'DQXControlSectionHeader';
             that._bodyStyleClass = 'DQXControlSectionBody';
             that._title = settings.title;
+            that._visible = true;
             if (settings.headerStyleClass)
                 that._headerStyleClass = settings.headerStyleClass;
             if (settings.bodyStyleClass)
@@ -421,35 +424,60 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
 
 
             that.getID = function () {
-                return myID;
+                return that.myID;
             }
 
-            that.setVisible = function (newStatus) {
-                if (newStatus != that._visible) {
-                    that._visible = newStatus;
-                    if (newStatus)
-                        $('#' + that.myID).show();
-                    else
-                        $('#' + that.myID).hide();
-                }
-                return this;
+
+            that._createButtonHtml = function (_collapsed) {
+                return '<IMG SRC="' + DQX.BMP(_collapsed ? 'morelines.png' : 'lesslines.png') + '" border=0 ALT="" TITLE="" class="DQXTreeButtonImage" style="float:left;padding-right:6px">';
             }
 
+//            that.setVisible = function (newStatus) {
+//                if (newStatus != that._visible) {
+//                    that._visible = newStatus;
+//                    if (newStatus)
+//                        $('#' + that.myID).show();
+//                    else
+//                        $('#' + that.myID).hide();
+//                }
+//                return this;
+//            }
 
             that.renderHtml = function () {
+                that.myIDHeader = that.myID+'header';
+                that.myIDButton = that.myID+'collapserbutton';
+                that.myIDBody = that.myID+'body';
                 var el = DocEl.Div({ id: this.myID });
-                var header = DocEl.Div({ parent: el });
+                var header = DocEl.Div({ parent: el , id:that.myIDHeader});
                 header.setCssClass(that._headerStyleClass);
+                var buttondv = DocEl.Div({ parent: header, id:that.myIDButton });
+                buttondv.addStyle('width','20px');
+                buttondv.addStyle('height','15px');
+                buttondv.setCssClass("DQXTreeButton");
+                buttondv.addElem(that._createButtonHtml(false));
                 header.addElem(that._title);
-                var body = DocEl.Div({ parent: el});
+                var body = DocEl.Div({ parent: el, id:that.myIDBody });
                 body.setCssClass(that._bodyStyleClass);
                 body.addElem(this._control.renderHtml());
                 return el.toString();
             }
 
             that.postCreateHtml = function () {
-                if (!that._visible)
-                    $('#' + that.myID).hide();
+//                if (!that._visible)
+//                    $('#' + that.myID).hide();
+                var clickElem = $('#' + that.myIDButton);
+                clickElem.click(function() {
+                    that._visible = !that._visible;
+                    var subdiv = $('#' + that.myIDBody);
+                    if (!that._visible)
+                        subdiv.slideUp(250);
+                    else
+                        subdiv.slideDown(250);
+                    setTimeout(function() {
+                        $('#' + that.myIDButton).html(that._createButtonHtml(!that._visible));
+                    }, 290)
+                });
+                this._control.postCreateHtml();
             }
 
             that.applyOnControls = function(fnc) {
