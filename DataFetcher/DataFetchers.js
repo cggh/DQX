@@ -87,6 +87,11 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                 this.clearData();
             }
 
+            this.setTableName = function(tableName) {
+                this.tablename = tableName;
+                this.clearData();
+            };
+
             // Use this function to cap the value of the record count of the result set. This speeds up the underlying count query
             this.setMaxRecordCount = function(mx) {
                 this._maxrecordcount = mx

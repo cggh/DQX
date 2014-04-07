@@ -525,6 +525,10 @@
                 this._dataValid = true;
             }
 
+            that.setTable = function (tablename) {
+                this.myDataFetcher.setTableName(tablename);
+            }
+
 
             //Renders the table to html
             that.render = function () {
