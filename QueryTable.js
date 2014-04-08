@@ -853,6 +853,25 @@
                 this.render();
             }
 
+            that.storeSettings = function() {
+                var obj = {};
+                obj.positionField = that.myDataFetcher.positionField;
+                obj.sortReverse = that.myDataFetcher.sortReverse;
+                return obj;
+            }
+
+            that.recallSettings = function(settObj) {
+                if (settObj.positionField)
+                    that.myDataFetcher.positionField = settObj.positionField;
+                if (settObj.sortReverse)
+                    that.myDataFetcher.sortReverse = settObj.sortReverse;
+/*
+                this.myDataFetcher.clearData();
+                this.myTableOffset = 0;
+                this._highlightRowNr = -1;
+                this.render();*/
+            }
+
             //This function is called when a key was pressed
             that.onKeyDown = function (ev) {
                 if (ev.keyCode == 40) {//line down
