@@ -98,6 +98,46 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
         }
 
 
+
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        // This control can be used to wrap another control control in a styled div
+        ////////////////////////////////////////////////////////////////////////////////////////////
+
+        Controls.Wrapper = function (icontrol, wrapperStyle) {
+            var that = {};
+            that._control = icontrol;
+            that.myID = Controls._getNextControlID();
+            that._wrapperStyle = wrapperStyle;
+
+            that.getID = function () {
+                return that.myID;
+            }
+
+            that.renderHtml = function () {
+                var el = DocEl.Div({ id: this.myID });
+                el.setCssClass(that._wrapperStyle)
+                el.addElem(this._control.renderHtml());
+                return el.toString();
+            }
+
+            that.postCreateHtml = function () {
+                this._control.postCreateHtml();
+            }
+
+            that.applyOnControls = function(fnc) {
+                if ('applyOnControls' in that._control)
+                    that._control.applyOnControls(fnc);
+            };
+
+            that.tearDown = function() {
+                if ('tearDown' in that._control)
+                    that._control.tearDown();
+            }
+
+            return that;
+        }
+
+
         ////////////////////////////////////////////////////////////////////////////////////////////
         // This control can be used to show or hide another control
         ////////////////////////////////////////////////////////////////////////////////////////////
