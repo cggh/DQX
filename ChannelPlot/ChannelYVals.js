@@ -608,7 +608,10 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/Chann
                 var theLabel=label;
                 if (defaultHidden) {
                     that.modifyComponentActiveStatus(cmpid,false,false);
-                    that._myPlotter.channelModifyVisibility(that.getID(),false);
+                    var channelActive=false;
+                    for (var othercompid in that.myComponents)
+                        if (that.myComponents[othercompid].getActive()) channelActive=true;
+                    that._myPlotter.channelModifyVisibility(that.getID(),channelActive);
                 }
                 if (showColor)
                     theLabel='<span style="background-color:{cl}">&nbsp&nbsp&nbsp</span>&nbsp'.DQXformat({cl:that.myComponents[cmpid].myPlotHints.color})+theLabel;
