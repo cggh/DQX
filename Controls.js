@@ -132,7 +132,13 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
             that.tearDown = function() {
                 if ('tearDown' in that._control)
                     that._control.tearDown();
+            };
+
+            that.setContextID = function (id) {
+                if ('setContextID' in that._control)
+                    that._control.setContextID(id);
             }
+
 
             return that;
         }
