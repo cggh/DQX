@@ -98,7 +98,7 @@
                     }
                     if (slotnr < slotcount) {
                         if (this._drawLabels) {
-                            var labellen = drawInfo.centerContext.measureText(label).width;
+                            var labellen = drawInfo.centerContext.measureText(label).width+5;
                         }
                         else
                             var labellen = 0;
@@ -119,9 +119,15 @@
                         }
 
                         if (hasColors) {
-                            var colstr = colorList[i].toString();
-                            drawInfo.centerContext.fillStyle = colstr;
-                            drawInfo.centerContext.strokeStyle = colstr;
+                            if (colorList[i]) {
+                                var colstr = colorList[i].toString();
+                                drawInfo.centerContext.fillStyle = colstr;
+                                drawInfo.centerContext.strokeStyle = colstr;
+                            }
+                            else {
+                                drawInfo.centerContext.fillStyle = 'rgb(128,128,128)';
+                                drawInfo.centerContext.strokeStyle = 'rgb(128,128,128)';
+                            }
                         }
 
                         drawInfo.centerContext.beginPath();
@@ -147,7 +153,7 @@
                         if (this._drawLabels) {
                             drawInfo.centerContext.fillStyle = "black";
                             drawInfo.centerContext.fillText(abbrevlabel, Math.round(psx2 + 2) + 0.5, clickpt.Y1 + 0.5);
-                            slotmaxpos[slotnr] = psx2 + labellen + 6;
+                            slotmaxpos[slotnr] = psx2 + labellen;
                         }
 
                         clickpt.XCent = Math.round((psx1 + psx2) / 2);
