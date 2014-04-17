@@ -165,7 +165,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
                 theMaximiser.addStyle('right', '20px');
                 theMaximiser.addStyle('top', '2px');
 
-                if (PopupFrame.hasThumbNails) {
+                if (PopupFrame.hasThumbNails && (!that.blocking)) {
                     var theMinimiser = DocEl.JavaScriptBitmaplinkTransparent(DQX.BMP("minimize.png"), "Minimise", "");
                     theMinimiser.addAttribute("id", that.ID + 'minimiseButton');
                     thebox.addElem(theMinimiser);
@@ -199,7 +199,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
 
                 Popup.makeDraggable(that.ID);
 
-                if (PopupFrame.hasThumbNails) {
+                if (PopupFrame.hasThumbNails && (!that.blocking)) {
                         that.thumbNailId = that.ID+'_minimisedThumbNail';
                     var iconStr = '<div class="DQXThumbNail" style="position:relative" id="{id}">{title}<img id="{closeboxid}" SRC="{closebmp}" style="position:absolute;right:1px;top:1px;"/></div>'.DQXformat({
                         id: that.thumbNailId,
