@@ -201,9 +201,11 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
 
                 if (PopupFrame.hasThumbNails) {
                         that.thumbNailId = that.ID+'_minimisedThumbNail';
-                    var iconStr = '<div class="DQXThumbNail" id="{id}">{title}</div>'.DQXformat({
+                    var iconStr = '<div class="DQXThumbNail" style="position:relative" id="{id}">{title}<img id="{closeboxid}" SRC="{closebmp}" style="position:absolute;right:1px;top:1px;"/></div>'.DQXformat({
                         id: that.thumbNailId,
-                        title: that._title
+                        title: that._title,
+                        closebmp: DQX.BMP("closeSmall.png"),
+                        closeboxid: that.thumbNailId+'_closebox'
                     });
                     $('.DQXThumbNailBox').append(iconStr);
 //                    $('#'+that.thumbNailId).dblclick(function() {
@@ -214,7 +216,16 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
 //                            $('#' + that.ID).css('z-index', Popup._floatBoxMaxIndex);
 //                        }
 //                    });
-                    $('#'+that.thumbNailId).mousedown(function(ev) {
+                    $('#' + that.thumbNailId+'_closebox').mousedown(function(ev) {
+                        that.close();
+                        if (ev.stopPropagation)
+                            ev.stopPropagation();
+                        if (ev.preventDefault)
+                            ev.preventDefault();
+                        return 0;
+                    });
+
+                    $('#'+that.thumbNailId).click(function(ev) {
                         if (that.minimised) {
                             that.restore();
                         }

@@ -25,6 +25,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/His
         Application._views=[];
         Application._viewMap={};
         Application._showViewsAsTabs = false;
+        Application._headerHeight = 60;
 
 
 
@@ -34,6 +35,11 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/His
             Application._views.push(view);
             Application._viewMap[view.getStateID()]=view;
         };
+
+
+        Application.setHeaderHeight = function(h) {
+            Application._headerHeight = h;
+        }
 
         //Define the html that will go into the header of the application
         Application.setHeader = function(html) {
@@ -107,7 +113,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/His
 
             //The top line of the page
             Application.frameHeaderIntro = Application.frameRoot.addMemberFrame(Framework.FrameFinal('HeaderIntro', 1))
-                .setFixedSize(Framework.dimY, 60).setFrameClassClient('DQXPage').setMargins(0).setAllowScrollBars(false,false);
+                .setFixedSize(Framework.dimY, Application._headerHeight).setFrameClassClient('DQXPage').setMargins(0).setAllowScrollBars(false,false);
 
             //The body panel of the page
             if (Application._showViewsAsTabs)
@@ -172,7 +178,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/His
             navSectionDiv.addStyle("position", "absolute");
             navSectionDiv.addStyle("right", "0px");
             navSectionDiv.addStyle("top", "0px");
-            navSectionDiv.addStyle("padding-top", "3px");
+            navSectionDiv.addStyle("padding-top", "0px");
             navSectionDiv.addStyle("padding-right", "5px");
             this._createNavigationButton("HeaderPrevious", navSectionDiv, DQX.BMP("/Icons/Small/Back.png"), "Previous<br>view", "DQXToolButton3", 100, function () { Msg.send({ type: 'Back' }) });
             this._createNavigationButton("HeaderHome", navSectionDiv, DQX.BMP("/Icons/Small/Home.png"), "Intro<br>view", "DQXToolButton3", 100, function () { Msg.send({ type: 'Home' }) });

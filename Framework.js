@@ -74,7 +74,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/Fram
 
         //Creates an instance of a frame that groups a set of subframes as a set of tabs
         Framework.FrameGroupTab = function (iid, isizeweight) {
-            return Framework.Frame(iid, 'Tab', isizeweight).setFrameClassClient('DQXForm').setMarginsIndividual(0,5,0,0);
+            return Framework.Frame(iid, 'Tab', isizeweight).setFrameClassClient('DQXForm').setMarginsIndividual(0,2,0,0);
         }
 
         //Creates an instance of a frame that groups a set of subframes as a stack without tabs
