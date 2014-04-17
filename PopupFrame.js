@@ -14,7 +14,11 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
         var PopupFrame = {};
 
         PopupFrame._settingsHistory = {}; //settings history for each type of PopupFrame, identified by its ID
+        PopupFrame.hasThumbNails = false;
 
+        PopupFrame.setHasThumbNails = function() {
+            PopupFrame.hasThumbNails = true;
+        }
 
         PopupFrame.PopupFrame = function (itypeID, settings) {
             DQX.checkIsString(itypeID);
@@ -26,6 +30,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
             that.frameRoot._frameContainer = that;
             that.getFrameRoot = function () { return this.frameRoot; }
             that.maximised = false;
+            that.minimised = false;
 
             that.frameRoot.setFrameClass('DQXLightFrame');
 
@@ -128,9 +133,11 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
                 thebox.addStyle("left", this.posX + 'px');
                 thebox.addStyle("top", this.posY + 'px');
 
+
                 var theheader = DocEl.Div({ id: that.ID + 'Handler', parent: thebox });
                 theheader.setCssClass("DQXPopupFrameHeader DQXDragHeader");
                 theheader.addElem(DQX.interpolate(this._title));
+
 
                 var thebody = DocEl.Div({ id: that.ID + 'Body', parent: thebox });
                 thebody.setCssClass("DQXPopupFrameContent");
@@ -151,12 +158,21 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
                 thecloser.addStyle('right', '-12px');
                 thecloser.addStyle('top', '-12px');
 
-                var theMaximiser = DocEl.JavaScriptBitmaplink(DQX.BMP("maximize.png"), "Maximise", "");
+                var theMaximiser = DocEl.JavaScriptBitmaplinkTransparent(DQX.BMP("maximize.png"), "Maximise", "");
                 theMaximiser.addAttribute("id", that.ID + 'maximiseButton');
                 thebox.addElem(theMaximiser);
                 theMaximiser.addStyle('position', 'absolute');
                 theMaximiser.addStyle('right', '20px');
                 theMaximiser.addStyle('top', '2px');
+
+                if (PopupFrame.hasThumbNails) {
+                    var theMinimiser = DocEl.JavaScriptBitmaplinkTransparent(DQX.BMP("minimize.png"), "Minimise", "");
+                    theMinimiser.addAttribute("id", that.ID + 'minimiseButton');
+                    thebox.addElem(theMinimiser);
+                    theMinimiser.addStyle('position', 'absolute');
+                    theMinimiser.addStyle('right', '55px');
+                    theMinimiser.addStyle('top', '2px');
+                }
 
                 var resizer = DocEl.Div({ parent: thebox });
                 resizer.setCssClass('DQXPopupFrameResizer DQXPopupFrameResizer1');
@@ -171,6 +187,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
 
                 $('#' + that.ID + 'closeButton').click($.proxy(that.close, that));
                 $('#' + that.ID + 'maximiseButton').click(that.maximise);
+                $('#' + that.ID + 'minimiseButton').click(that.minimise);
 
                 $('#' + that.ID).find('.DQXPopupFrameResizer').mousedown($.proxy(that._onResizeMouseDown, that))
 
@@ -181,6 +198,37 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
                 DQX.ExecPostCreateHtml();
 
                 Popup.makeDraggable(that.ID);
+
+                if (PopupFrame.hasThumbNails) {
+                        that.thumbNailId = that.ID+'_minimisedThumbNail';
+                    var iconStr = '<div class="DQXThumbNail" id="{id}">{title}</div>'.DQXformat({
+                        id: that.thumbNailId,
+                        title: that._title
+                    });
+                    $('.DQXThumbNailBox').append(iconStr);
+//                    $('#'+that.thumbNailId).dblclick(function() {
+//                        if (that.minimised)
+//                            that.restore()
+//                        else {
+//                            Popup._floatBoxMaxIndex++;
+//                            $('#' + that.ID).css('z-index', Popup._floatBoxMaxIndex);
+//                        }
+//                    });
+                    $('#'+that.thumbNailId).mousedown(function(ev) {
+                        if (that.minimised) {
+                            that.restore();
+                        }
+                        else {
+                            that.minimise();
+                        }
+                        if (ev.stopPropagation)
+                            ev.stopPropagation();
+                        if (ev.preventDefault)
+                            ev.preventDefault();
+                        return 0;
+                    });
+                }
+
             }
 
             that.notifyLayoutChanged = function () {
@@ -201,21 +249,67 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
                     $('#' + that.ID).offset({top: 5, left: 0});
                     $('#' + that.ID + 'Body').width(newSizeX);
                     $('#' + that.ID + 'Body').height(newSizeY);
-    //                var settingHist = PopupFrame._settingsHistory[this.typeID];
-    //                settingHist.sizeX = this._sizeX;
-    //                settingHist.sizeY = this._sizeY;
                     that._handleResize(false);
                 }
                 else {
-                    $('#' + that.ID).offset({top: that.unMaximisedPosX, left: that.unMaximisedPosY});
+                    $('#' + that.ID).offset({left: that.unMaximisedPosX, top: that.unMaximisedPosY});
                     $('#' + that.ID + 'Body').width(that.unMaximisedSizeX);
                     $('#' + that.ID + 'Body').height(that.unMaximisedSizeY);
                 }
             }
 
+            that.animateTransition = function(elementFrom, elementTo) {
+                var px0 = elementFrom.position().left;
+                var py0 = elementFrom.position().top;
+                var lx0 = elementFrom.width();
+                var ly0 = elementFrom.height();
+
+
+                var px1 = elementTo.position().left;
+                var py1 = elementTo.position().top;
+                var lx1 = elementTo.width();
+                var ly1 = elementTo.height();
+
+                var thebox = DocEl.Div({ id: '_transientAnim_' });
+                thebox.addStyle("position", "absolute");
+                thebox.addStyle("left", px0 + 'px');
+                thebox.addStyle("top", py0 + 'px');
+                thebox.addStyle("width", lx0 + 'px');
+                thebox.addStyle("height", ly0 + 'px');
+                thebox.addStyle('border', '4px solid black');
+//                thebox.addStyle('background-color', 'rgba(0,0,0,0.2)');
+                thebox.addStyle('z-index', Popup._floatBoxMaxIndex+1);
+
+                $('#DQXUtilContainer').append(thebox.toString());
+
+                $('#_transientAnim_').animate({left:px1+'px', top:py1+'px', width:lx1+'px', height:ly1+'px'}, 250, function() {
+                    $('#_transientAnim_').remove();
+                });
+
+
+            }
+
+            that.minimise = function() {
+                if (that.minimised)
+                    return;
+                that.minimised = true;
+                that.animateTransition($("#" + that.ID), $("#" + that.thumbNailId));
+                $('#' + that.ID).hide();
+            }
+
+            that.restore = function () {
+                if (that.minimised) {
+                    that.minimised = false;
+                    $('#' + that.ID).show();
+                    Popup._floatBoxMaxIndex++;
+                    $('#' + that.ID).css('z-index', Popup._floatBoxMaxIndex);
+                    that.animateTransition($("#" + that.thumbNailId), $("#" + that.ID));
+                }
+            }
+
             that.close = function () {
                 var settingHist = PopupFrame._settingsHistory[that.typeID];
-                if (!that.maximised) {
+                if ((!that.maximised)&&((!that.minimised))) {
                     settingHist.posX = $("#" + that.ID).position().left;
                     settingHist.posY = $("#" + that.ID).position().top;
                 }
@@ -227,6 +321,8 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
                     if (panel.tearDown)
                         panel.tearDown();
                 });
+                if (PopupFrame.hasThumbNails)
+                    $('#'+that.thumbNailId).remove();
             }
 
             that._onResizeMouseDown = function (ev) {
@@ -259,6 +355,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
                     newSizeY = Math.min(newSizeY, DQX.getWindowClientH() - 50);
                     $('#' + this.ID + 'Body').width(newSizeX);
                     $('#' + this.ID + 'Body').height(newSizeY);
+                    //$('#' + this.ID + 'Handler').width(newSizeX-19);//<-- this is used to force resize the handler to a width smaller than its natural size
                     this._sizeX = newSizeX;
                     this._sizeY = newSizeY;
                     var settingHist = PopupFrame._settingsHistory[this.typeID];
