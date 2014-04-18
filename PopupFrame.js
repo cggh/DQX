@@ -238,6 +238,8 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
                             ev.preventDefault();
                         return 0;
                     });
+
+                    that.animateTransition($('#' + that.thumbNailId), $('#' + that.ID));
                 }
 
             }
@@ -249,27 +251,32 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
             that.maximise = function() {
                 that.maximised = !that.maximised;
                 if (that.maximised) {
-                    that.unMaximisedPosX = $("#" + that.ID).position().left;
-                    that.unMaximisedPosY = $("#" + that.ID).position().top;
-                    that.unMaximisedSizeX = that._sizeX;
-                    that.unMaximisedSizeY = that._sizeY;
-                    newSizeX = DQX.getWindowClientW() - 10;
-                    newSizeY = DQX.getWindowClientH() - 50;
-                    that._sizeX = $('#' + this.ID + 'Body').width();
-                    that._sizeY = $('#' + this.ID + 'Body').height();
-                    $('#' + that.ID).offset({top: 5, left: 0});
-                    $('#' + that.ID + 'Body').width(newSizeX);
-                    $('#' + that.ID + 'Body').height(newSizeY);
-                    that._handleResize(false);
+                    that.animateTransition($("#" + that.ID),$('body'), function() {
+                        that.unMaximisedPosX = $("#" + that.ID).position().left;
+                        that.unMaximisedPosY = $("#" + that.ID).position().top;
+                        that.unMaximisedSizeX = that._sizeX;
+                        that.unMaximisedSizeY = that._sizeY;
+                        newSizeX = DQX.getWindowClientW() - 10;
+                        newSizeY = DQX.getWindowClientH() - 50;
+                        that._sizeX = $('#' + this.ID + 'Body').width();
+                        that._sizeY = $('#' + this.ID + 'Body').height();
+                        $('#' + that.ID).offset({top: 5, left: 0});
+                        $('#' + that.ID + 'Body').width(newSizeX);
+                        $('#' + that.ID + 'Body').height(newSizeY);
+                        that._handleResize(false);
+                    });
                 }
                 else {
                     $('#' + that.ID).offset({left: that.unMaximisedPosX, top: that.unMaximisedPosY});
                     $('#' + that.ID + 'Body').width(that.unMaximisedSizeX);
                     $('#' + that.ID + 'Body').height(that.unMaximisedSizeY);
+                    that._sizeX = that.unMaximisedSizeX;
+                    that._sizeY = that.unMaximisedSizeY;
+                    that.animateTransition($('body'), $("#" + that.ID) );
                 }
             }
 
-            that.animateTransition = function(elementFrom, elementTo) {
+            that.animateTransition = function(elementFrom, elementTo, onCompleted) {
                 var px0 = elementFrom.position().left;
                 var py0 = elementFrom.position().top;
                 var lx0 = elementFrom.width();
@@ -295,6 +302,8 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
 
                 $('#_transientAnim_').animate({left:px1+'px', top:py1+'px', width:lx1+'px', height:ly1+'px'}, 250, function() {
                     $('#_transientAnim_').remove();
+                    if (onCompleted)
+                        onCompleted();
                 });
 
 
@@ -304,25 +313,23 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
                 if (that.minimised)
                     return;
                 that.minimised = true;
-                that.animateTransition($("#" + that.ID), $("#" + that.thumbNailId));
-                $('#' + that.ID).hide();
-                setTimeout(function() {
+                that.animateTransition($("#" + that.ID), $("#" + that.thumbNailId), function() {
                     $("#" + that.thumbNailId).addClass('DQXThumbNailMinimised');
-                }, 250);
+                });
+                $('#' + that.ID).hide();
             }
 
             that.restore = function () {
                 if (that.minimised) {
                     that.minimised = false;
+                    $("#" + that.ID).css('opacity',0.0);
                     $('#' + that.ID).show();
                     Popup._floatBoxMaxIndex++;
                     $('#' + that.ID).css('z-index', Popup._floatBoxMaxIndex);
-                    $("#" + that.ID).css('opacity',0.3);
-                    setTimeout(function() {
-                        $("#" + that.ID).css('opacity',1);
-                    }, 250);
-                    that.animateTransition($("#" + that.thumbNailId), $("#" + that.ID));
                     $("#" + that.thumbNailId).removeClass('DQXThumbNailMinimised');
+                    that.animateTransition($("#" + that.thumbNailId), $("#" + that.ID), function() {
+                        $("#" + that.ID).css('opacity',1);
+                    });
                 }
             }
 
