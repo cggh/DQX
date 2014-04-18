@@ -515,6 +515,11 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eff6fc', end
     cursor:pointer;
 }
 
+.DQXThumbNailMinimised
+{
+    background-color: rgb(200,210,220);
+}
+
 /******************************************************************************************
 ** DQX Light frame styling elements
 ******************************************************************************************/

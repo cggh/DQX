@@ -306,6 +306,9 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
                 that.minimised = true;
                 that.animateTransition($("#" + that.ID), $("#" + that.thumbNailId));
                 $('#' + that.ID).hide();
+                setTimeout(function() {
+                    $("#" + that.thumbNailId).addClass('DQXThumbNailMinimised');
+                }, 250);
             }
 
             that.restore = function () {
@@ -314,7 +317,12 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
                     $('#' + that.ID).show();
                     Popup._floatBoxMaxIndex++;
                     $('#' + that.ID).css('z-index', Popup._floatBoxMaxIndex);
+                    $("#" + that.ID).css('opacity',0.3);
+                    setTimeout(function() {
+                        $("#" + that.ID).css('opacity',1);
+                    }, 250);
                     that.animateTransition($("#" + that.thumbNailId), $("#" + that.ID));
+                    $("#" + that.thumbNailId).removeClass('DQXThumbNailMinimised');
                 }
             }
 
