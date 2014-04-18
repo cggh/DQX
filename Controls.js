@@ -470,12 +470,15 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
             that._title = settings.title;
             //that._visible = true;
             that._canCollapse = true;
+            that._defaultCollapsed = false;
             if (settings.headerStyleClass)
                 that._headerStyleClass = settings.headerStyleClass;
             if (settings.bodyStyleClass)
                 that._bodyStyleClass = settings.bodyStyleClass;
             if (settings.canCollapse === false)
                 that._canCollapse = false;
+            if (settings.defaultCollapsed)
+                that._visible = false;
 
 
 
@@ -500,11 +503,13 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                     buttondv.addStyle('width','20px');
                     buttondv.addStyle('height','15px');
                     buttondv.setCssClass("DQXTreeButton");
-                    buttondv.addElem(that._createButtonHtml(false));
+                    buttondv.addElem(that._createButtonHtml(!that._visible));
                 }
                 header.addElem(that._title);
                 var body = DocEl.Div({ parent: el, id:that.myIDBody });
                 body.setCssClass(that._bodyStyleClass);
+                if (!that._visible)
+                    body.addStyle('display','none');
                 body.addElem(this._control.renderHtml());
                 return el.toString();
             }
