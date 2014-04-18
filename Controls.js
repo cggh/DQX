@@ -499,6 +499,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 var header = DocEl.Div({ parent: el , id:that.myIDHeader});
                 header.setCssClass(that._headerStyleClass);
                 if (that._canCollapse) {
+                    header.addStyle('cursor', 'pointer');
                     var buttondv = DocEl.Div({ parent: header, id:that.myIDButton });
                     buttondv.addStyle('width','20px');
                     buttondv.addStyle('height','15px');
@@ -516,7 +517,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
 
             that.postCreateHtml = function () {
                 if (that._canCollapse) {
-                    var clickElem = $('#' + that.myIDButton);
+                    var clickElem = $('#' + that.myIDHeader);
                     clickElem.click(function() {
                         that._visible = !that._visible;
                         var subdiv = $('#' + that.myIDBody);
