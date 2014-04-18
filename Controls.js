@@ -272,10 +272,17 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 return that;
             }
 
-            //add a new control to the list
+            //add a new control to the list (append at the end)
             that.addControl = function (item) {
                 DQX.requireMemberFunction(item, 'getID');
                 that._controls.push(item);
+                return item;
+            }
+
+            //add a new control to the list (insert at top)
+            that.addControlTop = function (item) {
+                DQX.requireMemberFunction(item, 'getID');
+                that._controls.unshift(item);
                 return item;
             }
 
