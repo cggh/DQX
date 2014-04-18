@@ -461,7 +461,7 @@
 
         //A class that checks for absence of the value
         SQL.WhereClause.whcClassGenerator['isabsent'] = function(args) {
-            var whc = SQL.WhereClause.IsPresent();
+            var whc = SQL.WhereClause.IsAbsent();
             whc.ColName = args.ColName;
             return whc;
         }
