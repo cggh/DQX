@@ -249,6 +249,42 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
                 that.hideToolTip();
             };
 
+            that._handleMouseWheel = function (ev) {
+                // !!! move this to a separate class FrameCanvasXYPlot
+                var px = that.getEventPosX(ev);
+                var py = that.getEventPosY(ev);
+                var delta = DQX.getMouseWheelDelta(ev);
+
+//                if (delta < 0)//zoom out
+//                    var scaleFactor = 1.0 / (1.0 + 0.4 * Math.abs(delta));
+//                else//zoom in
+//                    var scaleFactor = 1.0 + 0.4 * Math.abs(delta);
+//                this.reScale(scaleFactor, PosX);
+
+                var mainCanvas = that.getMyCanvasElement('main');
+                var ctx = mainCanvas.getContext("2d");
+
+                if (!that.grabbed) {
+                    image = new Image();
+                    image.id = "pic"
+                    image.src = mainCanvas.toDataURL();
+                    that.zoomed = 1;
+                }
+                that.grabbed = true;
+
+                that.zoomed *= 1+ delta/5;
+
+                ctx.fillStyle="#FFFFFF";
+                ctx.fillRect(0, 0, that._cnvWidth,that._cnvHeight);
+
+                ctx.drawImage(image, 0, 0, image.width, image.height, mainCanvas.width*(1-that.zoomed)/2, mainCanvas.height*(1-that.zoomed)/2, mainCanvas.width*that.zoomed, mainCanvas.height*that.zoomed);
+
+
+                ev.returnValue = false;
+                return false;
+            }
+
+
 
             that.startLassoSelection = function(callbackOnComplete) {
                 if (that.lassoSelecting)
@@ -437,6 +473,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
             $('#' + clickLayerId).mousemove($.proxy(that._onMouseMove, that));
             $('#' + clickLayerId).mouseenter($.proxy(that._onMouseEnter, that));
             $('#' + clickLayerId).mouseleave($.proxy(that._onMouseLeave, that));
+            $('#' + clickLayerId).bind('DOMMouseScroll mousewheel', $.proxy(that._handleMouseWheel, that));
 
 
             DQX.ExecPostCreateHtml();
