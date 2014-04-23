@@ -18,6 +18,8 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
             that._fixedWidth = null; // if this has a non-zero value, specifies a fixed dimension, if null, specifies autoscaling
             that._fixedHeight = null; // if this has a non-zero value, specifies a fixed dimension, if null, specifies autoscaling
 
+            that._dragActionPan = false;
+
             that.selectionHorOnly = false;//Set to true to have the user (mouse driven) selection restricted to horizontal areas
 
             that._canvasLayerIds = ['main','selection'];
@@ -139,6 +141,10 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
                     that.dragY0 = that.getEventPosY(ev);
                     that.dragX1 = that.dragX0;
                     that.dragY1 = that.dragY0;
+                    if (that._dragActionPan && (!ev.shiftKey)) {
+                        that.isPanning = true;
+                        that.panningStart(that.dragX0, that.dragY0);
+                    }
                 }
                 ev.returnValue = false;
                 return false;
@@ -148,16 +154,22 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
                 $(document).unbind("mouseup.FrameCanvas");
                 $(document).unbind("mousemove.FrameCanvas");
                 that.dragging = false;
-                ev.returnValue = false;
-                if (that._hasMouseMoved) {
-                    var selCanvas = that.getMyCanvasElement('selection');
-                    var ctx = selCanvas.getContext("2d");
-                    ctx.clearRect(0, 0, selCanvas.width, selCanvas.height);
-                    that.onSelected(Math.min(that.dragX0,that.dragX1), Math.min(that.dragY0,that.dragY1), Math.max(that.dragX0,that.dragX1), Math.max(that.dragY0,that.dragY1),
-                        ev.shiftKey,
-                        ev.ctrlKey,
-                        ev.altKey);
+                if (that.isPanning) {
+                    that.isPanning = false;
+                    that.panningStop();
                 }
+                else {
+                    if (that._hasMouseMoved) {
+                        var selCanvas = that.getMyCanvasElement('selection');
+                        var ctx = selCanvas.getContext("2d");
+                        ctx.clearRect(0, 0, selCanvas.width, selCanvas.height);
+                        that.onSelected(Math.min(that.dragX0,that.dragX1), Math.min(that.dragY0,that.dragY1), Math.max(that.dragX0,that.dragX1), Math.max(that.dragY0,that.dragY1),
+                            ev.shiftKey,
+                            ev.ctrlKey,
+                            ev.altKey);
+                    }
+                }
+                ev.returnValue = false;
                 return false;
             }
 
@@ -192,8 +204,13 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
                 that.dragY1 = that.getEventPosY(ev);
                 if (Math.abs(that.dragX1 - that.dragX0) + Math.abs(that.dragY1 - that.dragY0) > 5)
                     that._hasMouseMoved = true;
-                if (that._hasMouseMoved)
-                    that._drawSelRect();
+                if (that.isPanning) {
+                    that.panningDo(that.dragX1, that.dragY1);
+                }
+                else {
+                    if (that._hasMouseMoved)
+                        that._drawSelRect();
+                }
                 ev.returnValue = false;
                 return false;
             }
@@ -249,42 +266,6 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
                 that.hideToolTip();
             };
 
-            that._handleMouseWheel = function (ev) {
-                // !!! move this to a separate class FrameCanvasXYPlot
-                var px = that.getEventPosX(ev);
-                var py = that.getEventPosY(ev);
-                var delta = DQX.getMouseWheelDelta(ev);
-
-//                if (delta < 0)//zoom out
-//                    var scaleFactor = 1.0 / (1.0 + 0.4 * Math.abs(delta));
-//                else//zoom in
-//                    var scaleFactor = 1.0 + 0.4 * Math.abs(delta);
-//                this.reScale(scaleFactor, PosX);
-
-                var mainCanvas = that.getMyCanvasElement('main');
-                var ctx = mainCanvas.getContext("2d");
-
-                if (!that.grabbed) {
-                    image = new Image();
-                    image.id = "pic"
-                    image.src = mainCanvas.toDataURL();
-                    that.zoomed = 1;
-                }
-                that.grabbed = true;
-
-                that.zoomed *= 1+ delta/5;
-
-                ctx.fillStyle="#FFFFFF";
-                ctx.fillRect(0, 0, that._cnvWidth,that._cnvHeight);
-
-                ctx.drawImage(image, 0, 0, image.width, image.height, mainCanvas.width*(1-that.zoomed)/2, mainCanvas.height*(1-that.zoomed)/2, mainCanvas.width*that.zoomed, mainCanvas.height*that.zoomed);
-
-
-                ev.returnValue = false;
-                return false;
-            }
-
-
 
             that.startLassoSelection = function(callbackOnComplete) {
                 if (that.lassoSelecting)
@@ -325,13 +306,13 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
                 };
 
                 var lassoEventListener_dblclick = function() {
-                    $('#' + clickLayerId).unbind("click.FrameCanvasLasso");
-                    $('#' + clickLayerId).unbind("dblclick.FrameCanvasLasso");
+                    $('#' + that.clickLayerId).unbind("click.FrameCanvasLasso");
+                    $('#' + that.clickLayerId).unbind("dblclick.FrameCanvasLasso");
                     $(document).unbind("mousemove.FrameCanvasLasso");
                     var selectedPoints = selPts;
                     selPts = [];
                     drawSelArea();
-                    $('#' + clickLayerId).css('cursor', 'auto');
+                    $('#' + that.clickLayerId).css('cursor', 'auto');
                     that.lassoSelecting = false;
                     if (that.lassoSelectingCallbackOnComplete)
                         that.lassoSelectingCallbackOnComplete(selectedPoints);
@@ -343,10 +324,10 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
                     drawSelArea({x:px, y:py});
                 };
 
-                $('#' + clickLayerId).bind("click.FrameCanvasLasso", lassoEventListener_click);
-                $('#' + clickLayerId).bind("dblclick.FrameCanvasLasso", lassoEventListener_dblclick);
+                $('#' + that.clickLayerId).bind("click.FrameCanvasLasso", lassoEventListener_click);
+                $('#' + that.clickLayerId).bind("dblclick.FrameCanvasLasso", lassoEventListener_dblclick);
                 $(document).bind("mousemove.FrameCanvasLasso", lassoEventListener_mousemove);
-                $('#' + clickLayerId).css('cursor', 'crosshair');
+                $('#' + that.clickLayerId).css('cursor', 'crosshair');
             };
 
 
@@ -398,10 +379,10 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
                         drawSelArea(null);
                     }
                     else {
-                        $('#' + clickLayerId).unbind("click.FrameCanvasHalfPlaneSelection");
+                        $('#' + that.clickLayerId).unbind("click.FrameCanvasHalfPlaneSelection");
                         $(document).unbind("mousemove.FrameCanvasHalfPlaneSelection");
                         drawSelArea(null);
-                        $('#' + clickLayerId).css('cursor', 'auto');
+                        $('#' + that.clickLayerId).css('cursor', 'auto');
                         that.halfPlaneSelecting = false;
                         if (that.halfPlaneSelectingCallbackOnComplete && dir)
                             that.halfPlaneSelectingCallbackOnComplete(firstPoint, dir);
@@ -414,9 +395,9 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
                     drawSelArea({x:px, y:py});
                 };
 
-                $('#' + clickLayerId).bind("click.FrameCanvasHalfPlaneSelection", eventListener_click);
+                $('#' + that.clickLayerId).bind("click.FrameCanvasHalfPlaneSelection", eventListener_click);
                 $(document).bind("mousemove.FrameCanvasHalfPlaneSelection", eventListener_mousemove);
-                $('#' + clickLayerId).css('cursor', 'crosshair');
+                $('#' + that.clickLayerId).css('cursor', 'crosshair');
 
 
             };
@@ -467,13 +448,12 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
             });
             $('#' + that.getDivID()).html(canvasStr);
 
-            var clickLayerId = that.getCanvasID('selection');
-            $('#' + clickLayerId).click($.proxy(that._onMouseClick, that));
-            $('#' + clickLayerId).mousedown($.proxy(that._onMouseDown, that));
-            $('#' + clickLayerId).mousemove($.proxy(that._onMouseMove, that));
-            $('#' + clickLayerId).mouseenter($.proxy(that._onMouseEnter, that));
-            $('#' + clickLayerId).mouseleave($.proxy(that._onMouseLeave, that));
-            $('#' + clickLayerId).bind('DOMMouseScroll mousewheel', $.proxy(that._handleMouseWheel, that));
+            that.clickLayerId = that.getCanvasID('selection');
+            $('#' + that.clickLayerId).click($.proxy(that._onMouseClick, that));
+            $('#' + that.clickLayerId).mousedown($.proxy(that._onMouseDown, that));
+            $('#' + that.clickLayerId).mousemove($.proxy(that._onMouseMove, that));
+            $('#' + that.clickLayerId).mouseenter($.proxy(that._onMouseEnter, that));
+            $('#' + that.clickLayerId).mouseleave($.proxy(that._onMouseLeave, that));
 
 
             DQX.ExecPostCreateHtml();
