@@ -919,7 +919,7 @@ DQX.polyStar = function(ctx, x, y, radius, sides, pointSize, angle) {
                         ev.stopPropagation();
                     if (ev.preventDefault)
                         ev.preventDefault();
-                    if (Math.abs(touchInfo.elemX - this.touchStartElemX) + Math.abs(touchInfo.elemY - this.touchStartElemY) > 10) {
+                    if (Math.abs(touchInfo.elemX - that.touchStartElemX) + Math.abs(touchInfo.elemY - that.touchStartElemY) > 10) {
                         that.touchPositionMoved = true;
                         if (that.handleTouchMove)
                             that.handleTouchMove(touchInfo, ev);
