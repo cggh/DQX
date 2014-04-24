@@ -299,6 +299,12 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FrameCanvas"],
                 that.panningStop();
             }
 
+            that.handleTouchClick = function (info, ev) {
+                if (that.onMouseClick)
+                    that.onMouseClick(ev, info);
+            }
+
+
             that.handleGestureStart = function (ev) {
                 that.previousScale = 1.0;
                 that.scaleCenterPosX = that.getEventPosX(ev);

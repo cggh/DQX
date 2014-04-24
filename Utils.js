@@ -884,34 +884,47 @@ DQX.polyStar = function(ctx, x, y, radius, sides, pointSize, angle) {
                 if (!ev.touches) DQX.reportError('No touch event');
                 if (ev.touches.length < 1) DQX.reportError('Invalid touch event');
                 var touchInfo = ev.touches[0];
-                return {
+                var rs = {
                     elemX: touchInfo.pageX - $('#' + elemID).offset().left,
                     elemY: touchInfo.pageY - $('#' + elemID).offset().top,
                     pageX: touchInfo.pageX,
                     pageY: touchInfo.pageY
-                }
+                };
+                rs.x = rs.elemX;
+                rs.y = rs.elemY;
+                return rs;
             }
 
             var _onTouchStart = function (ev) {
                 if (ev.touches.length == 1) {
                     _touchMoving = true;
+                    var touchInfo = getSingleTouchInfo(ev);
                     if (ev.stopPropagation)
                         ev.stopPropagation();
                     if (ev.preventDefault)
                         ev.preventDefault();
                     if (that.handleTouchStart)
-                        that.handleTouchStart(getSingleTouchInfo(ev), ev);
+                        that.handleTouchStart(touchInfo, ev);
+                    that.touchPositionMoved = false;
+                    that.touchStartElemX = touchInfo.elemX;
+                    that.touchStartElemY = touchInfo.elemY;
+                    that.touchInfoStart = touchInfo;
                 }
             }
 
             var _onTouchMove = function (ev) {
                 if ((ev.touches.length == 1) && (_touchMoving)) {
+                    var touchInfo = getSingleTouchInfo(ev);
                     if (ev.stopPropagation)
                         ev.stopPropagation();
                     if (ev.preventDefault)
                         ev.preventDefault();
-                    if (that.handleTouchMove)
-                        that.handleTouchMove(getSingleTouchInfo(ev), ev);
+                    if (Math.abs(touchInfo.elemX - this.touchStartElemX) + Math.abs(touchInfo.elemY - this.touchStartElemY) > 10) {
+                        that.touchPositionMoved = true;
+                        if (that.handleTouchMove)
+                            that.handleTouchMove(touchInfo, ev);
+                    }
+
                 }
             }
 
@@ -924,6 +937,10 @@ DQX.polyStar = function(ctx, x, y, radius, sides, pointSize, angle) {
                         ev.preventDefault();
                     if (that.handleTouchEnd)
                         that.handleTouchEnd(ev);
+                    if (!that.touchPositionMoved) {
+                        if (that.handleTouchClick)
+                            that.handleTouchClick(that.touchInfoStart, ev);
+                    }
                 }
             }
 
