@@ -144,6 +144,8 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FrameCanvas"],
 
 
             that.draw = function(drawInfo) {
+                that.drawSizeX = drawInfo.sizeX;
+                that.drawSizeY = drawInfo.sizeY;
                 that.drawCenter(drawInfo);
                 that.drawScale(drawInfo);
             }

@@ -273,6 +273,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
                     that._sizeX = that.unMaximisedSizeX;
                     that._sizeY = that.unMaximisedSizeY;
                     that.animateTransition($('body'), $("#" + that.ID) );
+                    that._handleResize(false);
                 }
             }
 
