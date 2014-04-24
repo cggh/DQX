@@ -216,7 +216,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
             }
 
             that.isSelecting = function() {
-                return that.dragging || that.lassoSelecting || that.halfPlaneSelecting;
+                return that.dragging || that.lassoSelecting || that.halfPlaneSelecting || that.rectangleSelecting;
             }
 
             that._onMouseMove = function(ev) {
@@ -401,6 +401,69 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
 
 
             };
+
+
+
+            that.startRectangleSelection = function(callbackOnComplete) {
+                if (that.rectangleSelecting)
+                    return;
+                that.rectangleSelecting = true;
+                that.rectangleSelectingCallbackOnComplete = callbackOnComplete;
+
+                var drawSelArea = function(tempPt) {
+                    var selCanvas = that.getMyCanvasElement('selection');
+                    var ctx = selCanvas.getContext("2d");
+                    ctx.setTransform(1, 0, 0, 1, 0, 0);
+                    ctx.clearRect(0, 0, selCanvas.width, selCanvas.height);
+                    ctx.fillStyle='rgba(255,0,0,0.1)';
+                    ctx.strokeStyle='rgba(255,0,0,0.5)';
+                    if (firstPoint && tempPt) {
+                        secondPoint = tempPt;
+                        ctx.beginPath();
+                        ctx.moveTo(firstPoint.x, firstPoint.y);
+                        ctx.lineTo(firstPoint.x, secondPoint.y);
+                        ctx.lineTo(secondPoint.x, secondPoint.y);
+                        ctx.lineTo(secondPoint.x, firstPoint.y);
+                        ctx.closePath();
+                        ctx.fill();
+                        ctx.stroke();
+                    }
+                }
+
+                var firstPoint = null;
+                var secondPoint = null;
+
+                var eventListener_click = function(ev) {
+                    var px = that.getEventPosX(ev);
+                    var py = that.getEventPosY(ev);
+                    if (!firstPoint) {
+                        firstPoint = {x:px, y:py};
+                        drawSelArea(null);
+                    }
+                    else {
+                        $('#' + that.clickLayerId).unbind("click.FrameCanvasRectangleSelection");
+                        $(document).unbind("mousemove.FrameCanvasRectangleSelection");
+                        drawSelArea(null);
+                        $('#' + that.clickLayerId).css('cursor', 'auto');
+                        that.rectangleSelecting = false;
+                        if (that.rectangleSelectingCallbackOnComplete && secondPoint)
+                            that.rectangleSelectingCallbackOnComplete(firstPoint, secondPoint);
+                    }
+                };
+
+                var eventListener_mousemove = function(ev) {
+                    var px = that.getEventPosX(ev);
+                    var py = that.getEventPosY(ev);
+                    drawSelArea({x:px, y:py});
+                };
+
+                $('#' + that.clickLayerId).bind("click.FrameCanvasRectangleSelection", eventListener_click);
+                $(document).bind("mousemove.FrameCanvasRectangleSelection", eventListener_mousemove);
+                $('#' + that.clickLayerId).css('cursor', 'crosshair');
+
+
+            };
+
 
             that.hideToolTip = function () {
                 that._toolTipInfo.ID = null;
