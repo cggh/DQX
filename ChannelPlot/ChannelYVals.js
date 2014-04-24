@@ -110,6 +110,7 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/Chann
                 var points = this.myfetcher.getColumnPoints(args.PosMin, args.PosMax, this.valueID);
                 var xvals = points.xVals;
                 var yvals = points.YVals;
+                var blockSize = points.blockSize;
                 var psz = 3;
                 if (xvals.length > 10000) psz = 2;
                 var plothints = this.myPlotHints;
@@ -201,6 +202,15 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/Chann
                 if (pointstyle == 1) {
                     drawInfo.centerContext.stroke();
                 }
+
+                if (blockSize) {
+                    drawInfo.leftContext.textBaseline = 'top';
+                    drawInfo.leftContext.textAlign = 'left';
+                    drawInfo.leftContext.font = '10px sans-serif';
+                    drawInfo.leftContext.fillStyle = "rgba(0,0,0,0.5)";
+                    drawInfo.leftContext.fillText(blockSize.toString()+'bp', 1, 1);
+                }
+
             }
 
             that.getClosestPoint = function (px, py) {
