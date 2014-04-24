@@ -278,6 +278,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
             }
 
             that.animateTransition = function(elementFrom, elementTo, onCompleted) {
+                var transId = '_transientAnim_' + DQX.getNextUniqueID();
                 var px0 = elementFrom.position().left;
                 var py0 = elementFrom.position().top;
                 var lx0 = elementFrom.width();
@@ -289,7 +290,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
                 var lx1 = elementTo.width();
                 var ly1 = elementTo.height();
 
-                var thebox = DocEl.Div({ id: '_transientAnim_' });
+                var thebox = DocEl.Div({ id: transId });
                 thebox.addStyle("position", "absolute");
                 thebox.addStyle("left", px0 + 'px');
                 thebox.addStyle("top", py0 + 'px');
@@ -301,8 +302,8 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
 
                 $('#DQXUtilContainer').append(thebox.toString());
 
-                $('#_transientAnim_').animate({left:px1+'px', top:py1+'px', width:lx1+'px', height:ly1+'px'}, 250, function() {
-                    $('#_transientAnim_').remove();
+                $('#'+transId).animate({left:px1+'px', top:py1+'px', width:lx1+'px', height:ly1+'px'}, 250, function() {
+                    $('#'+transId).remove();
                     if (onCompleted)
                         onCompleted();
                 });
