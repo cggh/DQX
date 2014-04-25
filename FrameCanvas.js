@@ -299,7 +299,8 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
                 var lassoEventListener_click = function(ev) {
                     var px = that.getEventPosX(ev);
                     var py = that.getEventPosY(ev);
-                    selPts.push({x:px, y:py});
+                    if ( (selPts.length==0) || (px!=selPts[selPts.length-1].x) || (py!=selPts[selPts.length-1].y) )
+                        selPts.push({x:px, y:py});
                     drawSelArea();
                     //debugger;
                     //alert('point click');

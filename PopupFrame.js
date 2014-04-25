@@ -16,6 +16,8 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
         PopupFrame._settingsHistory = {}; //settings history for each type of PopupFrame, identified by its ID
         PopupFrame.hasThumbNails = false;
 
+        PopupFrame.activeList = [];
+
         PopupFrame.setHasThumbNails = function() {
             PopupFrame.hasThumbNails = true;
         }
@@ -208,14 +210,6 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
                         closeboxid: that.thumbNailId+'_closebox'
                     });
                     $('.DQXThumbNailBox').append(iconStr);
-//                    $('#'+that.thumbNailId).dblclick(function() {
-//                        if (that.minimised)
-//                            that.restore()
-//                        else {
-//                            Popup._floatBoxMaxIndex++;
-//                            $('#' + that.ID).css('z-index', Popup._floatBoxMaxIndex);
-//                        }
-//                    });
                     $('#' + that.thumbNailId+'_closebox').mousedown(function(ev) {
                         that.close();
                         if (ev.stopPropagation)
@@ -230,7 +224,12 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
                             that.restore();
                         }
                         else {
-                            that.minimise();
+                            if (PopupFrame.getTopLevelPopup() == that)
+                                that.minimise();
+                            else {
+                                Popup._floatBoxMaxIndex++;
+                                $('#' + that.ID).css('z-index', Popup._floatBoxMaxIndex);
+                            }
                         }
                         if (ev.stopPropagation)
                             ev.stopPropagation();
@@ -351,6 +350,14 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
                 });
                 if (PopupFrame.hasThumbNails)
                     $('#'+that.thumbNailId).remove();
+
+                var popupNr=-1;
+                $.each(PopupFrame.activeList, function(idx, popup) {
+                    if (popup.ID == that.ID)
+                        popupNr = idx;
+                });
+                if (popupNr>=0)
+                    PopupFrame.activeList.splice(popupNr,1);
             }
 
             that._onResizeMouseDown = function (ev) {
@@ -407,8 +414,24 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
                 that.frameRoot._executePostInitialisers();
             }
 
+            PopupFrame.activeList.push(that);
 
             return that;
+        }
+
+        PopupFrame.getTopLevelPopup = function() {
+            var maxzval = 0;
+            var topPopup = null;
+            $.each(PopupFrame.activeList , function(idx, popupObj) {
+                if (!popupObj.minimised) {
+                    var zval = parseInt($('#' + popupObj.ID).css('z-index'));
+                    if (zval>maxzval) {
+                        maxzval = zval;
+                        topPopup = popupObj;
+                    }
+                }
+            });
+            return topPopup;
         }
 
         return PopupFrame;
