@@ -1075,6 +1075,7 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                 });
                 that.lassoPoints = [];
                 that.selectionPolygonPoints = [];//lasso points, in flat coordinates
+                that.selectionPolygonLattLongPoints = [];//lasso points, in geo coordinates
 
                 that.lassoEventListener_click = google.maps.event.addListener(that.myMap, 'click', function(event) {
                     that.lassoPolygon1.getPath().push(event.latLng);
@@ -1090,6 +1091,10 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                     that.lassoPoints.push(markerObject);
 
                     var point = that.myMap.getProjection().fromLatLngToPoint(event.latLng);
+                    that.selectionPolygonLattLongPoints.push({
+                        longit: event.latLng.lng(),
+                        lattit: event.latLng.lat()
+                    });
                     that.selectionPolygonPoints.push({
                         x: point.x,
                         y: point.y
