@@ -421,13 +421,22 @@
 
             that.toDisplayString = function(fieldInfoMap, level) {
                 var str= fieldInfoMap[that.ColName].name+' '+that.Tpe[0]+' ';
-                if (that.Factor!=1)
-                    str += that.Factor+'x';
+                if (Math.abs(that.Factor-1)>1.0e-9) {
+                    if (that.Factor==0)
+                        var factorStr = '0';
+                    else {
+                        var factorVal = parseFloat(that.Factor);
+                        var decimCount = Math.max(0, Math.round(4-Math.log(Math.abs(factorVal)) / Math.LN10));
+                        var factorStr = factorVal.toFixed(decimCount);
+                    }
+                    str += factorStr+'x';
+                }
                 str += fieldInfoMap[that.ColName2].name;
+                var offsetStr = fieldInfoMap[that.ColName].toDisplayString(Math.abs(that.Offset));
                 if (that.Offset>0)
-                    str += '+'+that.Offset;
+                    str += '+'+offsetStr;
                 if (that.Offset<0)
-                    str += '-'+Math.abs(that.Offset);
+                    str += '-'+offsetStr;
                 return str;
             }
 
