@@ -1245,6 +1245,12 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
             }
 
 
+            that.setCenter = function(centerCoord, zoomFactor) {
+                if (zoomFactor)
+                    that.myMap.setZoom(zoomFactor);
+                that.myMap.setCenter(new google.maps.LatLng(centerCoord.lattit, centerCoord.longit));
+            }
+
 
             that.handleResize = function () {
                 google.maps.event.trigger(this.myMap, 'resize');
