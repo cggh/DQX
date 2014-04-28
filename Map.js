@@ -1226,8 +1226,8 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
 
 
 
-            google.maps.event.addListener(that.myMap, 'zoom_changed', $.proxy(that._handleOnZoomChanged, that));
-            google.maps.event.addListener(that.myMap, 'center_changed', $.proxy(that._handleOnCenterChanged, that));
+            that.eventListener_Zoom = google.maps.event.addListener(that.myMap, 'zoom_changed', $.proxy(that._handleOnZoomChanged, that));
+            that.eventListener_Moved = google.maps.event.addListener(that.myMap, 'center_changed', $.proxy(that._handleOnCenterChanged, that));
 
 
             that.storeSettings = function() {
@@ -1254,6 +1254,12 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
 
             that.handleResize = function () {
                 google.maps.event.trigger(this.myMap, 'resize');
+            }
+
+            that.tearDown = function() {
+                google.maps.event.removeListener(that.eventListener_Zoom);
+                google.maps.event.removeListener(that.eventListener_Moved);
+                that.myMap = null;
             }
 
 
