@@ -22,6 +22,13 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
             PopupFrame.hasThumbNails = true;
         }
 
+        PopupFrame.setFrameSettingsHistory = function(typeID, frameSettings) {
+            if (!PopupFrame._settingsHistory[typeID])
+                PopupFrame._settingsHistory[typeID] = {};
+            PopupFrame._settingsHistory[typeID].frameSettings = frameSettings;
+        };
+
+
         PopupFrame.PopupFrame = function (itypeID, settings) {
             DQX.checkIsString(itypeID);
             DQX.requireMember(settings, 'title');
