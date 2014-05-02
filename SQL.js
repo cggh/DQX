@@ -96,12 +96,18 @@
                 Create: function () { return SQL.WhereClause.CompareFixed('', 'LIKE', '') }
             },
             { ID: 'ISPRESENT', name: 'Is present', MultiChoiceInt: true,
-                String: true, Float: true, Integer: true,
+                Float: true, Integer: true,
                 Create: function () { return SQL.WhereClause.IsPresent() }
             },
             { ID: 'ISABSENT', name: 'Is absent', MultiChoiceInt: true,
-                String: true, Float: true, Integer: true,
+                Float: true, Integer: true,
                 Create: function () { return SQL.WhereClause.IsAbsent() }
+            },
+            { ID: 'ISNOTEMPTYSTR', name: 'Is present', String: true,
+                Create: function () { return SQL.WhereClause.IsNotEmptyStr() }
+            },
+            { ID: 'ISEMPTYSTR', name: 'Is absent', String: true,
+                Create: function () { return SQL.WhereClause.IsEmptyStr() }
             },
             { ID: '=FIELD', name: 'Equals field', MultiChoiceInt: true, //test the equality with another database field
                 String: true, Float: true, Integer: true,
@@ -479,6 +485,50 @@
             that.whcClass = 'isabsent';
             that.isCompound = false;
             that.Tpe = "ISABSENT";
+            that._buildStatement = function (ID, elem, querybuilder) {
+            }
+            that._fetchStatementContent = function (ID, querybuilder) {
+            }
+            that.toDisplayString = function(fieldInfoMap, level) {
+                return fieldInfoMap[that.ColName].name+' is absent';
+            }
+            return that;
+        }
+
+
+        //A class that checks for presence of a string value
+        SQL.WhereClause.whcClassGenerator['isstringnonempty'] = function(args) {
+            var whc = SQL.WhereClause.IsNotEmptyStr();
+            whc.ColName = args.ColName;
+            return whc;
+        }
+        SQL.WhereClause.IsNotEmptyStr = function () {
+            var that = {};
+            that.whcClass = 'isstringnonempty';
+            that.isCompound = false;
+            that.Tpe = "ISNOTEMPTYSTR";
+            that._buildStatement = function (ID, elem, querybuilder) {
+            }
+            that._fetchStatementContent = function (ID, querybuilder) {
+            }
+            that.toDisplayString = function(fieldInfoMap, level) {
+                return fieldInfoMap[that.ColName].name+' is present';
+            }
+            return that;
+        }
+
+
+        //A class that checks for absence of the value
+        SQL.WhereClause.whcClassGenerator['isstringempty'] = function(args) {
+            var whc = SQL.WhereClause.IsEmptyStr();
+            whc.ColName = args.ColName;
+            return whc;
+        }
+        SQL.WhereClause.IsEmptyStr = function () {
+            var that = {};
+            that.whcClass = 'isstringempty';
+            that.isCompound = false;
+            that.Tpe = "ISEMPTYSTR";
             that._buildStatement = function (ID, elem, querybuilder) {
             }
             that._fetchStatementContent = function (ID, querybuilder) {
