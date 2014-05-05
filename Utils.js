@@ -1204,6 +1204,17 @@ DQX.polyStar = function(ctx, x, y, radius, sides, pointSize, angle) {
             return delta;
         }
 
+        DQX.getMouseWheelDeltaX = function (ev) { //Returns the *horizontal* delta in a mouse wheel event
+            var ev1 = ev;
+            if (ev.originalEvent)
+                ev1 = ev.originalEvent;
+            if ((ev1.wheelDeltaX !== undefined) && (ev1.wheelDelta) ) { // check that we are scrolling horizontally
+                if (Math.abs(ev1.wheelDeltaX) >= Math.abs(ev1.wheelDelta))
+                    return ev1.wheelDeltaX / 120;
+            }
+            return 0;
+        }
+
         DQX.addMouseEventReceiver = function (obj) {
             this._mouseEventReceiverList.push(obj);
         }
