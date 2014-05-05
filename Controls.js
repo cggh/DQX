@@ -1822,7 +1822,9 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
             }
 
             that.getValue = function () {
-                this._selectedState = this.getJQElement('').find(":checked").attr('value');
+                var item = this.getJQElement('').find(":checked");
+                if (item.length>0)
+                    this._selectedState = item.attr('value');
                 return this._selectedState;
             }
 
