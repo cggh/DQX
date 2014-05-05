@@ -389,7 +389,7 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Scroller", "DQX
                 }
                 var deltaX = DQX.getMouseWheelDeltaX(ev);
                 if (deltaX!=0) {
-                    this._myNavigator.setValue(Math.min(1.0 - this._myNavigator.ScrollSize, this._myNavigator.scrollPos - this._myNavigator.ScrollSize * deltaX * 0.07));
+                    this._myNavigator.setValue(Math.max(0, Math.min(1.0 - this._myNavigator.ScrollSize, this._myNavigator.scrollPos - this._myNavigator.ScrollSize * deltaX * 0.07)));
                     this.zoomScrollTo(this._myNavigator.scrollPos, this._myNavigator.ScrollSize);
                     this.render();
                 }
