@@ -1189,11 +1189,15 @@ DQX.polyStar = function(ctx, x, y, radius, sides, pointSize, angle) {
             });
         }
 
-        DQX.getMouseWheelDelta = function (ev) {
+        DQX.getMouseWheelDelta = function (ev) { //Returns the *vertical* delta in a mouse wheel event
             var delta = 0;
             var ev1 = ev;
             if (ev.originalEvent)
                 ev1 = ev.originalEvent;
+            if ((ev1.wheelDeltaX !== undefined) && (ev1.wheelDelta) ) { // check that we are not scrolling horizontally
+                if (Math.abs(ev1.wheelDeltaX) >= Math.abs(ev1.wheelDelta))
+                    return 0;
+            }
             if (ev1.wheelDelta) { delta = ev1.wheelDelta / 120; }
             else
                 if (ev1.detail) { delta = -ev1.detail / 3; }

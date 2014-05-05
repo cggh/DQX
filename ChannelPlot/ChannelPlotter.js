@@ -378,14 +378,15 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Scroller", "DQX
                 if (this._channels[0].length == 0) return;
                 var PosX = this._channels[0].getEventPosX(ev); //a dirty solution to find the offset inside a center panel of a channel
                 var delta = DQX.getMouseWheelDelta(ev);
-
-                if (delta < 0)//zoom out
-                    var scaleFactor = 1.0 / (1.0 + 0.4 * Math.abs(delta));
-                else//zoom in
-                    var scaleFactor = 1.0 + 0.4 * Math.abs(delta);
-                this.reScale(scaleFactor, PosX);
-                ev.returnValue = false;
-                return false;
+                if (delta!=0) {
+                    if (delta < 0)//zoom out
+                        var scaleFactor = 1.0 / (1.0 + 0.4 * Math.abs(delta));
+                    else//zoom in
+                        var scaleFactor = 1.0 + 0.4 * Math.abs(delta);
+                    this.reScale(scaleFactor, PosX);
+                    ev.returnValue = false;
+                    return false;
+                }
             }
 
             that.reScale = function (scaleFactor, centerPosX) {

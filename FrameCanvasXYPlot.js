@@ -240,15 +240,17 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FrameCanvas"],
 
             that._handleMouseWheel = function (ev) {
                 var delta = DQX.getMouseWheelDelta(ev);
-                if (delta < 0)//zoom out
-                    var scaleFactor = 1.0 / (1.0 + 0.4 * Math.abs(delta));
-                else//zoom in
-                    var scaleFactor = 1.0 + 0.4 * Math.abs(delta);
-                var px = that.getEventPosX(ev);
-                var py = that.getEventPosY(ev);
-                that._handleZoom(scaleFactor, px, py);
-                ev.returnValue = false;
-                return false;
+                if (delta!=0) {
+                    if (delta < 0)//zoom out
+                        var scaleFactor = 1.0 / (1.0 + 0.4 * Math.abs(delta));
+                    else//zoom in
+                        var scaleFactor = 1.0 + 0.4 * Math.abs(delta);
+                    var px = that.getEventPosX(ev);
+                    var py = that.getEventPosY(ev);
+                    that._handleZoom(scaleFactor, px, py);
+                    ev.returnValue = false;
+                    return false;
+                }
             }
 
             that._handleZoom = function(scaleFactor, px, py) {

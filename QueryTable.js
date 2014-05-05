@@ -696,7 +696,7 @@
                                     var linkID = thecol.myCompID + '~' + rownr + '~link~' + this.myBaseID;
                                     rs_table[tbnr] += '<span class="DQXQueryTableLinkCell" id="{id}">'.DQXformat({ id: linkID });
                                     if (!thecol.isSelection)
-                                        rs_table[tbnr] += '<IMG SRC="' + DQX.BMP('link3.png') + '" border=0  id={id} title="{hint}" ALT="Link"> '.
+                                        rs_table[tbnr] += '<IMG SRC="' + DQX.BMP('link3.png') + '" border=0  width=12 id={id} title="{hint}" ALT="Link"> '.
                                             DQXformat({ hint: thecol._hyperlinkCellHint, id: linkID });
                                 }
                                 rs_table[tbnr] += cell_content;
@@ -915,11 +915,14 @@
 
             that.OnMouseWheel = function (ev) {
                 var delta = DQX.getMouseWheelDelta(ev);
-                if (delta < 0)
+                if (delta < 0) {
                     this._onLineDown(3);
-                if (delta > 0)
+                    return false;
+                }
+                if (delta > 0) {
                     this._onLineUp(3);
-                return false;
+                    return false;
+                }
             }
             /*
             that.handleTouchStart = function (info, ev) {
