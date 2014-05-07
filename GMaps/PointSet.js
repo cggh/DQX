@@ -275,8 +275,8 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                             ctx.fillStyle = colorStrings[point.catNr];
 
 
-                        pt.x += point.offsetX * drawPieChartSize/3;
-                        pt.y += point.offsetY * drawPieChartSize/3;
+                        pt.x += point.offsetX * drawPieChartSize;
+                        pt.y += point.offsetY * drawPieChartSize;
 
                         if (that.pointShape == 0) {
                             ctx.fillRect(pt.x-ptso, pt.y-ptso, pts, pts);
