@@ -108,6 +108,20 @@ define(["jquery", "DQX/Utils"],
                     var vals = this.b64codec.arrayB642Float(datastr, bytecount, slope, offset);
                     return vals;
                 }
+
+                if (data['Encoding'] == 'FloatAsH') {
+                    if (data['Data'].length == 0) return [];
+                    var vals = [];
+                    var datastrlist = data['Data'].split(',');
+                    for (var i = 0; i < datastrlist.length; i++) {
+                        if (datastrlist[i]!='~')
+                            vals.push(parseFloat(datastrlist[i]));
+                        else
+                            vals.push(null);
+                    }
+                    return vals;
+                }
+
                 if (data['Encoding'] == 'Integer') {
                     if (data['Data'].length == 0) return [];
                     var vals = [];
@@ -117,6 +131,7 @@ define(["jquery", "DQX/Utils"],
                     }
                     return vals;
                 }
+
                 if (data['Encoding'] == 'String') {
                     if (data['Data'].length == 0) return [];
                     var vals = data['Data'].split('~');
