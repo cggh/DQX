@@ -521,10 +521,16 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                     clickElem.click(function() {
                         that._visible = !that._visible;
                         var subdiv = $('#' + that.myIDBody);
-                        if (!that._visible)
+                        if (!that._visible) {
                             subdiv.slideUp(250);
-                        else
+                            if (that.onCollapsing)
+                                that.onCollapsing();
+                        }
+                        else {
                             subdiv.slideDown(250);
+                            if (that.onExpanding)
+                                that.onExpanding();
+                        }
                         setTimeout(function() {
                             $('#' + that.myIDButton).html(that._createButtonHtml(!that._visible));
                         }, 300)

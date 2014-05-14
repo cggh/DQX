@@ -67,6 +67,13 @@ ul li
 .DQXControlSectionHeader {
     font-weight: bold;
     background-color: rgb(210,210,210);
+    padding:0px;
+}
+
+.DQXControlSectionSubHeader {
+    font-weight: bold;
+    /*background-color: rgb(210,210,210);*/
+    border-bottom: 1px solid rgb(192,192,192);
     padding:5px;
 }
 
