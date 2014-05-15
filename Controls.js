@@ -571,6 +571,12 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 that._controlRows = [];
             }
 
+            that.setSeparation = function(seph, sepv) {
+                that.sepH = seph;
+                that.sepV = sepv;
+                return that;
+            }
+
             //Sets a header legend for the group
             that.setLegend = function (txt) { this._legend = txt; return this; }
 
