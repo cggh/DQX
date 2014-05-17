@@ -562,10 +562,13 @@ define(["_", "jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
                 }
                 drawInfo.leftContext.font = '11px sans-serif';
                 drawInfo.leftContext.fillStyle = "black";
-                drawInfo.leftContext.fillText(this._title, 0, 5);
+                var yoffset = 5;
+                if (drawInfo.sizeY>30)
+                    yoffset = -4;
+                drawInfo.leftContext.fillText(this._title, 0, yoffset);
                 drawInfo.leftContext.font = '10px sans-serif';
                 drawInfo.leftContext.fillStyle = "rgb(100,100,100)";
-                drawInfo.leftContext.fillText(this._subTitle, 0, 25);
+                drawInfo.leftContext.fillText(this._subTitle, 0, yoffset + 12);
                 drawInfo.leftContext.restore();
             }
 
