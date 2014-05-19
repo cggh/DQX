@@ -135,6 +135,10 @@ define(["_", "jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
                 return $("#" + this.getCanvasID(ext))[0];
             }
 
+            that.getCanvasElementJQ = function (ext) {
+                return $("#" + this.getCanvasID(ext));
+            }
+
             that.posXCenterCanvas2Screen = function (px) {
                 return px + $(this.getCanvasElement('center')).offset().left;
             }
@@ -654,7 +658,13 @@ define(["_", "jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
             that.render = function (drawInfo) {
                 if (!this._isVisible)
                     return;
+                //If we are completly offscreen then don't do any draw.
+                var centerElement = this.getCanvasElementJQ('center');
+                if (!this.getCanvasElementJQ('center').is(':visible'))
+                    return;
+
                 // X position conversion: X_screen = X_logical * drawInfo._zoomFactX - drawInfo._offsetX
+                var topVisible = centerElement.parent().parent().position().top - centerElement.parent().position().top;
                 var locDrawInfo = {
                     offsetX: drawInfo.offsetX,
                     zoomFactX: drawInfo.zoomFactX,
@@ -667,7 +677,9 @@ define(["_", "jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
                     sizeRightX: drawInfo.sizeRightX,
                     mark: drawInfo.mark,
                     sizeY: this._height,
-                    needZoomIn: false
+                    needZoomIn: false,
+                    top_visible: topVisible,
+                    bottom_visible: topVisible + this.getCanvasElementJQ('center').parent().parent().height()
                 };
 
                 if ( drawInfo.sizeCenterX/drawInfo.zoomFactX > that._maxViewportSizeX ) {
