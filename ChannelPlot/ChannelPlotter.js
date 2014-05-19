@@ -466,10 +466,9 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Scroller", "DQX
 
             that.getZoomFactorX = function () {
                 return this._zoomFactX;
-            }
+            };
 
-            that.handleResize = function () {
-
+            that.resizeHeight = function () {
                 var H = this.getElemJQ('').innerHeight();
                 var bodyH = H - this._headerHeight - this._footerHeight - this._navigatorHeight;
 
@@ -504,6 +503,27 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Scroller", "DQX
 
                 if ((autoHeightChannelCount > 0) && (hasScrollChannels))
                     DQX.reportError("Scrolling channels and auto height channels are not compatible");
+                this.getElemJQ('Header').height(this._headerHeight);
+                this.getElemJQ('Body').height(bodyH);
+                this.getElemJQ('Footer').height(this._footerHeight);
+                this.getElemJQ('BodyFixed').height(nonScrollChannelHeight);
+                this.getElemJQ('BodyScroll').height(bodyH - nonScrollChannelHeight);
+                if (hasScrollChannels)
+                    this.getElemJQ('BodyScroll').show();
+                else
+                    this.getElemJQ('BodyScroll').hide();
+                for (var i = 0; i < this._channels.length; i++)
+                    if (this._channels[i].getAutoFillHeight())
+                        this._channels[i].resizeY(autoChannelH);
+            };
+
+            that.resizeWidth = function () {
+                var hasScrollChannels = false;
+                for (var i = 0; i < this._channels.length; i++) {
+                    if (!this._channels[i]._isOnTopPart) {
+                        hasScrollChannels = true;
+                    }
+                }
 
                 var scrollbaroffset = 0;
                 if (hasScrollChannels)
@@ -515,29 +535,20 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Scroller", "DQX
                 if (this._sizeX < 1) this._sizeX = 1;
                 this._sizeCenterX = W - this._leftWidth - this.getRightWidth() - this.getRightOffset();
                 if (this._sizeCenterX < 1) this._sizeCenterX = 1;
-                this.getElemJQ('Header').height(this._headerHeight);
-                this.getElemJQ('Body').height(bodyH);
-                this.getElemJQ('Footer').height(this._footerHeight);
                 that._myNavigator.resize(W + scrollbaroffset);
 
-                this.getElemJQ('BodyFixed').height(nonScrollChannelHeight);
-                this.getElemJQ('BodyScroll').height(bodyH - nonScrollChannelHeight);
-                if (hasScrollChannels)
-                    this.getElemJQ('BodyScroll').show();
-                else
-                    this.getElemJQ('BodyScroll').hide();
 
                 for (var i = 0; i < this._channels.length; i++)
                     this._channels[i].handleResizeX(W);
 
-                for (var i = 0; i < this._channels.length; i++)
-                    if (this._channels[i].getAutoFillHeight())
-                        this._channels[i].resizeY(autoChannelH);
-
                 this._preventSendPositionChangeNotification = true;
                 this.zoomScrollTo(this._myNavigator.scrollPos, this._myNavigator.ScrollSize);
                 this._preventSendPositionChangeNotification = false;
+            };
 
+            that.handleResize = function () {
+                that.resizeHeight();
+                that.resizeWidth();
                 this.render();
             };
 
