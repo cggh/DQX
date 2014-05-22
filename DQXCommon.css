@@ -502,9 +502,10 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eff6fc', end
 }
 
 
+
 .DQXThumbNailBox
 {
-    display: inline-block;
+    /*display: inline-block;*/
 }
 
 

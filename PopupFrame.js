@@ -210,7 +210,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
 
                 if (PopupFrame.hasThumbNails && (!that.blocking)) {
                         that.thumbNailId = that.ID+'_minimisedThumbNail';
-                    var iconStr = '<div class="DQXThumbNail" style="position:relative" id="{id}">{title}<img id="{closeboxid}" SRC="{closebmp}" style="position:absolute;right:1px;top:1px;"/></div>'.DQXformat({
+                    var iconStr = '<div class="DQXThumbNail" style="position:relative" id="{id}">{title}<img id="{closeboxid}" SRC="{closebmp}" style="position:absolute;right:0px;top:0px;"/></div>'.DQXformat({
                         id: that.thumbNailId,
                         title: that._title,
                         closebmp: DQX.BMP("closeSmall.png"),
