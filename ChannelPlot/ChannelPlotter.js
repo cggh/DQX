@@ -364,12 +364,12 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Scroller", "DQX
                     this._offsetX = this._dragstartoffsetX - (mouseposx - this._dragstartx);
                     this.clipViewRange();
                     //this.delToolTip();
-                    this.updateNavigator();
-                    this.render();
-                    this._lastmouseposx = mouseposx;
                     if (args.pageY != this._dragstarty)
                         that.suppressScrollEvent = true;
                     this.getElemJQ("BodyScroll").scrollTop(this._dragstartoffsetY - (args.pageY - this._dragstarty))
+                    this.updateNavigator();
+                    this.render();
+                    this._lastmouseposx = mouseposx;
                 }
                 if (this._mousemarking) {
                     this._markPos2 = this.screenPos2XVal(mousePressX1);
