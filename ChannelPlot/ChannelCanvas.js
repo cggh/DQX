@@ -665,6 +665,9 @@ define(["_", "jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
 
                 // X position conversion: X_screen = X_logical * drawInfo._zoomFactX - drawInfo._offsetX
                 var topVisible = centerElement.parent().parent().position().top - centerElement.parent().position().top;
+                var bottomVisible = topVisible + this.getCanvasElementJQ('center').parent().parent().height();
+                if ((bottomVisible < 0) || (topVisible>this._height))
+                    return;
                 var locDrawInfo = {
                     offsetX: drawInfo.offsetX,
                     zoomFactX: drawInfo.zoomFactX,
@@ -679,7 +682,7 @@ define(["_", "jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
                     sizeY: this._height,
                     needZoomIn: false,
                     top_visible: topVisible,
-                    bottom_visible: topVisible + this.getCanvasElementJQ('center').parent().parent().height()
+                    bottom_visible: bottomVisible
                 };
 
                 if ( drawInfo.sizeCenterX/drawInfo.zoomFactX > that._maxViewportSizeX ) {
