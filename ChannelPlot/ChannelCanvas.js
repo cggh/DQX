@@ -664,10 +664,7 @@ define(["_", "jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
             that.render = function (drawInfo) {
                 if (!this._isVisible)
                     return;
-                //If we are completly offscreen then don't do any draw.
                 var centerElement = this.getCanvasElementJQ('center');
-                if (!this.getCanvasElementJQ('center').is(':visible'))
-                    return;
 
                 // X position conversion: X_screen = X_logical * drawInfo._zoomFactX - drawInfo._offsetX
                 var parent = centerElement.parent();
