@@ -135,6 +135,15 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Scroller", "DQX
                 that._onRangeSelected = handler;
             }
 
+            that.handleScrollBar = function() {
+                if (!that.suppressScrollEvent) {
+                    that.hideToolTip();
+                    that.render();
+                }
+                that.suppressScrollEvent = false;
+            };
+
+
             //////////////////////////////////////////////////////////////////////////////////////////
             // Create basic html emelents
             //////////////////////////////////////////////////////////////////////////////////////////
@@ -181,10 +190,10 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Scroller", "DQX
                 html += footer;
             }
             that.getElemJQ('').html(html);
+            that.getElemJQ('BodyScroll').scroll(that.handleScrollBar);
 
             that._myNavigator = Scroller.HScrollBar(that.getSubID("HScroller"));
             that._myNavigator.myConsumer = that;
-
 
 
             ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -358,6 +367,8 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Scroller", "DQX
                     this.updateNavigator();
                     this.render();
                     this._lastmouseposx = mouseposx;
+                    if (args.pageY != this._dragstarty)
+                        that.suppressScrollEvent = true;
                     this.getElemJQ("BodyScroll").scrollTop(this._dragstartoffsetY - (args.pageY - this._dragstarty))
                 }
                 if (this._mousemarking) {
