@@ -479,7 +479,7 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Scroller", "DQX
                 return this._zoomFactX;
             };
 
-            that.resizeHeight = function () {
+            that.resizeHeight = function (rerender) {
                 var H = this.getElemJQ('').innerHeight();
                 var bodyH = H - this._headerHeight - this._footerHeight - this._navigatorHeight;
 
@@ -526,6 +526,7 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Scroller", "DQX
                 for (var i = 0; i < this._channels.length; i++)
                     if (this._channels[i].getAutoFillHeight())
                         this._channels[i].resizeY(autoChannelH);
+                if (rerender) this.render();
             };
 
             that.resizeWidth = function () {
