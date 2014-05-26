@@ -430,24 +430,24 @@ define(["_", "jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
             that.drawStandardGradientCenter = function (drawInfo, fc) {
                 var backgrad = drawInfo.centerContext.createLinearGradient(0, 0, 0, drawInfo.sizeY);
                 backgrad.addColorStop(0, DQX.Color(fc, fc, fc));
-                backgrad.addColorStop(1, DQX.Color(0.9 * fc, 0.9 * fc, 0.9 * fc));
+                backgrad.addColorStop(1, DQX.Color(0.95 * fc, 0.95 * fc, 0.95 * fc));
                 drawInfo.centerContext.fillStyle = backgrad;
                 drawInfo.centerContext.fillRect(0, 0, drawInfo.sizeCenterX, drawInfo.sizeY);
-                drawInfo.centerContext.fillStyle = DQX.Color(0.5 * fc, 0.5 * fc, 0.5 * fc).toString();
-                drawInfo.centerContext.fillRect(0, drawInfo.sizeY - 1, drawInfo.sizeCenterX, 1);
                 drawInfo.centerContext.fillStyle = DQX.Color(0.7 * fc, 0.7 * fc, 0.7 * fc).toString();
+                drawInfo.centerContext.fillRect(0, drawInfo.sizeY - 1, drawInfo.sizeCenterX, 1);
+                drawInfo.centerContext.fillStyle = DQX.Color(0.8 * fc, 0.8 * fc, 0.8 * fc).toString();
                 drawInfo.centerContext.fillRect(0, drawInfo.sizeY - 2, drawInfo.sizeCenterX, 1);
             }
 
             that.drawStandardGradientLeft = function (drawInfo, fc) {
                 var backgrad = drawInfo.leftContext.createLinearGradient(0, 0, 0, drawInfo.sizeY);
                 backgrad.addColorStop(0, DQX.Color(0.95 * fc, 0.95 * fc, 0.95 * fc));
-                backgrad.addColorStop(1, DQX.Color(0.85 * fc, 0.85 * fc, 0.85 * fc));
+                backgrad.addColorStop(1, DQX.Color(0.9 * fc, 0.9 * fc, 0.9 * fc));
                 drawInfo.leftContext.fillStyle = backgrad;
                 drawInfo.leftContext.fillRect(0, 0, drawInfo.sizeLeftX, drawInfo.sizeY);
-                drawInfo.leftContext.fillStyle = DQX.Color(0.4 * fc, 0.4 * fc, 0.4 * fc).toString();
-                drawInfo.leftContext.fillRect(0, drawInfo.sizeY - 1, drawInfo.sizeLeftX, 1);
                 drawInfo.leftContext.fillStyle = DQX.Color(0.6 * fc, 0.6 * fc, 0.6 * fc).toString();
+                drawInfo.leftContext.fillRect(0, drawInfo.sizeY - 1, drawInfo.sizeLeftX, 1);
+                drawInfo.leftContext.fillStyle = DQX.Color(0.7 * fc, 0.7 * fc, 0.7 * fc).toString();
                 drawInfo.leftContext.fillRect(0, drawInfo.sizeY - 2, drawInfo.sizeLeftX, 1);
             }
 
@@ -455,10 +455,10 @@ define(["_", "jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
                 if (drawInfo.sizeRightX > 2) {
                     var backgrad = drawInfo.rightContext.createLinearGradient(0, 0, 0, drawInfo.sizeY);
                     backgrad.addColorStop(0, DQX.Color(0.9 * fc, 0.9 * fc, 0.9 * fc));
-                    backgrad.addColorStop(1, DQX.Color(0.7 * fc, 0.7 * fc, 0.7 * fc));
+                    backgrad.addColorStop(1, DQX.Color(0.8 * fc, 0.8 * fc, 0.8 * fc));
                     drawInfo.rightContext.fillStyle = backgrad;
                     drawInfo.rightContext.fillRect(0, 0, drawInfo.sizeRightX, drawInfo.sizeY);
-                    drawInfo.rightContext.fillStyle = DQX.Color(0.4 * fc, 0.4 * fc, 0.4 * fc).toString();
+                    drawInfo.rightContext.fillStyle = DQX.Color(0.6 * fc, 0.6 * fc, 0.6 * fc).toString();
                     drawInfo.rightContext.fillRect(0, drawInfo.sizeY - 1, drawInfo.sizeRightX, 1);
                 }
             }

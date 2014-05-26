@@ -160,6 +160,12 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                     this.activateFetchColumn(cid);
                 return col;
             }
+            this.addFetchColumnHighPrecisionValue = function (cid, activate) {
+                var col = this.addFetchColumn(cid,'FloatH');
+                if (activate)
+                    this.activateFetchColumn(cid);
+                return col;
+            }
 
             this.hasFetchColumn = function(cid) {
                 return (cid in this.myColumns);

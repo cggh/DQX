@@ -41,7 +41,7 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/Chann
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         //NOTE: a channel component is identified by a DataFetcher.Curve, and a column id in this fetcher
-        ChannelYVals.Comp = function (iID, imyDataFetcher, iValueID) {
+        ChannelYVals.Comp = function (iID, imyDataFetcher, iValueID, highPrecision) {
             var that = {};
             that.myfetcher = imyDataFetcher; //DataFetcher.Curve used
             if (!iID) iID=iValueID;
@@ -52,8 +52,12 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/Chann
             that._maxViewportSizeX=1.0e99;//info will be hidden if the viewport gets larger than this
 
             if ('addFetchColumnValue' in that.myfetcher) {//Convenience function: for fetcher that allow this, add column now if necessary
-                if (!that.myfetcher.hasFetchColumn(that.valueID)) //add column to datafetcher now
-                    var colinfo = that.myfetcher.addFetchColumnValue(that.valueID);
+                if (!that.myfetcher.hasFetchColumn(that.valueID)) {//add column to datafetcher now
+                    if (!highPrecision)
+                        var colinfo = that.myfetcher.addFetchColumnValue(that.valueID);
+                    else
+                        var colinfo = that.myfetcher.addFetchColumnHighPrecisionValue(that.valueID);
+                }
             }
 
             if (!that.myfetcher.hasFetchColumn(that.valueID))
