@@ -661,6 +661,7 @@ define(["_", "jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
             };
 
 
+
             that.render = function (drawInfo) {
                 if (!this._isVisible)
                     return;

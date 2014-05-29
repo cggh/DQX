@@ -25,6 +25,8 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/Chann
             that.opacity = 1.0;
             that.pointStyle = 0; //0: rectangle 1: crossed lines 2: bitmap
 
+            that.getOpacity = function() { return that.opacity; };
+
             //Call this function to let plots connect the dots with lines, if separated up to a given distance
             that.makeDrawLines = function (maxdist) {
                 this.drawLines = true;
@@ -128,7 +130,7 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/Chann
 
                 if (plothints.drawLines) {//draw connecting lines
                     drawInfo.centerContext.strokeStyle = plothints.color.toStringCanvas();
-                    drawInfo.centerContext.globalAlpha = plothints.opacity;
+                    drawInfo.centerContext.globalAlpha = plothints.getOpacity();
                     if (plothints.drawPoints)
                         drawInfo.centerContext.globalAlpha = 0.4;
                     drawInfo.centerContext.beginPath();
@@ -318,9 +320,9 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/Chann
                 var closePath = function () {
                     if (!thefirst) {
                         drawInfo.centerContext.lineTo(psx, psy_offset);
-                        drawInfo.centerContext.globalAlpha = 0.5 * that.myPlotHints.opacity;
+                        drawInfo.centerContext.globalAlpha = 0.5 * that.myPlotHints.getOpacity();
                         drawInfo.centerContext.fill();
-                        drawInfo.centerContext.globalAlpha = that.myPlotHints.opacity;
+                        drawInfo.centerContext.globalAlpha = that.myPlotHints.getOpacity();
                         drawInfo.centerContext.stroke();
                         drawInfo.centerContext.globalAlpha = 1.0;
                         theFirst = true;
@@ -438,6 +440,7 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/Chann
 
 
             that.draw = function (drawInfo, args) {
+                that._drawViewportSize = drawInfo.sizeCenterX/drawInfo.zoomFactX;
                 var rangemin = args.rangemin;
                 var rangemax = args.rangemax;
                 var points1 = this.myfetcher.getColumnPoints(args.PosMin, args.PosMax, this.YIDMin);
@@ -455,6 +458,7 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/Chann
                 var thefirst = true;
                 drawInfo.centerContext.beginPath();
                 drawInfo.centerContext.fillStyle = this.myColor.toStringCanvas();
+                drawInfo.centerContext.globalAlpha = that.myPlotHints.getOpacity();
 
                 var psy_fact = 1.0 / (rangemax - rangemin) * drawInfo.sizeY * 0.8;
                 var psy_offset = drawInfo.sizeY - drawInfo.sizeY * 0.1 + rangemin * psy_fact;

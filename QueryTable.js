@@ -398,6 +398,11 @@
                     return that.totalRecordCount;
             }
 
+            that.getIsTruncatedRecordCount = function () {
+                return that.isTruncatedRecordCount;
+            }
+
+
 
             that.getSortColumn = function() {
                 //this.myDataFetcher.sortReverse = reverse;
@@ -829,6 +834,10 @@
                 var tokens = ev.target.id.split('~');
                 var column = this.findColumn(tokens[0]);
 
+                if (column.checkCanSort) //if a funtion that controls the sortability of the column is present, call it
+                    if (!column.checkCanSort())
+                        return false;
+
                 var newPositionField = column.sortOption.toString();
                 if (this.myDataFetcher.positionField != newPositionField)
                     this.myDataFetcher.sortReverse = false;
@@ -844,6 +853,9 @@
 
             that.sortByColumn = function (colid, reverse) {
                 var column = this.findColumn(colid);
+                if (column.checkCanSort) //if a funtion that controls the sortability of the column is present, call it
+                    if (!column.checkCanSort())
+                        return;
                 var newPositionField = column.sortOption.toString();
                 this.myDataFetcher.sortReverse = reverse;
                 this.myDataFetcher.positionField = newPositionField;
