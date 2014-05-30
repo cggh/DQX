@@ -478,9 +478,9 @@ define(["_", "jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
                 drawInfo.centerContext.textBaseline = 'bottom';
                 drawInfo.centerContext.textAlign = 'center';
                 drawInfo.centerContext.globalAlpha = 0.6;
-                drawInfo.centerContext.fillText(txt1, drawInfo.sizeCenterX / 2, drawInfo.sizeY / 2 + 7);
+                drawInfo.centerContext.fillText(txt1, drawInfo.sizeCenterX / 2, Math.min(50, drawInfo.sizeY / 2 + 7));
                 if (txt2) {
-                    drawInfo.centerContext.fillText(txt2, drawInfo.sizeCenterX / 2, drawInfo.sizeY / 2 + 7 + 27);
+                    drawInfo.centerContext.fillText(txt2, drawInfo.sizeCenterX / 2, Math.min(77, drawInfo.sizeY / 2 + 7 + 27));
                 }
                 drawInfo.centerContext.globalAlpha = 1.0;
             }
