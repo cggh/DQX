@@ -242,15 +242,15 @@ define(["_", "jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
 
 
             that._onMouseClick = function (ev, area) {
-                var area = area || 'center';
-                if (!this.getMyPlotter()._hasMouseMoved) {
+              var area = area || 'center';
+//                if (!this.getMyPlotter()._hasMouseMoved) {
                     var px = this.getEventPosX(ev);
                     var py = this.getEventPosY(ev);
                     if (area == 'center')
                         this.handleMouseClicked(px, py);
                     else
                         this.handleMouseClickedSide(px, py, area);
-                }
+  //              }
 
             }
 
