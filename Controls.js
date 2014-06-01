@@ -1074,7 +1074,8 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
 
             //Returns the status of the check box
             that.getValue = function () {
-                this.isChecked = this.getJQElement('').is(':checked');
+                if (this.getJQElement('').length>0)
+                    this.isChecked = this.getJQElement('').is(':checked');
                 return this.isChecked;
             }
 
