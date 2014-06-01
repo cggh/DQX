@@ -16,8 +16,8 @@ IMPORTANT NOTE:
  *
  ************************************************************************************************************************************/
 
-define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/HistoryManager", "DQX/Controls"],
-    function ($, DQX, DocEl, Msg, Framework, HistoryManager, Controls) {
+define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/HistoryManager", "DQX/Controls", "DQX/PopupFrame"],
+    function ($, DQX, DocEl, Msg, Framework, HistoryManager, Controls, PopupFrame) {
         var Application = {};
 
         Application._initialised = false;
@@ -180,7 +180,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/His
             navSectionDiv.addStyle("top", "0px");
             navSectionDiv.addStyle("padding-top", "0px");
             navSectionDiv.addStyle("padding-right", "5px");
-            this._createNavigationButton("HeaderPrevious", navSectionDiv, DQX.BMP("/Icons/Small/Back.png"), "Previous<br>view", "DQXToolButton3", 100, function () { Msg.send({ type: 'Back' }) });
+            //this._createNavigationButton("HeaderPrevious", navSectionDiv, DQX.BMP("/Icons/Small/Back.png"), "Previous<br>view", "DQXToolButton3", 100, function () { Msg.send({ type: 'Back' }) });
             this._createNavigationButton("HeaderHome", navSectionDiv, DQX.BMP("/Icons/Small/Home.png"), "Intro<br>view", "DQXToolButton3", 100, function () { Msg.send({ type: 'Home' }) });
 
             // Create custom navigation buttons
@@ -192,6 +192,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/His
             DQX.ExecPostCreateHtml();
 
             Msg.listen('', { type: 'Home' }, function () {
+                PopupFrame.minimiseAll();
                 HistoryManager.setState(Application._views[0].getStateKeys());
             });
             Msg.listen('', { type: 'Back' }, function () {

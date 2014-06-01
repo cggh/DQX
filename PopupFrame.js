@@ -28,6 +28,12 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
             PopupFrame._settingsHistory[typeID].frameSettings = frameSettings;
         };
 
+        PopupFrame.minimiseAll = function() {
+            $.each(PopupFrame.activeList, function(idx, popup) {
+                popup.minimise();
+            });
+        }
+
 
         PopupFrame.PopupFrame = function (itypeID, settings) {
             DQX.checkIsString(itypeID);
