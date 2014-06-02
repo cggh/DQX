@@ -25,6 +25,7 @@ define(["jquery", "DQX/DocEl", "DQX/Msg"],
             that.units = '';
             that.myConsumer = null;
             that.drawIndicators = true;
+            this._scaleDistance = null;//automatic
 
             that.zoomareafraction = 0.3;
 
@@ -40,6 +41,10 @@ define(["jquery", "DQX/DocEl", "DQX/Msg"],
 
             that.setUnits = function (units) {
                 this.units = units;
+            }
+
+            that.setScaleDistance = function(dst) {
+                this._scaleDistance = dst;
             }
 
             //Sets the scroll position & size
@@ -171,15 +176,21 @@ define(["jquery", "DQX/DocEl", "DQX/Msg"],
                     centercontext.textAlign = 'center';
                     centercontext.shadowColor = "white";
                     centercontext.shadowBlur = 3;
-                    var scalejumps = DQX.DrawUtil.getScaleJump(20 / this.sizeX * (this.rangeMax - this.rangeMin));
-                    var i2 = ((this.rangeMax - this.rangeMin)) / scalejumps.Jump1;
+                    if (!this._scaleDistance) {
+                        var scalejumps = DQX.DrawUtil.getScaleJump(20 / this.sizeX * (this.rangeMax - this.rangeMin));
+                        var scaleDist = scalejumps.Jump1 * scalejumps.JumpReduc;
+                        var decimalCount = scalejumps.textDecimalCount;
+                    }
+                    else {
+                        var scaleDist = this._scaleDistance;
+                        var decimalCount = Math.max(0,-Math.floor(Math.log(scaleDist) / Math.log(10)));
+                    }
+                    var i2 = ((this.rangeMax - this.rangeMin)) / scaleDist;
                     for (var i = 0; i < i2; i++) {
-                        var x = i * scalejumps.Jump1;
+                        var x = i * scaleDist;
                         var psx = this.ScrollAreaStartX + Math.round((x - this.rangeMin) / (this.rangeMax - this.rangeMin) * this.ScrollAreaSizeX);
                         if ((psx > this.ScrollAreaStartX + 10) && (psx < this.ScrollAreaStartX + this.ScrollAreaSizeX - 10)) {
-                            if (i % scalejumps.JumpReduc == 0) {
-                                centercontext.fillText(x.toFixed(scalejumps.textDecimalCount) + that.units, psx, this.sizeY / 2 - 7);
-                            }
+                            centercontext.fillText(x.toFixed(decimalCount) + that.units, psx, this.sizeY / 2 - 7);
                         }
                     }
                     centercontext.shadowColor = "transparent";

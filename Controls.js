@@ -2081,6 +2081,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
         //    args.maxval : maximum value
         //    args.value : initial value
         //    args.digits (optional) : number of decimal digits displayed
+        //    args.scaleDistance: value difference between indicated tick marks
         //    args.width (optional) : width of the slider
         //    args.height (optional) : height of the slider
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2095,6 +2096,8 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
             DQX.requireMember(args, 'maxval');
             that._minval = args.minval;
             that._maxval = args.maxval;
+            if (args.scaleDistance)
+                that.scaleDistance = args.scaleDistance;
             that._value = that._minval; if (args.value) that._value = args.value;
             that.digits = 0; if (args.digits) that.digits = args.digits;
             that.minIsNone = false; if (args.minIsNone) that.minIsNone = args.minIsNone;
@@ -2136,6 +2139,8 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 this._scroller.drawIndicators = that._drawIndicators;
                 this._scroller.myConsumer = this;
                 this._scroller.zoomareafraction = 0.00001;
+                if (that.scaleDistance)
+                    this._scroller.setScaleDistance(that.scaleDistance);
                 this._scroller.setRange(this._minval, this._maxval);
                 this._scroller.setValue((this._value - this._minval) / (this._maxval - this._minval), 0.0);
                 this.showValue();
