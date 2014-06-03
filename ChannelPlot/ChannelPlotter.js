@@ -464,7 +464,7 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Scroller", "DQX
                     sizeCenterX: this._sizeCenterX,
                     sizeRightX: that.getRightWidth(),
                     mark: { present: this._markPresent, pos1: this._markPos1, pos2: this._markPos2 },
-                    HorAxisScaleJumps: DQX.DrawUtil.getScaleJump(20 / this._zoomFactX)
+                    HorAxisScaleJumps: DQX.DrawUtil.getScaleJump(30 / this._zoomFactX)
                 };
 
                 if (that.hasIntegralPositions) {

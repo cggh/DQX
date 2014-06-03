@@ -749,10 +749,16 @@ define(["_", "jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
                 this.drawStandardGradientLeft(drawInfo, 0.84);
                 this.drawStandardGradientRight(drawInfo, 0.84);
 
-                drawInfo.centerContext.fillStyle = DQX.Color(0.3, 0.3, 0.3).toString();
+                drawInfo.centerContext.fillStyle = DQX.Color(0.0, 0.0, 0.0).toString();
                 drawInfo.centerContext.font = '11px sans-serif';
                 drawInfo.centerContext.textBaseline = 'top';
                 drawInfo.centerContext.textAlign = 'center';
+
+                var drawBP = (drawInfo.zoomFactX>0.5);
+                var unit = 'Mb';
+                if  (drawBP)
+                    unit = 'bp';
+
 
                 var i1 = Math.round(((-50 + drawInfo.offsetX) / drawInfo.zoomFactX) / drawInfo.HorAxisScaleJumps.Jump1);
                 if (i1 < 0) i1 = 0;
@@ -764,11 +770,24 @@ define(["_", "jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
                     var psx = Math.round((value) * drawInfo.zoomFactX - drawInfo.offsetX) + 0.5;
                     if ((psx >= -50) && (psx <= drawInfo.sizeCenterX + 50)) {
                         if (i % drawInfo.HorAxisScaleJumps.JumpReduc == 0) {
-                            drawInfo.centerContext.strokeStyle = DQX.Color(0.1, 0.1, 0.1).toString();
+                            drawInfo.centerContext.strokeStyle = DQX.Color(0.0, 0.0, 0.0).toString();
                             drawInfo.centerContext.moveTo(psx, 19);
                             drawInfo.centerContext.lineTo(psx, 25);
                             drawInfo.centerContext.stroke();
-                            drawInfo.centerContext.fillText((value / 1.0e6), psx, 7);
+                            if (drawBP) {
+                                var valtxt = value.toFixed(0);
+                                valtxt = valtxt.split("").reverse().join("");
+                                var valtxt2 = [];
+                                for (var sp = 0; sp<valtxt.length; sp++) {
+                                    if ((sp>0) && (sp%3 == 0))
+                                        valtxt2.push(",");
+                                    valtxt2.push(valtxt[sp]);
+                                }
+                                valtxt = valtxt2.reverse().join("");
+                                drawInfo.centerContext.fillText(valtxt, psx, 7);
+                            }
+                            else
+                                drawInfo.centerContext.fillText((value / 1.0e6), psx, 7);
                         }
                         else {
                             drawInfo.centerContext.strokeStyle = DQX.Color(0.3, 0.3, 0.3).toString();
@@ -779,6 +798,13 @@ define(["_", "jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
                     }
                 }
                 this.drawMark(drawInfo, true);
+
+                drawInfo.leftContext.fillStyle = DQX.Color(0, 0, 0).toString();
+                drawInfo.leftContext.font = '11px sans-serif';
+                drawInfo.leftContext.textBaseline = 'top';
+                drawInfo.leftContext.textAlign = 'left';
+                drawInfo.leftContext.fillText('Position ({unit})'.DQXformat({unit:unit}), 2, 7);
+
             }
 
             return that;
