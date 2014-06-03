@@ -106,8 +106,8 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/ChannelPlot/ChannelCanvas", "DQX/
                         drawInfo.centerContext.beginPath();
                         for (i = 0; i < xvals.length - 1; i++) {
                             if (yvals[i] == base) {
-                                var psx1 = xvals[i] * drawInfo.zoomFactX - drawInfo.offsetX;
-                                var psx2 = xvals[i + 1] * drawInfo.zoomFactX - drawInfo.offsetX;
+                                var psx1 = xvals[i+1] * drawInfo.zoomFactX - drawInfo.offsetX;
+                                var psx2 = xvals[i + 2] * drawInfo.zoomFactX - drawInfo.offsetX;
                                 drawInfo.centerContext.moveTo(psx1, 0);
                                 drawInfo.centerContext.lineTo(psx1, 0 + h);
                                 if (psx2 > psx1 + 1) {
@@ -122,11 +122,22 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/ChannelPlot/ChannelCanvas", "DQX/
                 else {
                     for (i = 0; i < xvals.length - 1; i++) {
                         var base = yvals[i];
-                        var psx1 = Math.round(xvals[i] * drawInfo.zoomFactX - drawInfo.offsetX);
-                        var psx2 = Math.round(xvals[i + 1] * drawInfo.zoomFactX - drawInfo.offsetX);
+                        var psx1 = Math.round(xvals[i+1] * drawInfo.zoomFactX - drawInfo.offsetX);
+                        var psx2 = Math.round(xvals[i + 2] * drawInfo.zoomFactX - drawInfo.offsetX);
                         var ofs = 0;
                         drawInfo.centerContext.fillStyle = this.colors[base];
                         drawInfo.centerContext.fillRect(psx1, 0, psx2 - psx1 + 1, h);
+                    }
+                }
+                if (blockwidth>3) {
+                    var bwd = 1;
+                    if (blockwidth>6)
+                        bwd = 2;
+                    drawInfo.centerContext.fillStyle = "rgba(255,255,255,0.75)";
+                    for (i = 0; i < xvals.length - 1; i++) {
+                        var psx1 = Math.round(xvals[i+1] * drawInfo.zoomFactX - drawInfo.offsetX);
+                        var psx2 = Math.round(xvals[i + 2] * drawInfo.zoomFactX - drawInfo.offsetX);
+                        drawInfo.centerContext.fillRect(psx1-bwd/2, 0, bwd, h);
                     }
                 }
                 drawInfo.centerContext.globalAlpha = 1;
@@ -148,7 +159,6 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/ChannelPlot/ChannelCanvas", "DQX/
                 }
 
                 this.drawMark(drawInfo);
-                this.drawXScale(drawInfo);
                 this.drawTitle(drawInfo);
 
             }
