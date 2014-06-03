@@ -716,8 +716,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fafafa', end
 	padding-top:3px;
 	padding-bottom:7px;
 	/*float:left;*/
-	border:1px solid rgb(80,80,80);
-	border-bottom-width: 0px;
+	border:1px solid rgb(140,140,140);
+	border-bottom-width: 0;
 	cursor:pointer;
 	z-index:2;
 	display:inline-block;
@@ -729,7 +729,9 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fafafa', end
 
 
 .DQXTabInactive {
-	background-color:rgb(220,220,220);
+    position: relative;
+    top: 1px;
+	background-color:rgb(230,230,230);
 	border-color:rgb(210,210,210);
 	color:rgb(80,80,80);
 	font-weight:bold;
@@ -737,8 +739,9 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fafafa', end
 
 .DQXTabActive {
     position: relative;
-	top: 1px;	
+	top: 0px;
 	font-weight:bold;
+    color:rgb(0,0,0);
 	/*color:rgb(0,0,0);*/
 }
 
