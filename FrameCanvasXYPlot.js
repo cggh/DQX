@@ -112,8 +112,8 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FrameCanvas"],
         return function (iParentRef) {
             var that = FrameCanvas(iParentRef);
 
-            that.scaleMarginX = 30;
-            that.scaleMarginY = 30;
+            that.scaleMarginX = 37;
+            that.scaleMarginY = 37;
             that._dragActionPan = true;
 
             that.xScaler = Scaler();
