@@ -21,7 +21,9 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Scroller", "DQX
             that._rightWidth = 0; //size of the right side panel
             that._rightOffset = 0; //size of the right offset, including e.g. area for vertical scroll bars
 
-            that.scaleConversionFactor = 1.0e6
+            that.scaleConversionFactor = 1.0e6;
+
+            that.hasIntegralPositions = false;
 
             that._headerHeight = 35;
             that._hasHeader = true;
@@ -462,8 +464,16 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Scroller", "DQX
                     sizeCenterX: this._sizeCenterX,
                     sizeRightX: that.getRightWidth(),
                     mark: { present: this._markPresent, pos1: this._markPos1, pos2: this._markPos2 },
-                    HorAxisScaleJumps: DQX.DrawUtil.getScaleJump(20 / this._zoomFactX)
+                    HorAxisScaleJumps: DQX.DrawUtil.getScaleJump(30 / this._zoomFactX)
                 };
+
+                if (that.hasIntegralPositions) {
+                    if (drawInfo.HorAxisScaleJumps.Jump1<1) {
+                        drawInfo.HorAxisScaleJumps.Jump1 = 1;
+                        drawInfo.HorAxisScaleJumps.JumpReduc = 5;
+                    }
+                }
+
                 if (this._myNavigator)
                     drawInfo.rightSideNotComplete = this._myNavigator.canScrollRight();
                 for (var i = 0; i < this._channels.length; i++)

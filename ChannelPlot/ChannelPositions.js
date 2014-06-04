@@ -120,21 +120,23 @@ define(["require", "DQX/Framework", "DQX/Controls", "DQX/Msg", "DQX/Utils", "DQX
                         var pointsIndex = this._pointsIndex;
                         var mindst = 12;
                         var bestpt = -1;
+                        var bestpx = null;
                         if (!pointsX)
                             return;
                         for (var i = 0; i < pointsX.length; i++)
                             if (Math.abs(px - pointsX[i]) <= mindst) {
                                 mindst = Math.abs(px - pointsX[i]);
-                                bestpt = i;
+                                bestpt = pointsIndex[i];
+                                bestpx = pointsX[i];
                             }
                         if (bestpt >= 0) {
                             var info = { ID:'pos'+bestpt };
-                            info.px = pointsX[bestpt];
+                            info.px = bestpx;
                             info.py = 13;
-                            info.positionID = this.dataFetcher.getColumnPoint(this.startIndex + bestpt, that.positionIDField);
+                            info.positionID = this.dataFetcher.getColumnPoint(bestpt, that.positionIDField);
                             info.content=info.positionID;
                             if (that._toolTipHandler)
-                                info.content = that._toolTipHandler(info.positionID,this.startIndex + bestpt);
+                                info.content = that._toolTipHandler(info.positionID,bestpt);
                             if (that._clickHandler)
                                 info.showPointer = true;
                             return info;

@@ -16,6 +16,7 @@ define(["jquery", "DQX/Utils", "DQX/Msg", "DQX/ChannelPlot/ChannelPlotter", "DQX
 
         GenomePlotter.Panel = function (iParentRef, args) {
             var that = ChannelPlotter.Panel(iParentRef, args);
+            that.hasIntegralPositions = true;
 
             DQX.assertPresence(args, 'viewID');
             that.viewID = args.viewID;
