@@ -70,8 +70,12 @@ define(["datastream"],
                     DQX.reportError("unsupported dtype");
                     return;
             }
-            array.shape = shape;
-            return array;
+            //Firefox is a PITA and won't let us set properties on TypedArrays, so we have to wrap them in an object
+            var result = {
+              array:array,
+              shape:shape
+            }
+            return result;
         };
 
         var decode_array_set = function (stream) {

@@ -246,10 +246,7 @@ define(["_", "jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
 //                if (!this.getMyPlotter()._hasMouseMoved) {
                     var px = this.getEventPosX(ev);
                     var py = this.getEventPosY(ev);
-                    if (area == 'center')
-                        this.handleMouseClicked(px, py);
-                    else
-                        this.handleMouseClickedSide(px, py, area);
+                    this.handleMouseClicked(px, py, area);
   //              }
 
             }
