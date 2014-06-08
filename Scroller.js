@@ -1,3 +1,7 @@
+// This file is part of DQX - (C) Copyright 2014, Paul Vauterin, Ben Jeffery, Alistair Miles <info@cggh.org>
+// This program is free software licensed under the GNU Affero General Public License.
+// You can find a copy of this license in LICENSE in the top directory of the source code or at <http://opensource.org/licenses/AGPL-3.0>
+
 ﻿/************************************************************************************************************************************
 *************************************************************************************************************************************
 
@@ -65,7 +69,7 @@ define(["jquery", "DQX/DocEl", "DQX/Msg"],
             //Returns the zooming factor as a fraction
             that.getZoomFrac = function () {
                 var zoomfrac = (Math.min(this.minScrollSize / this.ScrollSize) - this.minScrollSize) / (1 - this.minScrollSize);
-                return Math.log(1 + 100 * zoomfrac) / Math.log(1 + 100);
+                return Math.log(1 + 10000000 * zoomfrac) / Math.log(1 + 10000000);
             }
 
             //Returns true if the scroller is on the extreme right
@@ -255,7 +259,7 @@ define(["jquery", "DQX/DocEl", "DQX/Msg"],
                     var newzoomfrac = (newzoompos - this.ZoomAreaStartX) / this.ZoomAreaSizeX;
                     newzoomfrac = Math.max(0, newzoomfrac);
                     newzoomfrac = Math.min(1, newzoomfrac);
-                    newzoomfrac = (Math.exp(newzoomfrac * Math.log(1 + 100)) - 1) / 100;
+                    newzoomfrac = (Math.exp(newzoomfrac * Math.log(1 + 10000000)) - 1) / 10000000;
                     var newscrollsize = this.minScrollSize / (newzoomfrac * (1 - this.minScrollSize) + this.minScrollSize);
                     newscrollsize = Math.min(1, newscrollsize);
                     newscrollsize = Math.max(this.minScrollSize, newscrollsize);
