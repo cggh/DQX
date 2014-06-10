@@ -32,9 +32,9 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
             PopupFrame._settingsHistory[typeID].frameSettings = frameSettings;
         };
 
-        PopupFrame.minimiseAll = function() {
+        PopupFrame.minimiseAll = function(settings) {
             $.each(PopupFrame.activeList, function(idx, popup) {
-                popup.minimise();
+                popup.minimise(settings);
             });
         }
 
@@ -293,7 +293,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
                 }
             }
 
-            that.animateTransition = function(elementFrom, elementTo, onCompleted) {
+            that.animateTransition = function(elementFrom, elementTo, onCompleted, settings) {
                 var transId = '_transientAnim_' + DQX.getNextUniqueID();
                 var px0 = elementFrom.position().left;
                 var py0 = elementFrom.position().top;
@@ -318,7 +318,11 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
 
                 $('#DQXUtilContainer').append(thebox.toString());
 
-                $('#'+transId).animate({left:px1+'px', top:py1+'px', width:lx1+'px', height:ly1+'px'}, 250, function() {
+                var animationSpeed = 250;
+                if (settings && settings.slow)
+                    animationSpeed = 500;
+
+                $('#'+transId).animate({left:px1+'px', top:py1+'px', width:lx1+'px', height:ly1+'px'}, animationSpeed, function() {
                     $('#'+transId).remove();
                     if (onCompleted)
                         onCompleted();
@@ -327,13 +331,13 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
 
             }
 
-            that.minimise = function() {
+            that.minimise = function(settings) {
                 if (that.minimised)
                     return;
                 that.minimised = true;
                 that.animateTransition($("#" + that.ID), $("#" + that.thumbNailId), function() {
                     $("#" + that.thumbNailId).addClass('DQXThumbNailMinimised');
-                });
+                }, settings);
                 $('#' + that.ID).hide();
             }
 
