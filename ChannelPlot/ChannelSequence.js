@@ -144,6 +144,20 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/ChannelPlot/ChannelCanvas", "DQX/
                         drawInfo.centerContext.fillRect(psx1-bwd/2, 0, bwd, h);
                     }
                 }
+                if (blockwidth > drawInfo.centerContext.measureText('G').width) {
+                  drawInfo.centerContext.save();
+                  drawInfo.centerContext.textAlign = "center";
+                  drawInfo.centerContext.textBaseline = 'middle';
+                  drawInfo.centerContext.font = '11px sans-serif';
+                  drawInfo.centerContext.fillStyle = "black";
+                  for (i = 0; i < xvals.length - 1; i++) {
+                    var psx1 = Math.round(xvals[i+1] * drawInfo.zoomFactX - drawInfo.offsetX);
+                    var psx2 = Math.round(xvals[i + 2] * drawInfo.zoomFactX - drawInfo.offsetX);
+                    var base = yvals[i];
+                    drawInfo.centerContext.fillText(base, (psx1+psx2)/2, h/2);
+                  }
+                  drawInfo.centerContext.restore();
+                }
                 drawInfo.centerContext.globalAlpha = 1;
 
 
