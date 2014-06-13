@@ -1,4 +1,8 @@
-﻿define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/ChannelPlot/ChannelCanvas", "DQX/DataFetcher/DataFetcherSnp2"],
+﻿// This file is part of DQX - (C) Copyright 2014, Paul Vauterin, Ben Jeffery, Alistair Miles <info@cggh.org>
+// This program is free software licensed under the GNU Affero General Public License.
+// You can find a copy of this license in LICENSE in the top directory of the source code or at <http://opensource.org/licenses/AGPL-3.0>
+
+define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/ChannelPlot/ChannelCanvas", "DQX/DataFetcher/DataFetcherSnp2"],
     function ($, DocEl, Msg, ChannelCanvas, DataFetcherSnp) {
         var ChannelSnps = {};
 
