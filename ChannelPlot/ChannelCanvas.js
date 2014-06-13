@@ -1,8 +1,8 @@
-// This file is part of DQX - (C) Copyright 2014, Paul Vauterin, Ben Jeffery, Alistair Miles <info@cggh.org>
+﻿// This file is part of DQX - (C) Copyright 2014, Paul Vauterin, Ben Jeffery, Alistair Miles <info@cggh.org>
 // This program is free software licensed under the GNU Affero General Public License.
 // You can find a copy of this license in LICENSE in the top directory of the source code or at <http://opensource.org/licenses/AGPL-3.0>
 
-﻿/************************************************************************************************************************************
+/************************************************************************************************************************************
 *************************************************************************************************************************************
 
 
@@ -251,7 +251,11 @@ define(["_", "jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
 //                if (!this.getMyPlotter()._hasMouseMoved) {
                     var px = this.getEventPosX(ev);
                     var py = this.getEventPosY(ev);
-                    this.handleMouseClicked(px, py, area);
+                    var params = {
+                        shiftPressed:ev.shiftKey,
+                        controlPressed:ev.ctrlKey
+                    };
+                    this.handleMouseClicked(px, py, area, params);
   //              }
 
             }
@@ -272,7 +276,7 @@ define(["_", "jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
             that.handleTouchEnd = function (ev) {
                 this.getMyPlotter().handleMouseUp(that, ev, null);
                 if (!this.touchMoved)
-                    this.handleMouseClicked(this.touchStartElemX, this.touchStartElemY);
+                    this.handleMouseClicked(this.touchStartElemX, this.touchStartElemY, 'center', {});
             }
 
             that.handleTouchCancel = function (ev) {
@@ -354,10 +358,7 @@ define(["_", "jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
                 this.hideToolTip();
             }
 
-            that.handleMouseClicked = function (px, py) {
-            }
-
-            that.handleMouseClickedSide = function (px, py, area) {
+            that.handleMouseClicked = function (px, py, area, params) {
             }
 
             // Override this function to implement a tooltip

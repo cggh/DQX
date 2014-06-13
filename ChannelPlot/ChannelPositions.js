@@ -1,6 +1,7 @@
-// This file is part of DQX - (C) Copyright 2014, Paul Vauterin, Ben Jeffery, Alistair Miles <info@cggh.org>
+// This file is part of Panoptes - (C) Copyright 2014, Paul Vauterin, Ben Jeffery, Alistair Miles <info@cggh.org>
 // This program is free software licensed under the GNU Affero General Public License.
 // You can find a copy of this license in LICENSE in the top directory of the source code or at <http://opensource.org/licenses/AGPL-3.0>
+
 
 define(["require", "DQX/Framework", "DQX/Controls", "DQX/Msg", "DQX/Utils", "DQX/ChannelPlot/ChannelCanvas", "DQX/DataFetcher/DataFetchers"],
     function (require, Framework, Controls, Msg, DQX, ChannelCanvas, DataFetchers) {
@@ -124,23 +125,21 @@ define(["require", "DQX/Framework", "DQX/Controls", "DQX/Msg", "DQX/Utils", "DQX
                         var pointsIndex = this._pointsIndex;
                         var mindst = 12;
                         var bestpt = -1;
-                        var bestpx = null;
                         if (!pointsX)
                             return;
                         for (var i = 0; i < pointsX.length; i++)
                             if (Math.abs(px - pointsX[i]) <= mindst) {
                                 mindst = Math.abs(px - pointsX[i]);
-                                bestpt = pointsIndex[i];
-                                bestpx = pointsX[i];
+                                bestpt = i;
                             }
                         if (bestpt >= 0) {
                             var info = { ID:'pos'+bestpt };
-                            info.px = bestpx;
+                            info.px = pointsX[bestpt];
                             info.py = 13;
-                            info.positionID = this.dataFetcher.getColumnPoint(bestpt, that.positionIDField);
+                            info.positionID = this.dataFetcher.getColumnPoint(this.startIndex + bestpt, that.positionIDField);
                             info.content=info.positionID;
                             if (that._toolTipHandler)
-                                info.content = that._toolTipHandler(info.positionID,bestpt);
+                                info.content = that._toolTipHandler(info.positionID,this.startIndex + bestpt);
                             if (that._clickHandler)
                                 info.showPointer = true;
                             return info;
@@ -149,7 +148,7 @@ define(["require", "DQX/Framework", "DQX/Controls", "DQX/Msg", "DQX/Utils", "DQX
                     return null;
                 }
 
-                that.handleMouseClicked = function (px, py) {
+                that.handleMouseClicked = function (px, py, area, params) {
                     var tooltipInfo = that.getToolTipInfo(px, py);
                     if (tooltipInfo && that._clickHandler)
                         that._clickHandler(tooltipInfo.positionID);

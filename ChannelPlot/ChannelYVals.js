@@ -1,7 +1,3 @@
-// This file is part of DQX - (C) Copyright 2014, Paul Vauterin, Ben Jeffery, Alistair Miles <info@cggh.org>
-// This program is free software licensed under the GNU Affero General Public License.
-// You can find a copy of this license in LICENSE in the top directory of the source code or at <http://opensource.org/licenses/AGPL-3.0>
-
 ﻿/************************************************************************************************************************************
 *************************************************************************************************************************************
 
@@ -835,7 +831,7 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/Chann
                 this.drawXScale(drawInfo);
             }
 
-            that.handleMouseClicked = function (px, py) {
+            that.handleMouseClicked = function (px, py, area, params) {
                 var tooltipInfo = that.getToolTipInfo(px, py);
                 if (tooltipInfo) {
                     that.handlePointClicked(tooltipInfo.compID, tooltipInfo.closestPointIndex);
