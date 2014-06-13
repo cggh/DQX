@@ -210,6 +210,7 @@ define(["_", "jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
                 $('#' + this.getCanvasID('center')).mouseleave($.proxy(that._onMouseLeave, that));
                 $('#' + this.getCanvasID('left')).mouseenter($.proxy(that._onLeftMouseEnter, that));
                 $('#' + this.getCanvasID('left')).mouseleave($.proxy(that._onLeftMouseLeave, that));
+                $('#' + this.getCanvasID('left')).mousemove($.proxy(that._onLeftMouseMove, that));
 
 
 
@@ -336,6 +337,14 @@ define(["_", "jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
                 return ev1.pageY - $(this.getCanvasElement('center')).offset().top;
             }
 
+            //Returns the position X coordinate of an event, relative to the left canvas element
+            that.getEventLeftPosX = function (ev) {
+                var ev1 = ev;
+                if (ev.originalEvent)
+                    ev1 = ev.originalEvent;
+                return ev1.pageX - $(this.getCanvasElement('left')).offset().left;
+            }
+
 
             that._onMouseEnter = function (ev) {
             }
@@ -351,6 +360,8 @@ define(["_", "jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
             that.handleMouseClickedSide = function (px, py, area) {
             }
 
+            // Override this function to implement a tooltip
+            // Note: getLeftToolTipInfo can also be defined for the left panel
             that.getToolTipInfo = function (px, py) {
                 return null;
             }
@@ -403,6 +414,7 @@ define(["_", "jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
             that._onLeftMouseLeave = function (ev) {
                 this.onStopHoverOverChannel();
                 this.hideHeaderToolTip();
+                this.hideToolTip();
             }
 
             that._onLeftMouseEnter = function (ev) {
@@ -425,6 +437,37 @@ define(["_", "jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
             that.hideHeaderToolTip = function () {
                 $('#'+that._currentHeaderTooltipID).remove();
                 that._currentHeaderTooltipID = null;
+            }
+
+
+            that._onLeftMouseMove = function (ev) {
+                var px = this.getEventLeftPosX(ev);
+                var py = this.getEventPosY(ev);
+                if (that.getLeftToolTipInfo) {
+                    var newToolTipInfo = that.getLeftToolTipInfo(px, py);
+                    var showPointer = false;
+                    if (newToolTipInfo) {
+                        if (newToolTipInfo.showPointer)
+                            showPointer = true;
+                        if (this._toolTipInfo.ID != newToolTipInfo.ID) {
+                            this.hideToolTip();
+                            this._toolTipInfo = newToolTipInfo;
+                            var tooltip = DocEl.Div();
+                            tooltip.setCssClass("DQXChannelToolTip");
+                            tooltip.addStyle("position", "absolute");
+                            tooltip.addStyle("left", (this.posXLeftCanvas2Screen(this._toolTipInfo.px) + 10) + 'px');
+                            tooltip.addStyle("top", (this.posYLeftCanvas2Screen(this._toolTipInfo.py) + 10) + 'px');
+                            tooltip.addElem(this._toolTipInfo.content||'');
+                            $('#DQXUtilContainer').append(tooltip.toString());
+                        }
+                    }
+                    else
+                        this.hideToolTip();
+                    if (showPointer)
+                        $('#' + this.getCanvasID('left')).css('cursor', 'pointer');
+                    else
+                        $('#' + this.getCanvasID('left')).css('cursor', 'auto');
+                }
             }
 
 
