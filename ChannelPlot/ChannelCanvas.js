@@ -247,6 +247,10 @@ define(["_", "jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
 
 
             that._onMouseClick = function (ev, area) {
+                if (that._wasDragged) {
+                    that._wasDragged = false;
+                    return;
+                }
               var area = area || 'center';
 //                if (!this.getMyPlotter()._hasMouseMoved) {
                     var px = this.getEventPosX(ev);
@@ -301,9 +305,11 @@ define(["_", "jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
             }
 
             that._onMouseDown = function (ev) {
+                that._wasDragged = false;
+                that._mouseDownStartPos = {x: this.getEventPosX(ev), y: this.getEventPosY(ev)};
                 $(document).bind("mouseup.ChannelCanvas", $.proxy(that._onMouseDragUp, that));
                 $(document).bind("mousemove.ChannelCanvas", $.proxy(that._onMouseDragMove, that));
-                this.getMyPlotter().handleMouseDown(that, ev, { x: this.getEventPosX(ev), channelY: this.getEventPosY(ev), pageY: ev.pageY });
+                this.getMyPlotter().handleMouseDown(that, ev, { x: that._mouseDownStartPos.x, channelY: that._mouseDownStartPos.y, pageY: ev.pageY });
                 ev.returnValue = false;
                 return false;
             }
@@ -317,7 +323,10 @@ define(["_", "jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
             }
 
             that._onMouseDragMove = function (ev) {
-                this.getMyPlotter().handleMouseMove(that, ev, { x: this.getEventPosX(ev), channelY: this.getEventPosY(ev), pageY: ev.pageY });
+                var pos = {x: this.getEventPosX(ev), y: this.getEventPosY(ev)};
+                if ( (Math.abs(pos.x-that._mouseDownStartPos.x)>4) || (Math.abs(pos.y-that._mouseDownStartPos.y)>4) )
+                    that._wasDragged = true;
+                this.getMyPlotter().handleMouseMove(that, ev, { x: pos.x, channelY: pos.y, pageY: ev.pageY });
                 ev.returnValue = false;
                 return false;
             }
