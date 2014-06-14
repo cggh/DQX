@@ -171,17 +171,26 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/Chann
                     drawInfo.centerContext.globalAlpha = 1.0;
                 }
 
+
+
+
+
                 var pointstyle = plothints.pointStyle;
 
-                if (pointstyle == 2) {
-                    var img = document.getElementById(plothints.pointBitmapID);
-                }
-
-                if (pointstyle == 1) {
-                    drawInfo.centerContext.strokeStyle = plothints.color.toStringCanvas();
-                    drawInfo.centerContext.beginPath();
-                }
+                var ctx = drawInfo.centerContext;
                 if (plothints.drawPoints) {//draw points
+
+                    if (xvals.length<200) //automatically switch to larger points
+                        pointstyle = 3;
+
+                    if (pointstyle == 2) {
+                        var img = document.getElementById(plothints.pointBitmapID);
+                    }
+
+                    if (pointstyle == 1) {
+                        drawInfo.centerContext.strokeStyle = plothints.color.toStringCanvas();
+                        drawInfo.centerContext.beginPath();
+                    }
                     drawInfo.centerContext.fillStyle = plothints.color.toStringCanvas();
                     for (i = 0; i < xvals.length; i++) {
                         if (yvals[i] != null) {
@@ -194,16 +203,22 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/Chann
                             pointsX.push(psx); pointsY.push(psy); pointsIndex.push(i + points.startIndex);
                             switch (pointstyle) {
                                 case 0:
-                                    drawInfo.centerContext.fillRect(psx - 1, psy - 1, psz, psz);
+                                    ctx.fillRect(psx - 1, psy - 1, psz, psz);
                                     break;
                                 case 1:
-                                    drawInfo.centerContext.moveTo(psx - 2, psy - 0.5);
-                                    drawInfo.centerContext.lineTo(psx + 1, psy - 0.5);
-                                    drawInfo.centerContext.moveTo(psx - 0.5, psy - 2);
-                                    drawInfo.centerContext.lineTo(psx - 0.5, psy + 1);
+                                    ctx.moveTo(psx - 2, psy - 0.5);
+                                    ctx.lineTo(psx + 1, psy - 0.5);
+                                    ctx.moveTo(psx - 0.5, psy - 2);
+                                    ctx.lineTo(psx - 0.5, psy + 1);
                                     break;
                                 case 2:
-                                    drawInfo.centerContext.drawImage(img, psx, psy);
+                                    ctx.drawImage(img, psx, psy);
+                                    break;
+                                case 3:
+                                    ctx.beginPath();
+                                    ctx.arc(psx, psy, 2, 0, 2 * Math.PI, false);
+                                    ctx.closePath();
+                                    ctx.fill();
                                     break;
                             }
                         }
