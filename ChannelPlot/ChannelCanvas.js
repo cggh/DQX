@@ -255,6 +255,8 @@ define(["_", "jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
 //                if (!this.getMyPlotter()._hasMouseMoved) {
                     var px = this.getEventPosX(ev);
                     var py = this.getEventPosY(ev);
+                    if (area=='left')
+                        px = this.getEventLeftPosX(ev);
                     var params = {
                         shiftPressed:ev.shiftKey,
                         controlPressed:ev.ctrlKey,
