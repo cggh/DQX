@@ -257,7 +257,8 @@ define(["_", "jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
                     var py = this.getEventPosY(ev);
                     var params = {
                         shiftPressed:ev.shiftKey,
-                        controlPressed:ev.ctrlKey
+                        controlPressed:ev.ctrlKey,
+                        altPressed:ev.altKey
                     };
                     this.handleMouseClicked(px, py, area, params);
   //              }

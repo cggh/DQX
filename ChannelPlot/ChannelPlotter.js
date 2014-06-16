@@ -336,7 +336,7 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Scroller", "DQX
                 this._hasMouseMoved = false;
                 this._dragging = false;
                 this._mousemarking = false;
-                if ((!ev.ctrlKey)&&(!ev.shiftKey)) {
+                if (!ev.shiftKey) {
                     //                    $(this.canvasCenterElement).css('cursor', 'col-resize');
                     this._dragging = true;
                     this._dragstartoffsetX = this._offsetX;
