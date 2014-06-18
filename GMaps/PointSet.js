@@ -219,8 +219,9 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                 // scale is just 2^zoom
                 var scale = Math.pow(2, that.myMapObject.myMap.zoom);
                 ctx.scale(scale, scale);
-                var pts = (that.pointSize*that.pointSize)/scale;
-                var ptso = pts/2;
+                var pts = (that.pointSize*that.pointSize)*1.0/scale;
+                //pts = 0.1;
+                var ptso = pts/2.0;
 
                 var drawPieChartSize = that.pieChartSize/scale;
 
@@ -275,8 +276,9 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                         point.pt = pt;
                         if (hasNumericalProperty)
                             ctx.fillStyle = DQX.HSL2Color(0.5-point.numPropFrac*0.75,1,0.5).changeOpacity(that.opacity).toStringCanvas();
-                        else
+                        else {
                             ctx.fillStyle = colorStrings[point.catNr];
+                        }
 
 
                         pt.x += point.offsetX * drawPieChartSize;
@@ -287,6 +289,7 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                         }
                         if (that.pointShape == 1) {
                             ctx.beginPath();
+                            ctx.moveTo(pt.x, pt.y);//Note: this seems to be necessary to avoid hollow circles if drawn very small
                             ctx.arc(pt.x, pt.y, ptso, 0, 2 * Math.PI, false);
                             ctx.closePath();
                             ctx.fill();
@@ -304,6 +307,7 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                             }
                             ctx.fillStyle = grd;
                             ctx.beginPath();
+                            ctx.moveTo(pt.x, pt.y);//Note: this seems to be necessary to avoid hollow circles if drawn very small
                             ctx.arc(pt.x, pt.y, ptso, 0, 2 * Math.PI, false);
                             ctx.closePath();
                             ctx.fill();
