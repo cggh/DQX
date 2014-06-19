@@ -33,6 +33,8 @@ define(["jquery", "DQX/DocEl", "DQX/Msg"],
 
             that.zoomareafraction = 0.3;
 
+            that.zoomLogFactor = 1000;
+
             that.zoomDragging = false;
             that.scrollerDragging = false;
 
@@ -41,6 +43,7 @@ define(["jquery", "DQX/DocEl", "DQX/Msg"],
 
             that.setMinScrollSize = function (fr) {
                 this.minScrollSize = fr;
+                that.zoomLogFactor = 10.0/Math.max(1.0e-9, fr);
             }
 
             that.setUnits = function (units) {
@@ -69,7 +72,7 @@ define(["jquery", "DQX/DocEl", "DQX/Msg"],
             //Returns the zooming factor as a fraction
             that.getZoomFrac = function () {
                 var zoomfrac = (Math.min(this.minScrollSize / this.ScrollSize) - this.minScrollSize) / (1 - this.minScrollSize);
-                return Math.log(1 + 10000000 * zoomfrac) / Math.log(1 + 10000000);
+                return Math.log(1 + that.zoomLogFactor * zoomfrac) / Math.log(1 + that.zoomLogFactor);
             }
 
             //Returns true if the scroller is on the extreme right
@@ -259,7 +262,7 @@ define(["jquery", "DQX/DocEl", "DQX/Msg"],
                     var newzoomfrac = (newzoompos - this.ZoomAreaStartX) / this.ZoomAreaSizeX;
                     newzoomfrac = Math.max(0, newzoomfrac);
                     newzoomfrac = Math.min(1, newzoomfrac);
-                    newzoomfrac = (Math.exp(newzoomfrac * Math.log(1 + 10000000)) - 1) / 10000000;
+                    newzoomfrac = (Math.exp(newzoomfrac * Math.log(1 + that.zoomLogFactor)) - 1) / that.zoomLogFactor;
                     var newscrollsize = this.minScrollSize / (newzoomfrac * (1 - this.minScrollSize) + this.minScrollSize);
                     newscrollsize = Math.min(1, newscrollsize);
                     newscrollsize = Math.max(this.minScrollSize, newscrollsize);
