@@ -984,7 +984,7 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
 
             that.myMap = new google.maps.Map(document.getElementById(that.getDivID()), mapoptions);
             that.myMap.mapTypes.set('map_style_simple', styledMap);
-            that.myMap.setMapTypeId('map_style_simple');
+            //that.myMap.setMapTypeId('map_style_simple');
 
 
             /*

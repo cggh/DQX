@@ -77,13 +77,16 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                 var mapProjection = that.myMapObject.myMap.getProjection();
                 if (!mapProjection)
                     return null;
+                var offset = mapProjection.fromLatLngToPoint(that.canvasLayer.getTopLeft());
+                var zoomF = Math.pow(2, that.myMapObject.myMap.zoom);
                 var mousept = mapProjection.fromLatLngToPoint(latLng);
+                mousept.x = (mousept.x-offset.x)*zoomF;
+                mousept.y = (mousept.y-offset.y)*zoomF;
                 var mindst = 5;
                 var matchpoint = null;
-                var scale = Math.pow(2, that.myMapObject.myMap.zoom);
                 $.each(that.myPointSet, function (idx, point) {
                     if ( (!that.isPointFiltered(point)) && (point.pt) && ((!point.isAggregated) || (!that.aggregatePieChart) ) ) {
-                        var dst = Math.sqrt(Math.pow(mousept.x-point.pt.x,2) + Math.pow(mousept.y-point.pt.y,2)) * scale;
+                        var dst = Math.sqrt(Math.pow(mousept.x-point.pt.x,2) + Math.pow(mousept.y-point.pt.y,2));
                         if (dst<=mindst) {
                             mindst = dst;
                             matchpoint = point;
@@ -100,8 +103,11 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                 var mapProjection = that.myMapObject.myMap.getProjection();
                 if (!mapProjection)
                     return null;
+                var offset = mapProjection.fromLatLngToPoint(that.canvasLayer.getTopLeft());
+                var zoomF = Math.pow(2, that.myMapObject.myMap.zoom);
                 var mousept = mapProjection.fromLatLngToPoint(latLng);
-                var scale = Math.pow(2, that.myMapObject.myMap.zoom);
+                mousept.x = (mousept.x-offset.x)*zoomF;
+                mousept.y = (mousept.y-offset.y)*zoomF;
                 var matchAggr = null;
                 $.each(that.aggregators, function (idx, aggr) {
                     var dst = Math.sqrt(Math.pow(mousept.x-aggr.pt.x,2) + Math.pow(mousept.y-aggr.pt.y,2));
@@ -186,6 +192,7 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
 
             that.draw = function() {
 
+
                 //Prepare color category strings
                 var colorStrings0 = [];
                 var colorStrings = [];
@@ -205,9 +212,6 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                 if ((!that.myPointSet) || (that.myPointSet.length == 0))
                     return;
 
-                ctx.fillStyle = 'rgba(0, 0, 255, 0.1)';
-                ctx.fillRect(0,0,canvasWidth,canvasHeight);
-
                 ctx.fillStyle = 'rgba(0, 128, 0, 0.5)';
 
                 var mapProjection = that.myMapObject.myMap.getProjection();
@@ -217,25 +221,20 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                 ctx.setTransform(1, 0, 0, 1, 0, 0);
 
                 // scale is just 2^zoom
-                var scale = Math.pow(2, that.myMapObject.myMap.zoom);
-                ctx.scale(scale, scale);
-                var pts = (that.pointSize*that.pointSize)*1.0/scale;
-                //pts = 0.1;
+                var zoomF = Math.pow(2, that.myMapObject.myMap.zoom);
+                var pts = (that.pointSize*that.pointSize)*1.0;
                 var ptso = pts/2.0;
 
-                var drawPieChartSize = that.pieChartSize/scale;
+                var drawPieChartSize = that.pieChartSize;
 
-                /* If the map was not translated, the topLeft corner would be 0,0 in
-                 * world coordinates. Our translation is just the vector from the
-                 * world coordinate of the topLeft corder to 0,0.
-                 */
                 var offset = mapProjection.fromLatLngToPoint(that.canvasLayer.getTopLeft());
-                ctx.translate(-offset.x, -offset.y);
 
                 // Draw pie charts
                 if (that.aggregatePieChart && (that.aggregators)) {
                     $.each(that.aggregators, function(idx, aggr) {
                         var pt = mapProjection.fromLatLngToPoint(new google.maps.LatLng(aggr.lattit, aggr.longit));
+                        pt.x = (pt.x-offset.x)*zoomF;
+                        pt.y = (pt.y-offset.y)*zoomF;
                         aggr.pt = pt;
                         var rd = Math.sqrt(aggr.totCount*1.0/that.maxAggrCount) * drawPieChartSize;
                         aggr.rd = rd;
@@ -253,13 +252,13 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                             ctx.fill();
                             prevAng = ang;
                         });
-                        ctx.lineWidth = 1/scale;
+                        ctx.lineWidth = 1;
                         ctx.beginPath();
                         ctx.arc(pt.x, pt.y, rd, 0, 2 * Math.PI, false);
                         ctx.closePath();
                         ctx.stroke();
                         if (aggr.selCount>0) {
-                            ctx.lineWidth = 4/scale;
+                            ctx.lineWidth = 4;
                             ctx.beginPath();
                             ctx.arc(pt.x, pt.y, rd, 0, aggr.selCount*1.0 / aggr.totCount * 2 * Math.PI, false);
                             ctx.stroke();
@@ -280,6 +279,8 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                             ctx.fillStyle = colorStrings[point.catNr];
                         }
 
+                        pt.x = (pt.x-offset.x)*zoomF;
+                        pt.y = (pt.y-offset.y)*zoomF;
 
                         pt.x += point.offsetX * drawPieChartSize;
                         pt.y += point.offsetY * drawPieChartSize;
