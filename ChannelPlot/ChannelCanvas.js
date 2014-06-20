@@ -67,6 +67,10 @@ define(["_", "jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
                     $('#' + this.getCanvasID('wrapper')).show();
             }
 
+            that.scrollInView = function() {
+                that._myPlotter.channelScrollInView(that.getID());
+            }
+
 
             that.getMyPlotter = function () {
                 if (!this._myPlotter) DQX.reportError("Channel is not yet associated to a plotter");

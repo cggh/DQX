@@ -236,10 +236,35 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Scroller", "DQX
                 if (!theChannel) DQX.reportError("Invalid channel id " + channelID);
                 if (newStatus!=theChannel.getVisible()) {
                     theChannel._setVisible(newStatus);
-                    if (!preventReDraw)
+                    if (!preventReDraw) {
                         this.render();
+                    }
                 }
             }
+
+            that.channelScrollInView = function(channelID) {
+                if (that.recallingSettings)
+                    return;
+                that.channelScrollInViewThrottled(channelID);
+            };
+
+            that.channelScrollInViewThrottled = DQX.debounce(function(channelID) {
+                var theChannel = this._idChannelMap[channelID];
+                if (!theChannel) DQX.reportError("Invalid channel id " + channelID);
+                var trackTopOffset = $('#' + theChannel.getCanvasID('wrapper')).offset().top
+                    - that.getElemJQ('BodyScroll').offset().top;
+                var scrollPos = that.getElemJQ('BodyScroll').scrollTop();
+                var trackH = $('#' + theChannel.getCanvasID('wrapper')).height();
+                var containerH = that.getElemJQ('BodyScroll').height();
+                if (trackTopOffset<0) {
+                    that.getElemJQ('BodyScroll').scrollTop(trackTopOffset+scrollPos);
+                } else if (trackTopOffset+trackH>containerH) {
+                    that.getElemJQ('BodyScroll').scrollTop(Math.min(
+                        trackTopOffset+scrollPos-containerH+trackH,
+                        trackTopOffset+scrollPos
+                    ));
+                }
+            }, 200);
 
             ///////////////////////////////////////////////////////////////////////////////////////////////////////
             // Some internally used functions

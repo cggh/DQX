@@ -659,6 +659,8 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/Chann
                     for (var othercompid in that.myComponents)
                         if (that.myComponents[othercompid].getActive()) channelActive=true;
                     that._myPlotter.channelModifyVisibility(that.getID(),channelActive);
+                    if (chk.getValue())
+                        that.scrollInView();
 
                     that._myPlotter.render();
                 });
@@ -674,6 +676,8 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/Chann
                 }
                 var chk=Controls.Check(null,{ label:that.getTitle(), value:(!defaultHidden) }).setClassID(that._myID).setOnChanged(function() {
                     that.modifyVisibility(chk.getValue());
+                    if (chk.getValue())
+                        that.scrollInView();
                 });
                 return chk;
             }
@@ -685,6 +689,8 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/Chann
                 if (!preventReDraw)
                     that._myPlotter.render();
             }
+
+
 
 
 
