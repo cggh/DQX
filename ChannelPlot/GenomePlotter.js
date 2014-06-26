@@ -102,8 +102,8 @@ define(["jquery", "DQX/Utils", "DQX/Msg", "DQX/ChannelPlot/ChannelPlotter", "DQX
             that.setChromosome = function (newchromoid, updatepicker, redraw) {
                 var newchromonr = this.getChromoNr(newchromoid);
                 if (newchromonr == null) {
-                    alert('This feature is not in the scope of the current data set (chromosome id: '+newchromoid+')');
-                    return;
+                    alert('Invalid chromosome id: '+newchromoid);
+                    return false;
                 }
                 if (newchromonr != this.currentChromoNr)
                     this.clearData();
@@ -134,7 +134,7 @@ define(["jquery", "DQX/Utils", "DQX/Msg", "DQX/ChannelPlot/ChannelPlotter", "DQX
                 }
 
                 Msg.broadcast({ type: 'ChromosomePositionChanged', id: that.myID });
-
+                return true;
             }
 
             //adds a new chromosome to the viewer
@@ -150,7 +150,8 @@ define(["jquery", "DQX/Utils", "DQX/Msg", "DQX/ChannelPlot/ChannelPlotter", "DQX
 
             //Call this function to highlight a particular region
             that.highlightRegion = function (chromid, pos, size) {
-                this.setChromosome(chromid, true, false);
+                if (!this.setChromosome(chromid, true, false))
+                    return;
                 if (size < 1) size = 1;
                 this.setMark(pos - size / 2, pos + size / 2);
                 var winsize = size * 3;
