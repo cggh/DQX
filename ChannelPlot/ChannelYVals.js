@@ -475,7 +475,6 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/Chann
                 var xvals2 = points1.xVals;
                 var yvals2 = points2.YVals;
                 var thefirst = true;
-                drawInfo.centerContext.beginPath();
                 drawInfo.centerContext.fillStyle = this.myColor.toStringCanvas();
                 drawInfo.centerContext.globalAlpha = that.myPlotHints.getOpacity();
 
@@ -483,36 +482,46 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/Chann
                 var psy_offset = drawInfo.sizeY - drawInfo.sizeY * 0.1 + rangemin * psy_fact;
                 var hasYFunction = "YFunction" in this;
 
-                var psx, psy;
+                var currentStretchX = [];
+                var currentStretchTop = [];
+                var currentStretchBottom = [];
+                var drawCurrentStretch = function() {
+                    var slen = currentStretchX.length;
+                    if (slen>0) {
+                        drawInfo.centerContext.beginPath();
+                        drawInfo.centerContext.moveTo(currentStretchX[0], currentStretchTop[0]);
+                        for (var j=1; j<slen; j++)
+                            drawInfo.centerContext.lineTo(currentStretchX[j], currentStretchTop[j]);
+                        for (var j=slen-1; j>=0; j--)
+                            drawInfo.centerContext.lineTo(currentStretchX[j], currentStretchBottom[j]);
+                        drawInfo.centerContext.closePath();
+                        drawInfo.centerContext.fill();
+                    }
+                }
+
                 for (var i = 0; i < xvals1.length; i++) {
                     psx = xvals1[i] * drawInfo.zoomFactX - drawInfo.offsetX;
-                    if (yvals1[i] != null) {
-                        var y = yvals1[i];
-                        if (hasYFunction)
-                            y = this.YFunction(y);
-                        psy = psy_offset - y * psy_fact;
+                    if ((yvals1[i] != null) && (yvals2[i] != null)) {
+                        var y1 = yvals1[i];
+                        var y2 = yvals2[i];
+                        if (hasYFunction) {
+                            y1 = this.YFunction(y1);
+                            y2 = this.YFunction(y2);
+                        }
+                        currentStretchX.push(xvals1[i] * drawInfo.zoomFactX - drawInfo.offsetX);
+                        currentStretchTop.push(psy_offset - y2 * psy_fact);
+                        currentStretchBottom.push(psy_offset - y1 * psy_fact);
                     }
-                    else
-                        psy = psy_offset;
-                    if (thefirst) {
-                        drawInfo.centerContext.moveTo(psx, psy);
-                        thefirst = false;
+                    else {
+                        if (currentStretchX.length>0) {
+                            drawCurrentStretch();
+                            currentStretchX = [];
+                            currentStretchTop = [];
+                            currentStretchBottom = [];
+                        }
                     }
-                    else drawInfo.centerContext.lineTo(psx, psy);
                 }
-                for (var i = xvals2.length - 1; i >= 0; i--) {
-                    var psx = xvals2[i] * drawInfo.zoomFactX - drawInfo.offsetX;
-                    if (yvals2[i] != null) {
-                        var y = yvals2[i];
-                        if (hasYFunction)
-                            y = this.YFunction(y);
-                        psy = psy_offset - y * psy_fact;
-                    }
-                    else
-                        psy = psy_offset;
-                    drawInfo.centerContext.lineTo(psx, psy);
-                }
-                drawInfo.centerContext.fill();
+                drawCurrentStretch();
             }
 
             that.getClosestPoint = function (px, py) {
