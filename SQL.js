@@ -2,7 +2,7 @@
 // This program is free software licensed under the GNU Affero General Public License.
 // You can find a copy of this license in LICENSE in the top directory of the source code or at <http://opensource.org/licenses/AGPL-3.0>
 
-﻿define(["jquery", "DQX/DocEl", "DQX/base64"],
+define(["jquery", "DQX/DocEl", "DQX/base64"],
     function ($, DocEl, Base64) {
 
         var SQL = {};
@@ -128,6 +128,9 @@
             { ID: '>FIELD', name: '> Field', //Performs a > operation with a linear function of another field
                 Float: true, Integer: true,
                 Create: function () { return SQL.WhereClause.CompareField('>FIELD') }
+            },
+            { ID: '_subset_', name: 'In subset',
+                Create: function () { return SQL.WhereClause.InSubset() }
             }
         ];
 
@@ -198,9 +201,14 @@
 
             //Fetches the content of this statement from the controls in the querybuilder GUI
             that._fetchStatementContent = function (ID, querybuilder) {
-                var mycol = querybuilder.getColumn(this.ColName);
-                if ($("#" + querybuilder.getControlID(ID, "Content")).length > 0) {
-                    this.CompValue = mycol.display2Content($("#" + querybuilder.getControlID(ID, "Content")).val());
+                if (this.ColName=='_subset_') {
+                    DQX.reportError('Invalid query component content');
+                }
+                else {
+                    var mycol = querybuilder.getColumn(this.ColName);
+                    if ($("#" + querybuilder.getControlID(ID, "Content")).length > 0) {
+                        this.CompValue = mycol.display2Content($("#" + querybuilder.getControlID(ID, "Content")).val());
+                    }
                 }
             }
 
@@ -542,6 +550,62 @@
             }
             return that;
         }
+
+
+
+        //A class that checks subset membership
+        SQL.WhereClause.whcClassGenerator['_subset_'] = function(args) {
+            var whc = SQL.WhereClause.InSubset();
+            whc.Subset = args.Subset;
+            whc.SubsetTable = args.SubsetTable;
+            whc.PrimKey = args.PrimKey;
+            return whc;
+        }
+        SQL.WhereClause.InSubset = function () {
+            var that = {};
+            that.whcClass = '_subset_';
+            that.isCompound = false;
+            that.Tpe = "_subset_";
+            that.ColName = '_subset_';
+            that._buildStatement = function (ID, elem, querybuilder) {
+                that.SubsetTable = querybuilder.subsetTableName;
+                that.PrimKey = querybuilder.primKey;
+                var thesubsets = [];
+                if (querybuilder.subsetList) {
+                    $.each(querybuilder.subsetList, function(idx, subset) {
+                        thesubsets.push({ id: subset.id, name: subset.name });
+                    });
+                }
+                var ctrl_subsets = DocEl.Select(thesubsets, this.Subset);
+                ctrl_subsets.setID(querybuilder.getControlID(ID, "Subset"));
+                ctrl_subsets.setWidthPx(150);
+                ctrl_subsets.setCssClass('DQXQBQueryboxControl');
+                querybuilder.decorateQueryStatementControl(ctrl_subsets, ID);
+                elem.addElem(ctrl_subsets);
+                //Hidden elements to keep track of extra stuff
+                var ctrl1 = DocEl.Span();
+                ctrl1.setID(querybuilder.getControlID(ID, "STable"));
+                ctrl1.addElem(that.SubsetTable);
+                ctrl1.addStyle('display', 'none');
+                elem.addElem(ctrl1);
+                var ctrl1 = DocEl.Span();
+                ctrl1.setID(querybuilder.getControlID(ID, "PrimKey"));
+                ctrl1.addElem(that.PrimKey);
+                ctrl1.addStyle('display', 'none');
+                elem.addElem(ctrl1);
+
+            }
+            that._fetchStatementContent = function (ID, querybuilder) {
+                this.Subset = $("#" + querybuilder.getControlID(ID, "Subset")).val();
+                this.SubsetTable = $("#" + querybuilder.getControlID(ID, "STable")).text();
+                this.PrimKey = $("#" + querybuilder.getControlID(ID, "PrimKey")).text();
+            }
+            that.toDisplayString = function(fieldInfoMap, level) {
+                return 'In subset "'+this.Subset+'"';
+            }
+            return that;
+        }
+
 
 
         //A class that Encapsulates the absence of a where clause

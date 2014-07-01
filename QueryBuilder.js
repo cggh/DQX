@@ -43,6 +43,9 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePane
             that.borderSize = 0;
             that._globalcontentnr = 10;
             that._compid = 0;
+            that.subsetList = settings.subsetList;
+            that.primKey = settings.primKey;
+            that.subsetTableName = settings.subsetTableName;
 
             that.notifyModified = function () {
                 Msg.broadcast({ type: "QueryModified", id: this.getDivID() });
@@ -334,7 +337,8 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePane
                 for (var colnr in this.myColumns) {
                     thecols.push({ id: this.myColumns[colnr].ID, name: this.myColumns[colnr].name, group: this.myColumns[colnr].GroupName });
                 }
-                //thecols.push({ id:'__', name: 'Is in subset'});
+                if (that.subsetList)
+                    thecols.push({ id:'_subset_', name: 'Is in subset', group: 'Other'});
                 var fieldlist = DocEl.Select(thecols, myOperator.ColName);
                 fieldlist.setID(this.getControlID(theComponentStatement.ID, "Field"));
                 fieldlist.setWidthPx(150);
@@ -344,24 +348,29 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePane
 
                 elem.addElem(" ");
 
-                var compatops = SQL.WhereClause.getCompatibleFieldComparisonOperators(this.getColumn(myOperator.ColName).datatype);
-                var cmpselectlist = [];
-                var foundinlist = false;
-                for (var operatornr in compatops) {
-                    var op = compatops[operatornr];
-                    cmpselectlist.push({ id: op.ID, name: op.name });
-                    if (myOperator.Tpe == op.ID) foundinlist = true;
+                if (myOperator.Tpe == '_subset_') {
+                    //!!!
                 }
-                if (!foundinlist) {
-                    myOperator.Tpe = cmpselectlist[0].id;
-                    this._needRebuild = true;
+                else {
+                    var compatops = SQL.WhereClause.getCompatibleFieldComparisonOperators(this.getColumn(myOperator.ColName).datatype);
+                    var cmpselectlist = [];
+                    var foundinlist = false;
+                    for (var operatornr in compatops) {
+                        var op = compatops[operatornr];
+                        cmpselectlist.push({ id: op.ID, name: op.name });
+                        if (myOperator.Tpe == op.ID) foundinlist = true;
+                    }
+                    if (!foundinlist) {
+                        myOperator.Tpe = cmpselectlist[0].id;
+                        this._needRebuild = true;
+                    }
+                    var comptype = DocEl.Select(cmpselectlist, myOperator.Tpe);
+                    comptype.setID(this.getControlID(theComponentStatement.ID, "Type"));
+                    comptype.setWidthPx(150);
+                    comptype.setCssClass('DQXQBQueryboxControl');
+                    comptype.SetChangeEvent(this._createReactFunctionString('_ReactChangeCompType', theComponentStatement.ID));
+                    elem.addElem(comptype);
                 }
-                var comptype = DocEl.Select(cmpselectlist, myOperator.Tpe);
-                comptype.setID(this.getControlID(theComponentStatement.ID, "Type"));
-                comptype.setWidthPx(150);
-                comptype.setCssClass('DQXQBQueryboxControl');
-                comptype.SetChangeEvent(this._createReactFunctionString('_ReactChangeCompType', theComponentStatement.ID));
-                elem.addElem(comptype);
 
                 elem.addElem(" ");
 
@@ -645,10 +654,20 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePane
                 }
                 else {
                     if ("ID" in theQueryComponent) {
-                        var mytype = $("#" + this.getControlID(theQueryComponent.ID, "Type")).val();
-                        theQueryComponent.myOperator = SQL.WhereClause.getFieldComparisonOperatorInfo(mytype).Create();
-                        theQueryComponent.myOperator.ColName = $("#" + this.getControlID(theQueryComponent.ID, "Field")).val();
-                        theQueryComponent.myOperator._fetchStatementContent(theQueryComponent.ID, this);
+                        var colName = $("#" + this.getControlID(theQueryComponent.ID, "Field")).val();
+                        if (colName == '_subset_') {
+                            theQueryComponent.myOperator = SQL.WhereClause.getFieldComparisonOperatorInfo('_subset_').Create();
+                            theQueryComponent.myOperator.ColName = '_subset_';
+                            theQueryComponent.myOperator._fetchStatementContent(theQueryComponent.ID, this);
+                        }
+                        else {
+                            var mytype = $("#" + this.getControlID(theQueryComponent.ID, "Type")).val();
+                            if (!mytype)
+                                mytype = '=';
+                            theQueryComponent.myOperator = SQL.WhereClause.getFieldComparisonOperatorInfo(mytype).Create();
+                            theQueryComponent.myOperator.ColName = colName;
+                            theQueryComponent.myOperator._fetchStatementContent(theQueryComponent.ID, this);
+                        }
                     }
                 }
             }

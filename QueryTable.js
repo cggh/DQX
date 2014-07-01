@@ -111,9 +111,11 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Co
 
             // Creates an advanced query tool panel for this table, in the frame provided
             // callBackFunction is called everytime the query was changed
-            that.createPanelAdvancedQuery = function(iFrame, callBackFunction, noAutoUpdate) {
+            that.createPanelAdvancedQuery = function(iFrame, callBackFunction, noAutoUpdate, iSettings) {
                 var settings = {};
                 settings.noUpdate = noAutoUpdate;
+                if (iSettings)
+                    settings = $.extend(settings,iSettings);
                 var panelAdvancedQueryBuilder = QueryBuilder.Panel(iFrame, settings);
                 var builder = panelAdvancedQueryBuilder;
                 var dataFetcher = this.myTable.myDataFetcher;
