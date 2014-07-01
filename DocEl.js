@@ -210,14 +210,25 @@ define(
             var that = DocEl.Create("select", args);
 
             var content = "";
+            var lastGroupName = '';
             for (var optnr in optionlist) {
                 if (!('id' in optionlist[optnr])) DQX.reportError("Select option list should have id properties");
                 if (!('name' in optionlist[optnr])) DQX.reportError("Select option list should have name properties");
+                var groupName = optionlist[optnr].group || '';
+                if (groupName != lastGroupName) {
+                    if (lastGroupName)
+                        content += '</optgroup>';
+                    lastGroupName = groupName;
+                    if (groupName)
+                        content += '<optgroup = label="{name}">'.DQXformat({name: groupName});
+                }
                 content += '<option value="' + optionlist[optnr].id + '"';
                 if (selectedvalue == optionlist[optnr].id)
                     content += 'selected="selected"';
                 content += '>' + optionlist[optnr].name + '</option>';
             }
+            if (lastGroupName)
+                content += '</optgroup>';
             that.addElem(content);
 
             that.SetChangeEvent = function (eventhandlerstr) {

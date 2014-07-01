@@ -2,7 +2,7 @@
 // This program is free software licensed under the GNU Affero General Public License.
 // You can find a copy of this license in LICENSE in the top directory of the source code or at <http://opensource.org/licenses/AGPL-3.0>
 
-﻿define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
+define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
     function ($, SQL, DQX, DocEl, Msg, FramePanel) {
 
         var QueryBuilder = {};
@@ -332,8 +332,9 @@
 
                 var thecols = [];
                 for (var colnr in this.myColumns) {
-                    thecols.push({ id: this.myColumns[colnr].ID, name: this.myColumns[colnr].name });
+                    thecols.push({ id: this.myColumns[colnr].ID, name: this.myColumns[colnr].name, group: this.myColumns[colnr].GroupName });
                 }
+                //thecols.push({ id:'__', name: 'Is in subset'});
                 var fieldlist = DocEl.Select(thecols, myOperator.ColName);
                 fieldlist.setID(this.getControlID(theComponentStatement.ID, "Field"));
                 fieldlist.setWidthPx(150);

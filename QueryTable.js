@@ -2,7 +2,7 @@
 // This program is free software licensed under the GNU Affero General Public License.
 // You can find a copy of this license in LICENSE in the top directory of the source code or at <http://opensource.org/licenses/AGPL-3.0>
 
-﻿define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Controls", "DQX/SQL", "DQX/QueryBuilder", "DQX/DataFetcher/DataFetchers"],
+define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Controls", "DQX/SQL", "DQX/QueryBuilder", "DQX/DataFetcher/DataFetchers"],
     function ($, DQX, DocEl, Msg, FramePanel, Controls, SQL, QueryBuilder, DataFetchers) {
 
         var QueryTable = {}
@@ -157,6 +157,8 @@
                             queryColInfo.content2Display = colinfo.CellToText;
                         if (colinfo.CellToTextInv)
                             queryColInfo.display2Content = colinfo.CellToTextInv;
+                        if (colinfo.GroupName)
+                            queryColInfo.GroupName = colinfo.GroupName;
                         builder.addTableColumn(queryColInfo);
                     }
                 });
