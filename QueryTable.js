@@ -654,7 +654,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Co
                             rs_table[tbnr] += ' ' + st;
                         }
                         if (thecol._hyperlinkHeaderMessageScope || thecol._headerClickHandler ) {
-                            var st = '<IMG class="DQXQueryTableLinkHeader" id="{theid}" SRC=' + DQX.BMP('link2.png') + ' border=0 class="DQXBitmapLink" ALT="Link" title="{hint}" style="position:absolute;right:-5px;top:-5px">'
+                            var st = '<IMG class="DQXQueryTableLinkHeader" id="{theid}" SRC=' + DQX.BMP('linkinfo2.png') + ' border=0 class="DQXBitmapLink" ALT="Link" title="{hint}" style="position:absolute;right:-4px;top:-4px">'
                             st = st.DQXformat({ theid: (thecol.myCompID + '~headerlink~' + this.myBaseID), hint: thecol._toolTip });
                             rs_table[tbnr] += ' ' + st;
                         }
