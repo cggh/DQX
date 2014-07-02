@@ -37,6 +37,10 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
                 that._onItemHighlighted = handler;
             }
 
+            that.setOnOpen = function(handler) {
+                that._onOpen = handler;
+            }
+
             //Call this function to make the list have a search function that shows string matches
             //Optionally, for template-based item rendering, a list of template components that should be searched for can be provided
             that.setHasFilter = function (ifilterTemplateComponentList) {
@@ -155,6 +159,8 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
                 }
                 $('#' + this.myListDivID).html(lst1 + lst2);
                 $('#' + this.myListDivID).children().click(that._clickItem);
+                $('#' + this.myListDivID).children().dblclick(that._dblclickItem);
+                $('#' + this.myListDivID).children().mousedown(function(e){ e.preventDefault(); })
                 that.scrollHelper.update();
             }
 
@@ -190,6 +196,18 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
                 var elem = $(this);
                 var id = elem.attr('id');
                 that.setActiveItem(id);
+                ev.preventDefault();
+                ev.stopPropagation();
+                return false;
+            }
+
+            that._dblclickItem = function(ev) {
+                ev.preventDefault();
+                ev.stopPropagation();
+                if (that._onOpen) {
+                    that._onOpen();
+                }
+                return false;
             }
 
             that.handleResize = function () {

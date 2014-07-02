@@ -212,8 +212,8 @@ define(["jquery", "DQX/DocEl", "DQX/base64"],
                 }
             }
 
-            that.toDisplayString = function(fieldInfoMap, level) {
-                return fieldInfoMap[that.ColName].name+' '+that.Tpe+' '+fieldInfoMap[that.ColName].toDisplayString(that.CompValue);
+            that.toQueryDisplayString = function(queryData, level) {
+                return queryData.fieldInfoMap[that.ColName].name+' '+that.Tpe+' '+queryData.fieldInfoMap[that.ColName].toDisplayString(that.CompValue);
             }
 
 
@@ -270,8 +270,8 @@ define(["jquery", "DQX/DocEl", "DQX/base64"],
                 }
             }
 
-            that.toDisplayString = function(fieldInfoMap, level) {
-                return fieldInfoMap[that.ColName].name+' between '+fieldInfoMap[that.ColName].toDisplayString(that.CompValueMin )+' and '+fieldInfoMap[that.ColName].toDisplayString(that.CompValueMax);
+            that.toQueryDisplayString = function(queryData, level) {
+                return queryData.fieldInfoMap[that.ColName].name+' between '+queryData.fieldInfoMap[that.ColName].toDisplayString(that.CompValueMin )+' and '+queryData.fieldInfoMap[that.ColName].toDisplayString(that.CompValueMax);
             }
 
 
@@ -317,8 +317,8 @@ define(["jquery", "DQX/DocEl", "DQX/base64"],
                 }
             }
 
-            that.toDisplayString = function(fieldInfoMap, level) {
-                return fieldInfoMap[that.ColName].name+' = '+fieldInfoMap[that.ColName2].name;
+            that.toQueryDisplayString = function(queryData, level) {
+                return queryData.fieldInfoMap[that.ColName].name+' = '+queryData.fieldInfoMap[that.ColName2].name;
             }
 
 
@@ -365,8 +365,8 @@ define(["jquery", "DQX/DocEl", "DQX/base64"],
                 }
             }
 
-            that.toDisplayString = function(fieldInfoMap, level) {
-                return fieldInfoMap[that.ColName].name+' <> '+fieldInfoMap[that.ColName2].name;
+            that.toQueryDisplayString = function(queryData, level) {
+                return queryData.fieldInfoMap[that.ColName].name+' <> '+queryData.fieldInfoMap[that.ColName2].name;
             }
 
             return that;
@@ -437,8 +437,8 @@ define(["jquery", "DQX/DocEl", "DQX/base64"],
             }
 
 
-            that.toDisplayString = function(fieldInfoMap, level) {
-                var str= fieldInfoMap[that.ColName].name+' '+that.Tpe[0]+' ';
+            that.toQueryDisplayString = function(queryData, level) {
+                var str= queryData.fieldInfoMap[that.ColName].name+' '+that.Tpe[0]+' ';
                 if (Math.abs(that.Factor-1)>1.0e-9) {
                     if (that.Factor==0)
                         var factorStr = '0';
@@ -449,8 +449,8 @@ define(["jquery", "DQX/DocEl", "DQX/base64"],
                     }
                     str += factorStr+'x';
                 }
-                str += fieldInfoMap[that.ColName2].name;
-                var offsetStr = fieldInfoMap[that.ColName].toDisplayString(Math.abs(that.Offset));
+                str += queryData.fieldInfoMap[that.ColName2].name;
+                var offsetStr = queryData.fieldInfoMap[that.ColName].toDisplayString(Math.abs(that.Offset));
                 if (that.Offset>0)
                     str += '+'+offsetStr;
                 if (that.Offset<0)
@@ -479,8 +479,8 @@ define(["jquery", "DQX/DocEl", "DQX/base64"],
             }
             that._fetchStatementContent = function (ID, querybuilder) {
             }
-            that.toDisplayString = function(fieldInfoMap, level) {
-                return fieldInfoMap[that.ColName].name+' is present';
+            that.toQueryDisplayString = function(queryData, level) {
+                return queryData.fieldInfoMap[that.ColName].name+' is present';
             }
             return that;
         }
@@ -501,8 +501,8 @@ define(["jquery", "DQX/DocEl", "DQX/base64"],
             }
             that._fetchStatementContent = function (ID, querybuilder) {
             }
-            that.toDisplayString = function(fieldInfoMap, level) {
-                return fieldInfoMap[that.ColName].name+' is absent';
+            that.toQueryDisplayString = function(queryData, level) {
+                return queryData.fieldInfoMap[that.ColName].name+' is absent';
             }
             return that;
         }
@@ -523,8 +523,8 @@ define(["jquery", "DQX/DocEl", "DQX/base64"],
             }
             that._fetchStatementContent = function (ID, querybuilder) {
             }
-            that.toDisplayString = function(fieldInfoMap, level) {
-                return fieldInfoMap[that.ColName].name+' is present';
+            that.toQueryDisplayString = function(queryData, level) {
+                return queryData.fieldInfoMap[that.ColName].name+' is present';
             }
             return that;
         }
@@ -545,8 +545,8 @@ define(["jquery", "DQX/DocEl", "DQX/base64"],
             }
             that._fetchStatementContent = function (ID, querybuilder) {
             }
-            that.toDisplayString = function(fieldInfoMap, level) {
-                return fieldInfoMap[that.ColName].name+' is absent';
+            that.toQueryDisplayString = function(queryData, level) {
+                return queryData.fieldInfoMap[that.ColName].name+' is absent';
             }
             return that;
         }
@@ -600,8 +600,11 @@ define(["jquery", "DQX/DocEl", "DQX/base64"],
                 this.SubsetTable = $("#" + querybuilder.getControlID(ID, "STable")).text();
                 this.PrimKey = $("#" + querybuilder.getControlID(ID, "PrimKey")).text();
             }
-            that.toDisplayString = function(fieldInfoMap, level) {
-                return 'In subset "'+this.Subset+'"';
+            that.toQueryDisplayString = function(queryData, level) {
+                var subsetName = '[Unknown]';
+                if (queryData.subsetMap[this.Subset])
+                    subsetName = queryData.subsetMap[this.Subset].name;
+                return 'In subset "'+subsetName+'"';
             }
             return that;
         }
@@ -619,7 +622,7 @@ define(["jquery", "DQX/DocEl", "DQX/base64"],
             that.isCompound = false;
             that.Tpe = "";
             that.isTrivial = true;
-            that.toDisplayString = function(fieldInfoMap, level) { return 'All'; }
+            that.toQueryDisplayString = function(queryData, level) { return 'All'; }
             return that;
         }
 
@@ -634,7 +637,7 @@ define(["jquery", "DQX/DocEl", "DQX/base64"],
             that.isCompound = false;
             that.Tpe = "None";
             that.isNone = true;
-            that.toDisplayString = function(fieldInfoMap, level) { return 'None'; }
+            that.toQueryDisplayString = function(queryData, level) { return 'None'; }
             return that;
         }
 
@@ -662,11 +665,11 @@ define(["jquery", "DQX/DocEl", "DQX/base64"],
             }
             that.getComponentCount = function () { return this.Components.length; }
 
-            that.toDisplayString = function(fieldInfoMap, level) {
+            that.toQueryDisplayString = function(queryData, level) {
                 if (!level) level = 0;
                 var compstrs = [];
                 $.each(that.Components,function(idx,comp) {
-                    compstrs.push(comp.toDisplayString(fieldInfoMap, level+1));
+                    compstrs.push(comp.toQueryDisplayString(queryData, level+1));
                 });
                 var joinstr = ' '+that.Tpe+' ';
                 if (level==0)
