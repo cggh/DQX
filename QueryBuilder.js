@@ -349,7 +349,6 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePane
                 elem.addElem(" ");
 
                 if (myOperator.Tpe == '_subset_') {
-                    //!!!
                 }
                 else {
                     var compatops = SQL.WhereClause.getCompatibleFieldComparisonOperators(this.getColumn(myOperator.ColName).datatype);
