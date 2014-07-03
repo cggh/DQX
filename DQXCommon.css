@@ -1007,6 +1007,15 @@ background: linear-gradient(to bottom, rgba(247,247,247,1) 0%,rgba(214,214,214,1
 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7f7f7', endColorstr='#d6d6d6',GradientType=0 ); /* IE6-9 */    
 }
 
+.DQXLargeListItem IMG, .DQXLargeListItemSelected IMG
+{
+    opacity: 0.7
+}
+
+.DQXLargeListItem:hover IMG, .DQXLargeListItemSelected:hover IMG
+{
+    opacity: 1.0
+}
 
 
 .DQXTree
