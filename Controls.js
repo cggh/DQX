@@ -2,7 +2,7 @@
 // This program is free software licensed under the GNU Affero General Public License.
 // You can find a copy of this license in LICENSE in the top directory of the source code or at <http://opensource.org/licenses/AGPL-3.0>
 
-﻿/************************************************************************************************************************************
+/************************************************************************************************************************************
 *************************************************************************************************************************************
 
 Controls are a set of UI widgets (edit boxes, checkboxes, ...) that can be
@@ -202,6 +202,51 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
         }
 
 
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        // This control can be used to center another control
+        ////////////////////////////////////////////////////////////////////////////////////////////
+
+        Controls.AlignCenter = function (icontrol) {
+            var that = {};
+            that._control = icontrol;
+
+            that.getID = function () {
+                return that._control.getID();
+            }
+
+
+            that.renderHtml = function () {
+                var el1 = DocEl.Div({});
+                el1.addStyle('text-align', 'center');
+                var el2 = DocEl.Div({ parent: el1 });
+                el2.addStyle('display', 'inline-block');
+                el2.addStyle('text-align', 'left');
+//                el2.addStyle('background-color', 'rgb(255,192,192)');
+                el2.addElem(this._control.renderHtml());
+                return el1.toString();
+            }
+
+            that.postCreateHtml = function () {
+                this._control.postCreateHtml();
+            }
+
+            that.applyOnControls = function(fnc) {
+                if ('applyOnControls' in that._control)
+                    that._control.applyOnControls(fnc);
+            };
+
+            that.tearDown = function() {
+                if ('tearDown' in that._control)
+                    that._control.tearDown();
+            }
+
+            that.setContextID = function (id) {
+                if ('setContextID' in that._control)
+                    that._control.setContextID(id);
+            }
+
+            return that;
+        }
 
         ////////////////////////////////////////////////////////////////////////////////////////////
         // This control can be used to right align another control
@@ -757,7 +802,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
             that.setContextID = function (id) { }
             that.modifyEnabled = function (newstate) { }
             that.renderHtml = function () {
-                return '<div style="height:{sz}px;width:100%"></div>'.DQXformat({ sz: this._size });
+                return '<div style="height:{sz}px;width:100%;clear:both"></div>'.DQXformat({ sz: this._size });
             }
             that.postCreateHtml = function () { }
             that.findControl = function (id) { return null; }
@@ -2120,7 +2165,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 st = '';
                 st += '<div style="display:inline-block">';
                 st += '<div id="{id}" style="width:{width}px">'.DQXformat({ id: this.getFullID(''), width: this._width });
-                st += '<span >{content}</span>'.DQXformat({ content: that._label });
+                st += '<span class="SupportingText">{content}</span>'.DQXformat({ content: that._label });
                 st += '<span id="{id}" style="float:right">1</span>'.DQXformat({ id: this.getFullID('Value') });
                 st += "</div>";
                 st += '<div><canvas id="{id}" width="{width}"  height="{height}"></canvas></div>'.DQXformat({ id: this.getFullID('Canvas'), width: this._width, height: this._height });

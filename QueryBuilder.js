@@ -338,7 +338,7 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePane
                     thecols.push({ id: this.myColumns[colnr].ID, name: this.myColumns[colnr].name, group: this.myColumns[colnr].GroupName });
                 }
                 if (that.subsetList && (that.subsetList.length>0))
-                    thecols.push({ id:'_subset_', name: 'Is in subset', group: 'Other'});
+                    thecols.push({ id:'_subset_', name: 'in subset', group: 'Other'});
                 var fieldlist = DocEl.Select(thecols, myOperator.ColName);
                 fieldlist.setID(this.getControlID(theComponentStatement.ID, "Field"));
                 fieldlist.setWidthPx(150);

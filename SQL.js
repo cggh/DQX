@@ -129,7 +129,7 @@ define(["jquery", "DQX/DocEl", "DQX/base64"],
                 Float: true, Integer: true,
                 Create: function () { return SQL.WhereClause.CompareField('>FIELD') }
             },
-            { ID: '_subset_', name: 'In subset',
+            { ID: '_subset_', name: 'in subset',
                 Create: function () { return SQL.WhereClause.InSubset() }
             }
         ];
@@ -604,7 +604,7 @@ define(["jquery", "DQX/DocEl", "DQX/base64"],
                 var subsetName = '[Unknown]';
                 if (queryData.subsetMap[this.Subset])
                     subsetName = queryData.subsetMap[this.Subset].name;
-                return 'In subset "'+subsetName+'"';
+                return 'in subset "'+subsetName+'"';
             }
             return that;
         }

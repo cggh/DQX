@@ -101,20 +101,20 @@ define(["jquery", "DQX/DocEl", "DQX/Msg"],
             }
 
             that.draw = function () {
-                var SepSizeX = 15;
+                var SepSizeX = 7;
 
                 var obj = this.getMyCanvasElement();
                 var centercontext = obj.getContext("2d");
 
                 var backgrad1 = centercontext.createLinearGradient(0, 0, 0, this.sizeY);
-                backgrad1.addColorStop(0, "rgb(210,210,210)");
-                backgrad1.addColorStop(0.35, "rgb(255,255,255)");
-                backgrad1.addColorStop(1, "rgb(170,170,170)");
+                backgrad1.addColorStop(0, "rgb(230,230,230)");
+                backgrad1.addColorStop(0.4, "rgb(255,255,255)");
+                backgrad1.addColorStop(1, "rgb(220,220,220)");
 
                 var backgrad2 = centercontext.createLinearGradient(0, 0, 0, this.sizeY);
-                backgrad2.addColorStop(0, "rgb(180,180,180)");
-                backgrad2.addColorStop(0.35, "rgb(240,240,240)");
-                backgrad2.addColorStop(1, "rgb(150,150,150)");
+                backgrad2.addColorStop(0, "rgb(200,200,200)");
+                backgrad2.addColorStop(0.4, "rgb(250,250,250)");
+                backgrad2.addColorStop(1, "rgb(170,170,170)");
 
                 centercontext.fillStyle = backgrad1;
                 centercontext.fillRect(0, 0, this.sizeX, this.sizeY);

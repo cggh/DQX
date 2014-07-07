@@ -169,6 +169,8 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Scroller", "DQX
                 var scroll = DocEl.Create('canvas', { parent: el, id: that.getSubID("HScroller") });
                 scroll.setWidthPx(10).addAttribute("height", that._navigatorHeight);
                 scroll.setWidthPx(10).setHeightPx(that._navigatorHeight);
+                scroll.addStyle('border-top', '1px solid rgb(192,192,192)');
+                scroll.addStyle('border-bottom', '1px solid rgb(192,192,192)');
                 html += el;
             }
             {//Create body

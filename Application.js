@@ -183,13 +183,13 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/His
             navSectionDiv.addStyle("right", "0px");
             navSectionDiv.addStyle("top", "0px");
             navSectionDiv.addStyle("padding-top", "0px");
-            navSectionDiv.addStyle("padding-right", "5px");
+            navSectionDiv.addStyle("padding-right", "0px");
             //this._createNavigationButton("HeaderPrevious", navSectionDiv, DQX.BMP("/Icons/Small/Back.png"), "Previous<br>view", "DQXToolButton3", 100, function () { Msg.send({ type: 'Back' }) });
-            this._createNavigationButton("HeaderHome", navSectionDiv, DQX.BMP("/Icons/Small/Home.png"), "Intro<br>view", "DQXToolButton3", 100, function () { Msg.send({ type: 'Home' }) });
+            this._createNavigationButton("HeaderHome", navSectionDiv, DQX.BMP("/Icons/Small/Home.png"), "Intro<br>view", "DQXToolButton3", 90, function () { Msg.send({ type: 'Home' }) });
 
             // Create custom navigation buttons
             $.each(Application._customNavigationButtons, function(idx, buttonInfo) {
-                Application._createNavigationButton("", navSectionDiv, buttonInfo.bitmap, buttonInfo.name, "DQXToolButton1", buttonInfo.width, buttonInfo.handler);
+                Application._createNavigationButton("", navSectionDiv, buttonInfo.bitmap, buttonInfo.name, "DQXToolButton3", buttonInfo.width, buttonInfo.handler);
             });
 
             $('#Div1').append(navSectionDiv.toString());

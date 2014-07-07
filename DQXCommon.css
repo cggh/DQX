@@ -316,8 +316,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#c3c3c3', end
 .DQXQueryTable td    
 { 
     border-width: 1px; 
-    border-style: dotted;
-    border-color: rgb(190,190,190);
+    border-style: solid;
+    border-color: rgb(220,220,220);
     padding-left: 3px;
     padding-right: 3px;
     padding-top: 1px;
@@ -345,6 +345,15 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#c3c3c3', end
 	cursor:pointer;
 }
 
+.DQXQueryTableHeaderText img
+{
+    opacity: 0.7;
+}
+
+.DQXQueryTableHeaderText:hover img
+{
+    opacity: 1.0;
+}
 
 .DQXQueryTableLinkCell 
 {
@@ -536,7 +545,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eff6fc', end
 /*Used for separators*/
 .DQXLightFrame
 {
-    background-color:rgb(160,160,160);
+    background-color:rgb(190,190,190);
     color:rgb(0,0,0);
 }
 
@@ -733,7 +742,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fafafa', end
     top: 1px;
 	background-color:rgb(230,230,230);
 	border-color:rgb(210,210,210);
-	color:rgb(80,80,80);
+	color:rgb(100,100,10F0);
 	font-weight:bold;
 }
 

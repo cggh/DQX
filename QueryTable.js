@@ -43,12 +43,12 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Co
                 tablebody1.addStyle("border-width", '0px');
                 tablebody1.addStyle("border-right-width", '2px');
                 tablebody1.addStyle("border-style", 'solid');
-                tablebody1.addStyle("border-color", 'rgb(60,60,60)');
+                tablebody1.addStyle("border-color", 'rgb(220,220,220)');
                 var div2 = DocEl.Div({ parent: holder, id: that.getSubId("BodyContainer") });
                 div2.addStyle('overflow', 'auto'); //.setWidthPc(95);
                 var tablebody2 = DocEl.Div({ parent: div2, id: that.getSubId("Body2") });
                 tablebody2.makeVisibleHorizontalScroller(true).addStyle("overflow-y", "hidden");
-                tablebody2.setBackgroundColor(DQX.Color(0.7, 0.7, 0.7));
+                tablebody2.setBackgroundColor(DQX.Color(0.98, 0.98, 0.98));
                 html += holder;
             }
             {//Create footer
@@ -359,10 +359,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Co
                 col.colorString = color.toString();
                 col.customTextCreator = function(myDataFetcher, downloadrownr) {
                     var id = myDataFetcher.getColumnPoint(downloadrownr, idcolumn);
-                    if (selectionManager.isItemSelected(id))
-                        return '<span style="background-color:'+col.colorString+';border:1px solid rgb(150,150,150)">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>';
-                    else
-                        return '<span style="border:1px solid rgb(150,150,150)">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>';
+                    return '<span style="'+(selectionManager.isItemSelected(id)?'background-color:'+col.colorString:"")+';border:1px solid rgb(150,150,150)">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>';
                 };
                 this.myColumns.push(col);
 
