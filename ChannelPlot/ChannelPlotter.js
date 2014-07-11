@@ -47,7 +47,7 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Scroller", "DQX
             if ('hasXScale' in args)
                 that._hasXScale = args.hasXScale;
 
-            that._navigatorHeight = 30;
+            that._navigatorHeight = 25;
             that._channels = [];
             that._idChannelMap = {};
             //some internal stuff
@@ -167,8 +167,8 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Scroller", "DQX
                 el.setWidthFull();
                 el.addStyle("white-space", "nowrap").addStyle("overflow", "hidden");
                 var scroll = DocEl.Create('canvas', { parent: el, id: that.getSubID("HScroller") });
-                scroll.setWidthPx(10).addAttribute("height", that._navigatorHeight);
-                scroll.setWidthPx(10).setHeightPx(that._navigatorHeight);
+                scroll.setWidthPx(10).addAttribute("height", that._navigatorHeight-2);
+                scroll.setWidthPx(10).setHeightPx(that._navigatorHeight-2);
                 scroll.addStyle('border-top', '1px solid rgb(192,192,192)');
                 scroll.addStyle('border-bottom', '1px solid rgb(192,192,192)');
                 html += el;

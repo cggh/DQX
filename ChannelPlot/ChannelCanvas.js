@@ -803,7 +803,7 @@ define(["_", "jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
 
         ChannelCanvas.XScale = function (id) {
             var that = ChannelCanvas.Base(id);
-            that._height = 25;
+            that._height = 22;
 
             that.draw = function (drawInfo) {
                 this.drawStandardGradientCenter(drawInfo, 0.84);
@@ -832,8 +832,8 @@ define(["_", "jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
                     if ((psx >= -50) && (psx <= drawInfo.sizeCenterX + 50)) {
                         if (i % drawInfo.HorAxisScaleJumps.JumpReduc == 0) {
                             drawInfo.centerContext.strokeStyle = DQX.Color(0.0, 0.0, 0.0).toString();
-                            drawInfo.centerContext.moveTo(psx, 19);
-                            drawInfo.centerContext.lineTo(psx, 25);
+                            drawInfo.centerContext.moveTo(psx, that._height-6);
+                            drawInfo.centerContext.lineTo(psx, that._height);
                             drawInfo.centerContext.stroke();
                             if (drawBP) {
                                 var valtxt = value.toFixed(0);
@@ -845,15 +845,15 @@ define(["_", "jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
                                     valtxt2.push(valtxt[sp]);
                                 }
                                 valtxt = valtxt2.reverse().join("");
-                                drawInfo.centerContext.fillText(valtxt, psx, 7);
+                                drawInfo.centerContext.fillText(valtxt, psx, 3);
                             }
                             else
-                                drawInfo.centerContext.fillText((value / 1.0e6), psx, 7);
+                                drawInfo.centerContext.fillText((value / 1.0e6), psx, 3);
                         }
                         else {
                             drawInfo.centerContext.strokeStyle = DQX.Color(0.3, 0.3, 0.3).toString();
-                            drawInfo.centerContext.moveTo(psx, 22);
-                            drawInfo.centerContext.lineTo(psx, 25);
+                            drawInfo.centerContext.moveTo(psx, that._height-3);
+                            drawInfo.centerContext.lineTo(psx, that._height);
                             drawInfo.centerContext.stroke();
                         }
                     }
@@ -864,7 +864,7 @@ define(["_", "jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
                 drawInfo.leftContext.font = '11px sans-serif';
                 drawInfo.leftContext.textBaseline = 'top';
                 drawInfo.leftContext.textAlign = 'left';
-                drawInfo.leftContext.fillText('Position ({unit})'.DQXformat({unit:unit}), 2, 7);
+                drawInfo.leftContext.fillText('Position ({unit})'.DQXformat({unit:unit}), 2, 3);
 
             }
 
