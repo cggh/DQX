@@ -276,7 +276,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
             that.render = function () {
                 var dv = DocEl.Div({ id: 'tree' });
                 dv.setCssClass('DQXTree');
-                dv.addStyle('padding', '1px');
+                dv.addStyle('padding', '6px');
                 var subItems = this.root.getItems();
                 for (var i = 0; i < subItems.length; i++)
                     this._renderSub(dv, subItems[i], 0);
@@ -296,8 +296,11 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
                     $('#' + this.getDivID()).find('#' + this._getDivIDItem(this._activeItem)).removeClass('DQXTreeItemSelected');
                 $('#' + this.getDivID()).find('#' + this._getDivIDItem(id)).addClass('DQXTreeItemSelected');
                 this._activeItem = id;
-                if (!noEvent)
+                if (!noEvent) {
+                    if (that.notifyClickTreeItem)
+                        that.notifyClickTreeItem(id);
                     Msg.broadcast({ type: 'SelectItem', id: this.myID }, this._activeItem);
+                }
             }
 
             //Automatically scroll the highlighted item in the visible area
