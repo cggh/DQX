@@ -1200,6 +1200,15 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 that.content += '">';
                 that.content += '<div class="_DQXButtonText" style="display:inline-block;width:{textw};vertical-align:middle">'.DQXformat({ textw: textWidth }) + DQX.interpolate(args.content) + '</div>';
             }
+            if (args.icon) {
+                var textWidth = '100%';
+                if (args.width && args.height)
+                    textWidth = (args.width - args.height - 12) + 'px';
+                that.content = '';
+                that.content += '<div style="display:inline-block;vertical-align:middle;width:1px;height:100%"></div>';
+                that.content += '<div class="fa {icon} buttonicon" style="display:inline-block;line-height: inherit;font-size: 22px;padding-right:7px;vertical-align:middle"></div>'.DQXformat({icon:args.icon});
+                that.content += '<div class="_DQXButtonText" style="display:inline-block;width:{textw};vertical-align:middle">'.DQXformat({ textw: textWidth }) + DQX.interpolate(args.content) + '</div>';
+            }
             if (args.hint)
                 that._hint = args.hint;
             that._buttonClass = 'DQXWizardButton';
