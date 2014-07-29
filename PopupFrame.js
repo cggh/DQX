@@ -55,6 +55,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
 
 
             that._title = 'Frame'; if (settings.title) that._title = settings.title;
+            that._icon = null;if (settings.icon) that._icon = settings.icon;
             that._sizeX = 800; if (settings.sizeX) that._sizeX = settings.sizeX;
             that._sizeY = 600; if (settings.sizeY) that._sizeY = settings.sizeY;
             that.blocking = false; if (settings.blocking) that.blocking = settings.blocking;
@@ -155,6 +156,8 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
 
                 var theheader = DocEl.Div({ id: that.ID + 'Handler', parent: thebox });
                 theheader.setCssClass("DQXPopupFrameHeader DQXDragHeader");
+                if (that._icon)
+                    theheader.addElem('<span class="fa {icon}" style="font-size:24px;position:relative;left:-5px;top:-4px;vertical-align: text-top"></span>'.DQXformat({icon:that._icon}));
                 theheader.addElem(DQX.interpolate(this._title));
 
 
