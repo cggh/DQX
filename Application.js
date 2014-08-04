@@ -171,7 +171,10 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/His
 
 
         Application._createNavigationButton = function (id, parentDiv, bitmap, content, styleClass, width, handlerFunction) {
-            var bt = Controls.Button(id, { bitmap: bitmap, content: content, buttonClass: styleClass, width: width, height: 30 });
+            if (bitmap.indexOf('fa-') === 0)
+                var bt = Controls.Button(id, { icon: bitmap, content: content, buttonClass: styleClass, width: width, height: 30 });
+            else
+                var bt = Controls.Button(id, { bitmap: bitmap, content: content, buttonClass: styleClass, width: width, height: 30 });
             bt.setOnChanged(handlerFunction);
             parentDiv.addElem(bt.renderHtml());
         };
@@ -185,7 +188,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/His
             navSectionDiv.addStyle("padding-top", "0px");
             navSectionDiv.addStyle("padding-right", "0px");
             //this._createNavigationButton("HeaderPrevious", navSectionDiv, DQX.BMP("/Icons/Small/Back.png"), "Previous<br>view", "DQXToolButton3", 100, function () { Msg.send({ type: 'Back' }) });
-            this._createNavigationButton("HeaderHome", navSectionDiv, DQX.BMP("/Icons/Small/Home.png"), "Intro<br>view", "DQXToolButton3", 90, function () { Msg.send({ type: 'Home' }) });
+            this._createNavigationButton("HeaderHome", navSectionDiv, 'fa-home', "Intro<br>view", "DQXToolButton3", 90, function () { Msg.send({ type: 'Home' }) });
 
             // Create custom navigation buttons
             $.each(Application._customNavigationButtons, function(idx, buttonInfo) {
