@@ -339,12 +339,15 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePane
                 }
                 if (that.subsetList && (that.subsetList.length>0))
                     thecols.push({ id:'_subset_', name: 'in subset', group: 'Other'});
-                var fieldlist = DocEl.Select(thecols, myOperator.ColName);
+                var wrapper = DocEl.Div();
+                wrapper.addStyle('display', 'inline-block');
+                wrapper.setCssClass('DQXSelectWrapper');
+                var fieldlist = DocEl.Select(thecols, myOperator.ColName, {parent:wrapper});
                 fieldlist.setID(this.getControlID(theComponentStatement.ID, "Field"));
                 fieldlist.setWidthPx(150);
                 fieldlist.setCssClass('DQXQBQueryboxControl');
                 fieldlist.SetChangeEvent(this._createReactFunctionString('_ReactChangeField', theComponentStatement.ID));
-                elem.addElem(fieldlist);
+                elem.addElem(wrapper);
 
                 elem.addElem(" ");
 
@@ -363,12 +366,15 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePane
                         myOperator.Tpe = cmpselectlist[0].id;
                         this._needRebuild = true;
                     }
-                    var comptype = DocEl.Select(cmpselectlist, myOperator.Tpe);
+                    var wrapper = DocEl.Div();
+                    wrapper.addStyle('display', 'inline-block');
+                    wrapper.setCssClass('DQXSelectWrapper');
+                    var comptype = DocEl.Select(cmpselectlist, myOperator.Tpe, {parent:wrapper});
                     comptype.setID(this.getControlID(theComponentStatement.ID, "Type"));
                     comptype.setWidthPx(150);
                     comptype.setCssClass('DQXQBQueryboxControl');
                     comptype.SetChangeEvent(this._createReactFunctionString('_ReactChangeCompType', theComponentStatement.ID));
-                    elem.addElem(comptype);
+                    elem.addElem(wrapper);
                 }
 
                 elem.addElem(" ");

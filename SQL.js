@@ -181,12 +181,15 @@ define(["jquery", "DQX/DocEl", "DQX/base64"],
 
                 var mycol = querybuilder.getColumn(this.ColName);
                 if (mycol.isMultipleCoice()) {
-                    var ctrl_choices = DocEl.Select(mycol.choicelist, this.CompValue);
+                    var wrapper = DocEl.Div();
+                    wrapper.addStyle('display', 'inline-block');
+                    wrapper.setCssClass('DQXSelectWrapper');
+                    var ctrl_choices = DocEl.Select(mycol.choicelist, this.CompValue, {parent:wrapper});
                     ctrl_choices.setID(querybuilder.getControlID(ID, "Content"));
                     ctrl_choices.setWidthPx(150);
                     ctrl_choices.setCssClass('DQXQBQueryboxControl');
                     querybuilder.decorateQueryStatementControl(ctrl_choices, ID);
-                    elem.addElem(ctrl_choices);
+                    elem.addElem(wrapper);
                     return;
                 }
                 else {
@@ -302,12 +305,15 @@ define(["jquery", "DQX/DocEl", "DQX/base64"],
                 for (var colnr = 0; colnr < querybuilder.myColumns.length; colnr++)
                     if (querybuilder.myColumns[colnr].ID != this.ColName)
                         thecols.push({ id: querybuilder.myColumns[colnr].ID, name: querybuilder.myColumns[colnr].name });
-                var ctrl_otherfield = DocEl.Select(thecols, this.ColName2);
+                var wrapper = DocEl.Div();
+                wrapper.addStyle('display', 'inline-block');
+                wrapper.setCssClass('DQXSelectWrapper');
+                var ctrl_otherfield = DocEl.Select(thecols, this.ColName2, {parent:wrapper});
                 ctrl_otherfield.setID(querybuilder.getControlID(ID, "OtherField"));
                 ctrl_otherfield.setWidthPx(150);
                 ctrl_otherfield.setCssClass('DQXQBQueryboxControl');
                 querybuilder.decorateQueryStatementControl(ctrl_otherfield, ID);
-                elem.addElem(ctrl_otherfield);
+                elem.addElem(wrapper);
             }
 
             //Fetches the content of this statement from the controls in the querybuilder GUI
@@ -350,12 +356,15 @@ define(["jquery", "DQX/DocEl", "DQX/base64"],
                 for (var colnr = 0; colnr < querybuilder.myColumns.length; colnr++)
                     if (querybuilder.myColumns[colnr].ID != this.ColName)
                         thecols.push({ id: querybuilder.myColumns[colnr].ID, name: querybuilder.myColumns[colnr].name });
-                var ctrl_otherfield = DocEl.Select(thecols, this.ColName2);
+                var wrapper = DocEl.Div();
+                wrapper.addStyle('display', 'inline-block');
+                wrapper.setCssClass('DQXSelectWrapper');
+                var ctrl_otherfield = DocEl.Select(thecols, this.ColName2, {parent:wrapper});
                 ctrl_otherfield.setID(querybuilder.getControlID(ID, "OtherField"));
                 ctrl_otherfield.setWidthPx(150);
                 ctrl_otherfield.setCssClass('DQXQBQueryboxControl');
                 querybuilder.decorateQueryStatementControl(ctrl_otherfield, ID);
-                elem.addElem(ctrl_otherfield);
+                elem.addElem(wrapper);
             }
 
             //Fetches the content of this statement from the controls in the querybuilder GUI
@@ -409,12 +418,15 @@ define(["jquery", "DQX/DocEl", "DQX/base64"],
                     if (querybuilder.myColumns[colnr].isNumerical())
                         if (querybuilder.myColumns[colnr].ID != this.ColName)
                             thecols.push({ id: querybuilder.myColumns[colnr].ID, name: querybuilder.myColumns[colnr].name });
-                var ctrl_otherfield = DocEl.Select(thecols, this.ColName2);
+                var wrapper = DocEl.Div();
+                wrapper.addStyle('display', 'inline-block');
+                wrapper.setCssClass('DQXSelectWrapper');
+                var ctrl_otherfield = DocEl.Select(thecols, this.ColName2, {parent:wrapper});
                 ctrl_otherfield.setID(querybuilder.getControlID(ID, "OtherField"));
                 ctrl_otherfield.setWidthPx(150);
                 ctrl_otherfield.setCssClass('DQXQBQueryboxControl');
                 querybuilder.decorateQueryStatementControl(ctrl_otherfield, ID);
-                elem.addElem(ctrl_otherfield);
+                elem.addElem(wrapper);
 
                 elem.addElem(" + ");
 
@@ -576,12 +588,15 @@ define(["jquery", "DQX/DocEl", "DQX/base64"],
                         thesubsets.push({ id: subset.id, name: subset.name });
                     });
                 }
-                var ctrl_subsets = DocEl.Select(thesubsets, this.Subset);
+                var wrapper = DocEl.Div();
+                wrapper.addStyle('display', 'inline-block');
+                wrapper.setCssClass('DQXSelectWrapper');
+                var ctrl_subsets = DocEl.Select(thesubsets, this.Subset, {parent:wrapper});
                 ctrl_subsets.setID(querybuilder.getControlID(ID, "Subset"));
                 ctrl_subsets.setWidthPx(150);
                 ctrl_subsets.setCssClass('DQXQBQueryboxControl');
                 querybuilder.decorateQueryStatementControl(ctrl_subsets, ID);
-                elem.addElem(ctrl_subsets);
+                elem.addElem(wrapper);
                 //Hidden elements to keep track of extra stuff
                 var ctrl1 = DocEl.Span();
                 ctrl1.setID(querybuilder.getControlID(ID, "STable"));

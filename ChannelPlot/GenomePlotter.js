@@ -318,7 +318,10 @@ define(["jquery", "DQX/Utils", "DQX/Msg", "DQX/ChannelPlot/ChannelPlotter", "DQX
             chromPickerDiv.addStyle('padding-left', '5px');
             chromPickerDiv.addStyle('padding-top', '2px');
             chromPickerDiv.addStyle('padding-right', '15px');
-            var chromopicker = DocEl.Select([], '', { id: that.getSubID("ChromoPicker"), parent: chromPickerDiv });
+            var wrapper = DocEl.Div({parent: chromPickerDiv});
+            wrapper.addStyle('display', 'inline-block');
+            wrapper.setCssClass('DQXSelectWrapper');
+            var chromopicker = DocEl.Select([], '', { id: that.getSubID("ChromoPicker"), parent: wrapper });
 
             var navButtonDiv = DocEl.Div({ parent: headerDiv });
             navButtonDiv.addStyle('float', 'left');
