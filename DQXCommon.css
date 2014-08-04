@@ -589,9 +589,25 @@ background: -o-linear-gradient(top, rgb(240,240,240) 0%,rgb(220,220,220) 100%);
 background: -ms-linear-gradient(top, rgb(240,240,240) 0%,rgb(220,220,220) 100%);
 background: linear-gradient(to bottom, rgb(240,240,240) 0%,rgb(220,220,220) 100%);
 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fafafa', endColorstr='#e6e6e6',GradientType=0 );
-    color:rgb(0,0,0);
+color:rgb(0,0,0);
 }
 
+.DQXButtonBarButton
+{
+    margin:0px;
+    margin-left:3px;
+    margin-right:3px;
+    /*    background: none;*/
+}
+
+.DQXButtonBarButton:hover
+{
+    background-color: rgb(255,192,0);
+    box-shadow:none;
+    /*border:none;*/
+    cursor:pointer;
+
+}
 
 .DQXDarkFrame, .DQXLight2
 {

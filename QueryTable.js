@@ -550,14 +550,14 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Co
                     var rs_pager = "";
                     rs_pager += '<span style="position:relative;bottom:-2px;">';
                     var navButtonControls = [];
-                    navButtonControls.push(Controls.Button(that.myBaseID + '_goFirst', { bitmap: DQX.BMP('first.png'), description: 'First page', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onFirst, that)));
-                    navButtonControls.push(Controls.Button(that.myBaseID + '_goPrevious', { bitmap: DQX.BMP('previous.png'), description: 'Previous page', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onBack, that)));
-                    navButtonControls.push(Controls.Button(that.myBaseID + '_goNext', { bitmap: DQX.BMP('next.png'), description: 'Next page', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onForward, that)));
-                    navButtonControls.push(Controls.Button(that.myBaseID + '_goLast', { bitmap: DQX.BMP('lastpage.png'), description: 'Last page', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onLast, that)));
+                    navButtonControls.push(Controls.Button(that.myBaseID + '_goFirst', { height:22, icon: 'fa-step-backward', description: 'First page', buttonClass: 'DQXButtonBarButton', fastTouch: true }).setOnChanged($.proxy(that._onFirst, that)));
+                    navButtonControls.push(Controls.Button(that.myBaseID + '_goPrevious', { height:22, icon: 'fa-play', description: 'Previous page', buttonClass: 'DQXButtonBarButton fa-flip-horizontal', fastTouch: true }).setOnChanged($.proxy(that._onBack, that)));
+                    navButtonControls.push(Controls.Button(that.myBaseID + '_goNext', { height:22, icon: 'fa-play', description: 'Next page', buttonClass: 'DQXButtonBarButton', fastTouch: true }).setOnChanged($.proxy(that._onForward, that)));
+                    navButtonControls.push(Controls.Button(that.myBaseID + '_goLast', { height:22, icon: 'fa-step-forward', description: 'Last page', buttonClass: 'DQXButtonBarButton', fastTouch: true }).setOnChanged($.proxy(that._onLast, that)));
                     this.navButtonControls = navButtonControls;
                     $.each(navButtonControls, function (idx, bt) { rs_pager += bt.renderHtml(); });
                     rs_pager += '</span>';
-                    rs_pager += '<span id="{id}" style="display:inline-block; padding-top:10px"></span>'.DQXformat({ id: that.myBaseID + '_status' });
+                    rs_pager += '<span id="{id}" style="display:inline-block; padding-top:7px"></span>'.DQXformat({ id: that.myBaseID + '_status' });
 
                     var rightgroup = DocEl.Span({ id: that.myBaseID + '_right' });
                     rightgroup.addStyle('float', 'right');
@@ -610,9 +610,14 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Co
 
                 if (datacomplete && this._dataValid && (!this.preventDownloadData) ) {
                     var downloadlink = this.myDataFetcher.createDownloadUrl();
-                    var downloadHtml = '<a href=' + downloadlink + '><IMG class="DQXBitmapLink" SRC=' + DQX.BMP('download.png') + ' border=0 title="Download this data as TAB-delimited file" ALT="Download"></a>';
-                    //var downloadHtml = '<a href=' + downloadlink + '><span class="DQXHyperlink">Download<br>table</span></a>';
-                    $('#' + that.myBaseID + '_right').html(downloadHtml);
+                    if (!that.dl_button) {
+                        that.dl_button = Controls.Button(that.myBaseID + '_dl', { height: 22, icon: 'fa-download', description: 'Download data', buttonClass: 'DQXButtonBarButton', fastTouch: true }).setOnChanged(function() {window.location.href = downloadlink});
+                        $('#' + that.myBaseID + '_right').html(that.dl_button.renderHtml());
+                        Controls.ExecPostCreateHtml();
+                    } else
+                        that.dl_button.setOnChanged(function() {window.location.href = downloadlink});
+
+
                 }
                 else
                     $('#' + that.myBaseID + '_right').html('');
