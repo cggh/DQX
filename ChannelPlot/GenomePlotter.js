@@ -35,6 +35,7 @@ define(["jquery", "DQX/Utils", "DQX/Msg", "DQX/ChannelPlot/ChannelPlotter", "DQX
                 that.chromoNrField = args.chromnrfield;
             }
 
+            that.variableHeightFactor = 1.0;
 
             //Create the data fetcher for the gen annotation information
             that._annotationFetcher = new DataFetcherAnnotation.Fetcher(args);
@@ -198,6 +199,7 @@ define(["jquery", "DQX/Utils", "DQX/Msg", "DQX/ChannelPlot/ChannelPlotter", "DQX
             }
 
             that._onZoomInVert = function () {
+                that.variableHeightFactor *= 1.25;
                 $.each(this._channels, function (idx, channel) {
                     if (channel._variableHeight) {
                         channel.modifyHeight(Math.round(channel.getHeight() * 1.25));
@@ -207,6 +209,7 @@ define(["jquery", "DQX/Utils", "DQX/Msg", "DQX/ChannelPlot/ChannelPlotter", "DQX
             }
 
             that._onZoomOutVert = function () {
+                that.variableHeightFactor /= 1.25;
                 $.each(this._channels, function (idx, channel) {
                     if (channel._variableHeight) {
                         channel.modifyHeight(Math.round(channel.getHeight() / 1.25));
