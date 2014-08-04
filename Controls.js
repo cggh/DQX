@@ -2156,7 +2156,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
         Controls.ValueSlider = function (iid, args) {
             var that = Controls.Control(iid);
             that._width = 300; if ('width' in args) that._width = args.width;
-            that._height = 25; if ('height' in args) that._height = args.height;
+            that._height = 20; if ('height' in args) that._height = args.height;
             DQX.requireMember(args, 'label');
             that._label = args.label;
             DQX.requireMember(args, 'minval');
