@@ -111,21 +111,18 @@ define(["datastream"],
         };
 
         ArrayBufferClient.request = function (url, success, failure) {
-            var xhr = new XMLHttpRequest();
-            xhr.open('GET', url, true/*async*/);
-            xhr.responseType = 'arraybuffer';
-            xhr.onreadystatechange = function handler() {
-                if (this.readyState == this.DONE) {
-                    if (this.status == 200 && this.response != null) {
-                        decode(this.response, success, failure);
-                        return;
-                    }
-                    //error
-                    failure();
+            $.ajax({
+                    url: url,
+                    success: function(data) {
+                        if (data != null)
+                            decode(data, success, failure);
+                        else
+                            failure();
+                    },
+                    error: failure,
+                    dataType: 'arraybuffer' // See extra code in jquery.js
                 }
-            };
-            xhr.send();
-
+            );
         };
         return ArrayBufferClient;
     }
