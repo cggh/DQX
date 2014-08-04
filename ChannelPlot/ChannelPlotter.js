@@ -29,7 +29,7 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Scroller", "DQX
 
             that.hasIntegralPositions = false;
 
-            that._headerHeight = 35;
+            that._headerHeight = 30;
             that._hasHeader = true;
             if ('hasHeader' in args)
                 that._hasHeader = args.hasHeader;

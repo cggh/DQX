@@ -311,7 +311,7 @@ define(["jquery", "DQX/Utils", "DQX/Msg", "DQX/ChannelPlot/ChannelPlotter", "DQX
 
             //Prepare header
             var headerDiv = DocEl.Div();
-            headerDiv.addStyle('padding', '4px');
+            headerDiv.addStyle('padding', '1px');
             var chromPickerDiv = DocEl.Div({ parent: headerDiv });
             chromPickerDiv.addStyle('float', 'left');
             chromPickerDiv.addElem('Chromosome: ');
@@ -322,16 +322,30 @@ define(["jquery", "DQX/Utils", "DQX/Msg", "DQX/ChannelPlot/ChannelPlotter", "DQX
 
             var navButtonDiv = DocEl.Div({ parent: headerDiv });
             navButtonDiv.addStyle('float', 'left');
+            navButtonDiv.addStyle('padding-top', '3px');
 
             navButtonControls = [];
-            navButtonControls.push(Controls.Button(that.getSubID('BtZoomin'), { bitmap: DQX.BMP('zoomin1H.png'), description: 'Zoom in horizontally', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onZoomIn, that)));
-            navButtonControls.push(Controls.Button(that.getSubID('BtZoomout'), { bitmap: DQX.BMP('zoomout1H.png'), description: 'Zoom out horizontally', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onZoomOut, that)));
+            //navButtonControls.push(Controls.Button(that.getSubID('BtZoomin'), { bitmap: DQX.BMP('zoomin1H.png'), description: 'Zoom in horizontally', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onZoomIn, that)));
+            //navButtonControls.push(Controls.Button(that.getSubID('BtZoomout'), { bitmap: DQX.BMP('zoomout1H.png'), description: 'Zoom out horizontally', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onZoomOut, that)));
+            navButtonControls.push(Controls.Button(that.getSubID('BtZoomin'), { content:
+                '<span style="position:relative"><i class="fa fa-search-plus" style="font-size: 20px"></i><i class="fa fa-arrows-h" style="font-size: 13px;position:absolute;left:1px;top:8px"></i></span>',
+                description: 'Zoom in horizontally', buttonClass: 'DQXButtonBarButton', fastTouch: true }).setOnChanged($.proxy(that._onZoomIn, that)));
+            navButtonControls.push(Controls.Button(that.getSubID('BtZoomOut'), { content:
+                '<span style="position:relative"><i class="fa fa-search-minus" style="font-size: 20px"></i><i class="fa fa-arrows-h" style="font-size: 13px;position:absolute;left:1px;top:8px"></i></span>',
+                description: 'Zoom out horizontally', buttonClass: 'DQXButtonBarButton', fastTouch: true }).setOnChanged($.proxy(that._onZoomOut, that)));
+
             if (args.canZoomVert) {
-                navButtonControls.push(Controls.Button(that.getSubID('BtZoominVert'), { bitmap: DQX.BMP('zoomin1V.png'), description: 'Zoom in vertically', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onZoomInVert, that)));
-                navButtonControls.push(Controls.Button(that.getSubID('BtZoomoutVert'), { bitmap: DQX.BMP('zoomout1V.png'), description: 'Zoom out vertically', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onZoomOutVert, that)));
+//                navButtonControls.push(Controls.Button(that.getSubID('BtZoominVert'), { bitmap: DQX.BMP('zoomin1V.png'), description: 'Zoom in vertically', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onZoomInVert, that)));
+//                navButtonControls.push(Controls.Button(that.getSubID('BtZoomoutVert'), { bitmap: DQX.BMP('zoomout1V.png'), description: 'Zoom out vertically', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onZoomOutVert, that)));
+                navButtonControls.push(Controls.Button(that.getSubID('BtZoominVert'), { content:
+                    '<span style="position:relative"><i class="fa fa-search-plus" style="font-size: 20px"></i><i class="fa fa-arrows-v" style="font-size: 13px;position:absolute;right:-3px;top:-4px"></i></span>',
+                    description: 'Zoom in vertically', buttonClass: 'DQXButtonBarButton', fastTouch: true }).setOnChanged($.proxy(that._onZoomInVert, that)));
+                navButtonControls.push(Controls.Button(that.getSubID('BtZoomoutVert'), { content:
+                    '<span style="position:relative"><i class="fa fa-search-minus" style="font-size: 20px"></i><i class="fa fa-arrows-v" style="font-size: 13px;position:absolute;right:-3px;top:-4px"></i></span>',
+                    description: 'Zoom out vertically', buttonClass: 'DQXButtonBarButton', fastTouch: true }).setOnChanged($.proxy(that._onZoomOutVert, that)));
             }
-            navButtonControls.push(Controls.Button(that.getSubID('BtScrollLeft'), { bitmap: DQX.BMP('arrow3left.png'), description: 'Scroll left', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onScrollLeft, that)));
-            navButtonControls.push(Controls.Button(that.getSubID('BtScrollRight'), { bitmap: DQX.BMP('arrow3right.png'), description: 'Scroll right', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onScrollRight, that)));
+            navButtonControls.push(Controls.Button(that.getSubID('BtScrollLeft'), { height: 20, icon: 'fa-play', description: 'Scroll left', buttonClass: 'DQXButtonBarButton fa-flip-horizontal', fastTouch: true }).setOnChanged($.proxy(that._onScrollLeft, that)));
+            navButtonControls.push(Controls.Button(that.getSubID('BtScrollRight'), { height: 20, icon: 'fa-play', description: 'Scroll right', buttonClass: 'DQXButtonBarButton', fastTouch: true }).setOnChanged($.proxy(that._onScrollRight, that)));
             $.each(navButtonControls, function (idx, bt) { navButtonDiv.addElem(bt.renderHtml()); });
 
             that.getElemJQ('Header').html(headerDiv.toString());
