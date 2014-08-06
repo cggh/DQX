@@ -163,8 +163,10 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FrameCanvas"],
                 ctx.fillRect(0,0,that.scaleMarginX, drawInfo.sizeY);
                 ctx.fillRect(0,drawInfo.sizeY-that.scaleMarginY,drawInfo.sizeX,that.scaleMarginY);
 
-                that.drawXScale(drawInfo);
-                that.drawYScale(drawInfo);
+                if (that.drawXScale)
+                    that.drawXScale(drawInfo);
+                if (that.drawYScale)
+                    that.drawYScale(drawInfo);
 
                 ctx.fillStyle="rgba(0,0,0,0.2)";
                 var vpFraction = that.xScaler.getViewPortFraction();
