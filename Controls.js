@@ -1328,6 +1328,13 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 this._notifyChanged();
             }
 
+            //modify the content of the control
+            that.modifyValue = function (newContent) {
+                that.content = newContent;
+                this.getJQElement('').html(that.content);
+            }
+
+
             return that;
         }
 
