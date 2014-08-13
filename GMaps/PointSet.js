@@ -230,6 +230,8 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
 
                 var drawPieChartSize = that.pieChartSize;
 
+                if ((!that.canvasLayer) || (!that.canvasLayer.getTopLeft()))
+                    return;
                 var offset = mapProjection.fromLatLngToPoint(that.canvasLayer.getTopLeft());
 
                 // Draw pie charts
