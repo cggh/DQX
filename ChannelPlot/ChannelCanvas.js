@@ -165,7 +165,7 @@ define(["_", "jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
 
             that.renderHtml = function () {
                 var wrapper = DocEl.Div({ id: this.getCanvasID('wrapper') });
-                wrapper.addStyle("white-space", "nowrap").addStyle("overflow", "hidden");
+                wrapper.addStyle("white-space", "nowrap").addStyle("overflow", "hidden").addStyle("position", "relative");
                 var elemLeft = DocEl.Create('canvas', { id: this.getCanvasID('left'), parent: wrapper });
                 elemLeft.addAttribute("width", this.getMyPlotter().getLeftWidth());
                 elemLeft.addAttribute("height", this._height);

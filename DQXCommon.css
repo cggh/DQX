@@ -1423,6 +1423,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7f7f7', end
     box-shadow: 1.5px 1.5px 4px rgba(0,0,0,0.30); 
     cursor:pointer;
     font-weight:bold;
+    vertical-align: top;
 
 background: #f7f7f7; /* Old browsers */
 background: -moz-linear-gradient(top, #f7f7f7 0%, #dddddd 100%); /* FF3.6+ */

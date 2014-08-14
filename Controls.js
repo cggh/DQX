@@ -989,13 +989,14 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 this.getJQElement('').css('background-color', this._backgroundColorString);
             }
 
-            that.bindToModel = function (model, attr) {
+            that.bindToModel = function (model, attr, transform) {
+                var transform = transform || function (a) {return a;}
                 that.modifyValue(model.get(attr), true);
                 model.on({ change: attr }, function () {
                     that.modifyValue(model.get(attr), true);
                 });
                 that.setOnChanged(function () {
-                    model.set(attr, that.getValue());
+                    model.set(attr, transform(that.getValue()));
                 });
                 return that;
             };
@@ -1233,7 +1234,8 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 if (this._hint)
                     bt.addHint(this._hint);
                 bt.addStyle('display', 'inline-block');
-                bt.addStyle('vertical-align', 'top');
+                //Commented out as added in default css class DQXWizardButton
+              //  bt.addStyle('vertical-align', 'top');
                 if (args.floatright)
                     bt.addStyle('float', 'right');
                 bt.setCssClass(this._buttonClass);
@@ -1352,6 +1354,8 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
             if (args.hint)
                 that._hint = args.hint;
             that._notifyEnter = null;
+            if (args.class)
+                that._class = args.class;
 
             //if (that.myLabel)
             //    that._controlExtensionList.push('TheLabel');
@@ -1372,10 +1376,14 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 edt.addAttribute('autocorrect', "off");
                 edt.addAttribute('autocapitalize', "off");
                 edt.addAttribute('autocomplete', "off");
+                if (that._class)
+                    edt.setCssClass(that._class);
                 var rs = '';
                 if (this.myLabel) {
                     var label = DocEl.Label({ target: this.getFullID('') });
                     label.addElem(this.myLabel);
+                    if (that._class)
+                        label.setCssClass(that._class);
                     rs = label.toString() + ' ';
                 }
                 return rs + edt.toString();
