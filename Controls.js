@@ -1433,7 +1433,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
 
             //Modify the content of the edit box
             that.modifyValue = function (newvalue, preventNotify) {
-                if (newvalue == this.getValue()) return;
+                if (newvalue === this.getValue()) return;
                 this.value = newvalue;
                 this.getJQElement('').val(newvalue);
                 if (!preventNotify)
