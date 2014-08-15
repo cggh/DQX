@@ -93,6 +93,10 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
             that.posY = Math.min(that.posY, DQX.getWindowClientH() - 40);
 
 
+            that._tools = [];
+            that.addTool = function(icon, handler) {
+                that._tools.push({icon: icon, handler: handler});
+            }
 
             that.onClose = function() {} // Override to get a notification if the popup is about to be closed
 
@@ -180,21 +184,35 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
                 thecloser.addStyle('right', '-12px');
                 thecloser.addStyle('top', '-12px');
 
+                var toolBoxOffset = 20;
                 var theMaximiser = DocEl.JavaScriptBitmaplinkTransparent(DQX.BMP("maximize.png"), "Maximise", "");
                 theMaximiser.addAttribute("id", that.ID + 'maximiseButton');
                 thebox.addElem(theMaximiser);
                 theMaximiser.addStyle('position', 'absolute');
-                theMaximiser.addStyle('right', '20px');
+                theMaximiser.addStyle('right', toolBoxOffset+'px');
                 theMaximiser.addStyle('top', '2px');
+                toolBoxOffset += 30;
 
                 if (PopupFrame.hasThumbNails && (!that.blocking)) {
                     var theMinimiser = DocEl.JavaScriptBitmaplinkTransparent(DQX.BMP("minimize.png"), "Minimise", "");
                     theMinimiser.addAttribute("id", that.ID + 'minimiseButton');
                     thebox.addElem(theMinimiser);
                     theMinimiser.addStyle('position', 'absolute');
-                    theMinimiser.addStyle('right', '55px');
+                    theMinimiser.addStyle('right', toolBoxOffset+'px');
                     theMinimiser.addStyle('top', '2px');
+                    toolBoxOffset += 30;
                 }
+
+                $.each(that._tools, function(idx, tool) {
+                    tool.id = 'DQXPopupFrameTool'+DQX.getNextUniqueID();
+                    var theTool = DocEl.Span({id: tool.id, parent: thebox});
+                    theTool.addElem('<span class="fa {icon} DQXPopupFrameTool"></span>'.DQXformat({icon:tool.icon}));
+//                    theMinimiser.addAttribute("id", that.ID + 'minimiseButton');
+                    theTool.addStyle('position', 'absolute');
+                    theTool.addStyle('right', toolBoxOffset+'px');
+                    theTool.addStyle('top', '6px');
+                    toolBoxOffset += 30;
+                } );
 
                 var resizer = DocEl.Div({ parent: thebox });
                 resizer.setCssClass('DQXPopupFrameResizer DQXPopupFrameResizer1');
@@ -210,6 +228,11 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
                 $('#' + that.ID + 'closeButton').click($.proxy(that.close, that));
                 $('#' + that.ID + 'maximiseButton').click(that.maximise);
                 $('#' + that.ID + 'minimiseButton').click(that.minimise);
+
+                $.each(that._tools, function(idx, tool) {
+                    $('#' + tool.id).click(tool.handler);
+                });
+
 
                 $('#' + that.ID).find('.DQXPopupFrameResizer').mousedown($.proxy(that._onResizeMouseDown, that))
 

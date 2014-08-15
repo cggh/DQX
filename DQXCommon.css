@@ -1537,6 +1537,16 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffdc50', end
     opacity: 1;
 }
 
+.DQXPopupFrameTool {
+    font-size: 20px;
+    color: rgba(240,245,255,0.7);
+    cursor: pointer;
+}
+
+.DQXPopupFrameTool:hover {
+    color: rgb(240,245,255);
+}
+
 /* Necessary to get touch events for IE10*/
 canvas, .DQXDragHeader
 {
