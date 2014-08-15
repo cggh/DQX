@@ -274,6 +274,18 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/Fram
                 return this;
             }
 
+            //Converts a generic frame into a two-panel set. The left panel has a fixed size and is collapsible
+            that.MakeControlsFrame = function(leftFrame, rightFrame, leftSize, isCollapsed) {
+                that.isControlsFrame = true;
+                that._controlsCollapsed = isCollapsed;
+                that._controlsSize = leftSize;
+                leftFrame.setFixedSize(Framework.dimX, that._controlsCollapsed?2:leftSize);
+                that.makeGroupHor();
+                that.addMemberFrame(leftFrame);
+                that.addMemberFrame(rightFrame);
+
+            }
+
 
             //Converts a generic frame into a horizontal splitter
             that.makeFinal = function () {
@@ -294,6 +306,8 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/Fram
             that.setFixedSize = function (dim, sz) {
                 Framework.isValidDim(dim);
                 DQX.checkIsNumber(sz);
+                if (dim==Framework.dimX)
+                    this._fixedSizeX = sz;
                 this.sizeRange[dim].setFixedSize(sz);
                 return this;
             }
@@ -636,6 +650,13 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/Fram
                             else
                                 splitdiv.addStyle('cursor', 'row-resize');
                         }
+                        if (that.isControlsFrame) {
+                            var el = DocEl.Create('img', {parent: splitdiv, id: this.getSeparatorDivID(fnr)+'_mover'});
+                            el.setCssClass('DQXControlExpandCollapse');
+                            el.addStyle('left', that._controlsCollapsed?'0px':'-10px');
+                            el.addAttribute('src', that._controlsCollapsed?DQX.BMP("controlexpand.png"):DQX.BMP("controlcollapse.png"));
+                            el.addStyle('cursor', that._controlsCollapsed?'e-resize':'w-resize');
+                        }
                     }
                     for (var fnr = 0; fnr < this.memberFrames.length; fnr++)
                         theclientdiv.addElem(this.memberFrames[fnr]._createElements(level + 1));
@@ -788,6 +809,8 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/Fram
                         if (this.isSplitter()) {
                             $('#' + this.getSeparatorDivID(fnr)).mousedown($.proxy(this._handleSplitterOnMouseDown, this));
                             $('#' + this.getSeparatorDivID(fnr)).mousemove($.proxy(this._handleSplitterOnMouseMove, this));
+                            if (that.isControlsFrame)
+                                $('#' + this.getSeparatorDivID(fnr)+'_mover').mousedown($.proxy(this._handleSplitterMover, this));
                             clientel.mousemove($.proxy(this._handleSplitterOnMouseMove, this));
                             /*Code to make splitters moveable on touc devices
                             var touchHandler = {
@@ -825,6 +848,34 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/Fram
                     if (!this.memberFrames[i]._isFixedSize(this.splitterDim()))
                         flex2 = true;
                 return flex1 && flex2;
+            }
+
+            that.isControlsCollapsed = function() {//Returns true if the frame is a controls container & the controls are currently collapsed
+                return !!that._controlsCollapsed;
+            }
+
+            that._handleSplitterMover = function (ev) {
+
+                var frameel = $('#' + this.myID);
+                var clientel = $('#' + this.getClientDivID());
+                var moverControl = $('#'+this.getSeparatorDivID(0)+'_mover');
+                if (!that._controlsCollapsed) {
+                    var newSize = 2;
+                    that._controlsCollapsed = true;
+                    moverControl.attr('src',DQX.BMP('controlexpand.png'));
+                    moverControl.css('left','0px');
+                    moverControl.css('cursor', 'e-resize');
+
+                }
+                else {
+                    var newSize = that._controlsSize;
+                    that._controlsCollapsed = false;
+                    moverControl.attr('src',DQX.BMP('controlcollapse.png'));
+                    moverControl.css('left','-10px');
+                    moverControl.css('cursor', 'w-resize');
+                }
+                that.memberFrames[0].sizeRange[0].setFixedSize(newSize);
+                this._setSubFramesPosition(true);
             }
 
             that._handleSplitterOnMouseDown = function (ev) {
@@ -881,8 +932,8 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/Fram
                 this.sepPosits = [];
                 var framePosits = [];
                 for (var fnr = 0; fnr < this.memberFrames.length; fnr++) {
-                    if (!this.memberFrames[fnr].mySizeWeight)
-                        DQX.reportError('Frame "' + this.memberFrames[fnr].myFrameID + '" does not have size weight information');
+//!!!                    if (!this.memberFrames[fnr].mySizeWeight)
+//                        DQX.reportError('Frame "' + this.memberFrames[fnr].myFrameID + '" does not have size weight information');
                     if (fnr > 0) this.sepPosits.push(pos);
                     var pos2 = pos + totsize * this.memberFrames[fnr].mySizeWeight;
                     var mar1 = Math.round(pos + ((fnr > 0) ? (this._separatorSize / 2) : 0));

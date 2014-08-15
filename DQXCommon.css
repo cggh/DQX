@@ -1524,7 +1524,18 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffdc50', end
 }
 
 
+.DQXControlExpandCollapse {
+/*height:25px;*/
+    opacity:0.5;
+    position:relative;
+    top:50%;
+    transform:translateY(-50%);
+    cursor: pointer;
+}
 
+.DQXControlExpandCollapse:hover {
+    opacity: 1;
+}
 
 /* Necessary to get touch events for IE10*/
 canvas, .DQXDragHeader

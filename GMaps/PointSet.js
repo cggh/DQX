@@ -106,6 +106,8 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                 var mapProjection = that.myMapObject.myMap.getProjection();
                 if (!mapProjection)
                     return null;
+                if (that.canvasLayer || (!that.canvasLayer.getTopLeft()))
+                    return;
                 var offset = mapProjection.fromLatLngToPoint(that.canvasLayer.getTopLeft());
                 var zoomF = Math.pow(2, that.myMapObject.myMap.zoom);
                 var mousept = mapProjection.fromLatLngToPoint(latLng);
