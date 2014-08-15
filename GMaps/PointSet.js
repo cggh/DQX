@@ -61,6 +61,8 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                     that.pointShape = 1;
                 if (sett.pointShape == 'fuzzy')
                     that.pointShape = 2;
+                if (sett.pointShape == 'marker')
+                    that.pointShape = 3;
                 if (that.pointShape < 0)
                     DQX.reportError('Invalid point shape');
                 that.pieChartSize = sett.aggrSize;
@@ -85,7 +87,8 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                 var mousept = mapProjection.fromLatLngToPoint(latLng);
                 mousept.x = (mousept.x-offset.x)*zoomF;
                 mousept.y = (mousept.y-offset.y)*zoomF;
-                var mindst = 5;
+                var pts = (that.pointSize*that.pointSize)*1.0;
+                var mindst = Math.max(5,pts/2);
                 var matchpoint = null;
                 $.each(that.myPointSet, function (idx, point) {
                     if ( (!that.isPointFiltered(point)) && (point.pt) && ((!point.isAggregated) || (!that.aggregatePieChart) ) ) {
@@ -301,6 +304,15 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                             ctx.arc(pt.x, pt.y, ptso, 0, 2 * Math.PI, false);
                             ctx.closePath();
                             ctx.fill();
+                        }
+                        if (that.pointShape == 3) {
+                            ctx.strokeStyle='rgb0(0,0,0)';
+                            ctx.beginPath();
+                            ctx.moveTo(pt.x, pt.y);//Note: this seems to be necessary to avoid hollow circles if drawn very small
+                            ctx.arc(pt.x, pt.y-ptso, 0.4*ptso, Math.PI*0.9, 2.1*Math.PI, false);
+                            ctx.closePath();
+                            ctx.fill();
+                            ctx.stroke();
                         }
                         if (that.pointShape == 2) {
                             var grd=ctx.createRadialGradient(pt.x,pt.y,0,pt.x,pt.y,ptso);
