@@ -207,7 +207,9 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
             this.getColumnPoints = function (rangemin, rangemax, cid) {
                 var blockSize = this.getOptimalBlockSize(rangemin, rangemax);
                 var buffer = this._getLevelBuffer(blockSize);
+                var isOptimalResolution = true;
                 if (!buffer.isRangeComplete(rangemin, rangemax)) {//the optimal level does not have all data -> look for the level that has the max number of relevant points
+                    isOptimalResolution = false;
                     var ptcount = buffer.getPointsInRange(rangemin, rangemax);
                     for (otherbuffid in this._levelBuffers) {
                         var otherbuff = this._levelBuffers[otherbuffid];
@@ -218,7 +220,9 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                         }
                     }
                 }
-                return buffer.getColumnPoints(rangemin, rangemax, cid); ;
+                var result = buffer.getColumnPoints(rangemin, rangemax, cid);
+                result.isOptimalResolution = isOptimalResolution;
+                return result;
             }
 
             this.getCurrentBlockSize = function (rangemin, rangemax) {

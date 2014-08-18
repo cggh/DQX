@@ -102,64 +102,65 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/ChannelPlot/ChannelCanvas", "DQX/
                 //drawInfo.centerContext.fillStyle = 'rgb(128,128,128)';
                 //drawInfo.centerContext.fillRect(0, 0, drawInfo.sizeCenterX, h);
 
-                drawInfo.centerContext.globalAlpha = 0.75;
-                if (blockwidth <= 2) {
-                    for (var basenr = 0; basenr < 4; basenr++) {
-                        var base = this.baseList[basenr];
-                        drawInfo.centerContext.strokeStyle = this.colors[base];
-                        drawInfo.centerContext.beginPath();
-                        for (i = 0; i < xvals.length - 1; i++) {
-                            if (yvals[i] == base) {
-                                var psx1 = xvals[i+1] * drawInfo.zoomFactX - drawInfo.offsetX;
-                                var psx2 = xvals[i + 2] * drawInfo.zoomFactX - drawInfo.offsetX;
-                                drawInfo.centerContext.moveTo(psx1, 0);
-                                drawInfo.centerContext.lineTo(psx1, 0 + h);
-                                if (psx2 > psx1 + 1) {
-                                    drawInfo.centerContext.moveTo(psx1 + 1, 0);
-                                    drawInfo.centerContext.lineTo(psx1 + 1, 0 + h);
+                if (points.isOptimalResolution) {
+                    drawInfo.centerContext.globalAlpha = 0.75;
+                    if (blockwidth <= 2) {
+                        for (var basenr = 0; basenr < 4; basenr++) {
+                            var base = this.baseList[basenr];
+                            drawInfo.centerContext.strokeStyle = this.colors[base];
+                            drawInfo.centerContext.beginPath();
+                            for (i = 0; i < xvals.length - 1; i++) {
+                                if (yvals[i] == base) {
+                                    var psx1 = xvals[i+1] * drawInfo.zoomFactX - drawInfo.offsetX;
+                                    var psx2 = xvals[i + 2] * drawInfo.zoomFactX - drawInfo.offsetX;
+                                    drawInfo.centerContext.moveTo(psx1, 0);
+                                    drawInfo.centerContext.lineTo(psx1, 0 + h);
+                                    if (psx2 > psx1 + 1) {
+                                        drawInfo.centerContext.moveTo(psx1 + 1, 0);
+                                        drawInfo.centerContext.lineTo(psx1 + 1, 0 + h);
+                                    }
                                 }
                             }
+                            drawInfo.centerContext.stroke();
                         }
-                        drawInfo.centerContext.stroke();
                     }
-                }
-                else {
-                    for (i = 0; i < xvals.length - 1; i++) {
+                    else {
+                        for (i = 0; i < xvals.length - 1; i++) {
+                            var base = yvals[i];
+                            var psx1 = Math.round(xvals[i+1] * drawInfo.zoomFactX - drawInfo.offsetX);
+                            var psx2 = Math.round(xvals[i + 2] * drawInfo.zoomFactX - drawInfo.offsetX);
+                            var ofs = 0;
+                            drawInfo.centerContext.fillStyle = this.colors[base];
+                            drawInfo.centerContext.fillRect(psx1, 0, psx2 - psx1 + 1, h);
+                        }
+                    }
+                    if (blockwidth>3) {
+                        var bwd = 1;
+                        if (blockwidth>6)
+                            bwd = 2;
+                        drawInfo.centerContext.fillStyle = "rgba(255,255,255,0.75)";
+                        for (i = 0; i < xvals.length - 1; i++) {
+                            var psx1 = Math.round(xvals[i+1] * drawInfo.zoomFactX - drawInfo.offsetX);
+                            var psx2 = Math.round(xvals[i + 2] * drawInfo.zoomFactX - drawInfo.offsetX);
+                            drawInfo.centerContext.fillRect(psx1-bwd/2, 0, bwd, h);
+                        }
+                    }
+                    if (blockwidth > drawInfo.centerContext.measureText('G').width) {
+                      drawInfo.centerContext.save();
+                      drawInfo.centerContext.textAlign = "center";
+                      drawInfo.centerContext.textBaseline = 'middle';
+                      drawInfo.centerContext.font = '11px sans-serif';
+                      drawInfo.centerContext.fillStyle = "black";
+                      for (i = 0; i < xvals.length - 1; i++) {
+                        var psx1 = Math.round(xvals[i+1] * drawInfo.zoomFactX - drawInfo.offsetX);
+                        var psx2 = Math.round(xvals[i + 2] * drawInfo.zoomFactX - drawInfo.offsetX);
                         var base = yvals[i];
-                        var psx1 = Math.round(xvals[i+1] * drawInfo.zoomFactX - drawInfo.offsetX);
-                        var psx2 = Math.round(xvals[i + 2] * drawInfo.zoomFactX - drawInfo.offsetX);
-                        var ofs = 0;
-                        drawInfo.centerContext.fillStyle = this.colors[base];
-                        drawInfo.centerContext.fillRect(psx1, 0, psx2 - psx1 + 1, h);
+                        drawInfo.centerContext.fillText(base, (psx1+psx2)/2, h/2);
+                      }
+                      drawInfo.centerContext.restore();
                     }
+                    drawInfo.centerContext.globalAlpha = 1;
                 }
-                if (blockwidth>3) {
-                    var bwd = 1;
-                    if (blockwidth>6)
-                        bwd = 2;
-                    drawInfo.centerContext.fillStyle = "rgba(255,255,255,0.75)";
-                    for (i = 0; i < xvals.length - 1; i++) {
-                        var psx1 = Math.round(xvals[i+1] * drawInfo.zoomFactX - drawInfo.offsetX);
-                        var psx2 = Math.round(xvals[i + 2] * drawInfo.zoomFactX - drawInfo.offsetX);
-                        drawInfo.centerContext.fillRect(psx1-bwd/2, 0, bwd, h);
-                    }
-                }
-                if (blockwidth > drawInfo.centerContext.measureText('G').width) {
-                  drawInfo.centerContext.save();
-                  drawInfo.centerContext.textAlign = "center";
-                  drawInfo.centerContext.textBaseline = 'middle';
-                  drawInfo.centerContext.font = '11px sans-serif';
-                  drawInfo.centerContext.fillStyle = "black";
-                  for (i = 0; i < xvals.length - 1; i++) {
-                    var psx1 = Math.round(xvals[i+1] * drawInfo.zoomFactX - drawInfo.offsetX);
-                    var psx2 = Math.round(xvals[i + 2] * drawInfo.zoomFactX - drawInfo.offsetX);
-                    var base = yvals[i];
-                    drawInfo.centerContext.fillText(base, (psx1+psx2)/2, h/2);
-                  }
-                  drawInfo.centerContext.restore();
-                }
-                drawInfo.centerContext.globalAlpha = 1;
-
 
                 if (!alldataready) {
                     drawInfo.centerContext.fillStyle = "rgb(0,192,0)";
