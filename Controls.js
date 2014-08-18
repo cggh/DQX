@@ -1639,12 +1639,24 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
 
             that._buildSelectContent = function () {
                 var st = '';
-                for (var i = 0; i < this.myStates.length; i++)
+                var lastGroupName = '';
+                for (var i = 0; i < this.myStates.length; i++) {
+                    var groupName = this.myStates[i].group || '';
+                    if (groupName != lastGroupName) {
+                        if (lastGroupName)
+                            st += '</optgroup>';
+                        lastGroupName = groupName;
+                        if (groupName)
+                            st += '<optgroup = label="{name}">'.DQXformat({name: groupName});
+                    }
                     st += '<option value="{id}" {selected}>{name}</option>'.DQXformat({
                         id: this.myStates[i].id,
                         name: this.myStates[i].name,
                         selected: (this.myStates[i].id == this._selectedState) ? 'selected="selected"' : ''
                     });
+                }
+                if (lastGroupName)
+                    st += '</optgroup>';
                 return st;
             }
 
