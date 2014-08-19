@@ -332,33 +332,6 @@ DQX.polyStar = function(ctx, x, y, radius, sides, pointSize, angle) {
         //A namespace for drawing helper utilities
         DQX.DrawUtil = {};
 
-        DQX.templateCache = {}
-        //Handlebars related funcs
-        DQX.renderTemplate = function (template, context, callback) {
-            if (DQX.templateCache[template]) {
-                callback(DQX.interpolate(DQX.templateCache[template](context)));
-            } else {
-                $.ajax({
-                    url: 'scripts/Views/Templates/'+template+'.handlebars',
-                    dataType: "text",
-                    success: function(template_text) {
-                    DQX.templateCache[template] = Handlebars.compile(template_text);
-                    callback(DQX.interpolate(DQX.templateCache[template](context)));
-                    }
-                })
-                .fail(function () {
-                    DQX.reportError("Error fetching template resource "+template);
-                });
-            }
-        };
-        Handlebars.registerHelper("control", function (control_factory, callback) {
-            //Return safe string so that HTML is escaped
-            return new Handlebars.SafeString(control_factory(callback).renderHtml());
-        });
-        Handlebars.registerHelper("pluralise", function (token, degree) {
-            return DQX.pluralise(token, degree);
-        });
-
         DQX.TextOrig = function (snippetID) {
             var elem = $('#Snippets').children('#' + snippetID);
             if (elem.length == 0)

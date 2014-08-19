@@ -1453,20 +1453,48 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/Fram
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////
+        //Handlebars related funcs
+        Handlebars.registerHelper("control", function (control_factory, callback) {
+            //Return safe string so that HTML is escaped
+            return new Handlebars.SafeString(control_factory(callback).renderHtml());
+        });
+        Handlebars.registerHelper("pluralise", function (token, degree) {
+            return DQX.pluralise(token, degree);
+        });
+
         //Frame that holds a handlebars template
-        Framework.TemplateFrame = function(iParentRef, template) {
+        Framework.TemplateFrame = function (iParentRef, template, file_template) {
             var that = FramePanel(iParentRef);
-            that.template = template;
+            that.compiled_template = null;
+            that.need_render = false;
+            if (file_template) {
+                $.ajax({
+                    url: 'scripts/Views/Templates/' + template + '.handlebars',
+                    dataType: "text",
+                    success: function (template_text) {
+                        that.compiled_template = Handlebars.compile(template_text);
+                        if (that.need_render) that.render(that.need_render);
+                    }
+                })
+                    .fail(function () {
+                        DQX.reportError("Error fetching template resource " + template);
+                    });
+            } else {
+                that.compiled_template = Handlebars.compile(template);
+            }
 
             //renders the form to the DOM
             that.render = function (context) {
-                DQX.renderTemplate(that.template, context || {}, function(rendered_template) {
-                    $('#' + that.getDivID()).html(rendered_template);
+                if (that.compiled_template) {
+                    var rendered_html = DQX.interpolate(that.compiled_template(context || {}));
+                    $('#' + that.getDivID()).html(rendered_html);
                     DQX.ExecPostCreateHtml();
                     that.myParentFrame.notifyContentChanged();
                     if (that.myParentFrame.autoSizeY)
                         setTimeout(that.myParentFrame.getFrameContainer()._handleResize, 500); //force resizing of the frames if the content was changed
-                });
+                } else {
+                    that.need_render = context;
+                }
             };
 
             //Called by the framework, but nothing needs to be done here
