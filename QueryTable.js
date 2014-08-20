@@ -696,6 +696,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Co
                                     cell_color = thecol.CellToColor(cell_content);
                                     cell_content = thecol.CellToText(cell_content);
                                     cell_title = cell_content;
+
                                     if (thecol.barGraphWidth)
                                         cell_content = '<div style="display:inline-block;width:{width}px"><div class="QueryTableValueBar" style="width:{widthfr}px"></div></div><div style="position:relative;left:{mwidth}px;top:-2px;display:inline-block">{content}</div>'.DQXformat({
                                             width:thecol.barGraphWidth,
@@ -704,7 +705,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Co
                                             content: cell_content
                                         });
                                 }
-                                rs_table[tbnr] += "<td style='background-color:" + cell_color + "'>";
+                                rs_table[tbnr] += "<td style='max-width:"+(thecol.maxColumnWidth?(thecol.maxColumnWidth+'px'):'none')+";background-color:" + cell_color + "'>";//!!!todo: introduce optional max-width
                                 var isLink = false;
                                 if ((thecol._hyperlinkCellMessageScope || (thecol._cellClickHandler)) && (hascontent) && (cell_content)) {
                                     isLink = true;
