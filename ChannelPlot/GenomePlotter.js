@@ -330,23 +330,19 @@ define(["jquery", "DQX/Utils", "DQX/Msg", "DQX/ChannelPlot/ChannelPlotter", "DQX
             navButtonDiv.addStyle('padding-top', '3px');
 
             navButtonControls = [];
-            //navButtonControls.push(Controls.Button(that.getSubID('BtZoomin'), { bitmap: DQX.BMP('zoomin1H.png'), description: 'Zoom in horizontally', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onZoomIn, that)));
-            //navButtonControls.push(Controls.Button(that.getSubID('BtZoomout'), { bitmap: DQX.BMP('zoomout1H.png'), description: 'Zoom out horizontally', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onZoomOut, that)));
             navButtonControls.push(Controls.Button(that.getSubID('BtZoomin'), { content:
-                '<span style="position:relative"><i class="fa fa-search-plus" style="font-size: 20px"></i><i class="fa fa-arrows-h" style="font-size: 13px;position:absolute;left:1px;top:8px"></i></span>',
+                '<span style="position:relative;vertical-align: middle"><i class="fa fa-search-plus" style="font-size: 20px"></i><i class="fa fa-arrows-h" style="font-size: 13px;position:absolute;left:1px;top:8px"></i></span>',
                 description: 'Zoom in horizontally', buttonClass: 'DQXButtonBarButton', fastTouch: true }).setOnChanged($.proxy(that._onZoomIn, that)));
             navButtonControls.push(Controls.Button(that.getSubID('BtZoomOut'), { content:
-                '<span style="position:relative"><i class="fa fa-search-minus" style="font-size: 20px"></i><i class="fa fa-arrows-h" style="font-size: 13px;position:absolute;left:1px;top:8px"></i></span>',
+                '<span style="position:relative;vertical-align: middle"><i class="fa fa-search-minus" style="font-size: 20px"></i><i class="fa fa-arrows-h" style="font-size: 13px;position:absolute;left:1px;top:8px"></i></span>',
                 description: 'Zoom out horizontally', buttonClass: 'DQXButtonBarButton', fastTouch: true }).setOnChanged($.proxy(that._onZoomOut, that)));
 
             if (args.canZoomVert) {
-//                navButtonControls.push(Controls.Button(that.getSubID('BtZoominVert'), { bitmap: DQX.BMP('zoomin1V.png'), description: 'Zoom in vertically', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onZoomInVert, that)));
-//                navButtonControls.push(Controls.Button(that.getSubID('BtZoomoutVert'), { bitmap: DQX.BMP('zoomout1V.png'), description: 'Zoom out vertically', buttonClass: 'DQXBitmapButton', fastTouch: true }).setOnChanged($.proxy(that._onZoomOutVert, that)));
                 navButtonControls.push(Controls.Button(that.getSubID('BtZoominVert'), { content:
-                    '<span style="position:relative"><i class="fa fa-search-plus" style="font-size: 20px"></i><i class="fa fa-arrows-v" style="font-size: 13px;position:absolute;right:-3px;top:-4px"></i></span>',
+                    '<span style="position:relative;vertical-align: middle"><i class="fa fa-search-plus" style="font-size: 20px"></i><i class="fa fa-arrows-v" style="font-size: 13px;position:absolute;right:-3px;top:-4px"></i></span>',
                     description: 'Zoom in vertically', buttonClass: 'DQXButtonBarButton', fastTouch: true }).setOnChanged($.proxy(that._onZoomInVert, that)));
                 navButtonControls.push(Controls.Button(that.getSubID('BtZoomoutVert'), { content:
-                    '<span style="position:relative"><i class="fa fa-search-minus" style="font-size: 20px"></i><i class="fa fa-arrows-v" style="font-size: 13px;position:absolute;right:-3px;top:-4px"></i></span>',
+                    '<span style="position:relative;vertical-align: middle"><i class="fa fa-search-minus" style="font-size: 20px"></i><i class="fa fa-arrows-v" style="font-size: 13px;position:absolute;right:-3px;top:-4px"></i></span>',
                     description: 'Zoom out vertically', buttonClass: 'DQXButtonBarButton', fastTouch: true }).setOnChanged($.proxy(that._onZoomOutVert, that)));
             }
             navButtonControls.push(Controls.Button(that.getSubID('BtScrollLeft'), { height: 20, icon: 'fa-play', description: 'Scroll left', buttonClass: 'DQXButtonBarButton fa-flip-horizontal', fastTouch: true }).setOnChanged($.proxy(that._onScrollLeft, that)));

@@ -130,15 +130,15 @@ define(["jquery", "DQX/DocEl", "DQX/Msg"],
                 px2 = Math.min(px2, this.ZoomAreaStartX + this.ZoomAreaSizeX);
                 centercontext.globalAlpha = 0.55;
                 var backgrad = centercontext.createLinearGradient(0, 5, 0, this.sizeY - 5);
-                backgrad.addColorStop(0, "rgb(0,0,192)");
-                backgrad.addColorStop(0.3, "rgb(192,192,255)");
-                backgrad.addColorStop(1, "rgb(0,0,192)");
+                backgrad.addColorStop(0, "rgb(0,130,142)");
+                backgrad.addColorStop(0.3, "rgb(101,218,229)");
+                backgrad.addColorStop(1, "rgb(0,130,152)");
                 centercontext.fillStyle = backgrad;
                 centercontext.fillRect(px1, 6, px2 - px1, this.sizeY - 12);
                 //arrow
-                centercontext.fillStyle = "rgb(128,128,255)";
+                centercontext.fillStyle = "rgb(71,168,177)";
                 this._drawTriangle(centercontext, px2 + 3, 1);
-                centercontext.fillStyle = "rgb(40,40,100)";
+                centercontext.fillStyle = "rgb(54,132,139)";
                 this._drawTriangle(centercontext, px2 - 3, -1);
 
                 //text
@@ -206,15 +206,15 @@ define(["jquery", "DQX/DocEl", "DQX/Msg"],
                 //scroll bar bar
                 //centercontext.globalAlpha = 0.55;
                 var backgrad = centercontext.createLinearGradient(px1, 0, px2, 0);
-                backgrad.addColorStop(0, "rgba(50,50,240,0.65)");
-                backgrad.addColorStop(0.25, "rgba(160,160,255,0.3)");
-                backgrad.addColorStop(0.75, "rgba(160,160,255,0.3)");
-                backgrad.addColorStop(1, "rgba(50,50,240,0.65)");
+                backgrad.addColorStop(0, "rgba(20,142,162,0.7)");
+                backgrad.addColorStop(0.25, "rgba(106,201,210,0.3)");
+                backgrad.addColorStop(0.75, "rgba(106,201,210,0.3)");
+                backgrad.addColorStop(1, "rgba(20,142,162,0.7)");
                 centercontext.fillStyle = backgrad;
                 centercontext.fillRect(px1, 2, px2 - px1, this.sizeY - 4);
                 //scroll bar arrows
-                centercontext.globalAlpha = 0.65;
-                centercontext.fillStyle = "rgb(80,80,255)";
+                centercontext.globalAlpha = 0.7;
+                centercontext.fillStyle = "rgb(0,150,164)";
                 this._drawTriangle(centercontext, px2 + 3, 1);
                 this._drawTriangle(centercontext, px1 - 3, -1);
 
