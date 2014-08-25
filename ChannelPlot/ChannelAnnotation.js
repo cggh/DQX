@@ -1,8 +1,8 @@
 ﻿// This file is part of DQX - (C) Copyright 2014, Paul Vauterin, Ben Jeffery, Alistair Miles <info@cggh.org>
 // This program is free software licensed under the GNU Affero General Public License.
 // You can find a copy of this license in LICENSE in the top directory of the source code or at <http://opensource.org/licenses/AGPL-3.0>
-define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/ChannelPlot/ChannelCanvas"],
-    function ($, DocEl, Msg, ChannelCanvas) {
+define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/ChannelCanvas"],
+    function ($, DocEl, Msg, Controls, ChannelCanvas) {
         var ChannelAnnotation = {};
 
 
@@ -114,7 +114,7 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/ChannelPlot/ChannelCanvas"],
                         clickpt.StartPs = annot.myStartList[i];
                         clickpt.Len = len;
 
-                        drawInfo.centerContext.fillStyle = "rgb(128,194,200)";
+                        drawInfo.centerContext.fillStyle = "rgb(180,225,230)";
                         drawInfo.centerContext.strokeStyle = "rgb(128,128,128)";
 
                         if (that._colorByName) {
@@ -139,7 +139,7 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/ChannelPlot/ChannelCanvas"],
                         drawInfo.centerContext.stroke();
 
                         if (imax - imin < 2000000) {//draw exons
-                            drawInfo.centerContext.fillStyle = "rgb(170,235,240)";
+                            drawInfo.centerContext.fillStyle = "rgb(128,194,200)";
                             drawInfo.centerContext.strokeStyle = "rgb(0,0,0)";
                             var exstartlist = annot.myExonStarts[i];
                             var exstoplist = annot.myExonStops[i];
@@ -223,6 +223,25 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/ChannelPlot/ChannelCanvas"],
 
             that.handleFeatureClicked = function (geneID) { //override this to implement behavour when a gene is clicked
             }
+
+            that.modifyVisibility = function(isVisible, preventReDraw) {
+                that._myPlotter.channelModifyVisibility(that.getID(), isVisible, preventReDraw);
+                if (!preventReDraw)
+                    that._myPlotter.render();
+            }
+
+            that.createVisibilityControl = function(defaultHidden, name) {
+                if (defaultHidden) {
+                    that._myPlotter.channelModifyVisibility(that.getID(),false);
+                }
+                var chk=Controls.Check(null,{ label:name||that.getTitle(), value:(!defaultHidden) }).setClassID(that._myID).setOnChanged(function() {
+                    that.modifyVisibility(chk.getValue());
+                    if (chk.getValue())
+                        that.scrollInView();
+                });
+                return chk;
+            }
+
 
 
             return that;

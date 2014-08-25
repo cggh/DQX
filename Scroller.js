@@ -134,7 +134,7 @@ define(["jquery", "DQX/DocEl", "DQX/Msg"],
                 backgrad.addColorStop(0.3, "rgb(101,218,229)");
                 backgrad.addColorStop(1, "rgb(0,130,152)");
                 centercontext.fillStyle = backgrad;
-                centercontext.fillRect(px1, 6, px2 - px1, this.sizeY - 12);
+                centercontext.fillRect(px1, 4, px2 - px1, this.sizeY - 8);
                 //arrow
                 centercontext.fillStyle = "rgb(71,168,177)";
                 this._drawTriangle(centercontext, px2 + 3, 1);
