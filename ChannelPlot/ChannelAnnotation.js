@@ -114,7 +114,7 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/ChannelPlot/ChannelCanvas"],
                         clickpt.StartPs = annot.myStartList[i];
                         clickpt.Len = len;
 
-                        drawInfo.centerContext.fillStyle = "rgb(220,160,100)";
+                        drawInfo.centerContext.fillStyle = "rgb(128,194,200)";
                         drawInfo.centerContext.strokeStyle = "rgb(128,128,128)";
 
                         if (that._colorByName) {
@@ -139,7 +139,7 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/ChannelPlot/ChannelCanvas"],
                         drawInfo.centerContext.stroke();
 
                         if (imax - imin < 2000000) {//draw exons
-                            drawInfo.centerContext.fillStyle = "rgb(255,170,30)";
+                            drawInfo.centerContext.fillStyle = "rgb(170,235,240)";
                             drawInfo.centerContext.strokeStyle = "rgb(0,0,0)";
                             var exstartlist = annot.myExonStarts[i];
                             var exstoplist = annot.myExonStops[i];
