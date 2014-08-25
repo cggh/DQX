@@ -537,7 +537,8 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
 
 
             that._createButtonHtml = function (_collapsed) {
-                return '<IMG SRC="' + DQX.BMP(_collapsed ? 'morelines.png' : 'lesslines.png') + '" border=0 ALT="" TITLE="" class="DQXTreeButtonImage" style="float:left;padding-right:6px">';
+                return '<span class="fa {ic}" style="font-size: 12px"></span>'.DQXformat({ic:_collapsed?'fa-plus-circle':'fa-minus-circle'});
+                //return '<IMG SRC="' + DQX.BMP(_collapsed ? 'morelines.png' : 'lesslines.png') + '" border=0 ALT="" TITLE="" class="DQXTreeButtonImage" style="float:left;padding-right:6px">';
             }
 
             that.renderHtml = function () {
