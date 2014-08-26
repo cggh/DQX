@@ -130,8 +130,10 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/ChannelPlot/ChannelCanvas", "DQX/
                             var psx1 = Math.round(xvals[i+1] * drawInfo.zoomFactX - drawInfo.offsetX);
                             var psx2 = Math.round(xvals[i + 2] * drawInfo.zoomFactX - drawInfo.offsetX);
                             var ofs = 0;
-                            drawInfo.centerContext.fillStyle = this.colors[base];
-                            drawInfo.centerContext.fillRect(psx1, 0, psx2 - psx1 + 1, h);
+                            if (base in this.colors) {
+                                drawInfo.centerContext.fillStyle = this.colors[base];
+                                drawInfo.centerContext.fillRect(psx1, 0, psx2 - psx1 + 1, h);
+                            }
                         }
                     }
                     if (blockwidth>3) {
