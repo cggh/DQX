@@ -96,6 +96,18 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/Fram
             return Framework.Frame(iid, '-', isizeweight);
         }
 
+        //Creates an instance of a frame that can be re-rendered
+        Framework.FrameDynamic = function (iid, isizeweight) {
+            var that = Framework.Frame(iid, '-', isizeweight);
+            //Renders the framework to the html page, in a div
+            that.render = function () {
+                var html = that._createElements(1).toString();
+                $('#' + that.myID).html(html);
+                that._postCreateHTML();
+            };
+            return that;
+        }
+
         //A class that encapsulates a Range of possible sizes for a frame (used for both X and Y sizes)
         Framework.SizeRange = function () {
             var that = {};
