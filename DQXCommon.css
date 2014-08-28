@@ -85,22 +85,22 @@ ul li
 }
 
 .DQXLogReportDataDump {
-    font-size:8pt;
+    font-size:7pt;
     font-family: "Courier New", Courier, monospace;
     color: rgb(130,130,130);
 }
 
 
 .DQXLogReportHeader {
-    font-size:10pt;
+    font-size:14pt;
     font-family: Verdana, Arial, Helvetica, sans-serif;
     font-weight:bold;
-    padding-top:5px;
-    padding-bottom:2px;
+    padding-top:12px;
+    padding-bottom:4px;
 }
 
 .DQXLogReportHeaderSub {
-    font-size:10pt;
+    font-size:12pt;
     font-family: Verdana, Arial, Helvetica, sans-serif;
     font-style:italic;
     padding-top:5px;
@@ -121,7 +121,7 @@ ul li
 }
 
 .DQXLogReportCommand {
-    font-size:8pt;
+    font-size:7pt;
     color: rgb(100,100,180);
 }
 

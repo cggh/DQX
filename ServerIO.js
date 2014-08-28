@@ -139,7 +139,9 @@ define(["require", "DQX/Framework", "DQX/Popup", "DQX/Msg", "DQX/Utils", "DQX/Do
 
         ServerIO.showLog = function(serverUrl, logid) {
             //!!! todo: move server side out of Pn Server Module and into DQXServer
+            DQX.setProcessing();
             DQX.customRequest(serverUrl, PnServerModule,'getcalculationlog',{ id: logid },function(resp) {
+                DQX.stopProcessing();
                 if (resp.Error)
                     Popup.create('Calculation log', 'No log data present');
                 else {
