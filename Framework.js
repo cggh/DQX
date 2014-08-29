@@ -103,8 +103,14 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/Fram
             that.render = function () {
                 var html = that._createElements(1).toString();
                 $('#' + that.myID).html(html);
+                $(window).resize();
                 that._postCreateHTML();
             };
+
+            that.clearMemberFrames = function () {
+                this.memberFrames = [];
+            };
+
             return that;
         }
 
