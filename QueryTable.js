@@ -360,7 +360,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Co
                 col.customTextCreator = function(myDataFetcher, downloadrownr) {
                     var id = myDataFetcher.getColumnPoint(downloadrownr, idcolumn);
                     var isSelected = selectionManager.isItemSelected(id);
-                    return '<div style="width:20px;font-size: 14px;color:{cl}">&nbsp;&nbsp;<span class="fa {ic}"></span></div>'.DQXformat({
+                    return '<div style="width:20px;font-size: 14px;color:{cl}">&nbsp;<span class="fa {ic}"></span></div>'.DQXformat({
                         cl:isSelected?col.colorString:'rgb(170,170,170)',
                         ic: isSelected?'fa-check-circle':'fa-circle-thin'
                     });
@@ -716,9 +716,11 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Co
                                     isLink = true;
                                     var linkID = thecol.myCompID + '~' + rownr + '~link~' + this.myBaseID;
                                     rs_table[tbnr] += '<span class="DQXQueryTableLinkCell" id="{id}">'.DQXformat({ id: linkID });
-                                    if (!thecol.isSelection)
-                                        rs_table[tbnr] += '<IMG SRC="' + DQX.BMP('link3.png') + '" border=0  width=12 id={id} title="{hint}" ALT="Link"> '.
-                                            DQXformat({ hint: thecol._hyperlinkCellHint, id: linkID });
+                                    if (!thecol.isSelection) {
+//                                        rs_table[tbnr] += '<IMG SRC="' + DQX.BMP('link3.png') + '" border=0  width=12 id={id} title="{hint}" ALT="Link"> '.
+//                                            DQXformat({ hint: thecol._hyperlinkCellHint, id: linkID });
+                                        rs_table[tbnr] += '<span class="fa fa-external-link-square DQXQueryTableLinkIcon"></span>';
+                                    }
                                 }
                                 rs_table[tbnr] += cell_content;
                                 if (isLink)

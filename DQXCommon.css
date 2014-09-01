@@ -366,6 +366,18 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#c3c3c3', end
     margin:0px;
 }
 
+.DQXQueryTableLinkIcon
+{
+    opacity:0.5;
+    padding-right: 2px;
+    font-size:110%;
+}
+
+.DQXQueryTableLinkCell:hover .DQXQueryTableLinkIcon
+{
+    opacity: 1;   
+}
+
 .DQXTableRowHover td {
     /*color: rgb(255,0,0) !important;*/
 /*    border-top: rgb(170,170,255) solid 1px !important;
