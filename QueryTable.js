@@ -359,7 +359,12 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Co
                 col.colorString = color.toString();
                 col.customTextCreator = function(myDataFetcher, downloadrownr) {
                     var id = myDataFetcher.getColumnPoint(downloadrownr, idcolumn);
-                    return '<span style="'+(selectionManager.isItemSelected(id)?'background-color:'+col.colorString:"")+';border:1px solid rgb(150,150,150)">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>';
+                    var isSelected = selectionManager.isItemSelected(id);
+                    return '<div style="width:20px;font-size: 14px;color:{cl}">&nbsp;&nbsp;<span class="fa {ic}"></span></div>'.DQXformat({
+                        cl:isSelected?col.colorString:'rgb(170,170,170)',
+                        ic: isSelected?'fa-check-circle':'fa-circle-thin'
+                    });
+//                    return '<span style="'+(selectionManager.isItemSelected(id)?'background-color:'+col.colorString:"")+';border:1px solid rgb(150,150,150)">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>';
                 };
                 this.myColumns.push(col);
 
