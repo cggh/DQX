@@ -59,6 +59,8 @@ define(["require", "DQX/Framework", "DQX/Popup", "DQX/Msg", "DQX/Utils", "DQX/Do
         };
 
         ServerIO.formatLog = function(origcontent) {
+            if (!origcontent)
+                return '';
             var div = DocEl.Div();
             div.setCssClass('DQXLogReport');
             var content = '';
