@@ -1208,7 +1208,10 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                     textWidth = (args.width - args.height - 12) + 'px';
                 that.content = '';
                 that.content += '<div style="display:inline-block;vertical-align:middle;width:1px;height:100%"></div>';
-                that.content += '<div class="fa {icon} buttonicon" style="display:inline-block;line-height: inherit;font-size: 22px;padding-right:7px;vertical-align:middle"></div>'.DQXformat({icon:args.icon});
+                that.content += '<div class="fa {icon} buttonicon" style="display:inline-block;line-height: inherit;font-size: 22px;padding-right:7px;vertical-align:middle;{colorToken}"></div>'.DQXformat({
+                    icon:args.icon,
+                    colorToken:(args.iconColor?('color:'+args.iconColor.toString()):'')
+                });
                 that.content += '<div class="_DQXButtonText" style="display:inline-block;width:{textw};vertical-align:middle">'.DQXformat({ textw: textWidth }) + DQX.interpolate(args.content) + '</div>';
             }
             if (args.icon && !args.content) {
@@ -1287,7 +1290,20 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
             //to be called when the button is running
             that.changeContent = function(newContent) {
                 this.getJQElement('').html(newContent);
-            }
+            };
+
+
+            //to be called when the button is running
+            that.changeIcon = function(newIcon, newIconColor, newText) {
+                var icEl = this.getJQElement('').find('.fa');
+                icEl.removeClass(args.icon);
+                icEl.addClass(newIcon);
+                icEl.css('color', newIconColor.toString());
+                if (newText!=null)
+                    this.getJQElement('').find('._DQXButtonText').html(newText);
+                args.icon = newIcon;
+            };
+
 
 
             that.modifyEnabled = function (newstate) {
