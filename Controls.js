@@ -1285,6 +1285,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                     this.getJQElement('').css('opacity', 1);
                 else
                     this.getJQElement('').css('opacity', 0.4);
+                return this;
             }
 
             //to be called when the button is running
