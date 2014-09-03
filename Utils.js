@@ -1591,6 +1591,18 @@ DQX.polyStar = function(ctx, x, y, radius, sides, pointSize, angle) {
             return date.getTime()/(24.0*60*60*1000) + 2440587.5;
         }
 
+        //For a given template return a list of the fields actually used
+        Handlebars.fields_used = function(template, possible_fields) {
+            var tracers = {};
+            var used_fields = [];
+            $.each(possible_fields, function(idx, field) {
+                tracers[field] = function() {
+                    used_fields.push(field)
+                };
+            });
+            template(tracers);
+            return _.unique(used_fields);
+        };
 
 
 
