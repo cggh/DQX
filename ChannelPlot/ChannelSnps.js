@@ -489,17 +489,17 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/ChannelPlot/ChannelCanvas", "DQX/
 
                 if (!alldataready) {
                     drawInfo.centerContext.fillStyle = "rgb(0,192,0)";
-                    drawInfo.centerContext.font = '25px sans-serif';
-                    drawInfo.centerContext.textBaseline = 'bottom';
+                    drawInfo.centerContext.font = '13px sans-serif';
+                    drawInfo.centerContext.textBaseline = 'top';
                     drawInfo.centerContext.textAlign = 'center';
-                    drawInfo.centerContext.fillText("Fetching data...", drawInfo.sizeCenterX / 2, 0 + 30);
+                    drawInfo.centerContext.fillText("Fetching data...", drawInfo.sizeCenterX / 2, 0);
                 }
                 if (fetcherror) {
                     drawInfo.centerContext.fillStyle = "rgb(255,0,0)";
-                    drawInfo.centerContext.font = '25px sans-serif';
-                    drawInfo.centerContext.textBaseline = 'bottom';
+                    drawInfo.centerContext.font = '13px sans-serif';
+                    drawInfo.centerContext.textBaseline = 'top';
                     drawInfo.centerContext.textAlign = 'center';
-                    drawInfo.centerContext.fillText("Fetch failed!", drawInfo.sizeCenterX / 2, 0 + 60);
+                    drawInfo.centerContext.fillText("Fetch failed!", drawInfo.sizeCenterX / 2, 0);
                 }
 
             }
