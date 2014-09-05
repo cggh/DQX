@@ -2,7 +2,7 @@
 // This program is free software licensed under the GNU Affero General Public License.
 // You can find a copy of this license in LICENSE in the top directory of the source code or at <http://opensource.org/licenses/AGPL-3.0>
 
-﻿/************************************************************************************************************************************
+/************************************************************************************************************************************
 /************************************************************************************************************************************
 *************************************************************************************************************************************
 
@@ -375,7 +375,10 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Scroller", "DQX
                 else {
                     this._mousemarking = true;
                     this._markPresent = false;
-                    this._markPos1 = this.screenPos2XVal(args.x);
+                    var posx = this.screenPos2XVal(args.x);
+                    if (channel.mapPositionsReverse)
+                        posx = channel.mapPositionsReverse(posx);
+                    this._markPos1 = posx;
                     this._markPos2 = this.markPos1;
                     this.render();
                 }
@@ -405,7 +408,10 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Scroller", "DQX
                     this._lastmouseposx = mouseposx;
                 }
                 if (this._mousemarking) {
-                    this._markPos2 = this.screenPos2XVal(mousePressX1);
+                    var posx = this.screenPos2XVal(mousePressX1);
+                    if (channel.mapPositionsReverse)
+                        posx = channel.mapPositionsReverse(posx);
+                    this._markPos2 = posx;
                     this._markPresent = true;
                     this.hideToolTip();
                     this.render();

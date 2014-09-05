@@ -660,7 +660,7 @@ define(["_", "jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
                     drawInfo.centerContext.fillStyle = markgrad;
                     drawInfo.centerContext.fillRect(psx1, 0, psx2 - psx1, drawInfo.sizeY);
 
-                    drawInfo.centerContext.globalAlpha = 0.4;
+                    drawInfo.centerContext.globalAlpha = 0.5;
                     drawInfo.centerContext.strokeStyle = "rgb(255,50,0)";
                     drawInfo.centerContext.beginPath();
                     drawInfo.centerContext.moveTo(psx1, 0); drawInfo.centerContext.lineTo(psx1, drawInfo.sizeY);
