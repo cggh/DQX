@@ -41,8 +41,8 @@ Further notes:
 *************************************************************************************************************************************/
 
 
-define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/FramePanel", "DQX/HistoryManager"],
-    function ($, DQX, DocEl, Msg, Controls, FramePanel, HistoryManager) {
+define(["jquery", "handlebars", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/FramePanel", "DQX/HistoryManager"],
+    function ($, Handlebars, DQX, DocEl, Msg, Controls, FramePanel, HistoryManager) {
         var Framework = {};
         //two constants defining the X and Y direction
         Framework.dimX = 0;
