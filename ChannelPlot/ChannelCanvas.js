@@ -549,18 +549,18 @@ define(["_", "jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
 
             that.drawFetchBusyMessage = function (drawInfo) {
                 drawInfo.centerContext.fillStyle = "rgb(0,192,0)";
-                drawInfo.centerContext.font = '25px sans-serif';
+                drawInfo.centerContext.font = '13px sans-serif';
                 drawInfo.centerContext.textBaseline = 'top';
                 drawInfo.centerContext.textAlign = 'center';
-                drawInfo.centerContext.fillText("Fetching data...", drawInfo.sizeCenterX / 2, 5);
+                drawInfo.centerContext.fillText("Fetching data...", drawInfo.sizeCenterX / 2, 0);
             }
 
             that.drawFetchFailedMessage = function (drawInfo) {
                 drawInfo.centerContext.fillStyle = "rgb(255,0,0)";
-                drawInfo.centerContext.font = '25px sans-serif';
+                drawInfo.centerContext.font = '13px sans-serif';
                 drawInfo.centerContext.textBaseline = 'top';
                 drawInfo.centerContext.textAlign = 'center';
-                drawInfo.centerContext.fillText("Fetch failed !", drawInfo.sizeCenterX / 2, 5);
+                drawInfo.centerContext.fillText("Fetch failed !", drawInfo.sizeCenterX / 2, 0);
             }
 
             //Draws a vertical scale in the left panel of the channel
@@ -660,7 +660,7 @@ define(["_", "jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
                     drawInfo.centerContext.fillStyle = markgrad;
                     drawInfo.centerContext.fillRect(psx1, 0, psx2 - psx1, drawInfo.sizeY);
 
-                    drawInfo.centerContext.globalAlpha = 0.4;
+                    drawInfo.centerContext.globalAlpha = 0.5;
                     drawInfo.centerContext.strokeStyle = "rgb(255,50,0)";
                     drawInfo.centerContext.beginPath();
                     drawInfo.centerContext.moveTo(psx1, 0); drawInfo.centerContext.lineTo(psx1, drawInfo.sizeY);

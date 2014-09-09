@@ -58,7 +58,8 @@ define(["require", "DQX/Framework", "DQX/Controls", "DQX/Msg", "DQX/Utils", "DQX
                     this.drawStandardGradientRight(drawInfo, 1);
 
                     //Draw SNPs
-                    this.dataFetcher.IsDataReady(PosMin, PosMax, DataFetchers.RecordCountFetchType.IMMEDIATE);
+                    var alldataready = this.dataFetcher.IsDataReady(PosMin, PosMax, DataFetchers.RecordCountFetchType.IMMEDIATE);
+                    var fetcherror = this.dataFetcher.hasFetchFailed;
                     var points = this.dataFetcher.getColumnPoints(PosMin, PosMax, this.positionIDField);
                     var xvals = points.xVals;
                     var ids = points.YVals;
@@ -113,6 +114,9 @@ define(["require", "DQX/Framework", "DQX/Controls", "DQX/Msg", "DQX/Utils", "DQX
                             psxLast = psx;
                         }
                     }
+
+                    if ((!alldataready) && (!fetcherror)) this.drawFetchBusyMessage(drawInfo);
+                    if (fetcherror) this.drawFetchFailedMessage(drawInfo);
 
                     this.drawMark(drawInfo);
                     this.drawXScale(drawInfo);

@@ -80,7 +80,27 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/Chann
                 drawInfo.centerContext.strokeStyle = "black";
                 var slotcount = Math.floor((this._height - 5) / that._slotH);
                 var slotmaxpos = [];
-                for (var i = 0; i < 3; i++) slotmaxpos[i] = -100;
+                for (var i = 0; i < 3; i++) slotmaxpos[i] = -10000;
+
+                var displayLabels = false;
+                if (annot.myStartList.length>0) {
+                    if (this._drawLabels && this._annotationFetcher.field_name) {
+                        displayLabels = true;
+                        var totalTextLen = 0;
+                        for (var i = 0; i < annot.myStartList.length; i++)
+                                totalTextLen += annot.myNameList[i].length;
+                        var psx1 = annot.myStartList[0] * drawInfo.zoomFactX - drawInfo.offsetX;
+                        var psx2 = annot.myStartList[annot.myStartList.length-1] * drawInfo.zoomFactX - drawInfo.offsetX;
+                        var abbrevLen = -1;
+                        if (psx2>psx1) {
+                            if (5*totalTextLen>psx2-psx1) {
+                                var abbrevLen = Math.round(3*(psx2-psx1)/totalTextLen);
+                                if (abbrevLen<4)
+                                    displayLabels = false;
+                            }
+                        }
+                    }
+                }
 
                 for (var i = 0; i < annot.myStartList.length; i++) {
                     var label = '';
@@ -95,13 +115,15 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/Chann
                     drawInfo.centerContext.textBaseline = 'bottom';
                     drawInfo.centerContext.textAlign = 'left';
                     var abbrevlabel = label;
+                    if (abbrevLen>0)
+                        abbrevlabel = DQX.truncateString(label, abbrevLen,'..');
                     var slotnr = 0;
                     if (that._autoVerticalPosition) {
                         for (var slotnr = 0; (slotnr < slotcount) && (slotmaxpos[slotnr] > psx1); slotnr++);
                     }
                     if (slotnr < slotcount) {
-                        if (this._drawLabels) {
-                            var labellen = drawInfo.centerContext.measureText(label).width+5;
+                        if (displayLabels) {
+                            var labellen = drawInfo.centerContext.measureText(abbrevlabel).width+5;
                         }
                         else
                             var labellen = 0;
@@ -153,11 +175,13 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/Chann
                             }
                         }
 
-                        if (this._drawLabels) {
-                            drawInfo.centerContext.fillStyle = "black";
+                        if (displayLabels) {
+                            drawInfo.centerContext.fillStyle = "rgb(80,80,80)";
                             drawInfo.centerContext.fillText(abbrevlabel, Math.round(psx2 + 2) + 0.5, clickpt.Y1 + 0.5);
                             slotmaxpos[slotnr] = psx2 + labellen;
                         }
+                        else
+                            slotmaxpos[slotnr] = psx2 + 1;
 
                         clickpt.XCent = Math.round((psx1 + psx2) / 2);
                         clickpt.X1 = psx2 + labellen;

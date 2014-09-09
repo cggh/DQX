@@ -51,6 +51,7 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/ChannelPlot/ChannelCanvas", "DQX/
 
             that.drawTitle = function (drawInfo) {
                 drawInfo.leftContext.save();
+                drawInfo.leftContext.globalAlpha = 0.6;
                 drawInfo.leftContext.translate(2, drawInfo.sizeY / 2 - 3);
                 drawInfo.leftContext.textAlign = "left";
                 drawInfo.leftContext.textBaseline = 'baseline';
@@ -66,6 +67,7 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/ChannelPlot/ChannelCanvas", "DQX/
                     xp += 20;
                 }
 
+                drawInfo.leftContext.globalAlpha = 1;
                 drawInfo.leftContext.restore();
             }
 
@@ -103,7 +105,7 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/ChannelPlot/ChannelCanvas", "DQX/
                 //drawInfo.centerContext.fillRect(0, 0, drawInfo.sizeCenterX, h);
 
                 if (points.isOptimalResolution) {
-                    drawInfo.centerContext.globalAlpha = 0.75;
+                    drawInfo.centerContext.globalAlpha = 0.6;
                     if (blockwidth <= 2) {
                         for (var basenr = 0; basenr < 4; basenr++) {
                             var base = this.baseList[basenr];
@@ -164,20 +166,8 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/ChannelPlot/ChannelCanvas", "DQX/
                     drawInfo.centerContext.globalAlpha = 1;
                 }
 
-                if (!alldataready) {
-                    drawInfo.centerContext.fillStyle = "rgb(0,192,0)";
-                    drawInfo.centerContext.font = '25px sans-serif';
-                    drawInfo.centerContext.textBaseline = 'bottom';
-                    drawInfo.centerContext.textAlign = 'center';
-                    drawInfo.centerContext.fillText("Fetching data...", drawInfo.sizeCenterX / 2, 5);
-                }
-                if (fetcherror) {
-                    drawInfo.centerContext.fillStyle = "rgb(255,0,0)";
-                    drawInfo.centerContext.font = '25px sans-serif';
-                    drawInfo.centerContext.textBaseline = 'bottom';
-                    drawInfo.centerContext.textAlign = 'center';
-                    drawInfo.centerContext.fillText("Fetch failed!", drawInfo.sizeCenterX / 2, 5);
-                }
+                if ((!alldataready) && (!fetcherror)) this.drawFetchBusyMessage(drawInfo);
+                if (fetcherror) this.drawFetchFailedMessage(drawInfo);
 
                 this.drawMark(drawInfo);
                 this.drawTitle(drawInfo);
