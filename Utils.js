@@ -1591,12 +1591,22 @@ DQX.polyStar = function(ctx, x, y, radius, sides, pointSize, angle) {
             return date.getTime()/(24.0*60*60*1000) + 2440587.5;
         }
 
-        //For a given template return a list of the fields actually used
+        //For a given template return a list of the fields actually used - note only supports shallow objects
         Handlebars.fields_used = function(template, possible_fields) {
             var hb = Handlebars.create();
             hb.registerHelper('if', function(conditional, options){
+                if (conditional)
+                    conditional();
                 options.fn(this);
                 options.inverse(this);
+            });
+            hb.registerHelper('with', function(context, options){
+                if (context)
+                    context();
+            });
+            hb.registerHelper('each', function(context, options){
+                if (context)
+                    context();
             });
             var compiled = hb.compile(template);
             var tracers = {};
@@ -1609,8 +1619,6 @@ DQX.polyStar = function(ctx, x, y, radius, sides, pointSize, angle) {
             compiled(tracers);
             return _.unique(used_fields);
         };
-
-
 
         // test
 
