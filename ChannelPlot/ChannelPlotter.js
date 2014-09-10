@@ -363,7 +363,7 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Scroller", "DQX
                 this._hasMouseMoved = false;
                 this._dragging = false;
                 this._mousemarking = false;
-                if (!ev.shiftKey) {
+                if (!ev.shiftKey && (!this.isSelecting) ) {
                     //                    $(this.canvasCenterElement).css('cursor', 'col-resize');
                     this._dragging = true;
                     this._dragstartoffsetX = this._offsetX;
@@ -385,8 +385,12 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Scroller", "DQX
             }
 
             that.handleMouseUp = function (channel, ev, args) {
-                if (that._mousemarking && that._onRangeSelected)
+                if (that._mousemarking && that._onRangeSelected) {
                     that._onRangeSelected();
+//                    if (that._onToggleSelection && that.isSelecting) {
+//                        that._onToggleSelection();
+//                    }
+                }
             }
 
             that.handleMouseMove = function (channel, ev, args) {

@@ -220,6 +220,15 @@ define(["jquery", "DQX/Utils", "DQX/Msg", "DQX/ChannelPlot/ChannelPlotter", "DQX
                 this.handleResize();
             }
 
+            that._onToggleSelection = function() {
+                that.isSelecting = !that.isSelecting;
+                if (!that.isSelecting)
+                    var buttonText = '<span style="position:relative;vertical-align: middle"><i class="fa fa-crosshairs" style="font-size: 20px"></i></span>';
+                else
+                    var buttonText = '<span style="position:relative;vertical-align: middle"><i class="fa fa-crosshairs" style="text-shadow: 0px 0px 4px rgb(8, 195, 198);color:black;font-size: 20px"></i></span>';
+                that.selectionButton.changeIcon(null, '', buttonText);
+            }
+
             //internal: request gene list was succesful
             that._ajaxResponse_FindGene = function (resp) {
                 var keylist = DQX.parseResponse(resp); //unpack the response
@@ -318,7 +327,7 @@ define(["jquery", "DQX/Utils", "DQX/Msg", "DQX/ChannelPlot/ChannelPlotter", "DQX
             chromPickerDiv.addStyle('float', 'left');
             chromPickerDiv.addElem('Chromosome: ');
             chromPickerDiv.addStyle('padding-left', '5px');
-            chromPickerDiv.addStyle('padding-top', '2px');
+            chromPickerDiv.addStyle('padding-top', '4px');
             chromPickerDiv.addStyle('padding-right', '15px');
             var wrapper = DocEl.Div({parent: chromPickerDiv});
             wrapper.addStyle('display', 'inline-block');
@@ -345,13 +354,17 @@ define(["jquery", "DQX/Utils", "DQX/Msg", "DQX/ChannelPlot/ChannelPlotter", "DQX
                     '<span style="position:relative;vertical-align: middle"><i class="fa fa-search-minus" style="font-size: 20px"></i><i class="fa fa-arrows-v" style="font-size: 13px;position:absolute;right:-3px;top:-4px"></i></span>',
                     description: 'Zoom out vertically', buttonClass: 'DQXButtonBarButton', fastTouch: true }).setOnChanged($.proxy(that._onZoomOutVert, that)));
             }
-            navButtonControls.push(Controls.HorizontalSeparator(7));
+            navButtonControls.push(Controls.HorizontalSeparator(9));
             navButtonControls.push(Controls.Button(that.getSubID('BtScrollLeft'), { content:
                 '<span style="position:relative;vertical-align: middle"><i class="fa fa-play" style="font-size: 20px"></i></span>', description: 'Scroll left', buttonClass: 'DQXButtonBarButton fa-flip-horizontal', fastTouch: true }).setOnChanged($.proxy(that._onScrollLeft, that)));
             navButtonControls.push(Controls.Button(that.getSubID('BtScrollRight'), { content:
                 '<span style="position:relative;vertical-align: middle"><i class="fa fa-play" style="font-size: 20px"></i></span>', description: 'Scroll right', buttonClass: 'DQXButtonBarButton', fastTouch: true }).setOnChanged($.proxy(that._onScrollRight, that)));
 
-            navButtonControls.push(Controls.HorizontalSeparator(7));
+            navButtonControls.push(Controls.HorizontalSeparator(9));
+
+            that.selectionButton  = Controls.Button(that.getSubID('BtToggleSelection'), { content:
+                '<span style="position:relative;vertical-align: middle"><i class="fa fa-crosshairs" style="font-size: 20px"></i></span>', description: 'Select region', buttonClass: 'DQXButtonBarButton' }).setOnChanged($.proxy(that._onToggleSelection, that));
+            navButtonControls.push(that.selectionButton);
 
             $.each(navButtonControls, function (idx, bt) { navButtonDiv.addElem(bt.renderHtml()); });
 
