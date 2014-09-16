@@ -414,10 +414,12 @@ define(["_", "jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
                 }
                 else
                     this.hideToolTip();
+                var cursorName = 'auto';
+                if (this._myPlotter && this._myPlotter.isSelecting)
+                    cursorName = 'ew-resize';
                 if (showPointer)
-                    $('#' + this.getCanvasID('center')).css('cursor', 'pointer');
-                else
-                    $('#' + this.getCanvasID('center')).css('cursor', 'auto');
+                    cursorName = 'pointer';
+                $('#' + this.getCanvasID('center')).css('cursor', cursorName);
             }
 
             that.hideToolTip = function () {
