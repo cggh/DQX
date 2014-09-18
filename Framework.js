@@ -782,6 +782,8 @@ define(["jquery", "handlebars", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Contro
                         for (var fnr = 0; fnr < this.memberFrames.length; fnr++) {
                             var tabid = this.getClientDivID() + '_tab_' + fnr;
                             var tabheaderitem = DocEl.Div({ id: tabid });
+                            if (this.memberFrames[fnr].isHiddenPanel)
+                                tabheaderitem.addStyle('display', 'none');
                             tabheaderitem.setCssClass(fnr == this.activeTabNr ? "DQXTab DQXTabActive" : "DQXTab DQXTabInactive");
                             var shortTitle = this.memberFrames[fnr].getTitle();
                             if (maxTitleLength < shortTitle.length)
