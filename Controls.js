@@ -1198,7 +1198,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 that.content += '<div style="display:inline-block;vertical-align:middle;width:1px;height:100%"></div>';
                 that.content += '<IMG SRC="' + args.bitmap + '" border=0 ALT="' + description + '" TITLE="' + description + '" style="padding-right:7px;vertical-align:middle;';
                 if (args.bitmapHeight)
-                    that.content += 'height:{h}px'.DQXformat({h:args.bitmapHeight});
+                    that.content += 'max-height:{h}px'.DQXformat({h:args.bitmapHeight});
                 that.content += '">';
                 that.content += '<div class="_DQXButtonText" style="display:inline-block;width:{textw};vertical-align:middle">'.DQXformat({ textw: textWidth }) + DQX.interpolate(args.content) + '</div>';
             }

@@ -264,7 +264,10 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/His
 
             // Creates & returns a standard button that activates this view zhen clicked
             that.createActivationButton = function(settings) {
-                var bt = Controls.Button(null, { buttonClass: 'DQXToolButton2', content: settings.content, bitmap:settings.bitmap, icon:settings.icon, width:100, height:35 });
+                var width = 100;
+                if (settings.width)
+                    width = settings.width;
+                var bt = Controls.Button(null, { buttonClass: 'DQXToolButton2', content: settings.content, bitmap:settings.bitmap, icon:settings.icon, width:width, height:35 });
                 bt.setOnChanged(function() {
                     Application.activateView(that._myID);
                 })
