@@ -206,7 +206,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
                 $.each(that._tools, function(idx, tool) {
                     tool.id = 'DQXPopupFrameTool'+DQX.getNextUniqueID();
                     var theTool = DocEl.Span({id: tool.id, parent: thebox});
-                    theTool.addElem('<span class="fa {icon} DQXPopupFrameTool"></span>'.DQXformat({icon:tool.icon}));
+                    theTool.addElem('<span style="font-size: 18px" class="fa {icon} DQXPopupFrameTool"></span>'.DQXformat({icon:tool.icon}));
 //                    theMinimiser.addAttribute("id", that.ID + 'minimiseButton');
                     theTool.addStyle('position', 'absolute');
                     theTool.addStyle('right', toolBoxOffset+'px');
