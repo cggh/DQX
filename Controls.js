@@ -1190,30 +1190,41 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
             if (args.bitmap && (!args.content)) {
                 that.content = '<IMG SRC="' + args.bitmap + '" border=0 ALT="' + description + '" TITLE="' + description + '" style="padding-right:5px;float:left">';
             }
-            if (args.bitmap && args.content) {
+
+
+            if ((args.bitmap||args.icon) && args.content) {
+                var iconWidth = 28;
                 var textWidth = '100%';
                 if (args.width && args.height)
-                    textWidth = (args.width - args.height - 12) + 'px';
+                    textWidth = (args.width - iconWidth - 5) + 'px';
                 that.content = '';
                 that.content += '<div style="display:inline-block;vertical-align:middle;width:1px;height:100%"></div>';
-                that.content += '<IMG SRC="' + args.bitmap + '" border=0 ALT="' + description + '" TITLE="' + description + '" style="padding-right:7px;vertical-align:middle;';
-                if (args.bitmapHeight)
-                    that.content += 'max-height:{h}px'.DQXformat({h:args.bitmapHeight});
-                that.content += '">';
+
+                if (args.bitmap) {
+                    that.content += '<div style="display:inline-block;line-height: inherit;font-size: 22px;width:{iconwidth}px;vertical-align:middle;text-align:left">'.DQXformat({
+                        iconwidth:iconWidth
+                    });
+                    that.content += '<IMG SRC="' + args.bitmap + '" border=0 ALT="' + description + '" TITLE="' + description + '" style="vertical-align:middle;';
+                    if (args.bitmapHeight)
+                        that.content += 'max-height:{h}px;'.DQXformat({
+                            h: args.bitmapHeight
+                        });
+                    else
+                        that.content += 'max-width:{w}px;'.DQXformat({w:iconWidth-6});
+                    that.content += '">';
+                    that.content += "</div>";
+                }
+                if (args.icon) {
+                    that.content += '<div class="fa {icon} buttonicon" style="display:inline-block;line-height: inherit;font-size: 20px;width:{iconwidth}px;vertical-align:middle;text-align:left;{colorToken}"></div>'.DQXformat({
+                        icon: args.icon,
+                        iconwidth: iconWidth,
+                        colorToken: (args.iconColor ? ('color:' + args.iconColor.toString()) : '')
+                    });
+                }
+//                that.content += '<div style="display:inline-block;vertical-align:middle;width:4px;height:100%"></div>';
                 that.content += '<div class="_DQXButtonText" style="display:inline-block;width:{textw};vertical-align:middle">'.DQXformat({ textw: textWidth }) + DQX.interpolate(args.content) + '</div>';
             }
-            if (args.icon && args.content) {
-                var textWidth = '100%';
-                if (args.width && args.height)
-                    textWidth = (args.width - args.height - 12) + 'px';
-                that.content = '';
-                that.content += '<div style="display:inline-block;vertical-align:middle;width:1px;height:100%"></div>';
-                that.content += '<div class="fa {icon} buttonicon" style="display:inline-block;line-height: inherit;font-size: 22px;padding-right:7px;vertical-align:middle;{colorToken}"></div>'.DQXformat({
-                    icon:args.icon,
-                    colorToken:(args.iconColor?('color:'+args.iconColor.toString()):'')
-                });
-                that.content += '<div class="_DQXButtonText" style="display:inline-block;width:{textw};vertical-align:middle">'.DQXformat({ textw: textWidth }) + DQX.interpolate(args.content) + '</div>';
-            }
+
             if (args.icon && !args.content) {
                 that.content += '<div class="fa {icon} buttonicon" style="'.DQXformat({icon:args.icon});
                 if (args.height)
