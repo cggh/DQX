@@ -990,14 +990,15 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 this.getJQElement('').css('background-color', this._backgroundColorString);
             }
 
-            that.bindToModel = function (model, attr, transform) {
-                var transform = transform || function (a) {return a;}
+            that.bindToModel = function (model, attr, transform_to_model, transform_to_ctrl) {
+                transform_to_model = transform_to_model || function (a) {return a;};
+                transform_to_ctrl = transform_to_ctrl || function (a) {return a;};
                 that.modifyValue(model.get(attr), true);
                 model.on({ change: attr }, function () {
-                    that.modifyValue(model.get(attr), true);
+                    that.modifyValue(transform_to_ctrl(model.get(attr)), true);
                 });
                 that.setOnChanged(function () {
-                    model.set(attr, transform(that.getValue()));
+                    model.set(attr, transform_to_model(that.getValue()));
                 });
                 return that;
             };
@@ -1193,7 +1194,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
 
 
             if ((args.bitmap||args.icon) && args.content) {
-                var iconWidth = 28;
+                var iconWidth = args.iconWidth || 28;
                 var textWidth = '100%';
                 if (args.width && args.height)
                     textWidth = (args.width - iconWidth - 5) + 'px';
@@ -1215,11 +1216,17 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                     that.content += "</div>";
                 }
                 if (args.icon) {
-                    that.content += '<div class="fa {icon} buttonicon" style="display:inline-block;line-height: inherit;font-size: 20px;width:{iconwidth}px;vertical-align:middle;text-align:left;{colorToken}"></div>'.DQXformat({
+                    that.content += '<div class="fa {icon} buttonicon" style="display:inline-block;line-height: inherit;width:{iconwidth}px;vertical-align:middle;text-align:left;{colorToken}'.DQXformat({
                         icon: args.icon,
                         iconwidth: iconWidth,
                         colorToken: (args.iconColor ? ('color:' + args.iconColor.toString()) : '')
                     });
+                    if (args.height)
+                        that.content += 'font-size: {height}px;'.DQXformat({height:Math.min(20,args.height)});
+                    else
+                        that.content += 'font-size: 20px;';
+                    that.content += '"></div>'
+
                 }
 //                that.content += '<div style="display:inline-block;vertical-align:middle;width:4px;height:100%"></div>';
                 that.content += '<div class="_DQXButtonText" style="display:inline-block;width:{textw};vertical-align:middle">'.DQXformat({ textw: textWidth }) + DQX.interpolate(args.content) + '</div>';
