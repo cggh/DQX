@@ -32,8 +32,12 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
 
             that.googleEventListeners = [];
 
-            that.googleEventListeners.push(google.maps.event.addListener(that.myMapObject.myMap, 'click', function(event) { that.onMouseClick(event); }));
-            that.googleEventListeners.push(google.maps.event.addListener(that.myMapObject.myMap, 'mousemove', function(event) { that.onMouseMove(event); }));
+            that.googleEventListeners.push(google.maps.event.addListener(that.myMapObject.myMap, 'click', function(event) {
+                that.onMouseClick(event);
+            }));
+            that.googleEventListeners.push(google.maps.event.addListener(that.myMapObject.myMap, 'mousemove', function(event) {
+                that.onMouseMove(event);
+            }));
 
             that.googleEventListeners.push(google.maps.event.addListener(that.myMapObject.myMap, 'mouseout', function(event) {
                 that.removeTooltip();
@@ -79,6 +83,8 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                 var mapProjection = that.myMapObject.myMap.getProjection();
                 if (!mapProjection)
                     return null;
+                if ((!that.canvasLayer) || (!that.canvasLayer.getTopLeft()))
+                    return;
                 var topLeftPoint = that.canvasLayer.getTopLeft();
                 if (!topLeftPoint)
                     return null;
@@ -109,7 +115,7 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                 var mapProjection = that.myMapObject.myMap.getProjection();
                 if (!mapProjection)
                     return null;
-                if (that.canvasLayer || (!that.canvasLayer.getTopLeft()))
+                if ((!that.canvasLayer) || (!that.canvasLayer.getTopLeft()))
                     return;
                 var offset = mapProjection.fromLatLngToPoint(that.canvasLayer.getTopLeft());
                 var zoomF = Math.pow(2, that.myMapObject.myMap.zoom);
@@ -340,9 +346,6 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                         if (point.sel) {
                             selptsx.push(pt.x);
                             selptsy.push(pt.y);
-//                            ctx.fillStyle = "rgba(0,0,0,0.75)";
-//                            ctx.fillRect(pt.x-pts/8, pt.y-ptso, pts/4, pts);
-//                            ctx.fillRect(pt.x-ptso, pt.y-pts/8, pts, pts/4);
                         }
                     }
                 });
