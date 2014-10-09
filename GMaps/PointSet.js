@@ -241,6 +241,7 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
 
                 // Draw pie charts
                 if (that.aggregatePieChart && (that.aggregators)) {
+                    ctx.strokeStyle=DQX.Color(0,0,0,0.5+0.5*that.opacity).toStringCanvas();
                     $.each(that.aggregators, function(idx, aggr) {
                         var pt = mapProjection.fromLatLngToPoint(new google.maps.LatLng(aggr.lattit, aggr.longit));
                         pt.x = (pt.x-offset.x)*zoomF;
@@ -276,9 +277,12 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                     });
                 }
 
+                var selptsx = [];
+                var selptsy = [];
+
                 // Draw individual points
-                var hasCategoricalProperty = that.pointSettings.catData
-                var hasNumericalProperty = that.pointSettings.numData
+                var hasCategoricalProperty = that.pointSettings.catData;
+                var hasNumericalProperty = that.pointSettings.numData;
                 $.each(that.myPointSet, function (idx, point) {
                     if ( (!that.isPointFiltered(point)) && ((!point.isAggregated) || (!that.aggregatePieChart) ) ) {
                         var pt = mapProjection.fromLatLngToPoint(new google.maps.LatLng(point.lattit, point.longit));
@@ -334,12 +338,23 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                         }
 
                         if (point.sel) {
-                            ctx.fillStyle = "rgba(0,0,0,0.75)";
-                            ctx.fillRect(pt.x-pts/8, pt.y-ptso, pts/4, pts);
-                            ctx.fillRect(pt.x-ptso, pt.y-pts/8, pts, pts/4);
+                            selptsx.push(pt.x);
+                            selptsy.push(pt.y);
+//                            ctx.fillStyle = "rgba(0,0,0,0.75)";
+//                            ctx.fillRect(pt.x-pts/8, pt.y-ptso, pts/4, pts);
+//                            ctx.fillRect(pt.x-ptso, pt.y-pts/8, pts, pts/4);
                         }
                     }
                 });
+
+                ctx.lineWidth = 1;
+                ctx.strokeStyle=DQX.Color(0,0,0,0.5+0.5*that.opacity).toStringCanvas();
+                for (var i=0; i<selptsx.length; i++) {
+                    ctx.beginPath();
+                    ctx.arc(selptsx[i], selptsy[i], ptso+2, 0, 2 * Math.PI, false);
+                    ctx.closePath();
+                    ctx.stroke();
+                }
 
 
             }
