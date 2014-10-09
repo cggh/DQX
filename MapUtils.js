@@ -41,7 +41,7 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Utils", "DQX/Map", "DQX/SVG"],
                     if (that._onClickCallBack!=null)
                         that._onClickCallBack(pieChart,id);
                 }
-
+                                                     7
             }
 
 

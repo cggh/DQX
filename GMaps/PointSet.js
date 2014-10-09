@@ -73,6 +73,8 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                 that.aggregatePieChart = true;
                 if (sett.aggregateStyle == 'cluster')
                     that.aggregatePieChart = false;
+
+                that.usePiechartOffset = !!(sett.usePiechartOffset);
             }
 
             that._resize = function() {
@@ -124,9 +126,11 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                 mousept.y = (mousept.y-offset.y)*zoomF;
                 var matchAggr = null;
                 $.each(that.aggregators, function (idx, aggr) {
-                    var dst = Math.sqrt(Math.pow(mousept.x-aggr.pt.x,2) + Math.pow(mousept.y-aggr.pt.y,2));
-                    if (dst<=aggr.rd)
-                        matchAggr = aggr;
+                    if (aggr.pt) {
+                        var dst = Math.sqrt(Math.pow(mousept.x-aggr.pt.x,2) + Math.pow(mousept.y-aggr.pt.y,2));
+                        if (dst<=aggr.rd)
+                            matchAggr = aggr;
+                    }
                 });
                 return matchAggr;
             }
@@ -247,8 +251,31 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
 
                 // Draw pie charts
                 if (that.aggregatePieChart && (that.aggregators)) {
-                    ctx.strokeStyle=DQX.Color(0,0,0,0.5+0.5*that.opacity).toStringCanvas();
+
+                    if (that.usePiechartOffset) {
+                        var layouter = Map.MapItemLayouter(that.myMapObject,'',100/zoomF);
+                        $.each(that.aggregators, function(idx, aggr) {
+                            var rd = Math.sqrt(aggr.totCount*1.0/that.maxAggrCount) * that.pieChartSize;
+                            layouter.addItem(aggr.longit0, aggr.lattit0, 2.5*rd);
+                        });
+                        layouter.calculatePositions();
+                        $.each(that.aggregators, function(idx, aggr) {
+                            aggr.longit = layouter.items[idx].longit2;
+                            aggr.lattit = layouter.items[idx].lattit2;
+                        });
+                    }
+                    else {
+                        $.each(that.aggregators, function(idx, aggr) {
+                            aggr.longit = aggr.longit0;
+                            aggr.lattit = aggr.lattit0;
+                        });
+                    }
+
+
                     $.each(that.aggregators, function(idx, aggr) {
+                        var pt0 = mapProjection.fromLatLngToPoint(new google.maps.LatLng(aggr.lattit0, aggr.longit0));
+                        pt0.x = (pt0.x-offset.x)*zoomF;
+                        pt0.y = (pt0.y-offset.y)*zoomF;
                         var pt = mapProjection.fromLatLngToPoint(new google.maps.LatLng(aggr.lattit, aggr.longit));
                         pt.x = (pt.x-offset.x)*zoomF;
                         pt.y = (pt.y-offset.y)*zoomF;
@@ -257,6 +284,28 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                         aggr.rd = rd;
                         var incrCount = 0;
                         var prevAng = 0;
+                        if (that.usePiechartOffset) {
+                            var p_dx = pt.x-pt0.x;
+                            var p_dy = pt.y-pt0.y;
+                            var p_w = 4;
+                            var p_offset = Math.sqrt(p_dx*p_dx + p_dy*p_dy);
+                            if (p_offset>0) {
+                                p_dx /= p_offset;
+                                p_dy /= p_offset;
+                                var p1x = pt.x - rd*p_dx;
+                                var p1y = pt.y - rd*p_dy;
+                                ctx.strokeStyle=DQX.Color(0,0,0,0.5+0.5*that.opacity).toStringCanvas();
+                                ctx.fillStyle=DQX.Color(0,0,0,0.5*that.opacity).toStringCanvas();
+                                ctx.lineWidth = 1;
+                                ctx.beginPath();
+                                ctx.moveTo(pt0.x, pt0.y);
+                                ctx.lineTo(p1x-p_w*p_dy, p1y+p_w*p_dx);
+                                ctx.lineTo(p1x+p_w*p_dy, p1y-p_w*p_dx);
+                                ctx.closePath();
+                                ctx.stroke();
+                                ctx.fill();
+                            }
+                        }
                         $.each(aggr.catsCount, function(catNr, count) {
                             ctx.fillStyle = colorStrings0[catNr];
                             incrCount += count;
@@ -275,7 +324,7 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                         ctx.closePath();
                         ctx.stroke();
                         if (aggr.selCount>0) {
-                            ctx.lineWidth = 4;
+                            ctx.lineWidth = 5;
                             ctx.beginPath();
                             ctx.arc(pt.x, pt.y, rd, 0, aggr.selCount*1.0 / aggr.totCount * 2 * Math.PI, false);
                             ctx.stroke();
@@ -449,6 +498,8 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                             var aggr = that.aggregatorMap[id];
                             aggr.longit = point.longit;
                             aggr.lattit = point.lattit;
+                            aggr.longit0 = point.longit;
+                            aggr.lattit0 = point.lattit;
                             aggr.totCount += 1;
                             while (aggr.catsCount.length<=point.catNr)
                                 aggr.catsCount.push(0);
