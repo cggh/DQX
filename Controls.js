@@ -1542,6 +1542,9 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                 if (that._fixedfont) {
                     edt.addStyle('font-family', 'Courier');
                 }
+                else {
+                    edt.addStyle('font-family', 'Verdana, Arial, Helvetica, sans-serif');
+                }
                 var rs = '';
                 if (this.myLabel) {
                     var label = DocEl.Label({ target: this.getFullID('') });
