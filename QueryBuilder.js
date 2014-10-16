@@ -46,6 +46,7 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePane
             that.subsetList = settings.subsetList;
             that.primKey = settings.primKey;
             that.subsetTableName = settings.subsetTableName;
+            that.tableName = settings.tableName;
 
             that.notifyModified = function () {
                 Msg.broadcast({ type: "QueryModified", id: this.getDivID() });
@@ -337,6 +338,7 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePane
                 for (var colnr in this.myColumns) {
                     thecols.push({ id: this.myColumns[colnr].ID, name: this.myColumns[colnr].name, group: this.myColumns[colnr].GroupName });
                 }
+                thecols.push({ id:'_note_', name: 'has note containing', group: 'Other'});
                 if (that.subsetList && (that.subsetList.length>0))
                     thecols.push({ id:'_subset_', name: 'in subset', group: 'Other'});
                 var wrapper = DocEl.Div();
@@ -351,7 +353,7 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePane
 
                 elem.addElem(" ");
 
-                if (myOperator.Tpe == '_subset_') {
+                if ((myOperator.Tpe == '_subset_') || (myOperator.Tpe == '_note_')) {
                 }
                 else {
                     var compatops = SQL.WhereClause.getCompatibleFieldComparisonOperators(this.getColumn(myOperator.ColName).datatype);
@@ -660,12 +662,18 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePane
                 else {
                     if ("ID" in theQueryComponent) {
                         var colName = $("#" + this.getControlID(theQueryComponent.ID, "Field")).val();
+                        theQueryComponent.myOperator = null;
                         if (colName == '_subset_') {
                             theQueryComponent.myOperator = SQL.WhereClause.getFieldComparisonOperatorInfo('_subset_').Create();
                             theQueryComponent.myOperator.ColName = '_subset_';
                             theQueryComponent.myOperator._fetchStatementContent(theQueryComponent.ID, this);
                         }
-                        else {
+                        if (colName == '_note_') {
+                            theQueryComponent.myOperator = SQL.WhereClause.getFieldComparisonOperatorInfo('_note_').Create();
+                            theQueryComponent.myOperator.ColName = '_note_';
+                            theQueryComponent.myOperator._fetchStatementContent(theQueryComponent.ID, this);
+                        }
+                        if (!theQueryComponent.myOperator) {
                             var mytype = $("#" + this.getControlID(theQueryComponent.ID, "Type")).val();
                             if (!mytype)
                                 mytype = '=';

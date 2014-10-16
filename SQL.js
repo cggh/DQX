@@ -131,6 +131,9 @@ define(["jquery", "DQX/DocEl", "DQX/base64"],
             },
             { ID: '_subset_', name: 'in subset',
                 Create: function () { return SQL.WhereClause.InSubset() }
+            },
+            { ID: '_note_', name: 'has note containing',
+                Create: function () { return SQL.WhereClause.NoteContains() }
             }
         ];
 
@@ -204,7 +207,7 @@ define(["jquery", "DQX/DocEl", "DQX/base64"],
 
             //Fetches the content of this statement from the controls in the querybuilder GUI
             that._fetchStatementContent = function (ID, querybuilder) {
-                if (this.ColName=='_subset_') {
+                if ((this.ColName=='_subset_') || (this.ColName=='_note_')) {
                     DQX.reportError('Invalid query component content');
                 }
                 else {
@@ -620,6 +623,60 @@ define(["jquery", "DQX/DocEl", "DQX/base64"],
                 if (queryData.subsetMap[this.Subset])
                     subsetName = queryData.subsetMap[this.Subset].name;
                 return 'in subset "'+subsetName+'"';
+            }
+            return that;
+        }
+
+
+
+
+        //A class that checks that a note contains a certain text
+        SQL.WhereClause.whcClassGenerator['_note_'] = function(args) {
+            var whc = SQL.WhereClause.NoteContains();
+            whc.NoteText = args.NoteText;
+            whc.PrimKey = args.PrimKey;
+            whc.NoteItemTable = args.NoteItemTable;
+            return whc;
+        }
+        SQL.WhereClause.NoteContains = function () {
+            var that = {};
+            that.whcClass = '_note_';
+            that.isCompound = false;
+            that.Tpe = "_note_";
+            that.ColName = '_note_';
+            that.NoteText = '';
+            that._buildStatement = function (ID, elem, querybuilder) {
+                that.PrimKey = querybuilder.primKey;
+                that.NoteItemTable = querybuilder.tableName;
+                var ctrl_txt = DocEl.Edit(that.NoteText);
+                ctrl_txt.setID(querybuilder.getControlID(ID, "NoteText"));
+                ctrl_txt.setWidthPx(150);
+                ctrl_txt.setCssClass('DQXQBQueryboxControl');
+                querybuilder.decorateQueryStatementControl(ctrl_txt, ID);
+                elem.addElem(ctrl_txt);
+                //Hidden elements to keep track of extra stuff
+                var ctrl1 = DocEl.Span();
+                ctrl1.setID(querybuilder.getControlID(ID, "PrimKey"));
+                ctrl1.addElem(that.PrimKey);
+                ctrl1.addStyle('display', 'none');
+                elem.addElem(ctrl1);
+                //Hidden elements to keep track of extra stuff
+                var ctrl1 = DocEl.Span();
+                ctrl1.setID(querybuilder.getControlID(ID, "NoteItemTable"));
+                ctrl1.addElem(that.NoteItemTable);
+                ctrl1.addStyle('display', 'none');
+                elem.addElem(ctrl1);
+
+            }
+            that._fetchStatementContent = function (ID, querybuilder) {
+                this.NoteText = $("#" + querybuilder.getControlID(ID, "NoteText")).val();
+                if (!this.NoteText)
+                    this.NoteText = '';
+                this.PrimKey = $("#" + querybuilder.getControlID(ID, "PrimKey")).text();
+                this.NoteItemTable = $("#" + querybuilder.getControlID(ID, "NoteItemTable")).text();
+            }
+            that.toQueryDisplayString = function(queryData, level) {
+                return 'has note containing "'+this.NoteText+'"';
             }
             return that;
         }
