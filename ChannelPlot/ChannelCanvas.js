@@ -847,10 +847,17 @@ define(["_", "jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
                                     valtxt2.push(valtxt[sp]);
                                 }
                                 valtxt = valtxt2.reverse().join("");
-                                drawInfo.centerContext.fillText(valtxt, psx, 3);
+                                if (valtxt === '0')
+                                  drawInfo.centerContext.fillText(valtxt, psx+2, 3);
+                                else
+                                  drawInfo.centerContext.fillText(valtxt, psx, 3);
                             }
                             else
+                              if (value === 0)
+                                drawInfo.centerContext.fillText((value / 1.0e6), psx+2, 3);
+                              else
                                 drawInfo.centerContext.fillText((value / 1.0e6), psx, 3);
+
                         }
                         else {
                             drawInfo.centerContext.strokeStyle = DQX.Color(0.3, 0.3, 0.3).toString();

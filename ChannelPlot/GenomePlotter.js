@@ -110,7 +110,7 @@ define(["jquery", "DQX/Utils", "DQX/Msg", "DQX/ChannelPlot/ChannelPlotter", "DQX
                     this.clearData();
                     that.delMark();
                 }
-                this._fullRangeMin = -this._chromosomes[newchromonr - 1].size * 1.0E6 / 2000;
+                this._fullRangeMin = 0;-this._chromosomes[newchromonr - 1].size * 1.0E6 / 2000;
                 this._fullRangeMax = this._chromosomes[newchromonr - 1].size * 1.0E6;
                 this.currentChromoNr = newchromonr;
 
