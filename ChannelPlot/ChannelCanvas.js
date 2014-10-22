@@ -132,7 +132,7 @@ define(["_", "jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
 
 
             that.getCanvasID = function (ext) {
-                return this.getMyPlotter().getSubID('') + '_channel_' + this._myID + '_' + ext;
+                return this.getMyPlotter().getSubID('') + '_channel_' + this._myID.replace('.', '_period_').replace(':', '_colon_') + '_' + ext;
             }
 
             that.getCenterElementID = function (ext) {
