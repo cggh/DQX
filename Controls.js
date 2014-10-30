@@ -2077,6 +2077,8 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
                     this._itemsMap[this._items[nr].id] = this._items[nr];
                 if (typeof activeItem != 'undefined')
                     this._activeItem = activeItem;
+                if (this._items.length==0)
+                    this._activeItem=null;
                 this.getJQElement('').html(this._renderItems());
                 if (this.scrollHelper)
                     this.scrollHelper.update();
