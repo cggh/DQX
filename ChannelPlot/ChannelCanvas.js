@@ -586,6 +586,7 @@ define(["_", "jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
                 drawInfo.leftContext.globalAlpha = 0.6;
                 drawInfo.centerContext.globalAlpha = 0.05;
                 drawInfo.centerContext.lineWidth = 1;
+                var maxLabelSizeX = 0;
                 for (j = Math.ceil(minvl / jumps.Jump1); j <= Math.floor(maxvl / jumps.Jump1); j++) {
                     vl = j * jumps.Jump1;
                     yp = Math.round(drawInfo.sizeY - drawInfo.sizeY * offsetFrac - (vl - minvl) / (maxvl - minvl) * drawInfo.sizeY * rangeFrac) - 0.5;
@@ -594,8 +595,11 @@ define(["_", "jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
                         drawInfo.leftContext.moveTo(drawInfo.sizeLeftX - 8, yp);
                         drawInfo.leftContext.lineTo(drawInfo.sizeLeftX, yp);
                         drawInfo.leftContext.stroke();
-                        if (yp<drawInfo.sizeY-2)
-                            drawInfo.leftContext.fillText(vl.toFixed(jumps.textDecimalCount), drawInfo.sizeLeftX - 12, yp + 5);
+                        if (yp<drawInfo.sizeY-2) {
+                            var labelStr = vl.toFixed(jumps.textDecimalCount);
+                            drawInfo.leftContext.fillText(labelStr, drawInfo.sizeLeftX - 12, yp + 5);
+                            maxLabelSizeX = Math.max(maxLabelSizeX, drawInfo.leftContext.measureText(labelStr).width);
+                        }
                         drawInfo.centerContext.beginPath();
                         drawInfo.centerContext.moveTo(0, yp);
                         drawInfo.centerContext.lineTo(drawInfo.sizeCenterX, yp);
@@ -608,35 +612,98 @@ define(["_", "jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
                         drawInfo.leftContext.stroke();
                     }
                 }
+                drawInfo.leftPanelRightOffset = maxLabelSizeX + 15;
                 drawInfo.leftContext.globalAlpha = 1;
                 drawInfo.centerContext.globalAlpha = 1;
 
             }
 
             that.drawTitle = function (drawInfo) {
-                var drawVert = (drawInfo.sizeY >= 5000);
-                drawInfo.leftContext.save();
+
+                function wrapTextGetLines(text, maxWidth) {
+                    var words = text.split(' ');
+                    var lines = [];
+                    var line = '';
+                    for(var n = 0; n < words.length; n++) {
+                        var testLine = line + words[n] + ' ';
+                        var metrics = ctx.measureText(testLine);
+                        var testWidth = metrics.width;
+                        if (testWidth > maxWidth && n > 0) {
+                            lines.push(line);
+                            line = words[n] + ' ';
+                        }
+                        else {
+                            line = testLine;
+                        }
+                    }
+                    lines.push(line);
+                    return lines;
+                }
+
+                var ctx = drawInfo.leftContext;
+
+                ctx.font = '11px sans-serif';
+                ctx.fillStyle = "black";
+                var lineHeight = 12;
+
+                var xSpace = drawInfo.sizeLeftX;
+                if (drawInfo.leftPanelRightOffset)
+                    xSpace -= drawInfo.leftPanelRightOffset;
+                var ySpace = drawInfo.sizeY-15;
+
+                var drawVert = ( ySpace >= xSpace *1.5);//Switch to vertical orientation if panel has a vertical aspect ratio
+                ctx.save();
                 if (drawVert) {
-                    drawInfo.leftContext.translate(0, drawInfo.sizeY / 2);
-                    drawInfo.leftContext.rotate(-Math.PI / 2);
-                    drawInfo.leftContext.textAlign = "center";
-                    drawInfo.leftContext.textBaseline = 'top';
+                    ctx.translate(0, drawInfo.sizeY / 2);
+                    ctx.rotate(-Math.PI / 2);
+                    ctx.textAlign = "center";
+                    ctx.textBaseline = 'top';
+                    var dw = ySpace;
+                    var dh = xSpace;
+                    var centerH = false;
                 }
                 else {
-                    drawInfo.leftContext.translate(2, drawInfo.sizeY / 2 - 3);
-                    drawInfo.leftContext.textAlign = "left";
-                    drawInfo.leftContext.textBaseline = 'baseline';
+                    ctx.translate(2, drawInfo.sizeY / 2);
+                    ctx.textAlign = "left";
+                    ctx.textBaseline = 'top';
+                    var dw = xSpace;
+                    var dh = ySpace;
+                    var centerH = true;
                 }
-                drawInfo.leftContext.font = '11px sans-serif';
-                drawInfo.leftContext.fillStyle = "black";
+
+                var linesTitle1 = [];
+                var linesTitle2 = [];
+                if (dh>20) {// Spread over several lines if necessary
+                    if (that._title)
+                        linesTitle1 = wrapTextGetLines(that._title, dw);
+                    if (that._subTitle)
+                        linesTitle2 = wrapTextGetLines(that._subTitle, dw);
+                }
+                else {//Too narrow - use single line only
+                    if (that._title)
+                        linesTitle1 =[that._title];
+                    if (that._subTitle)
+                        linesTitle2 = [that._subTitle];
+                }
+
+
+                var lineCount = linesTitle1.length + linesTitle2.length;
                 var yoffset = 5;
-                if (drawInfo.sizeY>30)
-                    yoffset = -4;
-                drawInfo.leftContext.fillText(this._title, 0, yoffset);
-                drawInfo.leftContext.font = '10px sans-serif';
-                drawInfo.leftContext.fillStyle = "rgb(100,100,100)";
-                drawInfo.leftContext.fillText(this._subTitle, 0, yoffset + 12);
-                drawInfo.leftContext.restore();
+                if (centerH)
+                    yoffset = -lineCount*lineHeight/2;
+                $.each(linesTitle1, function(idx, line) {
+                    ctx.fillText(line, 0, yoffset);
+                    yoffset += lineHeight;
+                });
+                ctx.font = '10px sans-serif';
+                ctx.fillStyle = "rgb(100,100,100)";
+                $.each(linesTitle2, function(idx, line) {
+                    ctx.fillText(line, 0, yoffset);
+                    yoffset += lineHeight;
+                });
+
+
+                ctx.restore();
             }
 
             that.drawMark = function (drawInfo, showText) {

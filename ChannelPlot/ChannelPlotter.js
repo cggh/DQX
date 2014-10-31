@@ -20,7 +20,7 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Scroller", "DQX
 
         ChannelPlotter.Panel = function (iParentRef, args) {
             var that = FramePanel(iParentRef);
-            that._leftWidth = 120;
+            that._leftWidth = 140;
             if ('leftWidth' in args) that._leftWidth = args.leftWidth;
             that._rightWidth = 0; //size of the right side panel
             that._rightOffset = 0; //size of the right offset, including e.g. area for vertical scroll bars

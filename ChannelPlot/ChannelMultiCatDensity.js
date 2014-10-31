@@ -214,9 +214,9 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Controls", "DQX/ChannelPlot/Chann
                     }
                     drawInfo.leftContext.textBaseline = 'top';
                     drawInfo.leftContext.textAlign = 'left';
-                    drawInfo.leftContext.font = '10px sans-serif';
+                    drawInfo.leftContext.font = '9px sans-serif';
                     drawInfo.leftContext.fillStyle = "rgba(0,0,0,0.5)";
-                    drawInfo.leftContext.fillText(blockSize.toString()+'bp', 1, 1);
+                    drawInfo.leftContext.fillText(blockSize.toString()+'bp', 1, 0);
                 }
 
 
