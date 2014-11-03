@@ -70,7 +70,26 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
             }
 
 
+            that.correctIdenticalPositions = function() {
+                //Check for identical positions, and disentangle them
+                for (var i1 = 0; i1 < this.items.length; i1++) {
+                    var item1 = this.items[i1];
+                    var shiftx = 0;
+                    var shifty = 0;
+                    for (var i2 = 0; i2 < this.items.length; i2++) if (i1 != i2) {
+                        var item2 = this.items[i2];
+                        if (Math.abs(item1.longit-item2.longit) + Math.abs(item1.lattit-item2.lattit) < 1.0e-9) {
+                            item1.longit -= 1.0e-9;
+                            item2.longit += 1.0e-9;
+                        }
+                    }
+                }
+            }
+
             that.calculatePositions0 = function () {
+
+                that.correctIdenticalPositions();
+
                 for (var i = 0; i < this.items.length; i++) {
                     var item = this.items[i];
                     item.x0 = this.Longit2X(item.longit, item.lattit);
@@ -78,6 +97,7 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                     item.dx = 0;
                     item.dy = 0;
                 }
+
 
                 for (var iter = 0; iter < 50; iter++) {
                     for (var i1 = 0; i1 < this.items.length; i1++) {
@@ -112,6 +132,9 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
 
 
             that.calculatePositions = function () {
+
+                that.correctIdenticalPositions();
+
                 for (var i = 0; i < this.items.length; i++) {
                     var item = this.items[i];
                     item.x0 = this.Longit2X(item.longit, item.lattit);
