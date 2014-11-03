@@ -216,7 +216,7 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                 var colorStrings = [];
                 var colorStrings2 = [];
                 $.each(that.colorMap, function(idx, color) {
-                    colorStrings0.push(color.changeOpacity(0.75*that.opacity).toStringCanvas());
+                    colorStrings0.push(color.changeOpacity(that.opacity).toStringCanvas());
                     colorStrings.push(color.changeOpacity(that.opacity).toStringCanvas());
                     colorStrings2.push(color.changeOpacity(0).toStringCanvas());
                 });
