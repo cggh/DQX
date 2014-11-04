@@ -168,7 +168,11 @@ define(["jquery"],
             }
         }
 
-        CanvasLayer.prototype = new google.maps.OverlayView();
+        try {
+            CanvasLayer.prototype = new google.maps.OverlayView();
+        }catch(e){
+            return;
+        }
 
         /**
          * The default MapPane to contain the canvas.

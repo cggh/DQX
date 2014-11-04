@@ -17,10 +17,14 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
 
         var GMaps = {}
 
-        GMaps.defaults = {
-            zoom: 2,
-            center : new google.maps.LatLng(0, 0)
-        };
+        try {
+            GMaps.defaults = {
+                zoom: 2,
+                center : new google.maps.LatLng(0, 0)
+            };
+        }catch(e){
+            return;
+        }
 
         GMaps.Coord = function (longit, lattit) {
             var that = {};
