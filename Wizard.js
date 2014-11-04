@@ -2,8 +2,8 @@
 // This program is free software licensed under the GNU Affero General Public License.
 // You can find a copy of this license in LICENSE in the top directory of the source code or at <http://opensource.org/licenses/AGPL-3.0>
 
-﻿define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Utils", "DQX/Framework", "DQX/Controls", "DQX/Popup"],
-    function ($, DocEl, Msg, DQX, Framework, Controls, Popup) {
+define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Utils", "DQX/Framework", "DQX/Controls", "DQX/Popup", "DQX/MessageBox"],
+    function ($, DocEl, Msg, DQX, Framework, Controls, Popup, MessageBox) {
         var Wizard = {};
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -301,7 +301,7 @@
                 if (this.getCurrentPage().reportValidationError) {
                     var error = this.getCurrentPage().reportValidationError();
                     if (error) {
-                        alert(error)
+                        MessageBox.errorBox('', error);
                         return;
                     }
                 }
@@ -330,7 +330,7 @@
                 if (this.getCurrentPage().reportValidationError) {
                     var error = this.getCurrentPage().reportValidationError();
                     if (error) {
-                        alert(error)
+                        MessageBox.errorBox('', error);
                         return;
                     }
                 }
