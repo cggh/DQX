@@ -567,7 +567,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eff6fc', end
 
 .DQXTabBodyStyled, .DQXTabActive
 {
-    background-color:rgb(190,190,190);
+    background-color:rgb(210,210,210);
     color:rgb(0,0,0);
 }
 
@@ -757,7 +757,7 @@ color:rgb(0,0,0);
 	padding-top:3px;
 	padding-bottom:7px;
 	/*float:left;*/
-	border:1px solid rgb(140,140,140);
+	border:1px solid rgb(160,160,160);
 	border-bottom-width: 0;
 	cursor:pointer;
 	z-index:2;
@@ -772,9 +772,9 @@ color:rgb(0,0,0);
 .DQXTabInactive {
     position: relative;
     top: 1px;
-	background-color:rgb(230,230,230);
+	background-color:rgb(240,240,240);
 	border-color:rgb(210,210,210);
-	color:rgb(100,100,10F0);
+	color:rgb(80,80,80);
 	font-weight:bold;
 }
 
