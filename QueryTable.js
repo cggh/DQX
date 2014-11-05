@@ -649,19 +649,19 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Co
                         if (thecol.myName.indexOf('<br>') < 0)
                             rs_table[tbnr] += '<br>&nbsp;';
                         if (thecol.sortOption) {
-                            var bitmapname = DQX.BMP("arrow5down.png");
+                            var bitmapname = DQX.BMP("arrow6down.png");
                             if (this.myDataFetcher.positionField == thecol.sortOption.toString()) {
                                 if (!this.myDataFetcher.sortReverse)
-                                    bitmapname = DQX.BMP("arrow4down.png");
+                                    bitmapname = DQX.BMP("arrow7down.png");
                                 else
-                                    bitmapname = DQX.BMP("arrow4up.png");
+                                    bitmapname = DQX.BMP("arrow7up.png");
                             }
                             var st = '<IMG class="DQXQueryTableSortHeader" id="{id}" SRC={bmp} border=0 class="DQXBitmapLink" title="Sort by this column" ALT="Link" style="position:absolute;right:-4px;bottom:-3px">'.
                                 DQXformat({ id: thecol.myCompID + '~sort~' + this.myBaseID, bmp: bitmapname });
                             rs_table[tbnr] += ' ' + st;
                         }
                         if (thecol._hyperlinkHeaderMessageScope || thecol._headerClickHandler ) {
-                            var st = '<IMG class="DQXQueryTableLinkHeader" id="{theid}" SRC=' + DQX.BMP('linkinfo2.png') + ' border=0 class="DQXBitmapLink" ALT="Link" title="{hint}" style="position:absolute;right:-4px;top:-4px">'
+                            var st = '<IMG class="DQXQueryTableLinkHeader" id="{theid}" SRC=' + DQX.BMP('linkinfo2.png') + ' border=0 class="DQXBitmapLink" ALT="Link" title="{hint}" style="position:absolute;right:-3px;top:-3px">'
                             st = st.DQXformat({ theid: (thecol.myCompID + '~headerlink~' + this.myBaseID), hint: thecol._toolTip });
                             rs_table[tbnr] += ' ' + st;
                         }

@@ -382,14 +382,14 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#c3c3c3', end
     /*color: rgb(255,0,0) !important;*/
 /*    border-top: rgb(170,170,255) solid 1px !important;
     border-bottom: rgb(170,170,255) solid 1px !important;*/
-    outline: rgb(120,120,120) solid 1px !important;
+    outline: rgb(160,160,160) solid 1px !important;
 }
 
 .DQXTableRowSelected td 
 {
-    color: rgb(0,0,192) !important;
-    border-top: rgb(80,80,255) solid 1px !important;
-    border-bottom: rgb(80,80,255) solid 1px !important;
+    color: rgb(165,0,0) !important;
+    /*border-top: rgb(80,80,255) solid 1px !important;*/
+    border-bottom: rgb(219,135,135) solid 1px !important;
     /*font-weight:bolder;*/
     text-shadow: 0.75px 0.75px 1.5px rgba(80,80,80,0.5) !important;
 }
