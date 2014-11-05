@@ -466,7 +466,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eff6fc', end
     border-color:rgb(60,60,60);
     position:absolute;
     left:850px; 
-    top:100px; 
+    top:100px;
     box-shadow: 4px 4px 20px 2px rgba(0,0,0,0.95);
  	z-index:999;
 }
@@ -498,7 +498,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eff6fc', end
 .DQXPopupFrameResizer1, .DQXPopupFrameResizer2
 {    
     background-color:rgb(140,140,230);
-    cursor:nw-resize;
+    cursor:se-resize;
     position:absolute;
 }
 

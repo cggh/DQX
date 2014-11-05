@@ -80,7 +80,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
             that.ID = 'DXPopup' + DQX._popupIndex;
 
             that.posX = 70;
-            that.posY = 70;
+            that.posY = 88;
             if ('posX' in settingHist) that.posX = settingHist.posX;
             if ('posY' in settingHist) that.posY = settingHist.posY;
             $('.DQXPopupFrame').each(function (a, b) {
