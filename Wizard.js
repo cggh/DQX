@@ -186,8 +186,8 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/Utils", "DQX/Framework", "DQX/Con
                 var thecloser = DocEl.JavaScriptBitmaplink(DQX.BMP("close2.png"), "Close", "closeWizard();");
                 box.addElem(thecloser);
                 thecloser.addStyle('position', 'absolute');
-                thecloser.addStyle('right', '-16px');
-                thecloser.addStyle('top', '-16px');
+                thecloser.addStyle('right', '-13px');
+                thecloser.addStyle('top', '-13px');
 
 
                 var buttons = [];

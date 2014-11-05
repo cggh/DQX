@@ -158,8 +158,8 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Controls"],
             var thepinner = DocEl.JavaScriptBitmaplink(bmp, "Keep this info box visible", "DQX.SwitchPinned('" + ID + "')");
             thepinner.setCssClass(isPinned ? "DQXPinBoxPinned" : "DQXPinBoxUnpinned");
             thepinner.addStyle('position', 'absolute');
-            thepinner.addStyle('left', '2px');
-            thepinner.addStyle('top', '-21px');
+            thepinner.addStyle('left', isPinned ? '0px' : '4px');
+            thepinner.addStyle('top', isPinned ? '-11px' : '-8px');
             return thepinner.toString();
         }
 
@@ -250,8 +250,8 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Controls"],
                     var thecloser = DocEl.JavaScriptBitmaplink(DQX.BMP("close2.png"), "Close", "DQX.ClosePopup('" + ID + "')");
                     thebox.addElem(thecloser);
                     thecloser.addStyle('position', 'absolute');
-                    thecloser.addStyle('right', '-16px');
-                    thecloser.addStyle('top', '-16px');
+                    thecloser.addStyle('right', '-13px');
+                    thecloser.addStyle('top', '-13px');
                 }
 
                 if (canClose) {

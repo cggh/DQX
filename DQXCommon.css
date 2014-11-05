@@ -464,10 +464,10 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eff6fc', end
     border-width:4px;
     border-style:solid;
     border-color:rgb(60,60,60);
-    position:absolute; 
+    position:absolute;
     left:850px; 
     top:100px; 
-    box-shadow: 4px 4px 20px 3px rgba(0,0,0,0.95); 
+    box-shadow: 4px 4px 20px 2px rgba(0,0,0,0.95);
  	z-index:999;
 }
 .DQXPopupFrameHeader

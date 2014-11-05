@@ -181,8 +181,8 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/Pop
                 thecloser.addAttribute("id", that.ID + 'closeButton');
                 thebox.addElem(thecloser);
                 thecloser.addStyle('position', 'absolute');
-                thecloser.addStyle('right', '-12px');
-                thecloser.addStyle('top', '-12px');
+                thecloser.addStyle('right', '-13px');
+                thecloser.addStyle('top', '-13px');
 
                 var toolBoxOffset = 20;
                 var theMaximiser = DocEl.JavaScriptBitmaplinkTransparent(DQX.BMP("maximize.png"), "Maximise", "");
