@@ -528,11 +528,11 @@ define(["_", "jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
 
             //Draws a message in the center panel of the channel
             that.drawMessage = function (drawInfo, txt1, txt2) {
-                drawInfo.centerContext.fillStyle = "black";
+                drawInfo.centerContext.fillStyle = "rgb(210,210,210)";
                 drawInfo.centerContext.globalAlpha = 0.2;
                 drawInfo.centerContext.fillRect(0, 0, drawInfo.sizeCenterX, drawInfo.sizeY);
                 drawInfo.centerContext.globalAlpha = 1.0;
-                drawInfo.leftContext.fillStyle = "black";
+                drawInfo.leftContext.fillStyle = "rgb(210,210,210)";
                 drawInfo.leftContext.globalAlpha = 0.2;
                 drawInfo.leftContext.fillRect(0, 0, drawInfo.sizeLeftX, drawInfo.sizeY);
                 drawInfo.leftContext.globalAlpha = 1.0;
@@ -826,7 +826,7 @@ define(["_", "jquery", "DQX/DocEl", "DQX/Msg", "DQX/Scroller"],
                 }
 
                 if (locDrawInfo.needZoomIn) {
-                    var darkenFactor = 0.85;
+                    var darkenFactor = 0.9;
                     this.drawStandardGradientCenter(locDrawInfo, darkenFactor);
                     this.drawStandardGradientLeft(locDrawInfo, darkenFactor);
                     this.drawStandardGradientRight(locDrawInfo, darkenFactor);
