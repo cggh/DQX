@@ -228,8 +228,9 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Co
                 this._headerClickHandler=handler;
             }
 
-            that.setCellClickHandler = function(handler) {
+            that.setCellClickHandler = function(handler, isExternal) {
                 this._cellClickHandler=handler;
+                this._cellClickHandlerIsExternal=isExternal;
             }
 
             //Returns the visibility status of a column
@@ -719,7 +720,9 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Co
                                     if (!thecol.isSelection) {
 //                                        rs_table[tbnr] += '<IMG SRC="' + DQX.BMP('link3.png') + '" border=0  width=12 id={id} title="{hint}" ALT="Link"> '.
 //                                            DQXformat({ hint: thecol._hyperlinkCellHint, id: linkID });
-                                        rs_table[tbnr] += '<span class="fa fa-external-link-square DQXQueryTableLinkIcon"></span>';
+                                        rs_table[tbnr] += '<span class="fa {icon} DQXQueryTableLinkIcon"></span>'.DQXformat({
+                                            icon: (thecol._cellClickHandlerIsExternal?"fa-external-link":"fa-external-link-square")
+                                        });
                                     }
                                 }
                                 rs_table[tbnr] += cell_content;
