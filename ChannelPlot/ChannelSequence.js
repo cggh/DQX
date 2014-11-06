@@ -87,6 +87,7 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/ChannelPlot/ChannelCanvas", "DQX/
                 var points = this.myfetcher.getColumnPoints(PosMin, PosMax, this.mycol.myID);
                 var xvals = points.xVals;
                 var yvals = points.YVals;
+                var blockSize = points.blockSize;
 
                 var blockwidth = (xvals[xvals.length - 1] - xvals[0]) * drawInfo.zoomFactX / (xvals.length);
 
@@ -94,12 +95,8 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/ChannelPlot/ChannelCanvas", "DQX/
                 if (xvals.length > 3000)
                     return;
 
-                var h = 16;
-                if (('extraInfo' in points) && (points.extraInfo.blockSize > 1)) {
-                    //drawInfo.centerContext.fillStyle = 'rgb(192,192,192)';
-                    //drawInfo.centerContext.fillRect(0, 10, drawInfo.sizeCenterX, 6);
-                    h = 10;
-                }
+                var summarised = (('extraInfo' in points) && (points.extraInfo.blockSize > 1));
+                var h = summarised ? 6 : 16;
 
                 //drawInfo.centerContext.fillStyle = 'rgb(128,128,128)';
                 //drawInfo.centerContext.fillRect(0, 0, drawInfo.sizeCenterX, h);
@@ -164,6 +161,17 @@ define(["jquery", "DQX/DocEl", "DQX/Msg", "DQX/ChannelPlot/ChannelCanvas", "DQX/
                       drawInfo.centerContext.restore();
                     }
                     drawInfo.centerContext.globalAlpha = 1;
+
+                    if (summarised) {
+                        drawInfo.centerContext.textAlign = "left";
+                        drawInfo.centerContext.textBaseline = 'top';
+                        drawInfo.centerContext.font = '9px sans-serif';
+                        drawInfo.centerContext.fillStyle = "rgb(90,90,90)";
+                        var str = 'Majority vote summarised';
+                        if (blockSize)
+                            str += ' (Window size: {blocksize}bp)'.DQXformat({blocksize: blockSize});
+                        drawInfo.centerContext.fillText(str, 20, 6);
+                    }
                 }
 
                 if ((!alldataready) && (!fetcherror)) this.drawFetchBusyMessage(drawInfo);
