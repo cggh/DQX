@@ -324,19 +324,35 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                             });
                         }
                         else {
-                            var valCount = aggr.numPropFracs.length;
-                            var ang = 0;
-                            var prevAng = 0;
-                            for (var ptnr=0; ptnr<valCount; ptnr++) {
-                                ang = (ptnr+1.0)/valCount * 2 * Math.PI;
-                                ctx.fillStyle = DQX.HSL2Color(0.5-aggr.numPropFracs[ptnr]*0.75,1,0.5).changeOpacity(that.opacity).toStringCanvas();
-                                ctx.beginPath();
-                                ctx.moveTo(pt.x, pt.y);
-                                ctx.arc(pt.x, pt.y, rd, prevAng, ang, false);
-                                ctx.lineTo(pt.x, pt.y);
-                                ctx.closePath();
-                                ctx.fill();
-                                prevAng = ang;
+                            if (aggr.numPropFracs.length > 0) {
+                                var intervalStartFrac = aggr.numPropFracs[0];
+                                var intervalStartAng = 0;
+                                var intervalEndFrac = null;
+                                var intervalEndAng = null;
+                                var valCount = aggr.numPropFracs.length;
+
+                                var _drawFracPie = function() {
+                                    if (intervalEndAng <= intervalStartAng) return;
+                                    var intervalMidFrac = (intervalStartFrac+intervalEndFrac)/2;
+                                    ctx.fillStyle = DQX.HSL2Color(0.5-intervalMidFrac*0.75,1,0.5).changeOpacity(that.opacity).toStringCanvas();
+                                    ctx.beginPath();
+                                    ctx.moveTo(pt.x, pt.y);
+                                    ctx.arc(pt.x, pt.y, rd, intervalStartAng, intervalEndAng + (intervalEndAng-intervalStartAng)*0.05, false);
+                                    ctx.lineTo(pt.x, pt.y);
+                                    ctx.closePath();
+                                    ctx.fill();
+                                };
+
+                                for (var ptnr=0; ptnr<valCount; ptnr++) {
+                                    intervalEndFrac = aggr.numPropFracs[ptnr];
+                                    intervalEndAng = (ptnr+1.0)/valCount * 2 * Math.PI;
+                                    if (intervalEndFrac-intervalStartFrac>0.0025) {
+                                        _drawFracPie();
+                                        intervalStartFrac = intervalEndFrac;
+                                        intervalStartAng = intervalEndAng;
+                                    }
+                                }
+                                _drawFracPie();
                             }
                         }
                         ctx.lineWidth = 1;
