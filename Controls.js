@@ -1186,7 +1186,7 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
             if (args.description)
                 description = DQX.interpolate(args.description);
             if (args.content && (!args.bitmap)) {
-                that.content = '<span class="_DQXButtonText">' + DQX.interpolate(args.content) + '</span>';
+                that.content = '<span class="_DQXButtonText" TITLE="{description}">'.DQXformat({description: description}) + DQX.interpolate(args.content) + '</span>';
             }
             if (args.bitmap && (!args.content)) {
                 that.content = '<IMG SRC="' + args.bitmap + '" border=0 ALT="' + description + '" TITLE="' + description + '" style="padding-right:5px;float:left">';
