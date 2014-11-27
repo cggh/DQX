@@ -618,15 +618,21 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Co
                     var downloadlink = this.myDataFetcher.createDownloadUrl();
                     if (!that.dl_button) {
                         that.dl_button = Controls.Button(that.myBaseID + '_dl', { height: 22, icon: 'fa-download', description: 'Download data', buttonClass: 'DQXButtonBarButton', fastTouch: true }).setOnChanged(function() {window.location.href = downloadlink});
-                        $('#' + that.myBaseID + '_right').html(that.dl_button.renderHtml());
+                        that.dl_button_showhide = Controls.ShowHide(that.dl_button);
+                        $('#' + that.myBaseID + '_right').html(that.dl_button_showhide.renderHtml());
                         Controls.ExecPostCreateHtml();
-                    } else
+                    } else {
                         that.dl_button.setOnChanged(function() {window.location.href = downloadlink});
+                        that.dl_button_showhide.setVisible(true);
+                    }
 
 
                 }
-                else
-                    $('#' + that.myBaseID + '_right').html('');
+                else {
+                    if (that.dl_button_showhide)
+                        that.dl_button_showhide.setVisible(false);
+                }
+
 
 
 
