@@ -436,6 +436,28 @@ define(["DQX/Utils", "DQX/Msg", "DQX/DocEl", "DQX/Scroller", "DQX/Documentation"
             return that;
         }
 
+        Controls.CompoundFloat = function (icontrols) {
+            var that = Controls.CompoundGenericList(icontrols);
+
+            that.renderHtml = function () {
+                var st = '';
+                st += '<div style="display:inline-block">';
+                for (var i = 0; i < this._controls.length; i++) {
+                    if (i === 0)
+                        st += '<div style="float:left">';
+                    else
+                        st += '<div>';
+                    st += this._controls[i].renderHtml();
+                    if (i === 0)
+                        st += '</div>';
+                }
+                st += '</div>';
+                return st;
+            }
+
+            return that;
+        }
+
 
         ////////////////////////////////////////////////////////////////////////////////////////////
         //A compound control grouping a list of controls in a horizontal way
