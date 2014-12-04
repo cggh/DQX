@@ -188,7 +188,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Framework", "DQX/His
             navSectionDiv.addStyle("padding-top", "0px");
             navSectionDiv.addStyle("padding-right", "0px");
             //this._createNavigationButton("HeaderPrevious", navSectionDiv, DQX.BMP("/Icons/Small/Back.png"), "Previous<br>view", "DQXToolButton3", 100, function () { Msg.send({ type: 'Back' }) });
-            this._createNavigationButton("HeaderHome", navSectionDiv, 'fa-home', "Start<br>page", "DQXToolButton3", 90, function () { Msg.send({ type: 'Home' }) });
+            this._createNavigationButton("HeaderHome", navSectionDiv, 'fa-home', "Start", "DQXToolButton3", 70, function () { Msg.send({ type: 'Home' }) });
 
             // Create custom navigation buttons
             $.each(Application._customNavigationButtons, function(idx, buttonInfo) {
