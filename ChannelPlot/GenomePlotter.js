@@ -131,7 +131,8 @@ define(["jquery", "DQX/Utils", "DQX/Msg", "DQX/ChannelPlot/ChannelPlotter", "DQX
                         this._myDataFetchers[fetchnr].setChromoID(this._chromosomes[this.currentChromoNr - 1].id);
                 }
 
-                if (redraw) {
+              this.clearData();
+              if (redraw) {
                     this.render();
                     //this.myHScroller.draw();
                 }
@@ -173,7 +174,6 @@ define(["jquery", "DQX/Utils", "DQX/Msg", "DQX/ChannelPlot/ChannelPlotter", "DQX
             that._onChangeChromosome = function () {
                 var newnr = parseInt(that.getElemJQ("ChromoPicker").val());
                 this.setChromosome(this._chromosomes[newnr - 1].id, false);
-                this.clearData();
                 this._offsetX = 0;
                 this._myNavigator.rangeMax = this._chromosomes[newnr - 1].size;
                 this._myNavigator.scrollPos = 0;
