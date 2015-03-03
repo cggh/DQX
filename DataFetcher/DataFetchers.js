@@ -10,8 +10,8 @@
 *************************************************************************************************************************************
 *************************************************************************************************************************************/
 
-define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
-    function ($, SQL, DQX, DataDecoders) {
+define(["jquery", "lzstring", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
+    function ($, LZString, SQL, DQX, DataDecoders) {
         var DataFetchers = {}
 
 
@@ -393,7 +393,7 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                     myurl.addUrlQueryItem('requestnr', this._requestNr);
                     myurl.addUrlQueryItem("qry", SQL.WhereClause.encode(qry));
                     myurl.addUrlQueryItem("tbname", this.tablename);
-                    myurl.addUrlQueryItem("collist", collist);
+                    myurl.addUrlQueryItem("collist", LZString.compressToEncodedURIComponent(collist));
                     myurl.addUrlQueryItem("posfield", this.positionField);
                     if (this.positionField)
                         myurl.addUrlQueryItem("order", this.positionField);
@@ -461,7 +461,7 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                 myurl.addUrlQueryItem("database", this.database);
                 myurl.addUrlQueryItem("qry", SQL.WhereClause.encode(thequery));
                 myurl.addUrlQueryItem("tbname", this.tablename);
-                myurl.addUrlQueryItem("collist", collist);
+                myurl.addUrlQueryItem("collist", LZString.compressToEncodedURIComponent(collist));
                 myurl.addUrlQueryItem("posfield", this.positionField);
                 myurl.addUrlQueryItem("order", this.positionField);
                 myurl.addUrlQueryItem("sortreverse", this.sortReverse ? 1 : 0);
@@ -710,7 +710,7 @@ define(["jquery", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                 myurl.addUrlQueryItem('database', this.database);
                 myurl.addUrlQueryItem("qry", SQL.WhereClause.encode(query));
                 myurl.addUrlQueryItem("tbname", this.tableName);
-                myurl.addUrlQueryItem("collist", this._createActiveColumnListString());
+                myurl.addUrlQueryItem("collist", LZString.compressToEncodedURIComponent(this._createActiveColumnListString()));
                 myurl.addUrlQueryItem("order", orderField);
                 myurl.addUrlQueryItem("sortreverse", that._sortReverse?1:0);
                 myurl.addUrlQueryItem("needtotalcount", 0);
