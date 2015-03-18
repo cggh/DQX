@@ -340,7 +340,9 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Co
             that.createSelectionColumn = function(colID, colName, tableid, idcolumn, selectionManager, color, onChanged) {
                 var col = QueryTable.Column(colName, colID, 0);
                 col.isSelection = true;
-                col.setCellClickHandler(function(myDataFetcher, downloadrownr, info) {
+                col.setCellClickHandler(function(myDataFetcher, rownr, info) {
+                    var downloadrownr = myDataFetcher.findIndexByXVal(rownr);
+                    if (downloadrownr < 0) return null;
                     var id = myDataFetcher.getColumnPoint(downloadrownr, idcolumn);
                     var prevState = selectionManager.isItemSelected(id);
                     if ( (!info.shiftPressed) || (that._lastSelClickedRowNr == null) ) {
