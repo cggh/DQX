@@ -658,12 +658,12 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel", "DQX/Co
                         if (thecol.myName.indexOf('<br>') < 0)
                             rs_table[tbnr] += '<br>&nbsp;';
                         if (thecol.sortOption) {
-                            var bitmapname = DQX.BMP("arrow6down.png");
+                            var bitmapname = DQX.BMP("arrow6up.png");
                             if (this.myDataFetcher.positionField == thecol.sortOption.toString()) {
                                 if (!this.myDataFetcher.sortReverse)
-                                    bitmapname = DQX.BMP("arrow7down.png");
-                                else
                                     bitmapname = DQX.BMP("arrow7up.png");
+                                else
+                                    bitmapname = DQX.BMP("arrow7down.png");
                             }
                             var st = '<IMG class="DQXQueryTableSortHeader" id="{id}" SRC={bmp} border=0 class="DQXBitmapLink" title="Sort by this column" ALT="Link" style="position:absolute;right:-4px;bottom:-3px">'.
                                 DQXformat({ id: thecol.myCompID + '~sort~' + this.myBaseID, bmp: bitmapname });
