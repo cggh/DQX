@@ -565,6 +565,28 @@ DQX.polyStar = function(ctx, x, y, radius, sides, pointSize, angle) {
         // An RGB Color helper class
         //////////////////////////////////////////////////////////////////////////////////////////////////////
 
+        DQX.colourFromString = function(str) {
+          var matches = str.match(/\((.*?)\)/);
+          var nums
+          if (matches) {
+            nums = matches[1].split(',');
+          } else {
+            nums = [0.5, 0.5, 0.5];
+            DQX.reportError('Badly formatted colour:'+str)
+          }
+          nums = $.map(nums, function(val) {
+              return parseFloat(val);
+            }
+          );
+          console.log(nums)
+          if (nums.length == 3)
+            return DQX.Color(nums[0]/255, nums[1]/255, nums[2]/255);
+          if (nums.length == 4)
+            return DQX.Color(nums[0]/255, nums[1]/255, nums[2]/255, nums[3]/255);
+          DQX.reportError('Badly formatted colour:'+str);
+          return DQX.Color(0.5, 0.5, 0.5)
+        };
+
         DQX.Color = function (r, g, b, a) {
             var that = {};
             that.r = (typeof r == 'undefined') ? 0 : r;
