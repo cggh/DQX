@@ -338,7 +338,7 @@ define(["jquery", "DQX/DocEl", "DQX/base64"],
 
         //A class that Encapsulates the differential comparison of a field to another field
         SQL.WhereClause.whcClassGenerator['differsfield'] = function(args) {
-            var whc = SQL.WhereClause.EqualsField();
+            var whc = SQL.WhereClause.DiffersField();
             whc.ColName = args.ColName;
             whc.ColName2 = args.ColName2;
             return whc;
