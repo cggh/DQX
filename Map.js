@@ -161,8 +161,11 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                             shiftx += -dfx / (dst * dst * dst);
                             shifty += -dfy / (dst * dst * dst);
                         }
-                        item1.dx = 30 * shiftx / Math.sqrt(shiftx * shiftx + shifty * shifty);
-                        item1.dy = 30 * shifty / Math.sqrt(shiftx * shiftx + shifty * shifty);
+                        var dist = Math.sqrt(shiftx * shiftx + shifty * shifty);
+                        if (dist > 0) {
+                            item1.dx = 30 * shiftx / dist;
+                            item1.dy = 30 * shifty / dist;
+                        }
                     }
                 }
 
@@ -177,12 +180,12 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                             var dfy = (item2.y0 + item2.dy) - (item1.y0 + item1.dy);
                             var dst = Math.sqrt(dfx * dfx + dfy * dfy);
                             var mindst = (1+that.offset/2) * (item1.radius + item2.radius);
-                            if (dst < mindst) {
-                                var shiftsize = (mindst - dst) / dst;
-                                shiftx += -dfx * shiftsize;
-                                shifty += -dfy * shiftsize;
+                            if (dst < mindst && dst > 0) {
+                                    var shiftsize = (mindst - dst) / dst;
+                                    shiftx += -dfx * shiftsize;
+                                    shifty += -dfy * shiftsize;
                             }
-                            else if (dst < 4 * mindst) {
+                            else if (dst < 4 * mindst && dst > 0) {
                                 var shiftsize = 0.05 / (dst * dst * dst);
                                 shiftx += -dfx * shiftsize;
                                 shifty += -dfy * shiftsize;
@@ -195,7 +198,7 @@ define(["jquery", "DQX/data/countries", "DQX/lib/geo_json", "DQX/lib/StyledMarke
                                 var dfy = (item2.y0) - (item1.y0 + item1.dy);
                                 var dst = Math.sqrt(dfx * dfx + dfy * dfy);
                                 var mindst = (1+that.offset) * (item1.radius);
-                                if (dst < mindst) {
+                                if (dst < mindst && dst > 0) {
                                     var shiftsize = (mindst - dst) / dst;
                                     shiftx += -dfx * shiftsize;
                                     shifty += -dfy * shiftsize;
