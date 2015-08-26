@@ -1482,6 +1482,7 @@ define(["jquery", "handlebars", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/Contro
             return DQX.pluralise(token, degree);
         });
 
+
         //Frame that holds a handlebars template
         Framework.TemplateFrame = function (iParentRef, template, file_template) {
             var that = FramePanel(iParentRef);
