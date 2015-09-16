@@ -379,13 +379,6 @@ define(["jquery", "lzstring", "DQX/SQL", "DQX/Utils", "DQX/DataDecoders"],
                     var qrytype = "qry";
                     if (this.useLimit) qrytype = "pageqry";
 
-                    if (!this.positionField) {
-                        if (!this.useLimit)
-                            DQX.reportError("positionField is missing in DataFetcher");
-                        else
-                        DQX.reportError("No sorting specified for table data fetcher");
-                    }
-
                     //prepare the url
                     var myurl = DQX.Url(this.serverurl);
                     myurl.addUrlQueryItem("datatype", qrytype);
