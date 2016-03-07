@@ -184,7 +184,14 @@ DQX.polyStar = function(ctx, x, y, radius, sides, pointSize, angle) {
         //Returns a html string that highlights every occurrence of a specific string in a flat text
         DQX.highlightText = function (data, search) {
             function preg_quote(str) { return (str + '').replace(/([\\\.\+\*\?\[\^\]\$\(\)\{\}\=\!\<\>\|\:])/g, "\\$1"); }
-            return data.replace(new RegExp("(" + preg_quote(search) + ")", 'gi'), '<span class="DQXHighlight">$1</span>');
+            //horrendous hack - don't do this, we do here as 1.6 is EOL
+            data = data.match(/<[^> ]+[^>]*>[^<]*/g);
+            dataOut = ''
+            for (var i=0; i < data.length; i++) {
+                var split=data[i].split('>')
+                dataOut = dataOut + split[0] + '>' + split[1].replace(new RegExp("(" + preg_quote(search) + ")", 'gi'), '<span class="DQXHighlight">$1</span>');
+            }
+            return dataOut;
         }
 
         DQX.pluralise = function (str, number) {
