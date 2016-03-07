@@ -132,7 +132,7 @@ define(["jquery", "DQX/Utils", "DQX/DocEl", "DQX/Msg", "DQX/FramePanel"],
                     var matching = !this._filterText;
                     if (!this._template) {//without template
                         if (this._filterText)
-                            matching = (this.items[i].content.toUpperCase().indexOf(this._filterText) >= 0);
+                            matching = ($(this.items[i].content).text().toUpperCase().indexOf(this._filterText) >= 0);
                         var content = this.items[i].content;
                         if (this._filterText)
                             content = DQX.highlightText(content, this._filterText);
